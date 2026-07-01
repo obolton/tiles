@@ -21,10 +21,7 @@ export interface NavigationMenuProps {
   workspaceId: string;
 }
 
-export default function NavigationMenu({
-  user,
-  workspaceId,
-}: NavigationMenuProps) {
+export default function NavigationMenu({ user, workspaceId }: NavigationMenuProps) {
   const workspace = user.workspaces.find((w) => w.id === workspaceId);
 
   function createWorkspace() {
@@ -40,11 +37,7 @@ export default function NavigationMenu({
 
   return (
     <>
-      <ToolbarButton
-        label={workspace?.name}
-        popovertarget="navigation-menu"
-        aria-haspopup="menu"
-      >
+      <ToolbarButton label={workspace?.name} popovertarget="navigation-menu" aria-haspopup="menu">
         <ProfileImage imageUrl={user.imageUrl} name={user.name} />
         {workspace?.name}
       </ToolbarButton>
@@ -68,10 +61,7 @@ export default function NavigationMenu({
             </MenuItemLink>
           ))}
           {user.workspaces.length < 5 ? (
-            <MenuItem
-              icon={<NewIcon aria-hidden="true" />}
-              on:click={createWorkspace}
-            >
+            <MenuItem icon={<NewIcon aria-hidden="true" />} on:click={createWorkspace}>
               Create workspace
             </MenuItem>
           ) : null}
@@ -83,10 +73,7 @@ export default function NavigationMenu({
           >
             Settings
           </MenuItemLink>
-          <MenuItem
-            icon={<SignOutIcon aria-hidden="true" />}
-            on:click={signOut}
-          >
+          <MenuItem icon={<SignOutIcon aria-hidden="true" />} on:click={signOut}>
             Sign out
           </MenuItem>
         </MenuItemGroup>

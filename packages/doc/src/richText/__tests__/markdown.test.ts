@@ -30,8 +30,7 @@ function text(value: string, attributes?: Record<string, object>): Y.XmlText {
   return node;
 }
 
-const paragraph = (...children: (Y.XmlElement | Y.XmlText)[]) =>
-  element("paragraph", {}, children);
+const paragraph = (...children: (Y.XmlElement | Y.XmlText)[]) => element("paragraph", {}, children);
 
 const item = (checked: boolean, ...blocks: Y.XmlElement[]) =>
   element("list_item", { checked }, blocks);
@@ -43,16 +42,12 @@ describe("fragmentToMarkdown", () => {
 
   describe("paragraph", () => {
     test("serializes a single paragraph", () => {
-      expect(fragmentToMarkdown(fragment(paragraph(text("Hello world"))))).toBe(
-        "Hello world",
-      );
+      expect(fragmentToMarkdown(fragment(paragraph(text("Hello world"))))).toBe("Hello world");
     });
 
     test("separates multiple paragraphs with a blank line", () => {
       expect(
-        fragmentToMarkdown(
-          fragment(paragraph(text("First")), paragraph(text("Second"))),
-        ),
+        fragmentToMarkdown(fragment(paragraph(text("First")), paragraph(text("Second")))),
       ).toBe("First\n\nSecond");
     });
 
@@ -62,9 +57,9 @@ describe("fragmentToMarkdown", () => {
       styled.insert(6, "bold", { bold: {} });
       styled.insert(10, " and ");
       styled.insert(15, "italic", { italic: {} });
-      expect(
-        fragmentToMarkdown(fragment(element("paragraph", {}, [styled]))),
-      ).toBe("Plain bold and italic");
+      expect(fragmentToMarkdown(fragment(element("paragraph", {}, [styled])))).toBe(
+        "Plain bold and italic",
+      );
     });
   });
 
@@ -74,11 +69,9 @@ describe("fragmentToMarkdown", () => {
       [2, "## Title"],
       [3, "### Title"],
     ])("serializes level %i", (level, expected) => {
-      expect(
-        fragmentToMarkdown(
-          fragment(element("heading", { level }, [text("Title")])),
-        ),
-      ).toBe(expected);
+      expect(fragmentToMarkdown(fragment(element("heading", { level }, [text("Title")])))).toBe(
+        expected,
+      );
     });
   });
 
@@ -132,12 +125,8 @@ describe("fragmentToMarkdown", () => {
 
   describe("code", () => {
     test("fences a code block with its language", () => {
-      const code = element("codeBlock", { language: "javascript" }, [
-        text("const x = 1;"),
-      ]);
-      expect(fragmentToMarkdown(fragment(code))).toBe(
-        "```javascript\nconst x = 1;\n```",
-      );
+      const code = element("codeBlock", { language: "javascript" }, [text("const x = 1;")]);
+      expect(fragmentToMarkdown(fragment(code))).toBe("```javascript\nconst x = 1;\n```");
     });
 
     test("fences a code block without a language", () => {
@@ -152,9 +141,7 @@ describe("fragmentToMarkdown", () => {
         paragraph(text("Line one")),
         paragraph(text("Line two")),
       ]);
-      expect(fragmentToMarkdown(fragment(quote))).toBe(
-        "> Line one\n> \n> Line two",
-      );
+      expect(fragmentToMarkdown(fragment(quote))).toBe("> Line one\n> \n> Line two");
     });
   });
 
@@ -162,11 +149,7 @@ describe("fragmentToMarkdown", () => {
     test("serializes a divider between paragraphs", () => {
       expect(
         fragmentToMarkdown(
-          fragment(
-            paragraph(text("Before")),
-            element("divider"),
-            paragraph(text("After")),
-          ),
+          fragment(paragraph(text("Before")), element("divider"), paragraph(text("After"))),
         ),
       ).toBe("Before\n\n---\n\nAfter");
     });
@@ -174,23 +157,15 @@ describe("fragmentToMarkdown", () => {
 
   describe("inline nodes", () => {
     test("serializes a link", () => {
-      const link = element("link", { href: "https://example.com" }, [
-        text("Example"),
-      ]);
-      expect(fragmentToMarkdown(fragment(paragraph(link)))).toBe(
-        "[Example](https://example.com)",
-      );
+      const link = element("link", { href: "https://example.com" }, [text("Example")]);
+      expect(fragmentToMarkdown(fragment(paragraph(link)))).toBe("[Example](https://example.com)");
     });
 
     test("serializes inline nodes mixed with text", () => {
-      const link = element("link", { href: "https://example.com" }, [
-        text("Example"),
-      ]);
-      expect(
-        fragmentToMarkdown(
-          fragment(paragraph(text("See "), link, text(" for more"))),
-        ),
-      ).toBe("See [Example](https://example.com) for more");
+      const link = element("link", { href: "https://example.com" }, [text("Example")]);
+      expect(fragmentToMarkdown(fragment(paragraph(text("See "), link, text(" for more"))))).toBe(
+        "See [Example](https://example.com) for more",
+      );
     });
 
     test("serializes a mention", () => {
@@ -203,9 +178,7 @@ describe("fragmentToMarkdown", () => {
 
     test("keeps the full value of a date with a time", () => {
       const date = element("date", { value: "2024-01-15T09:30", time: true });
-      expect(fragmentToMarkdown(fragment(paragraph(date)))).toBe(
-        "2024-01-15T09:30",
-      );
+      expect(fragmentToMarkdown(fragment(paragraph(date)))).toBe("2024-01-15T09:30");
     });
 
     test("truncates a date without a time to the day", () => {
@@ -218,9 +191,7 @@ describe("fragmentToMarkdown", () => {
         dropdownType: "status",
         value: "In Progress",
       });
-      expect(fragmentToMarkdown(fragment(paragraph(dropdown)))).toBe(
-        "In Progress",
-      );
+      expect(fragmentToMarkdown(fragment(paragraph(dropdown)))).toBe("In Progress");
     });
   });
 

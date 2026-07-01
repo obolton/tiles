@@ -1,10 +1,4 @@
-import type {
-  TileType,
-  Sizing,
-  Animation,
-  FrameStyle,
-  DockEdge,
-} from "../enums";
+import type { TileType, Sizing, Animation, FrameStyle, DockEdge } from "../enums";
 import type { Color } from "../color";
 import type { Fill } from "../fill";
 

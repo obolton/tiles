@@ -29,8 +29,9 @@ describe("buildChartMap", () => {
 
     const series = map.get("series") as Y.Map<Y.Map<unknown>>;
     expect(series.size).toBe(2);
-    expect(
-      [...series.values()].map((s) => (s.get("column") as { id: string }).id),
-    ).toEqual(["c1", "c2"]);
+    expect([...series.values()].map((s) => (s.get("column") as { id: string }).id)).toEqual([
+      "c1",
+      "c2",
+    ]);
   });
 });

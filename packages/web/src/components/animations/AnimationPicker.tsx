@@ -15,10 +15,7 @@ export interface AnimationPickerProps {
   onChange: (animation: Animation | null) => void;
 }
 
-export default function AnimationPicker({
-  value,
-  onChange,
-}: AnimationPickerProps) {
+export default function AnimationPicker({ value, onChange }: AnimationPickerProps) {
   function handleChange(event: Event) {
     const selected = (event.currentTarget as ListSelect).value;
     onChange(selected === "" ? null : (selected as Animation));

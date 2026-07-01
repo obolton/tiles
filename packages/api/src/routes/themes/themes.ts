@@ -57,8 +57,7 @@ export async function updateTheme(
       headingFont: fonts?.heading,
       bodyFont: fonts?.body,
       codeFont: fonts?.code,
-      borderColor:
-        border !== undefined ? (border ? fromHex(border) : null) : undefined,
+      borderColor: border !== undefined ? (border ? fromHex(border) : null) : undefined,
     },
     select: THEME_FIELDS,
   });

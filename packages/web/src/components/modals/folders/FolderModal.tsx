@@ -12,12 +12,7 @@ export interface FolderModalProps extends ModalProps<FolderModalResult> {
   showDelete?: boolean;
 }
 
-export default function FolderModal({
-  cancel,
-  confirm,
-  name,
-  showDelete,
-}: FolderModalProps) {
+export default function FolderModal({ cancel, confirm, name, showDelete }: FolderModalProps) {
   const pending = flag(false);
 
   async function onSubmit(event: Event) {
@@ -81,11 +76,7 @@ export default function FolderModal({
           Save
         </button>
         {showDelete ? (
-          <button
-            type="button"
-            className="secondary destructive"
-            on:click={onDelete}
-          >
+          <button type="button" className="secondary destructive" on:click={onDelete}>
             Delete folder
           </button>
         ) : null}

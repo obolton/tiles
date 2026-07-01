@@ -18,9 +18,7 @@ export default function UserRow({
   return (
     <Row
       icon={
-        user.imageUrl ? (
-          <img className="profile-image" src={user.imageUrl} alt={user.name} />
-        ) : null
+        user.imageUrl ? <img className="profile-image" src={user.imageUrl} alt={user.name} /> : null
       }
       title={user.name}
       subtitle={description}

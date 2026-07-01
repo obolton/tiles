@@ -18,34 +18,32 @@ export async function inviteToPage(
   { userId }: AuthenticatedRequestContext,
 ) {
   const key = await createKey(INVITE_KEY_BYTES);
-  const [page, inviter, invite] = await prisma.$transaction(
-    async (transaction) =>
-      Promise.all([
-        transaction.page.findUniqueOrThrow({
-          where: { id: pageId },
-          select: { title: true },
-        }),
-        transaction.user.findUniqueOrThrow({
-          where: { id: userId },
-          select: { id: true, name: true },
-        }),
-        transaction.pageInvite.create({
-          data: {
-            creatorId: userId,
-            pageId,
-            email,
-            key,
-          },
-          select: PAGE_INVITE_FIELDS,
-        }),
-      ]),
+  const [page, inviter, invite] = await prisma.$transaction(async (transaction) =>
+    Promise.all([
+      transaction.page.findUniqueOrThrow({
+        where: { id: pageId },
+        select: { title: true },
+      }),
+      transaction.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { id: true, name: true },
+      }),
+      transaction.pageInvite.create({
+        data: {
+          creatorId: userId,
+          pageId,
+          email,
+          key,
+        },
+        select: PAGE_INVITE_FIELDS,
+      }),
+    ]),
   );
 
   // Don't block on sending email
-  sendEmail(
-    email,
-    inviteToPageEmail({ inviter, title: page.title, key }),
-  ).catch((error) => console.error(error));
+  sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key })).catch((error) =>
+    console.error(error),
+  );
 
   return invite;
 }
@@ -96,10 +94,7 @@ export async function deletePageInvite({ pageId, id }: DeletePageInviteSchema) {
   });
 }
 
-export async function revokePageAccess({
-  pageId,
-  userId,
-}: RevokePageAccessSchema) {
+export async function revokePageAccess({ pageId, userId }: RevokePageAccessSchema) {
   return prisma.pageAccess.delete({
     where: { id: { pageId, userId } },
     select: { userId: true },

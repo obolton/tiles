@@ -72,11 +72,7 @@ function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
   throw new Error(`Unknown tile type: ${tile.type}`);
 }
 
-export function getSizeStyle(
-  sizing: Sizing,
-  width: number | null,
-  height: number,
-) {
+export function getSizeStyle(sizing: Sizing, width: number | null, height: number) {
   if (sizing === "CUSTOM") {
     return {
       "--width": width?.toString(),
@@ -102,14 +98,7 @@ export function getSizeStyle(
   };
 }
 
-export default function Item({
-  classList,
-  style,
-  tile,
-  tabindex,
-  resize,
-  draggable,
-}: ItemProps) {
+export default function Item({ classList, style, tile, tabindex, resize, draggable }: ItemProps) {
   const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
   const allowDrag = draggable === false ? false : editor.isTileEditable;
 
@@ -118,9 +107,7 @@ export default function Item({
     item = element;
   };
 
-  const isSelected = editor.selection.derive((selection) =>
-    selection.has(tile),
-  );
+  const isSelected = editor.selection.derive((selection) => selection.has(tile));
 
   const isReferenced = editor.references.derive((refs) => refs.includes(tile));
 
@@ -135,8 +122,7 @@ export default function Item({
       theme: tile.theme,
       textColor: tile.textColor,
     },
-    ({ background, theme, textColor }) =>
-      getThemeStyles(theme, { background, textColor }),
+    ({ background, theme, textColor }) => getThemeStyles(theme, { background, textColor }),
   );
 
   function onPointerDown(event: PointerEvent) {
@@ -202,24 +188,14 @@ export default function Item({
       animation: tile.animation,
       cornerRadius: tile.cornerRadius,
     },
-    ({
-      sizing,
-      width,
-      height,
-      rowSpan,
-      position,
-      themeStyles,
-      animation,
-      cornerRadius,
-    }) => ({
+    ({ sizing, width, height, rowSpan, position, themeStyles, animation, cornerRadius }) => ({
       ...style,
       ...position,
       ...getSizeStyle(sizing, width, height),
       "--rows": rowSpan.toString(),
       ...themeStyles,
       "--animation-name": animation ? ANIMATION_NAMES[animation] : undefined,
-      "--border-radius":
-        cornerRadius !== null ? `${cornerRadius}px` : undefined,
+      "--border-radius": cornerRadius !== null ? `${cornerRadius}px` : undefined,
     }),
   );
 
@@ -257,16 +233,12 @@ export default function Item({
         resize={resizeDirection}
         classList={{
           [styles.item]: true,
-          [styles["frame-outlined"]]: tile.frame.derive(
-            (f) => f === "OUTLINED",
-          ),
+          [styles["frame-outlined"]]: tile.frame.derive((f) => f === "OUTLINED"),
           [styles["frame-subtle"]]: tile.frame.derive((f) => f === "SUBTLE"),
           [styles["frame-card"]]: tile.frame.derive((f) => f === "CARD"),
           [styles["frame-raised"]]: tile.frame.derive((f) => f === "RAISED"),
           [styles["frame-framed"]]: tile.frame.derive((f) => f === "FRAMED"),
-          [styles["frame-full-bleed"]]: tile.frame.derive(
-            (f) => f === "FULL_BLEED",
-          ),
+          [styles["frame-full-bleed"]]: tile.frame.derive((f) => f === "FULL_BLEED"),
           animate: tile.animation.derive((a) => a !== null),
           "aspect-fixed": sizing.derive((s) => s !== "AUTO" && s !== "CUSTOM"),
           [styles.draggable]: allowDrag,

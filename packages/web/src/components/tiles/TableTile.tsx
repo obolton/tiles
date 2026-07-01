@@ -34,11 +34,7 @@ function createDocument(text: string): RichTextType {
   return [{ type: "paragraph", children: [{ type: "text", format: 0, text }] }];
 }
 
-export default function TableTile({
-  table,
-  showToolbar,
-  signal,
-}: TableTileProps) {
+export default function TableTile({ table, showToolbar, signal }: TableTileProps) {
   let tableView: TableView | undefined;
   const editorView: Reactive<EditorView | null> = reactive(null);
   const state: Reactive<EditorState | null> = reactive(null);
@@ -89,8 +85,7 @@ export default function TableTile({
       editorView.value?.destroy();
 
       const value = column.id ? rows.value[row.index]?.cell(column.id) : null;
-      const content =
-        typeof value === "string" ? createDocument(value) : (value ?? null);
+      const content = typeof value === "string" ? createDocument(value) : (value ?? null);
       state.value = createState(content, [keymap(KEY_MAP)]);
       target.replaceChildren();
 
@@ -282,9 +277,7 @@ export default function TableTile({
       >
         {import.meta.env.SSR && (
           <TableViewContents table={table}>
-            {(value) =>
-              Array.isArray(value) ? <RichText content={value} /> : value
-            }
+            {(value) => (Array.isArray(value) ? <RichText content={value} /> : value)}
           </TableViewContents>
         )}
       </table-view>

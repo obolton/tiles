@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Trash, { type TrashProps } from "@/pages/library/Trash";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<TrashProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<TrashProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
     return notFound();
@@ -44,6 +37,5 @@ export default {
   loader,
   component: Trash,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<TrashProps>;

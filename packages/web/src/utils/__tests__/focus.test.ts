@@ -2,22 +2,17 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { focusInside, getFocusedDescendant } from "../focus";
 
 describe("focusInside", () => {
-  test.for([
-    "button",
-    "iframe",
-    "input",
-    "object",
-    "select",
-    "summary",
-    "textarea",
-  ])("focuses a %s element", (tag) => {
-    const container = document.createElement("div");
-    const element = document.createElement(tag);
-    container.append(element);
-    const spy = vi.spyOn(element, "focus");
-    focusInside(container);
-    expect(spy).toHaveBeenCalledOnce();
-  });
+  test.for(["button", "iframe", "input", "object", "select", "summary", "textarea"])(
+    "focuses a %s element",
+    (tag) => {
+      const container = document.createElement("div");
+      const element = document.createElement(tag);
+      container.append(element);
+      const spy = vi.spyOn(element, "focus");
+      focusInside(container);
+      expect(spy).toHaveBeenCalledOnce();
+    },
+  );
 
   test("focuses an anchor element with href attribute", () => {
     const container = document.createElement("div");

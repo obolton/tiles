@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Folder, { type FolderProps } from "@/pages/library/Folder";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<FolderProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<FolderProps> {
   const { workspaceId, folderId } = parameters;
   if (!workspaceId || !folderId) {
     return notFound();
@@ -49,6 +42,5 @@ export default {
   loader,
   component: Folder,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<FolderProps>;

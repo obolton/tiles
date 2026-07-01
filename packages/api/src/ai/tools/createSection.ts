@@ -22,9 +22,7 @@ async function createSectionTile(
   return { tileId, type: "SECTION" };
 }
 
-export const CREATE_SECTION_TOOL: FunctionToolOptions<
-  typeof CreateSectionSchema
-> = {
+export const CREATE_SECTION_TOOL: FunctionToolOptions<typeof CreateSectionSchema> = {
   name: "create_section",
   description:
     "Creates a section container for grouping related content. After creating a section, use its ID as the sectionId parameter in other tools to add content inside it.",

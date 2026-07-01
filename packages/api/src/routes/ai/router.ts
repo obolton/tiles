@@ -1,8 +1,5 @@
 import { router } from "@/utils/trpc.ts";
-import {
-  authenticatedProcedure,
-  pageUpdateProcedure,
-} from "@/utils/middleware.ts";
+import { authenticatedProcedure, pageUpdateProcedure } from "@/utils/middleware.ts";
 import { generateImage, write } from "./ai.ts";
 import { GenerateImageSchema, WriteSchema } from "./schema.ts";
 

@@ -30,9 +30,7 @@ export function encodeSelection(range: SelectionRange): SerializedSelection {
  * Restores a selection serialized by {@link encodeSelection}. Returns null when
  * the payload is malformed so callers can fall back to default behavior.
  */
-export function decodeSelection(
-  selection: SerializedSelection,
-): SelectionRange | null {
+export function decodeSelection(selection: SerializedSelection): SelectionRange | null {
   try {
     return {
       from: Y.decodeRelativePosition(base64ToBytes(selection.from)),

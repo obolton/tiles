@@ -129,12 +129,9 @@ export default class FilterSelect extends HTMLElement {
   }
 
   private handleKeyDown(event: KeyboardEvent) {
-    const items = Array.from(
-      this.querySelectorAll<HTMLElement>("[data-value]:not([hidden])"),
-    );
+    const items = Array.from(this.querySelectorAll<HTMLElement>("[data-value]:not([hidden])"));
     const active = this.ariaActiveDescendantElement;
-    const activeIndex =
-      active instanceof HTMLElement ? items.indexOf(active) : -1;
+    const activeIndex = active instanceof HTMLElement ? items.indexOf(active) : -1;
 
     switch (event.key) {
       case "ArrowDown":
@@ -144,9 +141,7 @@ export default class FilterSelect extends HTMLElement {
           this.setActiveOption(items.at(-1));
         } else {
           this.setActiveOption(
-            activeIndex < 0
-              ? items.at(0)
-              : items.at((activeIndex + 1) % items.length),
+            activeIndex < 0 ? items.at(0) : items.at((activeIndex + 1) % items.length),
           );
         }
         break;
@@ -194,9 +189,7 @@ export default class FilterSelect extends HTMLElement {
         option.ariaSelected = "false";
       });
 
-    const option = this.querySelector(
-      `[data-value="${CSS.escape(this.#value)}"]`,
-    );
+    const option = this.querySelector(`[data-value="${CSS.escape(this.#value)}"]`);
     if (option) {
       option.ariaSelected = "true";
     }
@@ -237,9 +230,7 @@ export default class FilterSelect extends HTMLElement {
       this.ariaActiveDescendantElement instanceof HTMLElement &&
       this.ariaActiveDescendantElement.hidden
     ) {
-      const firstVisible = this.querySelector<HTMLElement>(
-        "[data-value]:not([hidden])",
-      );
+      const firstVisible = this.querySelector<HTMLElement>("[data-value]:not([hidden])");
       this.setActiveOption(firstVisible);
     }
 
@@ -265,10 +256,7 @@ export default class FilterSelect extends HTMLElement {
       const optionRect = option.getBoundingClientRect();
 
       // Scroll option into view if needed
-      if (
-        optionRect.top < listRect.top ||
-        optionRect.bottom > listRect.bottom
-      ) {
+      if (optionRect.top < listRect.top || optionRect.bottom > listRect.bottom) {
         const top = optionRect.top - listRect.top;
         this.list.scrollTo({ top });
       }

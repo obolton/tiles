@@ -11,10 +11,7 @@ export interface CreateWorkspaceModalResult {
 
 export type CreateWorkspaceModalProps = ModalProps<CreateWorkspaceModalResult>;
 
-export default function CreateWorkspaceModal({
-  cancel,
-  confirm,
-}: CreateWorkspaceModalProps) {
+export default function CreateWorkspaceModal({ cancel, confirm }: CreateWorkspaceModalProps) {
   const pending = flag(false);
 
   async function onSubmit(event: Event) {
@@ -47,13 +44,7 @@ export default function CreateWorkspaceModal({
       <ModalBody>
         <label>
           Name
-          <input
-            type="text"
-            name="name"
-            placeholder="Workspace name"
-            autofocus
-            required
-          />
+          <input type="text" name="name" placeholder="Workspace name" autofocus required />
         </label>
       </ModalBody>
 

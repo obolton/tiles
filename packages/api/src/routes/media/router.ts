@@ -1,10 +1,6 @@
 import { router } from "@/utils/trpc.ts";
 import { authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
-import {
-  CreateImageSchema,
-  UpdateImageSchema,
-  DeleteImageSchema,
-} from "./schema.ts";
+import { CreateImageSchema, UpdateImageSchema, DeleteImageSchema } from "./schema.ts";
 import { createImage, updateImage, deleteImage } from "./media.ts";
 
 export default router({

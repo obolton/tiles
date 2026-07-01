@@ -39,10 +39,7 @@ function functionTool<T extends z.ZodType>({
 
 export const TOOLS: Tool[] = FUNCTION_TOOLS.map(functionTool);
 
-export async function useFunctionTool(
-  call: ResponseFunctionToolCall,
-  context: ToolContext,
-) {
+export async function useFunctionTool(call: ResponseFunctionToolCall, context: ToolContext) {
   for (const tool of FUNCTION_TOOLS) {
     if (tool.name === call.name) {
       const args = JSON.parse(call.arguments) as unknown;

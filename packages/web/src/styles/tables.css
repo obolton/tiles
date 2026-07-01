@@ -64,11 +64,7 @@
 
     &.selected,
     tr.selected > & {
-      background: color-mix(
-        in lch,
-        var(--header-color) 80%,
-        var(--focus-ring-color) 20%
-      );
+      background: color-mix(in lch, var(--header-color) 80%, var(--focus-ring-color) 20%);
     }
 
     & > span {

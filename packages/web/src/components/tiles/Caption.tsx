@@ -14,12 +14,7 @@ function stopPropagation(event: Event) {
   event.stopPropagation();
 }
 
-export default function Caption({
-  isEditable,
-  value,
-  onChange,
-  placeholder,
-}: CaptionProps) {
+export default function Caption({ isEditable, value, onChange, placeholder }: CaptionProps) {
   const handleChange = (event: Event) => {
     const element = event.currentTarget as HTMLTextAreaElement;
     const value = element.value;
@@ -42,9 +37,7 @@ export default function Caption({
       </figcaption>
     ) : (
       value.derive((val) =>
-        val ? (
-          <figcaption className={styles.caption}>{value}</figcaption>
-        ) : null,
+        val ? <figcaption className={styles.caption}>{value}</figcaption> : null,
       )
     ),
   );

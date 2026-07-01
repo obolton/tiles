@@ -24,9 +24,7 @@ export function invalidateCachedUrls(urls: string[]) {
       zone_id: CLOUDFLARE_ZONE_ID,
       files: urls,
     })
-    .catch((error) =>
-      console.error("Failed to invalidate cached URLs:", urls, error),
-    );
+    .catch((error) => console.error("Failed to invalidate cached URLs:", urls, error));
 }
 
 export function invalidateCachedPages(ids: string[]) {

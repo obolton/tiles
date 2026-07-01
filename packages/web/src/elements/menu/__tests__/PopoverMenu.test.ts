@@ -51,9 +51,7 @@ describe("PopoverMenu", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
-      items[0]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
-      );
+      items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
 
       expect(document.activeElement).toBe(items[1]);
     });
@@ -62,9 +60,7 @@ describe("PopoverMenu", () => {
       items[1]!.tabIndex = 0;
       items[1]!.focus();
 
-      items[1]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }),
-      );
+      items[1]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
 
       expect(document.activeElement).toBe(items[0]);
     });
@@ -73,9 +69,7 @@ describe("PopoverMenu", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
-      items[2]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
-      );
+      items[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
 
       expect(document.activeElement).toBe(items[0]);
     });
@@ -84,9 +78,7 @@ describe("PopoverMenu", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
-      items[0]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }),
-      );
+      items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
 
       expect(document.activeElement).toBe(items[2]);
     });
@@ -95,9 +87,7 @@ describe("PopoverMenu", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
-      items[2]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "Home", bubbles: true }),
-      );
+      items[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
 
       expect(document.activeElement).toBe(items[0]);
     });
@@ -106,9 +96,7 @@ describe("PopoverMenu", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
-      items[0]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "End", bubbles: true }),
-      );
+      items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
 
       expect(document.activeElement).toBe(items[2]);
     });
@@ -117,9 +105,7 @@ describe("PopoverMenu", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
-      items[0]!.dispatchEvent(
-        new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }),
-      );
+      items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
 
       expect(document.activeElement).toBe(items[0]);
     });

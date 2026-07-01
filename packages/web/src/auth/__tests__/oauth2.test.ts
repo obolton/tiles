@@ -26,9 +26,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("response_type")).toBe("code");
       expect(parsedUrl.searchParams.get("client_id")).toBe("test-client-id");
       expect(parsedUrl.searchParams.get("scope")).toBe("openid profile");
-      expect(parsedUrl.searchParams.get("redirect_uri")).toBe(
-        "https://app.example.com/callback",
-      );
+      expect(parsedUrl.searchParams.get("redirect_uri")).toBe("https://app.example.com/callback");
     });
 
     it("should include PKCE parameters", () => {
@@ -113,22 +111,14 @@ describe("oauth2", () => {
         expect(cookies.every(([name]) => name === "Set-Cookie")).toBe(true);
 
         const cookieValues = cookies.map(([, value]) => value);
-        expect(
-          cookieValues.some((v) => v.includes("__Host-oauth_state=test-state")),
-        ).toBe(true);
-        expect(
-          cookieValues.some((v) =>
-            v.includes("__Host-oauth_verifier=test-verifier"),
-          ),
-        ).toBe(true);
-        expect(
-          cookieValues.some((v) => v.includes("__Host-oauth_nonce=test-nonce")),
-        ).toBe(true);
-        expect(
-          cookieValues.some((v) =>
-            v.includes("__Host-oauth_dest=test-destination"),
-          ),
-        ).toBe(true);
+        expect(cookieValues.some((v) => v.includes("__Host-oauth_state=test-state"))).toBe(true);
+        expect(cookieValues.some((v) => v.includes("__Host-oauth_verifier=test-verifier"))).toBe(
+          true,
+        );
+        expect(cookieValues.some((v) => v.includes("__Host-oauth_nonce=test-nonce"))).toBe(true);
+        expect(cookieValues.some((v) => v.includes("__Host-oauth_dest=test-destination"))).toBe(
+          true,
+        );
       });
 
       it("should set secure cookie options", () => {
@@ -139,9 +129,7 @@ describe("oauth2", () => {
           destination: "",
         });
 
-        const stateCookie = cookies.find(([, v]) =>
-          v.includes("__Host-oauth_state"),
-        )?.[1];
+        const stateCookie = cookies.find(([, v]) => v.includes("__Host-oauth_state"))?.[1];
         expect(stateCookie).toContain("HttpOnly");
         expect(stateCookie).toContain("Secure");
         expect(stateCookie).toContain("SameSite=Lax");

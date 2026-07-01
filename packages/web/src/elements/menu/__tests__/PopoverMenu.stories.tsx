@@ -42,12 +42,8 @@ export const BasicMenu: Story = {
       </button>
       <popover-menu id="basic-menu">
         <MenuItemGroup>
-          <MenuItem icon={<SettingsIcon aria-hidden="true" />}>
-            Settings
-          </MenuItem>
-          <MenuItem icon={<SignOutIcon aria-hidden="true" />}>
-            Sign out
-          </MenuItem>
+          <MenuItem icon={<SettingsIcon aria-hidden="true" />}>Settings</MenuItem>
+          <MenuItem icon={<SignOutIcon aria-hidden="true" />}>Sign out</MenuItem>
         </MenuItemGroup>
       </popover-menu>
     </>
@@ -62,29 +58,19 @@ export const WithMultipleGroups: Story = {
       </button>
       <popover-menu id="groups-menu">
         <MenuItemGroup>
-          <MenuItemLink
-            icon={<WorkspaceIcon aria-hidden="true" />}
-            href="#workspace-1"
-          >
+          <MenuItemLink icon={<WorkspaceIcon aria-hidden="true" />} href="#workspace-1">
             My Workspace
           </MenuItemLink>
-          <MenuItemLink
-            icon={<WorkspaceIcon aria-hidden="true" />}
-            href="#workspace-2"
-          >
+          <MenuItemLink icon={<WorkspaceIcon aria-hidden="true" />} href="#workspace-2">
             Team Workspace
           </MenuItemLink>
-          <MenuItem icon={<NewIcon aria-hidden="true" />}>
-            Create workspace
-          </MenuItem>
+          <MenuItem icon={<NewIcon aria-hidden="true" />}>Create workspace</MenuItem>
         </MenuItemGroup>
         <MenuItemGroup>
           <MenuItemLink icon={<SettingsIcon aria-hidden="true" />} href="#">
             Settings
           </MenuItemLink>
-          <MenuItem icon={<SignOutIcon aria-hidden="true" />}>
-            Sign out
-          </MenuItem>
+          <MenuItem icon={<SignOutIcon aria-hidden="true" />}>Sign out</MenuItem>
         </MenuItemGroup>
       </popover-menu>
     </>
@@ -106,10 +92,7 @@ export const WithSelectedItem: Story = {
           >
             My Workspace
           </MenuItemLink>
-          <MenuItemLink
-            icon={<WorkspaceIcon aria-hidden="true" />}
-            href="#workspace-2"
-          >
+          <MenuItemLink icon={<WorkspaceIcon aria-hidden="true" />} href="#workspace-2">
             Team Workspace
           </MenuItemLink>
         </MenuItemGroup>
@@ -126,11 +109,7 @@ export const WithCheckboxItems: Story = {
       </button>
       <popover-menu id="checkbox-menu">
         <MenuItemGroup label="Text style">
-          <MenuItem
-            icon={<BoldIcon aria-hidden="true" />}
-            checked={true}
-            role="menuitemcheckbox"
-          >
+          <MenuItem icon={<BoldIcon aria-hidden="true" />} checked={true} role="menuitemcheckbox">
             Bold
           </MenuItem>
           <MenuItem
@@ -161,9 +140,7 @@ export const WithDestructiveItem: Story = {
       </button>
       <popover-menu id="destructive-menu">
         <MenuItemGroup>
-          <MenuItem icon={<SettingsIcon aria-hidden="true" />}>
-            Settings
-          </MenuItem>
+          <MenuItem icon={<SettingsIcon aria-hidden="true" />}>Settings</MenuItem>
         </MenuItemGroup>
         <MenuItemGroup>
           <MenuItem icon={<TrashIcon aria-hidden="true" />} destructive>
@@ -185,10 +162,7 @@ export const IconsOnly: Story = {
         <MenuItemGroup>
           <MenuItem icon={<BoldIcon aria-hidden="true" />} label="Bold" />
           <MenuItem icon={<ItalicIcon aria-hidden="true" />} label="Italic" />
-          <MenuItem
-            icon={<UnderlineIcon aria-hidden="true" />}
-            label="Underline"
-          />
+          <MenuItem icon={<UnderlineIcon aria-hidden="true" />} label="Underline" />
         </MenuItemGroup>
       </popover-menu>
     </>

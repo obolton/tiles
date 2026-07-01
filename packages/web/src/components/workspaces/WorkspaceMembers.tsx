@@ -71,15 +71,10 @@ export default function WorkspaceMembers({
     }
   };
 
-  const onChangeRole = async (
-    member: WorkspaceMember,
-    role: WorkspaceMember["role"],
-  ) => {
+  const onChangeRole = async (member: WorkspaceMember, role: WorkspaceMember["role"]) => {
     const previousRole = member.role;
     const isSelf = member.id === currentUser.value?.id;
-    members.value = members.value.map((m) =>
-      m === member ? { ...m, role } : m,
-    );
+    members.value = members.value.map((m) => (m === member ? { ...m, role } : m));
     if (isSelf) {
       isAdmin.value = role === "ADMIN";
     }
@@ -137,9 +132,7 @@ export default function WorkspaceMembers({
             onRemove={() => onRemove(member)}
           />
         )}
-        renderPlaceholder={() => (
-          <Placeholder>There are no results</Placeholder>
-        )}
+        renderPlaceholder={() => <Placeholder>There are no results</Placeholder>}
       />
 
       <form className={styles.leave} on:submit={onLeave}>

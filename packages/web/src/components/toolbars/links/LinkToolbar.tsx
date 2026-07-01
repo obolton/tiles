@@ -33,11 +33,7 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
   };
 
   return (
-    <floating-toolbar
-      className="primary"
-      aria-label="Link toolbar"
-      data-tooltip-position="bottom"
-    >
+    <floating-toolbar className="primary" aria-label="Link toolbar" data-tooltip-position="bottom">
       <toolbar-tab name="link" label="Link">
         <ToolbarGroup label="Link tools">
           <ToolbarButton on:click={editLink}>

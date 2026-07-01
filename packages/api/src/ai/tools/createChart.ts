@@ -1,12 +1,7 @@
 import { z } from "zod";
 import { createChart, getTableColumns } from "@/routes/charts/charts";
 import { ColorSchema } from "@/schema/Color";
-import {
-  SizeSchema,
-  getDimensions,
-  CoordinatesSchema,
-  resolveParentId,
-} from "./schema";
+import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";
 import type { FunctionToolOptions, ToolContext } from "./types";
 
 const CreateChartSchema = z.strictObject({
@@ -19,8 +14,7 @@ const CreateChartSchema = z.strictObject({
     description: "The ID of the table to visualize (from create_table result)",
   }),
   labelColumnIndex: z.number().int().min(0).nullable().meta({
-    description:
-      "Column index (0-based) for x-axis labels, or null for no labels",
+    description: "Column index (0-based) for x-axis labels, or null for no labels",
   }),
   series: z
     .array(
@@ -42,10 +36,7 @@ const CreateChartSchema = z.strictObject({
   coordinates: CoordinatesSchema,
 });
 
-async function createChartArtifact(
-  args: z.infer<typeof CreateChartSchema>,
-  context: ToolContext,
-) {
+async function createChartArtifact(args: z.infer<typeof CreateChartSchema>, context: ToolContext) {
   const { pageId, resolveArtifactId } = context;
   const { size } = args;
   const parentId = resolveParentId(args.parentId, context);
@@ -53,9 +44,7 @@ async function createChartArtifact(
   const columns = await getTableColumns(pageId, tableId);
 
   const labelColumnId =
-    args.labelColumnIndex !== null
-      ? columns[args.labelColumnIndex]?.id
-      : undefined;
+    args.labelColumnIndex !== null ? columns[args.labelColumnIndex]?.id : undefined;
 
   const series = args.series.map((s) => {
     const column = columns[s.columnIndex];
@@ -83,11 +72,10 @@ async function createChartArtifact(
   return { artifact };
 }
 
-export const CREATE_CHART_TOOL: FunctionToolOptions<typeof CreateChartSchema> =
-  {
-    name: "create_chart",
-    description:
-      "Creates a chart to visualize data from a table. First create a table with create_table, then use this tool with the table ID. Supports bar, line, and area charts.",
-    schema: CreateChartSchema,
-    function: createChartArtifact,
-  };
+export const CREATE_CHART_TOOL: FunctionToolOptions<typeof CreateChartSchema> = {
+  name: "create_chart",
+  description:
+    "Creates a chart to visualize data from a table. First create a table with create_table, then use this tool with the table ID. Supports bar, line, and area charts.",
+  schema: CreateChartSchema,
+  function: createChartArtifact,
+};

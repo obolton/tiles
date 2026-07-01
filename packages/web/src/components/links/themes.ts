@@ -16,8 +16,6 @@ export const LINK_THEMES: ThemeRegistry<LinkThemeProps> = {
   "square-button": SquareButtonLink,
 } as const;
 
-export const LINK_THEME_OPTIONS = Object.keys(
-  LINK_THEMES,
-) as (keyof typeof LINK_THEMES)[];
+export const LINK_THEME_OPTIONS = Object.keys(LINK_THEMES) as (keyof typeof LINK_THEMES)[];
 
 export const DEFAULT_LINK_THEME = "default";

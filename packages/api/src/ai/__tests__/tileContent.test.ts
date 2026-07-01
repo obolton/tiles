@@ -106,18 +106,12 @@ describe("getTileContent", () => {
         imageId: null,
       }),
     );
-    expect(getTileContent(tile)).toBe(
-      "Example\nAn example\nhttps://example.com",
-    );
+    expect(getTileContent(tile)).toBe("Example\nAn example\nhttps://example.com");
   });
 
   test("reads a page link's target title", () => {
     const { tiles: map } = tiles();
-    const tile = place(
-      map,
-      "p",
-      buildPageLinkMap({ linkedPage: { title: "Linked Page" } }),
-    );
+    const tile = place(map, "p", buildPageLinkMap({ linkedPage: { title: "Linked Page" } }));
     expect(getTileContent(tile)).toBe("Linked Page");
   });
 
@@ -172,9 +166,7 @@ describe("getTileContent", () => {
     rows.set("row-1", row);
     writeCells(row, { "col-1": "line1\nline2 | x" });
 
-    expect(getTileContent(tile)).toBe(
-      "| A \\| B |\n| --- |\n| line1 line2 \\| x |",
-    );
+    expect(getTileContent(tile)).toBe("| A \\| B |\n| --- |\n| line1 line2 \\| x |");
   });
 
   test("yields no content for a table with no columns", () => {

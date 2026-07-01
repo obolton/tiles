@@ -112,13 +112,7 @@ const DEFAULT_THEMES: ThemeDefinition[] = [
 
 export function getDefaultThemesData() {
   return DEFAULT_THEMES.map(
-    ({
-      backgroundColor,
-      backgroundGradient,
-      textColor,
-      accentColor,
-      ...theme
-    }) => ({
+    ({ backgroundColor, backgroundGradient, textColor, accentColor, ...theme }) => ({
       ...theme,
       backgroundColor: fromHex(backgroundColor),
       backgroundGradient: backgroundGradient ?? null,
@@ -141,9 +135,7 @@ export interface Background {
   backgroundImageId: string | null;
 }
 
-export function getBackgroundProperties(
-  background: ColorBackgroundSchema,
-): ColorBackground;
+export function getBackgroundProperties(background: ColorBackgroundSchema): ColorBackground;
 export function getBackgroundProperties(
   background: ColorBackgroundSchema | undefined,
 ): ColorBackground | undefined;

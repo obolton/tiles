@@ -41,9 +41,7 @@ describe("renderToString", () => {
     const element = jsx("div", {
       title: '"test<>',
     });
-    expect(renderToString(element)).toBe(
-      '<div title="&quot;test&lt;&gt;"></div>',
-    );
+    expect(renderToString(element)).toBe('<div title="&quot;test&lt;&gt;"></div>');
   });
 
   test("renders a numeric attribute", () => {
@@ -69,16 +67,12 @@ describe("renderToString", () => {
 
       test("falsy value", () => {
         const element = jsx("div", { [attribute]: 0 });
-        expect(renderToString(element)).toBe(
-          `<div ${attribute}="false"></div>`,
-        );
+        expect(renderToString(element)).toBe(`<div ${attribute}="false"></div>`);
       });
 
       test("false", () => {
         const element = jsx("div", { [attribute]: "false" });
-        expect(renderToString(element)).toBe(
-          `<div ${attribute}="false"></div>`,
-        );
+        expect(renderToString(element)).toBe(`<div ${attribute}="false"></div>`);
       });
 
       test("string value", () => {
@@ -150,8 +144,7 @@ describe("renderToString", () => {
   });
 
   test("renders a child component", () => {
-    const Component = ({ name }: { name: string }) =>
-      jsx("span", { children: `Hello ${name}` });
+    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
 
     const element = jsx("p", {
       children: jsx(Component, { name: "Test" }),
@@ -161,15 +154,9 @@ describe("renderToString", () => {
 
   test("renders multiple child nodes", () => {
     const element = jsx("p", {
-      children: [
-        jsx("span", { children: "Foo" }),
-        "Bar",
-        jsx("span", { children: "Baz" }),
-      ],
+      children: [jsx("span", { children: "Foo" }), "Bar", jsx("span", { children: "Baz" })],
     });
-    expect(renderToString(element)).toBe(
-      "<p><span>Foo</span>Bar<span>Baz</span></p>",
-    );
+    expect(renderToString(element)).toBe("<p><span>Foo</span>Bar<span>Baz</span></p>");
   });
 
   test("renders a style attribute", () => {

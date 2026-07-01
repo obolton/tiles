@@ -4,13 +4,8 @@ import { deserialize } from "./deserialize";
 import { schema } from "./schema";
 import type { RichText } from "./types";
 
-export function createState(
-  content: RichText | null,
-  additionalPlugins: Plugin[] = [],
-) {
+export function createState(content: RichText | null, additionalPlugins: Plugin[] = []) {
   const plugins = additionalPlugins.concat(getPlugins());
-  const config = content
-    ? { doc: deserialize(content), plugins }
-    : { schema, plugins };
+  const config = content ? { doc: deserialize(content), plugins } : { schema, plugins };
   return EditorState.create(config);
 }

@@ -20,9 +20,7 @@ describe("fragmentToPlainText", () => {
   });
 
   test("extracts text from a single paragraph", () => {
-    const fragment = toFragment(
-      schema.node("paragraph", null, [schema.text("Hello")]),
-    );
+    const fragment = toFragment(schema.node("paragraph", null, [schema.text("Hello")]));
     expect(fragmentToPlainText(fragment)).toBe("Hello\n");
   });
 
@@ -35,9 +33,7 @@ describe("fragmentToPlainText", () => {
   });
 
   test("accepts a single XmlElement", () => {
-    const fragment = toFragment(
-      schema.node("paragraph", null, [schema.text("Hello")]),
-    );
+    const fragment = toFragment(schema.node("paragraph", null, [schema.text("Hello")]));
     const element = fragment.get(0) as Y.XmlElement;
     expect(fragmentToPlainText(element)).toBe("Hello\n");
   });
@@ -89,8 +85,6 @@ describe("toPlainText", () => {
         ],
       },
     ];
-    expect(toPlainText(text)).toEqual(
-      "Heading\nFirst line\nSecond line\nDONE\nList item\n",
-    );
+    expect(toPlainText(text)).toEqual("Heading\nFirst line\nSecond line\nDONE\nList item\n");
   });
 });

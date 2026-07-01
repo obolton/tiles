@@ -100,16 +100,9 @@ export interface FormattingToolsProps {
   state: Reactive<EditorState | null>;
 }
 
-export default function FormattingTools({
-  editorView,
-  state,
-}: FormattingToolsProps) {
-  const format = state.derive((value) =>
-    value ? getSelectionFormat(value) : DEFAULT_FORMAT,
-  );
-  const prompting = state.derive((value) =>
-    value ? isPromptOpen(value) : false,
-  );
+export default function FormattingTools({ editorView, state }: FormattingToolsProps) {
+  const format = state.derive((value) => (value ? getSelectionFormat(value) : DEFAULT_FORMAT));
+  const prompting = state.derive((value) => (value ? isPromptOpen(value) : false));
 
   function performCommand(command: Command) {
     const editor = editorView.value;
@@ -198,12 +191,9 @@ export default function FormattingTools({
   const changeTextSize = (size: number) => performCommand(setTextSize(size));
 
   const changeLineHeight = (value: number) =>
-    performCommand(
-      setLineHeight(value === DEFAULT_LINE_HEIGHT ? undefined : value),
-    );
+    performCommand(setLineHeight(value === DEFAULT_LINE_HEIGHT ? undefined : value));
 
-  const changeTextColor = (color: string) =>
-    performCommand(setTextColor(color));
+  const changeTextColor = (color: string) => performCommand(setTextColor(color));
 
   const clearTextColor = () => performCommand(removeTextColor);
 
@@ -236,9 +226,7 @@ export default function FormattingTools({
   const rejectSelection = () => performCommand(reject);
 
   const formatAlignment = (event: Event) => {
-    performCommand(
-      setAlignment((event.currentTarget as ListSelect).value as TextAlignment),
-    );
+    performCommand(setAlignment((event.currentTarget as ListSelect).value as TextAlignment));
     editorView.value?.focus();
   };
 
@@ -252,11 +240,7 @@ export default function FormattingTools({
   return (
     <>
       <ToolbarGroup label="AI tools">
-        <ToolbarButton
-          label="Write with AI"
-          aria-pressed={prompting}
-          on:click={onTogglePrompt}
-        >
+        <ToolbarButton label="Write with AI" aria-pressed={prompting} on:click={onTogglePrompt}>
           <AIIcon aria-hidden="true" />
         </ToolbarButton>
 
@@ -288,16 +272,10 @@ export default function FormattingTools({
 
         <popover-menu id="insert-content-menu">
           <MenuItemGroup>
-            <MenuItem
-              icon={<EventIcon aria-hidden="true" />}
-              on:click={insertNewDate}
-            >
+            <MenuItem icon={<EventIcon aria-hidden="true" />} on:click={insertNewDate}>
               Date
             </MenuItem>
-            <MenuItem
-              icon={<DropdownIcon aria-hidden="true" />}
-              on:click={insertNewDropdown}
-            >
+            <MenuItem icon={<DropdownIcon aria-hidden="true" />} on:click={insertNewDropdown}>
               Dropdown
             </MenuItem>
             <MenuItem
@@ -318,17 +296,12 @@ export default function FormattingTools({
                 <MenuItem
                   icon={<DropdownIcon aria-hidden="true" />}
                   on:click={() =>
-                    insertExistingDropdown(
-                      dropdown.id,
-                      dropdown.options.value[0]?.value ?? "",
-                    )
+                    insertExistingDropdown(dropdown.id, dropdown.options.value[0]?.value ?? "")
                   }
                 >
                   {dropdown.title.value ||
                     listFormatter.format(
-                      dropdown.options.value
-                        .slice(0, 5)
-                        .map(({ value }) => value),
+                      dropdown.options.value.slice(0, 5).map(({ value }) => value),
                     )}
                 </MenuItem>
               )}
@@ -341,9 +314,7 @@ export default function FormattingTools({
         <list-select
           aria-label="Text format"
           aria-selected={format.derive((value) =>
-            typeof value.headingLevel === "number" || value.codeBlock
-              ? "true"
-              : undefined,
+            typeof value.headingLevel === "number" || value.codeBlock ? "true" : undefined,
           )}
           data-tooltip="Text format"
           orientation="vertical"
@@ -395,22 +366,13 @@ export default function FormattingTools({
           </ListGroup>
 
           <ListGroup>
-            <ListOption
-              icon={<UnorderedListIcon aria-hidden="true" />}
-              value="unordered-list"
-            >
+            <ListOption icon={<UnorderedListIcon aria-hidden="true" />} value="unordered-list">
               Bulleted list
             </ListOption>
-            <ListOption
-              icon={<OrderedListIcon aria-hidden="true" />}
-              value="ordered-list"
-            >
+            <ListOption icon={<OrderedListIcon aria-hidden="true" />} value="ordered-list">
               Numbered list
             </ListOption>
-            <ListOption
-              icon={<CheckListIcon aria-hidden="true" />}
-              value="check-list"
-            >
+            <ListOption icon={<CheckListIcon aria-hidden="true" />} value="check-list">
               Check list
             </ListOption>
           </ListGroup>
@@ -448,9 +410,7 @@ export default function FormattingTools({
         <LineHeightPopover
           id="line-height-popover"
           align="center"
-          value={format.derive(
-            (value) => value.lineHeight ?? DEFAULT_LINE_HEIGHT,
-          )}
+          value={format.derive((value) => value.lineHeight ?? DEFAULT_LINE_HEIGHT)}
           onChange={changeLineHeight}
         />
 
@@ -536,9 +496,7 @@ export default function FormattingTools({
 
         <list-select
           aria-label="Text alignment"
-          aria-disabled={format.derive((value) =>
-            value.align === undefined ? "true" : undefined,
-          )}
+          aria-disabled={format.derive((value) => (value.align === undefined ? "true" : undefined))}
           data-tooltip="Text alignment"
           orientation="horizontal"
           align="center"

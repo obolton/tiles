@@ -194,12 +194,7 @@ export class DragState<T = unknown> {
     clearTimeout(this.longPressTimeout);
   }
 
-  private findDropTarget(
-    child: HTMLElement,
-    clientX: number,
-    clientY: number,
-    altKey: boolean,
-  ) {
+  private findDropTarget(child: HTMLElement, clientX: number, clientY: number, altKey: boolean) {
     const target = child.closest<HTMLElement>('[data-drop="true"]');
     if (!target || target === this.dropTarget) {
       return;
@@ -232,12 +227,7 @@ export class DragState<T = unknown> {
 
   private pointerOver(event: PointerEvent) {
     if (event.target instanceof HTMLElement) {
-      this.findDropTarget(
-        event.target,
-        event.clientX,
-        event.clientY,
-        event.altKey,
-      );
+      this.findDropTarget(event.target, event.clientX, event.clientY, event.altKey);
     }
   }
 
@@ -262,16 +252,10 @@ export class DragState<T = unknown> {
       // Auto-scroll when dragging near viewport edges
       if (clientY <= SCROLL_MARGIN) {
         this.scrollSpeed = -(SCROLL_MARGIN - clientY);
-        this.scrollInterval ??= setInterval(
-          this.scroll.bind(this),
-          SCROLL_INTERVAL,
-        );
+        this.scrollInterval ??= setInterval(this.scroll.bind(this), SCROLL_INTERVAL);
       } else if (window.innerHeight - clientY <= SCROLL_MARGIN) {
         this.scrollSpeed = SCROLL_MARGIN - (window.innerHeight - clientY);
-        this.scrollInterval ??= setInterval(
-          this.scroll.bind(this),
-          SCROLL_INTERVAL,
-        );
+        this.scrollInterval ??= setInterval(this.scroll.bind(this), SCROLL_INTERVAL);
       } else if (typeof this.scrollInterval !== "undefined") {
         clearInterval(this.scrollInterval);
         this.scrollInterval = undefined;
@@ -375,9 +359,7 @@ export class DragState<T = unknown> {
     this.isDragging = true;
 
     const rect = this.element.getBoundingClientRect();
-    this.dragPreview = this.clone
-      ? (this.element.cloneNode(true) as HTMLElement)
-      : this.element;
+    this.dragPreview = this.clone ? (this.element.cloneNode(true) as HTMLElement) : this.element;
     this.dragPreview.classList.add("drag-preview");
     this.dragPreview.popover = "manual";
 
@@ -473,9 +455,7 @@ export class DragState<T = unknown> {
         );
       }
 
-      const dragEndTarget = this.element.isConnected
-        ? this.element
-        : document.body;
+      const dragEndTarget = this.element.isConnected ? this.element : document.body;
 
       dragEndTarget.dispatchEvent(
         this.createDragDropEvent("dnd-dragend", {
@@ -491,11 +471,7 @@ export class DragState<T = unknown> {
     this.dropTarget = undefined;
   }
 
-  private dispatchDragEvents(
-    clientX: number,
-    clientY: number,
-    altKey: boolean,
-  ) {
+  private dispatchDragEvents(clientX: number, clientY: number, altKey: boolean) {
     this.element.dispatchEvent(
       this.createDragDropEvent("dnd-drag", {
         bubbles: true,
@@ -541,10 +517,7 @@ export interface MakeDraggableOptions {
   signal?: AbortSignal;
 }
 
-export function makeDraggable(
-  element: HTMLElement,
-  options?: MakeDraggableOptions,
-) {
+export function makeDraggable(element: HTMLElement, options?: MakeDraggableOptions) {
   if (element.dataset.draggable === "true") {
     return;
   }

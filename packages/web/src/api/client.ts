@@ -1,14 +1,5 @@
-import {
-  createTRPCClient,
-  httpBatchLink,
-  httpBatchStreamLink,
-  splitLink,
-} from "@trpc/client";
-import type {
-  AppRouter,
-  AppRouterInputs,
-  AppRouterOutputs,
-} from "api/routes/index";
+import { createTRPCClient, httpBatchLink, httpBatchStreamLink, splitLink } from "@trpc/client";
+import type { AppRouter, AppRouterInputs, AppRouterOutputs } from "api/routes/index";
 
 if (import.meta.env.SSR && !process.env.INTERNAL_API_ORIGIN) {
   throw new Error("INTERNAL_API_ORIGIN environment variable is required");

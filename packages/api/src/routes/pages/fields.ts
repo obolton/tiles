@@ -1,10 +1,7 @@
 import prisma from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import { THEME_FIELDS } from "@/routes/themes/fields";
-import {
-  PAGE_ACCESS_FIELDS,
-  PAGE_INVITE_FIELDS,
-} from "@/routes/collaboration/fields";
+import { PAGE_ACCESS_FIELDS, PAGE_INVITE_FIELDS } from "@/routes/collaboration/fields";
 
 export const PAGE_FIELDS = {
   id: true,

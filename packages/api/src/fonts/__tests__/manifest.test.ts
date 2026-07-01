@@ -1,9 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  FontsManifestSchema,
-  FontVariantSchema,
-  ManifestFontSchema,
-} from "../manifest";
+import { FontsManifestSchema, FontVariantSchema, ManifestFontSchema } from "../manifest";
 
 const SAMPLE_VARIANT = {
   weight: 400,

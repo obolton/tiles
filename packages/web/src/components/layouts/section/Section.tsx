@@ -14,11 +14,7 @@ export interface SectionProps {
   signal?: AbortSignal;
 }
 
-export default function Section({
-  section,
-  showToolbar,
-  signal,
-}: SectionProps) {
+export default function Section({ section, showToolbar, signal }: SectionProps) {
   const { layout, editor } = section;
   const { isEditable } = editor;
 
@@ -47,23 +43,10 @@ export default function Section({
   const content = layout.derive((value) => {
     switch (value) {
       case "CALENDAR":
-        return (
-          <CalendarSection
-            section={section}
-            tabindex={tabindex}
-            resize={resize}
-          />
-        );
+        return <CalendarSection section={section} tabindex={tabindex} resize={resize} />;
 
       case "MAP":
-        return (
-          <MapSection
-            section={section}
-            tabindex={tabindex}
-            resize={resize}
-            signal={signal}
-          />
-        );
+        return <MapSection section={section} tabindex={tabindex} resize={resize} signal={signal} />;
 
       default:
         return (

@@ -4,8 +4,7 @@ import type { JSX } from "@/jsx/jsx";
 type ResizingTextareaProps = JSX.Attributes<"textarea">;
 
 // https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing
-const SUPPORTS_FIELD_SIZING =
-  !import.meta.env.SSR && CSS.supports("field-sizing", "content");
+const SUPPORTS_FIELD_SIZING = !import.meta.env.SSR && CSS.supports("field-sizing", "content");
 
 function onInput(event: Event) {
   const element = event.currentTarget as HTMLTextAreaElement;
@@ -13,11 +12,7 @@ function onInput(event: Event) {
   element.style.setProperty("height", `${element.scrollHeight}px`);
 }
 
-export default function ResizingTextarea({
-  classList,
-  value,
-  ...props
-}: ResizingTextareaProps) {
+export default function ResizingTextarea({ classList, value, ...props }: ResizingTextareaProps) {
   return (
     <textarea
       {...props}

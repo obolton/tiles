@@ -11,9 +11,7 @@ export interface MentionMeta {
   pos: number | null;
 }
 
-export const MENTION_PLUGIN_KEY = new PluginKey<DecorationSet | null>(
-  "mention-plugin",
-);
+export const MENTION_PLUGIN_KEY = new PluginKey<DecorationSet | null>("mention-plugin");
 
 class MentionNodeView implements NodeView {
   readonly dom: HTMLSpanElement;
@@ -60,9 +58,7 @@ class MentionNodeView implements NodeView {
       // Update the node attribute if the name has changed
       const pos = this.getPos();
       if (typeof pos === "number") {
-        this.view.dispatch(
-          this.view.state.tr.setNodeAttribute(pos, "displayName", currentName),
-        );
+        this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "displayName", currentName));
       }
       this.dom.textContent = currentName;
     } else {
@@ -81,11 +77,7 @@ function getPickerElement(view: EditorView, getPos: () => number | undefined) {
     const tr = view.state.tr;
 
     // Delete the @ and insert the mention
-    tr.replaceRangeWith(
-      pos - 1,
-      pos,
-      schema.nodes.mention.create({ userId, displayName }),
-    );
+    tr.replaceRangeWith(pos - 1, pos, schema.nodes.mention.create({ userId, displayName }));
 
     // Close the picker
     tr.setMeta(MENTION_PLUGIN_KEY, { pos: null } as MentionMeta);
@@ -95,15 +87,11 @@ function getPickerElement(view: EditorView, getPos: () => number | undefined) {
   }
 
   function onClose() {
-    view.dispatch(
-      view.state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: null } as MentionMeta),
-    );
+    view.dispatch(view.state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: null } as MentionMeta));
     view.focus();
   }
 
-  const element = render(
-    <MentionPicker onSelect={onSelect} onClose={onClose} />,
-  )[0] as HTMLElement;
+  const element = render(<MentionPicker onSelect={onSelect} onClose={onClose} />)[0] as HTMLElement;
 
   requestAnimationFrame(() => {
     const filterSelect = element.querySelector("filter-select");

@@ -94,9 +94,7 @@ export default class MapView extends HTMLElement {
       this.intersectionObserverCallback.bind(this),
       { rootMargin: "128px 128px 128px 128px", threshold: 0 },
     );
-    this.mutationObserver = new MutationObserver(
-      this.mutationObserverCallback.bind(this),
-    );
+    this.mutationObserver = new MutationObserver(this.mutationObserverCallback.bind(this));
   }
 
   handleEvent(event: Event) {
@@ -118,8 +116,7 @@ export default class MapView extends HTMLElement {
     }
 
     // Selection via legend
-    const markerId =
-      target.closest<HTMLElement>("[data-marker-id]")?.dataset.markerId;
+    const markerId = target.closest<HTMLElement>("[data-marker-id]")?.dataset.markerId;
     if (markerId) {
       this.selectMarker(markerId, event.shiftKey);
       this.flyToMarker(markerId);
@@ -143,9 +140,7 @@ export default class MapView extends HTMLElement {
 
   private get legendItems() {
     return (
-      this.shadowRoot
-        ?.getElementById("legend")
-        ?.querySelectorAll<HTMLElement>(".legend-item") ?? []
+      this.shadowRoot?.getElementById("legend")?.querySelectorAll<HTMLElement>(".legend-item") ?? []
     );
   }
 
@@ -197,8 +192,7 @@ export default class MapView extends HTMLElement {
     this.map = new maplibregl.Map({
       container: this.root,
       style: getStyleUrl(this.mapStyle),
-      center:
-        points.length === 1 ? [points[0]!.long, points[0]!.lat] : undefined,
+      center: points.length === 1 ? [points[0]!.long, points[0]!.lat] : undefined,
       bounds: this.getBounds(),
       zoom: 13,
       attributionControl: { compact: true },
@@ -233,11 +227,7 @@ export default class MapView extends HTMLElement {
     this.mutationObserver.disconnect();
   }
 
-  attributeChangedCallback(
-    name: keyof MapViewAttributes,
-    _: string,
-    value: string | null,
-  ) {
+  attributeChangedCallback(name: keyof MapViewAttributes, _: string, value: string | null) {
     if (!this.map) {
       return;
     }
@@ -268,10 +258,7 @@ export default class MapView extends HTMLElement {
 
   mutationObserverCallback(mutations: MutationRecord[]) {
     for (const mutation of mutations) {
-      if (
-        mutation.type === "attributes" &&
-        mutation.target instanceof HTMLElement
-      ) {
+      if (mutation.type === "attributes" && mutation.target instanceof HTMLElement) {
         const point = mutation.target.closest("map-point") as MapPoint | null;
         if (point) {
           this.markers.get(point)?.setLngLat([point.long, point.lat]);
@@ -382,8 +369,7 @@ export default class MapView extends HTMLElement {
   private updateMarkerSelection() {
     for (const item of this.legendItems) {
       const markerId = item.dataset.markerId;
-      item.ariaSelected =
-        markerId && this.selectedMarkerIds.has(markerId) ? "true" : "false";
+      item.ariaSelected = markerId && this.selectedMarkerIds.has(markerId) ? "true" : "false";
     }
   }
 

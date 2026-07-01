@@ -39,11 +39,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
         <AspectRatioSelect
           value={tile.sizing}
           onChange={(sizing) => tile.setSizing(sizing)}
-          showAuto={
-            tile.type === "TEXT" ||
-            tile.type === "TABLE" ||
-            tile.type === "IMAGE"
-          }
+          showAuto={tile.type === "TEXT" || tile.type === "TABLE" || tile.type === "IMAGE"}
         />
 
         {tile.page.type === "FREE" && <DockSelect tile={tile} />}
@@ -76,10 +72,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           themeColors={themeColors}
         />
 
-        <AnimationPicker
-          value={animation}
-          onChange={(animation) => tile.setAnimation(animation)}
-        />
+        <AnimationPicker value={animation} onChange={(animation) => tile.setAnimation(animation)} />
 
         <FramePicker
           tile={tile}

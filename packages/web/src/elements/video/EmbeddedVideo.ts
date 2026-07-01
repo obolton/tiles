@@ -63,11 +63,7 @@ export default class EmbeddedVideo extends HTMLElement {
     this.placeholder = undefined;
   }
 
-  attributeChangedCallback(
-    name: keyof EmbeddedVideoAttributes,
-    _: string,
-    value: string,
-  ) {
+  attributeChangedCallback(name: keyof EmbeddedVideoAttributes, _: string, value: string) {
     switch (name) {
       case "src":
         if (this.iframe) {

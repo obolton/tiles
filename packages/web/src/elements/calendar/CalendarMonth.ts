@@ -22,18 +22,15 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class CalendarMonth extends HTMLElement {
-  static readonly observedAttributes: (keyof CalendarMonthAttributes)[] = [
-    "date",
-  ] as const;
+  static readonly observedAttributes: (keyof CalendarMonthAttributes)[] = ["date"] as const;
 
   // Date formatters
   private static monthFormatter = new Intl.DateTimeFormat(navigator.language, {
     month: "long",
   });
-  private static weekDayFormatter = new Intl.DateTimeFormat(
-    navigator.language,
-    { weekday: "narrow" },
-  );
+  private static weekDayFormatter = new Intl.DateTimeFormat(navigator.language, {
+    weekday: "narrow",
+  });
   private static dayFormatter = new Intl.DateTimeFormat(navigator.language, {
     day: "numeric",
   });
@@ -74,15 +71,12 @@ export default class CalendarMonth extends HTMLElement {
     const items = document.createDocumentFragment();
 
     // Header
-    this.header.textContent =
-      CalendarMonth.monthFormatter.format(highlightDate);
+    this.header.textContent = CalendarMonth.monthFormatter.format(highlightDate);
 
     // Weekdays
     const firstDayOfWeek = getFirstDayOfWeek();
     const headerDate = new Date(highlightDate);
-    headerDate.setDate(
-      highlightDate.getDate() - highlightDate.getDay() + firstDayOfWeek,
-    );
+    headerDate.setDate(highlightDate.getDate() - highlightDate.getDay() + firstDayOfWeek);
     for (let i = 0; i < 7; i++) {
       const weekday = document.createElement("div");
       weekday.textContent = CalendarMonth.weekDayFormatter.format(headerDate);
@@ -93,18 +87,9 @@ export default class CalendarMonth extends HTMLElement {
     }
 
     // Dates
-    const firstDayOfMonth = new Date(
-      highlightDate.getFullYear(),
-      highlightDate.getMonth(),
-      1,
-    );
-    const columnOffset =
-      ((firstDayOfMonth.getDay() - firstDayOfWeek + 7) % 7) + 1;
-    const date = new Date(
-      highlightDate.getFullYear(),
-      highlightDate.getMonth(),
-      1,
-    );
+    const firstDayOfMonth = new Date(highlightDate.getFullYear(), highlightDate.getMonth(), 1);
+    const columnOffset = ((firstDayOfMonth.getDay() - firstDayOfWeek + 7) % 7) + 1;
+    const date = new Date(highlightDate.getFullYear(), highlightDate.getMonth(), 1);
     for (let j = 1; j <= getDaysInMonth(highlightDate); j++) {
       date.setDate(j);
 

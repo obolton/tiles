@@ -47,10 +47,7 @@ enum LineBreak {
   SOFT,
 }
 
-export class MarkdownTransformer implements Transformer<
-  string,
-  RichTextStreamEvent
-> {
+export class MarkdownTransformer implements Transformer<string, RichTextStreamEvent> {
   private buffer = "";
   private pos = 0;
   private format: RichTextFormat = {};
@@ -162,10 +159,7 @@ export class MarkdownTransformer implements Transformer<
     }
   }
 
-  transform(
-    chunk: string,
-    controller: TransformStreamDefaultController<RichTextStreamEvent>,
-  ) {
+  transform(chunk: string, controller: TransformStreamDefaultController<RichTextStreamEvent>) {
     this.buffer += chunk;
     this.pos = 0;
 
@@ -174,9 +168,7 @@ export class MarkdownTransformer implements Transformer<
 
       if (this.codeFence) {
         const { char, length } = this.codeFence;
-        const endMatch = this.buffer.match(
-          new RegExp(`^[${char}]{${length},}\\s*\\n`),
-        );
+        const endMatch = this.buffer.match(new RegExp(`^[${char}]{${length},}\\s*\\n`));
         if (endMatch) {
           this.codeFence = null;
           this.lineBreak = null;
@@ -233,11 +225,7 @@ export class MarkdownTransformer implements Transformer<
             default:
               mode = "insert";
           }
-          this.set(
-            controller,
-            { destination: parseInt(id!, 10), mode },
-            match.length,
-          );
+          this.set(controller, { destination: parseInt(id!, 10), mode }, match.length);
           continue;
         }
 
@@ -266,11 +254,7 @@ export class MarkdownTransformer implements Transformer<
 
         const dividerMatch = this.buffer.match(DIVIDER_MATCH);
         if (dividerMatch) {
-          this.set(
-            controller,
-            { node: { type: "divider" } },
-            dividerMatch[0].length,
-          );
+          this.set(controller, { node: { type: "divider" } }, dividerMatch[0].length);
           this.node = null;
           continue;
         }
@@ -334,22 +318,14 @@ export class MarkdownTransformer implements Transformer<
 
       const hardLineBreakMatch = rest.match(HARD_LINE_BREAK_MATCH);
       if (hardLineBreakMatch) {
-        this.set(
-          controller,
-          { lineBreak: LineBreak.HARD },
-          hardLineBreakMatch[0].length,
-        );
+        this.set(controller, { lineBreak: LineBreak.HARD }, hardLineBreakMatch[0].length);
         continue;
       }
 
       const newLineMatch = rest.match(LINE_BREAK_MATCH);
       if (newLineMatch) {
         if (newLineMatch[0].match(ALL_NEW_LINES_MATCH)?.length === 1) {
-          this.set(
-            controller,
-            { lineBreak: LineBreak.SOFT },
-            newLineMatch[0].length,
-          );
+          this.set(controller, { lineBreak: LineBreak.SOFT }, newLineMatch[0].length);
         } else {
           this.set(controller, { node: null }, newLineMatch[0].length);
         }
@@ -368,9 +344,7 @@ export class MarkdownTransformer implements Transformer<
   flush(controller: TransformStreamDefaultController<RichTextStreamEvent>) {
     if (this.codeFence) {
       const { char, length } = this.codeFence;
-      const endMatch = this.buffer.match(
-        new RegExp(`^[${char}]{${length},}\\s*$`),
-      );
+      const endMatch = this.buffer.match(new RegExp(`^[${char}]{${length},}\\s*$`));
       if (endMatch) {
         this.codeFence = null;
         this.lineBreak = null;

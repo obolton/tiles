@@ -35,12 +35,7 @@ export default function Chip({ icon: Icon, label, href, onRemove }: ChipProps) {
         <span className={styles.label}>{label}</span>
       </a>
       {onRemove && (
-        <button
-          className={styles.remove}
-          on:click={onRemove}
-          type="button"
-          aria-label="Remove"
-        >
+        <button className={styles.remove} on:click={onRemove} type="button" aria-label="Remove">
           <CloseIcon aria-hidden="true" />
         </button>
       )}

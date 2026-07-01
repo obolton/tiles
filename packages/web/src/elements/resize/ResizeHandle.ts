@@ -21,9 +21,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class ResizeHandle extends HTMLElement {
-  static readonly observedAttributes: (keyof ResizeHandleAttributes)[] = [
-    "direction",
-  ] as const;
+  static readonly observedAttributes: (keyof ResizeHandleAttributes)[] = ["direction"] as const;
 
   direction: ResizeDirection = "horizontal";
 
@@ -133,10 +131,8 @@ export default class ResizeHandle extends HTMLElement {
     if (!this.resizing) {
       return;
     }
-    this.deltaX =
-      this.direction === "horizontal" ? event.pageX - this.initialPageX : 0;
-    this.deltaY =
-      this.direction === "vertical" ? event.pageY - this.initialPageY : 0;
+    this.deltaX = this.direction === "horizontal" ? event.pageX - this.initialPageX : 0;
+    this.deltaY = this.direction === "vertical" ? event.pageY - this.initialPageY : 0;
 
     const allowed = this.dispatchEvent(
       new ResizeEvent("resizedrag", {

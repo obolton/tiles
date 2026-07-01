@@ -19,11 +19,7 @@ export interface SeriesPanelProps extends JSX.Attributes<"anchored-popover"> {
   table: Table;
 }
 
-export default function SeriesPanel({
-  chart,
-  table,
-  ...props
-}: SeriesPanelProps) {
+export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps) {
   const availableColumns = combine(
     {
       series: chart.series,
@@ -39,9 +35,7 @@ export default function SeriesPanel({
     const select = event.currentTarget as ListSelect;
     const value = select.value;
     const column = table.columns.value.find((c) => c.id === value);
-    chart.setLabel(
-      column ? { id: column.id, title: column.title.value } : null,
-    );
+    chart.setLabel(column ? { id: column.id, title: column.title.value } : null);
   }
 
   function addSeries(event: Event) {
@@ -57,10 +51,7 @@ export default function SeriesPanel({
     chart.setSeriesChartType(series.id, type);
   }
 
-  function setSeriesFill(
-    fill: ColorFill | GradientFill | null,
-    series: Series,
-  ) {
+  function setSeriesFill(fill: ColorFill | GradientFill | null, series: Series) {
     chart.setSeriesFill(series.id, fill);
   }
 

@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { ColorSchema } from "@/schema/Color";
-import {
-  ColorBackgroundSchema,
-  GradientBackgroundSchema,
-} from "@/schema/Background";
+import { ColorBackgroundSchema, GradientBackgroundSchema } from "@/schema/Background";
 import { FontIdSchema } from "@/config/fonts";
 
 const ThemeBackgroundSchema = z.discriminatedUnion("type", [

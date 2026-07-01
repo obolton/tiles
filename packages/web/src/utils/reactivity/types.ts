@@ -1,16 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Reactive<T = any, C = void> {
   value: T;
-  subscribe(
-    callback: SubscribeCallback<T, C>,
-    signal?: AbortSignal,
-  ): UnsubscribeCallback;
+  subscribe(callback: SubscribeCallback<T, C>, signal?: AbortSignal): UnsubscribeCallback;
   unsubscribe(callback: SubscribeCallback<T, C>): void;
   disconnect(): void;
-  derive<V>(
-    transform: (input: T) => V,
-    signal?: AbortSignal,
-  ): ComputedReactive<V>;
+  derive<V>(transform: (input: T) => V, signal?: AbortSignal): ComputedReactive<V>;
 }
 
 export interface ComputedReactive<T> extends Reactive<T> {
@@ -18,10 +12,7 @@ export interface ComputedReactive<T> extends Reactive<T> {
   markAsStale(): void;
 }
 
-export type SubscribeCallback<T, C = void> = (
-  reactive: Reactive<T, C>,
-  change: C,
-) => void;
+export type SubscribeCallback<T, C = void> = (reactive: Reactive<T, C>, change: C) => void;
 export type UnsubscribeCallback = () => boolean;
 
 export type ReactiveType<T extends Reactive<unknown, unknown>> = T["value"];

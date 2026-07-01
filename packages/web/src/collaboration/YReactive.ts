@@ -4,9 +4,7 @@ import { BaseReactive, type SubscribeCallback } from "@/utils/reactivity";
 /**
  * A reactive view of a `Y.AbstractType`.
  */
-export default class YReactive<
-  T extends Y.AbstractType<any>,
-> extends BaseReactive<T> {
+export default class YReactive<T extends Y.AbstractType<any>> extends BaseReactive<T> {
   private observing = false;
   private readonly onDeepChange = this.handleDeepChange.bind(this);
 

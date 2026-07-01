@@ -6,10 +6,7 @@ export interface CacheMeta {
   nextCursor?: string | null;
 }
 
-type CacheCollectionOptions<
-  Raw extends { id: string },
-  Item extends { id: string } = Raw,
-> = {
+type CacheCollectionOptions<Raw extends { id: string }, Item extends { id: string } = Raw> = {
   ttlMs: number;
   itemsStoreName: string;
   metaStoreName: string;
@@ -27,10 +24,7 @@ const META_KEY = "meta";
 /**
  * A cached collection of items, persisted to IndexedDB.
  */
-export class CacheCollection<
-  Raw extends { id: string },
-  Item extends { id: string } = Raw,
-> {
+export class CacheCollection<Raw extends { id: string }, Item extends { id: string } = Raw> {
   readonly items = new ReactiveArray<Item>([]);
   readonly schema: SchemaDefinition;
 
@@ -145,8 +139,7 @@ export class CacheCollection<
   async append(items: Item[], nextCursor?: string | null): Promise<void> {
     const fullMeta: CacheMeta = {
       ...this.cachedMeta,
-      nextCursor:
-        nextCursor !== undefined ? nextCursor : this.cachedMeta?.nextCursor,
+      nextCursor: nextCursor !== undefined ? nextCursor : this.cachedMeta?.nextCursor,
       cachedAt: new Date(),
     };
 
@@ -216,10 +209,7 @@ export class CacheCollection<
    * Accepts partial updates in the raw (serialized) form.
    * Returns the updated item, or null if the item doesn't exist.
    */
-  async update(
-    id: string,
-    updates: Partial<Omit<Raw, "id">>,
-  ): Promise<Item | null> {
+  async update(id: string, updates: Partial<Omit<Raw, "id">>): Promise<Item | null> {
     const existing = this.itemsMap.get(id);
     if (!existing) {
       return null;

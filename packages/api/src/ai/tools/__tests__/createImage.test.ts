@@ -41,10 +41,7 @@ describe("CREATE_IMAGE_TOOL", () => {
   });
 
   test("resolves an args parentId to the parent", async () => {
-    const result = await CREATE_IMAGE_TOOL.function(
-      { ...BASE_ARGS, parentId: 0 },
-      context,
-    );
+    const result = await CREATE_IMAGE_TOOL.function({ ...BASE_ARGS, parentId: 0 }, context);
 
     expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(getCreatedTile(doc, result).get("parentId")).toBe("resolved-0");

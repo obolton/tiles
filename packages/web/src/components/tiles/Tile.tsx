@@ -10,10 +10,7 @@ export type TileProps = {
 
 export default function Tile({ classList, children, anchorName }: TileProps) {
   return (
-    <div
-      classList={{ [styles.tile]: true, ...classList }}
-      style={{ anchorName }}
-    >
+    <div classList={{ [styles.tile]: true, ...classList }} style={{ anchorName }}>
       {children}
     </div>
   );

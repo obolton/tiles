@@ -4,13 +4,7 @@ const SPECULATION_RULES = {
       where: {
         and: [
           {
-            href_matches: [
-              "/",
-              "/library",
-              "/library/bookmarks",
-              "/settings",
-              "/pages/:id",
-            ],
+            href_matches: ["/", "/library", "/library/bookmarks", "/settings", "/pages/:id"],
           },
           {
             not: { selector_matches: '[target="_blank"]' },
@@ -23,7 +17,5 @@ const SPECULATION_RULES = {
 };
 
 export default function SpeculationRules() {
-  return (
-    <script type="speculationrules">{JSON.stringify(SPECULATION_RULES)}</script>
-  );
+  return <script type="speculationrules">{JSON.stringify(SPECULATION_RULES)}</script>;
 }

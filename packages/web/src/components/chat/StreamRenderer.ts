@@ -1,9 +1,7 @@
 import type { MessageEvent } from "./types";
 import type { RichTextFormat, RichTextNode } from "doc/richText/events";
 
-function isListElement(
-  el: Element | null,
-): el is HTMLUListElement | HTMLOListElement {
+function isListElement(el: Element | null): el is HTMLUListElement | HTMLOListElement {
   return el?.tagName === "UL" || el?.tagName === "OL";
 }
 
@@ -90,10 +88,7 @@ export default class StreamRenderer {
     this.container.appendChild(this.currentBlock);
   }
 
-  private appendListItem(
-    listType: "ordered" | "unordered",
-    depth: number,
-  ): void {
+  private appendListItem(listType: "ordered" | "unordered", depth: number): void {
     const tag = listType === "ordered" ? "ol" : "ul";
     const activeList = this.getActiveList();
 

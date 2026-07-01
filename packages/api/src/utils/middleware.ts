@@ -14,15 +14,13 @@ export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   return opts.next({ ctx });
 });
 
-export const authenticatedServiceProcedure = publicProcedure.use(
-  async (opts) => {
-    const { ctx } = opts;
-    if (!ctx.serviceName) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return opts.next({ ctx });
-  },
-);
+export const authenticatedServiceProcedure = publicProcedure.use(async (opts) => {
+  const { ctx } = opts;
+  if (!ctx.serviceName) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return opts.next({ ctx });
+});
 
 const AuthenticatedPageProcedureSchema = z.object({
   pageId: z.uuid(),
@@ -66,13 +64,11 @@ export const authenticatedPageProcedure = authenticatedProcedure
     });
   });
 
-export const pageUpdateProcedure = authenticatedPageProcedure.use(
-  async ({ next, ctx }) => {
-    const result = await next();
-    invalidateCachedPages([ctx.pageId]);
-    return result;
-  },
-);
+export const pageUpdateProcedure = authenticatedPageProcedure.use(async ({ next, ctx }) => {
+  const result = await next();
+  invalidateCachedPages([ctx.pageId]);
+  return result;
+});
 
 const AuthenticatedWorkspaceProcedureSchema = z.object({
   workspaceId: z.uuid(),
@@ -113,11 +109,9 @@ export const authenticatedWorkspaceProcedure = authenticatedProcedure
     });
   });
 
-export const adminWorkspaceProcedure = authenticatedWorkspaceProcedure.use(
-  async (opts) => {
-    if (opts.ctx.role !== "ADMIN") {
-      throw new TRPCError({ code: "FORBIDDEN" });
-    }
-    return opts.next();
-  },
-);
+export const adminWorkspaceProcedure = authenticatedWorkspaceProcedure.use(async (opts) => {
+  if (opts.ctx.role !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+  return opts.next();
+});

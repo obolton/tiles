@@ -47,9 +47,7 @@ export type RouteMiddleware = (
 
 export type RouteLoaderResult<T> = Promise<RouteData<T> | Response>;
 
-export type RouteLoader<T> = (
-  request: RequestProperties,
-) => RouteLoaderResult<T>;
+export type RouteLoader<T> = (request: RequestProperties) => RouteLoaderResult<T>;
 
 export interface RouteHookContext<T = unknown> {
   parameters: RouteParameters;
@@ -66,9 +64,7 @@ export interface ComponentRoute<T> {
   afterHydrate?: (context: RouteHookContext<T>) => void;
 }
 
-export type APIRequestHandler = (
-  request: RequestProperties,
-) => Promise<Response> | Response;
+export type APIRequestHandler = (request: RequestProperties) => Promise<Response> | Response;
 
 export type APIRoute = {
   get?: APIRequestHandler;

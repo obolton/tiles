@@ -12,15 +12,7 @@ export interface LinkMapInput extends Omit<CreateTileInput, "type"> {
 export function buildLinkMap(
   properties: Omit<LinkMapInput, "parentId" | "beforeId">,
 ): Y.Map<unknown> {
-  const {
-    url,
-    title,
-    description,
-    siteName,
-    imageId,
-    background,
-    ...baseProps
-  } = properties;
+  const { url, title, description, siteName, imageId, background, ...baseProps } = properties;
   const map = buildBaseTileMap({
     ...baseProps,
     type: "LINK",

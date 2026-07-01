@@ -47,10 +47,7 @@ export default class Chart extends Tile {
     this.tableId = this.binding.field("tableId", "");
     this.label = this.binding.field("label", null);
     this.seriesMap = map.get("series") as Y.Map<Y.Map<unknown>>;
-    this.series = new SharedList(
-      this.seriesMap,
-      (id, map) => new Series(id, map),
-    );
+    this.series = new SharedList(this.seriesMap, (id, map) => new Series(id, map));
   }
 
   serialize(): ChartTile {
@@ -74,10 +71,7 @@ export default class Chart extends Tile {
 
   addSeries(column: Property) {
     const order = orderBetween(orderedEntries(this.seriesMap), null);
-    this.seriesMap.set(
-      createId(),
-      Series.createMap(order, { type: "BAR", column, fill: null }),
-    );
+    this.seriesMap.set(createId(), Series.createMap(order, { type: "BAR", column, fill: null }));
   }
 
   setSeriesChartType(id: string, type: ChartType) {

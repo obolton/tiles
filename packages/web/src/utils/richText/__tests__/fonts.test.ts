@@ -135,9 +135,7 @@ describe("getRichTextFonts", () => {
         ],
       },
     ];
-    expect(getRichTextFonts(text)).toEqual(
-      new Set(["lora", "quicksand", "dynapuff"]),
-    );
+    expect(getRichTextFonts(text)).toEqual(new Set(["lora", "quicksand", "dynapuff"]));
   });
 
   test("ignores divider nodes", () => {

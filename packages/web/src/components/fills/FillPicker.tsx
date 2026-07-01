@@ -11,10 +11,7 @@ import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "./types";
 import type { ToolbarButtonProps } from "@/components/buttons/ToolbarButton";
 
-export interface FillPickerProps extends Omit<
-  ToolbarButtonProps,
-  "children" | "value"
-> {
+export interface FillPickerProps extends Omit<ToolbarButtonProps, "children" | "value"> {
   themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
   onChange: (value: Fill | null) => void;
@@ -46,12 +43,7 @@ export default function FillPicker({
               return <BackgroundIcon aria-hidden="true" />;
             }
             if (fill.type === "color") {
-              return (
-                <SolidColorIcon
-                  style={{ fill: toCSSColor(fill.color) }}
-                  aria-hidden="true"
-                />
-              );
+              return <SolidColorIcon style={{ fill: toCSSColor(fill.color) }} aria-hidden="true" />;
             }
             if (fill.type === "gradient") {
               return (

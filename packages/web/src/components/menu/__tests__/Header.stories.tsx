@@ -34,9 +34,7 @@ export const LibraryPage: Story = {
 };
 
 export const SettingsPage: Story = {
-  render: () => (
-    <Header user={USER} workspaceId={WORKSPACE_ID} center={<h1>Settings</h1>} />
-  ),
+  render: () => <Header user={USER} workspaceId={WORKSPACE_ID} center={<h1>Settings</h1>} />,
 };
 
 export const EditorViewMode: Story = {

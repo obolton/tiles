@@ -25,12 +25,7 @@ export interface LibraryProps {
   user: User;
 }
 
-export default function Library({
-  workspace,
-  folders,
-  pages: initialPages,
-  user,
-}: LibraryProps) {
+export default function Library({ workspace, folders, pages: initialPages, user }: LibraryProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
@@ -39,9 +34,7 @@ export default function Library({
   function renderPlaceholder(query: string) {
     return (
       <Placeholder>
-        {query
-          ? "There are no results."
-          : "Get started by creating your first page."}
+        {query ? "There are no results." : "Get started by creating your first page."}
       </Placeholder>
     );
   }
@@ -61,13 +54,7 @@ export default function Library({
       }
     >
       <SidebarLayout
-        sidebar={
-          <Sidebar
-            workspace={workspace}
-            folders={folders}
-            selectedFolderId="RECENT"
-          />
-        }
+        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="RECENT" />}
       >
         <PagesGrid
           workspaceId={workspace.id}

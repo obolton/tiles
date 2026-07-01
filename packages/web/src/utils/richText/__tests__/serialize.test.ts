@@ -58,9 +58,7 @@ describe("serializeFragment", () => {
               {
                 type: "paragraph",
                 align: 0,
-                children: [
-                  { type: "text", text: "Done", format: TextFormat.NONE },
-                ],
+                children: [{ type: "text", text: "Done", format: TextFormat.NONE }],
               },
             ],
           },

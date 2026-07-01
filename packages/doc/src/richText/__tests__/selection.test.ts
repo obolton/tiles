@@ -19,10 +19,7 @@ describe("selection codec", () => {
       throw new Error("expected a decoded selection");
     }
 
-    const from = Y.createAbsolutePositionFromRelativePosition(
-      decoded.from,
-      doc,
-    );
+    const from = Y.createAbsolutePositionFromRelativePosition(decoded.from, doc);
     const to = Y.createAbsolutePositionFromRelativePosition(decoded.to, doc);
     expect(from?.index).toBe(2);
     expect(to?.index).toBe(7);

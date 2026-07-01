@@ -20,11 +20,7 @@ import type {
 } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
-import {
-  WORKSPACE_FIELDS,
-  WORKSPACE_MEMBERSHIP_FIELDS,
-  WORKSPACE_INVITE_FIELDS,
-} from "./fields";
+import { WORKSPACE_FIELDS, WORKSPACE_MEMBERSHIP_FIELDS, WORKSPACE_INVITE_FIELDS } from "./fields";
 
 const INVITE_KEY_BYTES = 32;
 
@@ -79,9 +75,7 @@ export async function updateWorkspace(
   });
 }
 
-export async function deleteWorkspace({
-  workspaceId,
-}: AuthenticatedWorkspaceProcedureContext) {
+export async function deleteWorkspace({ workspaceId }: AuthenticatedWorkspaceProcedureContext) {
   return prisma.workspace.delete({
     where: {
       id: workspaceId,
@@ -95,34 +89,32 @@ export async function inviteToWorkspace(
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const key = await createKey(INVITE_KEY_BYTES);
-  const [workspace, inviter, invite] = await prisma.$transaction(
-    async (transaction) =>
-      Promise.all([
-        transaction.workspace.findUniqueOrThrow({
-          where: { id: workspaceId },
-          select: { name: true },
-        }),
-        transaction.user.findUniqueOrThrow({
-          where: { id: userId },
-          select: { id: true, name: true },
-        }),
-        transaction.workspaceInvite.create({
-          data: {
-            creatorId: userId,
-            workspaceId,
-            email,
-            key,
-          },
-          select: WORKSPACE_INVITE_FIELDS,
-        }),
-      ]),
+  const [workspace, inviter, invite] = await prisma.$transaction(async (transaction) =>
+    Promise.all([
+      transaction.workspace.findUniqueOrThrow({
+        where: { id: workspaceId },
+        select: { name: true },
+      }),
+      transaction.user.findUniqueOrThrow({
+        where: { id: userId },
+        select: { id: true, name: true },
+      }),
+      transaction.workspaceInvite.create({
+        data: {
+          creatorId: userId,
+          workspaceId,
+          email,
+          key,
+        },
+        select: WORKSPACE_INVITE_FIELDS,
+      }),
+    ]),
   );
 
   // Don't block on sending email
-  sendEmail(
-    email,
-    inviteToWorkspaceEmail({ inviter, workspaceName: workspace.name, key }),
-  ).catch((error) => console.error(error));
+  sendEmail(email, inviteToWorkspaceEmail({ inviter, workspaceName: workspace.name, key })).catch(
+    (error) => console.error(error),
+  );
 
   return invite;
 }
@@ -132,12 +124,10 @@ export async function acceptWorkspaceInvite(
   { userId }: AuthenticatedRequestContext,
 ) {
   return prisma.$transaction(async (transaction) => {
-    const { workspaceId } = await transaction.workspaceInvite.findUniqueOrThrow(
-      {
-        where: { key },
-        select: { workspaceId: true },
-      },
-    );
+    const { workspaceId } = await transaction.workspaceInvite.findUniqueOrThrow({
+      where: { key },
+      select: { workspaceId: true },
+    });
 
     await Promise.all([
       transaction.workspaceMembership.create({

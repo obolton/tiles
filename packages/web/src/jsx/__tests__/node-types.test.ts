@@ -1,10 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  isEmptyNode,
-  isTextNode,
-  isElementNode,
-  toNodeArray,
-} from "../node-types";
+import { isEmptyNode, isTextNode, isElementNode, toNodeArray } from "../node-types";
 import { jsx } from "../jsx";
 
 describe("isEmptyNode", () => {

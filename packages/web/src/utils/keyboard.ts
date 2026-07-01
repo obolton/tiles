@@ -44,18 +44,14 @@ export default class KeyboardNavigation implements EventListenerObject {
    * All navigable items.
    */
   get items(): HTMLElement[] {
-    return Array.from(
-      this.container.querySelectorAll<HTMLElement>(this.selector),
-    );
+    return Array.from(this.container.querySelectorAll<HTMLElement>(this.selector));
   }
 
   /**
    * The currently active item.
    */
   get activeItem(): HTMLElement | null {
-    return this.container.querySelector<HTMLElement>(
-      `${this.selector}[tabindex="0"]`,
-    );
+    return this.container.querySelector<HTMLElement>(`${this.selector}[tabindex="0"]`);
   }
 
   /**
@@ -134,11 +130,7 @@ export default class KeyboardNavigation implements EventListenerObject {
     }
   }
 
-  private getNextIndex(
-    key: string,
-    index: number,
-    length: number,
-  ): number | null {
+  private getNextIndex(key: string, index: number, length: number): number | null {
     let delta: number;
 
     switch (key) {

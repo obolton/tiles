@@ -15,11 +15,7 @@ const migrators: Record<number, Migrator> = {
 };
 
 export function applyMigrations(doc: Y.Doc, fromVersion: number) {
-  for (
-    let version = fromVersion + 1;
-    version <= CURRENT_SCHEMA_VERSION;
-    version++
-  ) {
+  for (let version = fromVersion + 1; version <= CURRENT_SCHEMA_VERSION; version++) {
     const migrator = migrators[version];
 
     if (!migrator) {

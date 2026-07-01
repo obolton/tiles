@@ -27,20 +27,13 @@ import { PAGE_FIELDS } from "./fields";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-export async function getPageById(
-  { id }: GetPageByIdSchema,
-  { userId }: RequestContext,
-) {
+export async function getPageById({ id }: GetPageByIdSchema, { userId }: RequestContext) {
   const page = await prisma.page.findUnique({
     where: userId
       ? {
           id,
           deletedAt: null,
-          OR: [
-            { published: true },
-            { authorId: userId },
-            { access: { some: { userId } } },
-          ],
+          OR: [{ published: true }, { authorId: userId }, { access: { some: { userId } } }],
         }
       : { id, deletedAt: null, published: true },
     select: PAGE_FIELDS,
@@ -57,12 +50,7 @@ export async function getPageById(
 }
 
 export async function listPages(
-  {
-    query,
-    cursor,
-    sortBy = "updatedAt",
-    sortDirection = "desc",
-  }: ListPagesSchema,
+  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -87,12 +75,7 @@ export async function listPages(
 }
 
 export async function listSharedPages(
-  {
-    query,
-    cursor,
-    sortBy = "updatedAt",
-    sortDirection = "desc",
-  }: ListPagesSchema,
+  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
   { userId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -116,12 +99,7 @@ export async function listSharedPages(
 }
 
 export async function listDeletedPages(
-  {
-    query,
-    cursor,
-    sortBy = "updatedAt",
-    sortDirection = "desc",
-  }: ListPagesSchema,
+  { query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   const filter: Prisma.PageWhereInput = query
@@ -150,10 +128,9 @@ export async function listDeletedPages(
 
 function createDocumentDoc(): Y.Doc {
   const doc = createEmptyDoc();
-  new DocWriter(doc).createTile(
-    buildTextMap({ sizing: "AUTO", height: 1, width: null }),
-    { parentId: null },
-  );
+  new DocWriter(doc).createTile(buildTextMap({ sizing: "AUTO", height: 1, width: null }), {
+    parentId: null,
+  });
   return doc;
 }
 
@@ -197,9 +174,7 @@ export async function createPage(
       type: pageType,
       document: {
         create: {
-          snapshot: Buffer.from(
-            Y.encodeStateAsUpdate(createInitialDoc(pageType)),
-          ),
+          snapshot: Buffer.from(Y.encodeStateAsUpdate(createInitialDoc(pageType))),
           schemaVersion: currentSchemaVersion,
         },
       },
@@ -296,10 +271,7 @@ export async function movePages(
   });
 }
 
-export async function emptyTrash({
-  userId,
-  workspaceId,
-}: AuthenticatedWorkspaceProcedureContext) {
+export async function emptyTrash({ userId, workspaceId }: AuthenticatedWorkspaceProcedureContext) {
   return prisma.page.deleteMany({
     where: { workspaceId, authorId: userId, deletedAt: { not: null } },
   });

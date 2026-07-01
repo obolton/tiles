@@ -23,24 +23,14 @@ export interface CodeNode {
   lineNumbers: boolean;
 }
 
-export type RichTextNode =
-  | ParagraphNode
-  | HeadingNode
-  | ListItemNode
-  | DividerNode
-  | CodeNode;
+export type RichTextNode = ParagraphNode | HeadingNode | ListItemNode | DividerNode | CodeNode;
 
 export interface RichTextFormat {
   bold?: boolean;
   italic?: boolean;
 }
 
-export type DestinationMode =
-  | "insert"
-  | "replace"
-  | "append"
-  | "prepend"
-  | "selection";
+export type DestinationMode = "insert" | "replace" | "append" | "prepend" | "selection";
 
 export interface Destination {
   destination: number | null;

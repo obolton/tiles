@@ -8,9 +8,7 @@ export interface GenerateImagePanelProps {
   onChange: (value: ImageFill) => void;
 }
 
-export default function GenerateImagePanel({
-  onChange,
-}: GenerateImagePanelProps) {
+export default function GenerateImagePanel({ onChange }: GenerateImagePanelProps) {
   function onSubmit(prompt: string) {
     return generateImage(prompt, Editor.current.workspaceId)
       .then(({ id }) => onChange({ type: "image", imageId: id }))

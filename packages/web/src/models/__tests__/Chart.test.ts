@@ -138,9 +138,7 @@ describe("Chart", () => {
     test("throws an error for an invalid series ID", () => {
       const chart = createChart();
 
-      expect(() => chart.setSeriesFill("invalid-id", null)).toThrow(
-        "Item not found: invalid-id",
-      );
+      expect(() => chart.setSeriesFill("invalid-id", null)).toThrow("Item not found: invalid-id");
     });
   });
 
@@ -153,9 +151,7 @@ describe("Chart", () => {
 
       expect(chart.series.value).toHaveLength(1);
       expect(chart.series.value[0]?.id).toBe(second!.id);
-      expect(() => chart.series.get(first!.id)).toThrow(
-        `Item not found: ${first!.id}`,
-      );
+      expect(() => chart.series.get(first!.id)).toThrow(`Item not found: ${first!.id}`);
     });
   });
 });

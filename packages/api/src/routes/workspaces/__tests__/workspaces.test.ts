@@ -50,17 +50,12 @@ const MOCK_WORKSPACE_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
 describe("getWorkspace", () => {
   beforeEach(() => {
     vi.mocked(
-      prisma.workspace.findUniqueOrThrow<
-        FindUniqueQuery<typeof WORKSPACE_FIELDS>
-      >,
+      prisma.workspace.findUniqueOrThrow<FindUniqueQuery<typeof WORKSPACE_FIELDS>>,
     ).mockResolvedValue(MOCK_WORKSPACE);
   });
 
   it("should include the user's role in the response", async () => {
-    const result = await getWorkspace(
-      { workspaceId: "workspace-1" },
-      MOCK_WORKSPACE_CONTEXT,
-    );
+    const result = await getWorkspace({ workspaceId: "workspace-1" }, MOCK_WORKSPACE_CONTEXT);
 
     expect(result).toEqual({ ...MOCK_WORKSPACE, role: "ADMIN" });
   });
@@ -77,9 +72,9 @@ describe("getWorkspace", () => {
 
 describe("createWorkspace", () => {
   beforeEach(() => {
-    vi.mocked(
-      prisma.workspace.create<CreateQuery<typeof WORKSPACE_FIELDS>>,
-    ).mockResolvedValue(MOCK_WORKSPACE);
+    vi.mocked(prisma.workspace.create<CreateQuery<typeof WORKSPACE_FIELDS>>).mockResolvedValue(
+      MOCK_WORKSPACE,
+    );
   });
 
   it("should create the workspace creator as an ADMIN", async () => {
@@ -103,14 +98,12 @@ describe("createWorkspace", () => {
 describe("acceptWorkspaceInvite", () => {
   beforeEach(() => {
     vi.mocked(
-      prisma.workspaceInvite.findUniqueOrThrow<
-        FindUniqueQuery<{ workspaceId: true }>
-      >,
+      prisma.workspaceInvite.findUniqueOrThrow<FindUniqueQuery<{ workspaceId: true }>>,
     ).mockResolvedValue({ workspaceId: "workspace-1" });
 
-    vi.mocked(
-      prisma.workspaceMembership.create<CreateQuery<{ userId: true }>>,
-    ).mockResolvedValue({ userId: "user-2" });
+    vi.mocked(prisma.workspaceMembership.create<CreateQuery<{ userId: true }>>).mockResolvedValue({
+      userId: "user-2",
+    });
 
     vi.mocked(prisma.workspaceInvite.delete).mockResolvedValue(
       {} as Awaited<ReturnType<typeof prisma.workspaceInvite.delete>>,
@@ -157,9 +150,7 @@ describe("listWorkspaceUsers", () => {
 
   beforeEach(() => {
     vi.mocked(
-      prisma.workspaceMembership.findMany<
-        FindManyQuery<typeof WORKSPACE_MEMBERSHIP_FIELDS>
-      >,
+      prisma.workspaceMembership.findMany<FindManyQuery<typeof WORKSPACE_MEMBERSHIP_FIELDS>>,
     ).mockResolvedValue(MOCK_MEMBERSHIPS);
   });
 
@@ -237,24 +228,21 @@ describe("removeFromWorkspace", () => {
   it("should reject removing the last admin", async () => {
     vi.mocked(prisma.workspaceMembership.count).mockResolvedValueOnce(0);
 
-    await expect(
-      removeFromWorkspace({ userId: "user-1" }, MOCK_WORKSPACE_CONTEXT),
-    ).rejects.toThrow("Cannot remove the last admin");
+    await expect(removeFromWorkspace({ userId: "user-1" }, MOCK_WORKSPACE_CONTEXT)).rejects.toThrow(
+      "Cannot remove the last admin",
+    );
   });
 });
 
 describe("updateWorkspaceRole", () => {
   beforeEach(() => {
-    vi.mocked(
-      prisma.workspaceMembership.update<UpdateQuery<{ role: true }>>,
-    ).mockResolvedValue({ role: "ADMIN" });
+    vi.mocked(prisma.workspaceMembership.update<UpdateQuery<{ role: true }>>).mockResolvedValue({
+      role: "ADMIN",
+    });
   });
 
   it("should update a member's role", async () => {
-    await updateWorkspaceRole(
-      { userId: "user-2", role: "ADMIN" },
-      MOCK_WORKSPACE_CONTEXT,
-    );
+    await updateWorkspaceRole({ userId: "user-2", role: "ADMIN" }, MOCK_WORKSPACE_CONTEXT);
 
     expect(prisma.workspaceMembership.update).toHaveBeenCalledWith({
       where: {
@@ -268,10 +256,7 @@ describe("updateWorkspaceRole", () => {
   it("should allow demoting when other admins exist", async () => {
     vi.mocked(prisma.workspaceMembership.count).mockResolvedValueOnce(1);
 
-    await updateWorkspaceRole(
-      { userId: "user-1", role: "MEMBER" },
-      MOCK_WORKSPACE_CONTEXT,
-    );
+    await updateWorkspaceRole({ userId: "user-1", role: "MEMBER" }, MOCK_WORKSPACE_CONTEXT);
 
     expect(prisma.workspaceMembership.update).toHaveBeenCalledWith({
       where: {
@@ -286,10 +271,7 @@ describe("updateWorkspaceRole", () => {
     vi.mocked(prisma.workspaceMembership.count).mockResolvedValueOnce(0);
 
     await expect(
-      updateWorkspaceRole(
-        { userId: "user-1", role: "MEMBER" },
-        MOCK_WORKSPACE_CONTEXT,
-      ),
+      updateWorkspaceRole({ userId: "user-1", role: "MEMBER" }, MOCK_WORKSPACE_CONTEXT),
     ).rejects.toThrow("Cannot demote the last admin");
   });
 });

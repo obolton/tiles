@@ -45,11 +45,7 @@ export const BOOLEAN_STRING_ATTRIBUTES = new Set([
   "aria-selected",
 ]);
 
-export function applyClassList(
-  element: Element,
-  value: ClassList,
-  signal?: AbortSignal,
-): void {
+export function applyClassList(element: Element, value: ClassList, signal?: AbortSignal): void {
   // Remove old classes
   for (const className of element.classList.values()) {
     if (!(className in value)) {
@@ -95,11 +91,7 @@ export function serializeStyles(styles: StyleDeclaration) {
   return rules.join(";");
 }
 
-function applyStyleValue(
-  style: CSSStyleDeclaration,
-  property: string,
-  value: StyleValue,
-): void {
+function applyStyleValue(style: CSSStyleDeclaration, property: string, value: StyleValue): void {
   if (isValidStyleValue(value)) {
     style.setProperty(property, value.toString());
   } else {

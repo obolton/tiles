@@ -6,8 +6,7 @@ export const VerticalAlignment = {
   CENTER: "CENTER",
   BOTTOM: "BOTTOM",
 } as const;
-export type VerticalAlignment =
-  (typeof VerticalAlignment)[keyof typeof VerticalAlignment];
+export type VerticalAlignment = (typeof VerticalAlignment)[keyof typeof VerticalAlignment];
 
 export interface TextTile extends TileBase {
   type: "TEXT";

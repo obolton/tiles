@@ -10,10 +10,7 @@ export function placeholders() {
           return;
         }
         const { $from } = selection;
-        if (
-          $from.parent.type === schema.nodes.heading &&
-          $from.parent.content.size === 0
-        ) {
+        if ($from.parent.type === schema.nodes.heading && $from.parent.content.size === 0) {
           const decoration = Decoration.node($from.before(), $from.after(), {
             placeholder: "Heading",
           });

@@ -11,16 +11,9 @@ type LinkMetadata = {
 };
 
 const FETCH_TIMEOUT_MS = 10000;
-const HTML_CONTENT_TYPES = [
-  "text/html",
-  "application/xhtml+xml",
-  "application/xml",
-];
+const HTML_CONTENT_TYPES = ["text/html", "application/xhtml+xml", "application/xml"];
 
-export function matchContentType(
-  contentType: string,
-  allowedTypes: string[],
-): boolean {
+export function matchContentType(contentType: string, allowedTypes: string[]): boolean {
   const mimeType = contentType.split(";")[0]?.trim().toLowerCase() ?? "";
   return allowedTypes.includes(mimeType);
 }
@@ -51,16 +44,12 @@ async function parseDocument(url: string, language: string) {
 
   const contentType = response.headers.get("Content-Type");
   if (!contentType || !matchContentType(contentType, HTML_CONTENT_TYPES)) {
-    throw new Error(
-      `Link metadata: Invalid content type for ${url}: ${contentType}`,
-    );
+    throw new Error(`Link metadata: Invalid content type for ${url}: ${contentType}`);
   }
 
   const body = response.body;
   if (!body) {
-    throw new Error(
-      `Link metadata: Failed to fetch ${url}: No content returned`,
-    );
+    throw new Error(`Link metadata: Failed to fetch ${url}: No content returned`);
   }
 
   return new Promise<LinkMetadata>((resolve, reject) => {
@@ -140,20 +129,10 @@ async function parseDocument(url: string, language: string) {
   });
 }
 
-export async function getLinkMetadata(
-  url: string,
-  language: string = "en-US,en",
-) {
+export async function getLinkMetadata(url: string, language: string = "en-US,en") {
   try {
     const metadata = await parseDocument(url, language);
-    const {
-      title,
-      description,
-      ogTitle,
-      ogDescription,
-      ogSiteName,
-      ogImageUrl,
-    } = metadata;
+    const { title, description, ogTitle, ogDescription, ogSiteName, ogImageUrl } = metadata;
     return {
       title: ogTitle || title,
       description: ogDescription || description,
@@ -161,9 +140,7 @@ export async function getLinkMetadata(
       imageUrl: ogImageUrl ? resolveImageUrl(ogImageUrl, url) : null,
     };
   } catch (error) {
-    console.error(
-      `Link metadata: Failed to fetch metadata for ${url}: ${error}`,
-    );
+    console.error(`Link metadata: Failed to fetch metadata for ${url}: ${error}`);
     return null;
   }
 }

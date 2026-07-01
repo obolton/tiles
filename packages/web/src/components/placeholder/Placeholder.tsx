@@ -8,11 +8,7 @@ interface PlaceholderProps {
   actions?: JSX.Node;
 }
 
-export default function Placeholder({
-  className,
-  children,
-  actions,
-}: PlaceholderProps) {
+export default function Placeholder({ className, children, actions }: PlaceholderProps) {
   return (
     <div className={classNames(styles.placeholder, className)}>
       {children ? <p>{children}</p> : null}

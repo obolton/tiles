@@ -15,10 +15,9 @@ async function deleteTiles(
   session.deleteTiles(tileIds);
 }
 
-export const DELETE_TILES_TOOL: FunctionToolOptions<typeof DeleteTilesSchema> =
-  {
-    name: "delete_tiles",
-    description: "Delete one or more tiles from the document.",
-    schema: DeleteTilesSchema,
-    function: deleteTiles,
-  };
+export const DELETE_TILES_TOOL: FunctionToolOptions<typeof DeleteTilesSchema> = {
+  name: "delete_tiles",
+  description: "Delete one or more tiles from the document.",
+  schema: DeleteTilesSchema,
+  function: deleteTiles,
+};

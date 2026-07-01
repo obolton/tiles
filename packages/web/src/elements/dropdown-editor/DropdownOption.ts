@@ -19,10 +19,7 @@ declare global {
 }
 
 export default class DropdownOption extends HTMLElement {
-  static readonly observedAttributes: (keyof DropdownOptionAttributes)[] = [
-    "value",
-    "editing",
-  ];
+  static readonly observedAttributes: (keyof DropdownOptionAttributes)[] = ["value", "editing"];
 
   private readonly dragHandle: HTMLSpanElement;
   private readonly contentSlot: HTMLSlotElement;
@@ -51,12 +48,7 @@ export default class DropdownOption extends HTMLElement {
     this.deleteButton.type = "button";
     this.deleteButton.innerHTML = trashIcon;
 
-    shadow.append(
-      this.dragHandle,
-      this.contentSlot,
-      this.editInput,
-      this.deleteButton,
-    );
+    shadow.append(this.dragHandle, this.contentSlot, this.editInput, this.deleteButton);
 
     shadow.addEventListener("click", this);
     this.editInput.addEventListener("blur", this);
@@ -167,9 +159,7 @@ export default class DropdownOption extends HTMLElement {
       return false;
     }
 
-    const match = parent.querySelector(
-      `dropdown-option[value="${CSS.escape(value)}"]`,
-    );
+    const match = parent.querySelector(`dropdown-option[value="${CSS.escape(value)}"]`);
     return match !== null && match !== this;
   }
 }

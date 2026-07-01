@@ -19,11 +19,7 @@ const chip = {
 
 export const WithItems: Story = {
   render: () => (
-    <calendar-grid
-      year={2026}
-      month={2}
-      style={{ width: "800px", height: "600px" }}
-    >
+    <calendar-grid year={2026} month={2} style={{ width: "800px", height: "600px" }}>
       <calendar-date start="2026-02-03">
         <div style={{ ...chip, background: "royalblue" }}>Team standup</div>
       </calendar-date>

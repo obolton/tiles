@@ -19,9 +19,7 @@ function truncate(text: string, maxLength: number): string {
 
 export function getTileLabel(tile: Tile): string {
   if (tile instanceof Text) {
-    const firstLine = fragmentToPlainText(tile.contentFragment)
-      .split("\n")[0]
-      ?.trim();
+    const firstLine = fragmentToPlainText(tile.contentFragment).split("\n")[0]?.trim();
     return firstLine ? truncate(firstLine, MAX_LABEL_LENGTH) : "Text";
   }
 

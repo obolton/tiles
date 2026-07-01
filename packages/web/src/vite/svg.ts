@@ -19,9 +19,7 @@ export interface SVGPluginOptions {
   importSource?: string;
 }
 
-export default function svgPlugin({
-  importSource,
-}: SVGPluginOptions = {}): Plugin {
+export default function svgPlugin({ importSource }: SVGPluginOptions = {}): Plugin {
   const filter = createFilter(FILTER);
   return {
     name: "svg-plugin",

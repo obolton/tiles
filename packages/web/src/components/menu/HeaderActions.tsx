@@ -59,18 +59,12 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
 
       <ToolbarGroup label="Page actions">
         <ToolbarButton
-          label={isBookmarked.derive((value) =>
-            value ? "Bookmarked" : "Not bookmarked",
-          )}
+          label={isBookmarked.derive((value) => (value ? "Bookmarked" : "Not bookmarked"))}
           aria-pressed={isBookmarked}
           on:click={onClickBookmark}
         >
           {isBookmarked.derive((value) =>
-            value ? (
-              <BookmarkFilledIcon aria-hidden="true" />
-            ) : (
-              <BookmarkIcon aria-hidden="true" />
-            ),
+            value ? <BookmarkFilledIcon aria-hidden="true" /> : <BookmarkIcon aria-hidden="true" />,
           )}
         </ToolbarButton>
 

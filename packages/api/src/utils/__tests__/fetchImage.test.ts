@@ -13,10 +13,7 @@ const USER_ID = "user-1";
 
 function imageResponse(
   contentType = "image/jpeg",
-  {
-    status = 200,
-    contentLength,
-  }: { status?: number; contentLength?: string } = {},
+  { status = 200, contentLength }: { status?: number; contentLength?: string } = {},
 ) {
   const headers: Record<string, string> = { "Content-Type": contentType };
   if (contentLength) {
@@ -34,19 +31,10 @@ describe("fetchImage", () => {
     const response = imageResponse();
     vi.spyOn(globalThis, "fetch").mockResolvedValue(response);
 
-    const imageId = await fetchImage(
-      "https://example.com/image.jpg",
-      WORKSPACE_ID,
-      USER_ID,
-    );
+    const imageId = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
     expect(imageId).toBeTypeOf("string");
-    expect(upload).toHaveBeenCalledWith(
-      IMAGES_BUCKET,
-      imageId,
-      expect.anything(),
-      "image/jpeg",
-    );
+    expect(upload).toHaveBeenCalledWith(IMAGES_BUCKET, imageId, expect.anything(), "image/jpeg");
     expect(prisma.image.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         id: imageId,
@@ -70,9 +58,7 @@ describe("fetchImage", () => {
 
     for (const [contentType, imageType] of types) {
       vi.restoreAllMocks();
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        imageResponse(contentType),
-      );
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse(contentType));
 
       await fetchImage("https://example.com/img", WORKSPACE_ID, USER_ID);
 
@@ -83,34 +69,19 @@ describe("fetchImage", () => {
   });
 
   test("handles content type with charset parameter", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      imageResponse("image/png; charset=utf-8"),
-    );
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/png; charset=utf-8"));
 
-    const imageId = await fetchImage(
-      "https://example.com/img.png",
-      WORKSPACE_ID,
-      USER_ID,
-    );
+    const imageId = await fetchImage("https://example.com/img.png", WORKSPACE_ID, USER_ID);
 
     expect(imageId).toBeTypeOf("string");
-    expect(upload).toHaveBeenCalledWith(
-      IMAGES_BUCKET,
-      imageId,
-      expect.anything(),
-      "image/png",
-    );
+    expect(upload).toHaveBeenCalledWith(IMAGES_BUCKET, imageId, expect.anything(), "image/png");
   });
 
   describe("URL validation", () => {
     test("rejects non-http/https protocols", async () => {
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "ftp://example.com/image.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("ftp://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -129,16 +100,10 @@ describe("fetchImage", () => {
 
   describe("response validation", () => {
     test("returns null on non-OK response", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        imageResponse("image/jpeg", { status: 404 }),
-      );
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/jpeg", { status: 404 }));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/missing.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/missing.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -146,16 +111,10 @@ describe("fetchImage", () => {
     });
 
     test("rejects invalid content types", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        imageResponse("text/html"),
-      );
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("text/html"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/page.html",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/page.html", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -163,16 +122,10 @@ describe("fetchImage", () => {
     });
 
     test("rejects SVG images", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        imageResponse("image/svg+xml"),
-      );
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/svg+xml"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/logo.svg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/logo.svg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -185,11 +138,7 @@ describe("fetchImage", () => {
       );
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/huge.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/huge.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -201,11 +150,7 @@ describe("fetchImage", () => {
         imageResponse("image/jpeg", { contentLength: "1000" }),
       );
 
-      const result = await fetchImage(
-        "https://example.com/small.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/small.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeTypeOf("string");
     });
@@ -219,11 +164,7 @@ describe("fetchImage", () => {
       );
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/empty.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/empty.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -232,16 +173,10 @@ describe("fetchImage", () => {
 
   describe("error handling", () => {
     test("returns null on fetch failure", async () => {
-      vi.spyOn(globalThis, "fetch").mockRejectedValue(
-        new Error("Network error"),
-      );
+      vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("Network error"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/image.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -252,11 +187,7 @@ describe("fetchImage", () => {
       vi.mocked(upload).mockRejectedValue(new Error("R2 upload failed"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/image.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
@@ -267,11 +198,7 @@ describe("fetchImage", () => {
       vi.mocked(prisma.image.create).mockRejectedValue(new Error("DB error"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await fetchImage(
-        "https://example.com/image.jpg",
-        WORKSPACE_ID,
-        USER_ID,
-      );
+      const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();

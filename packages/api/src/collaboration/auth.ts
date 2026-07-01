@@ -18,9 +18,7 @@ export async function authenticateConnection({
   sessionId: string;
 }> {
   const cookieHeader = requestHeaders.get("cookie");
-  const sessionId =
-    token ||
-    (cookieHeader ? getCookie(cookieHeader, SESSION_COOKIE_NAME) : null);
+  const sessionId = token || (cookieHeader ? getCookie(cookieHeader, SESSION_COOKIE_NAME) : null);
 
   if (!sessionId) {
     throw new Error("Missing session");

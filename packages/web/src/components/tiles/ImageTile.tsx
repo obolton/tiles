@@ -5,11 +5,7 @@ import Tile from "./Tile";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
-import {
-  getImageSrcSet,
-  getImageStyle,
-  getMaxWidth,
-} from "@/components/images/imageStyle";
+import { getImageSrcSet, getImageStyle, getMaxWidth } from "@/components/images/imageStyle";
 import { flag, reactive } from "@/utils/reactivity";
 import styles from "@/components/images/ImageView.module.css";
 import type Image from "@/models/Image";

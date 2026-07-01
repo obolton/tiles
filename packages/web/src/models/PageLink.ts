@@ -20,16 +20,11 @@ export default class PageLink extends Tile {
 
   readonly linkedPage: Reactive<LinkedPage>;
 
-  static createMap(
-    properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">,
-  ): Y.Map<unknown> {
+  static createMap(properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildPageLinkMap(properties);
   }
 
-  static async create(
-    page: Page,
-    data: CreatePageLinkInput,
-  ): Promise<PageLink> {
+  static async create(page: Page, data: CreatePageLinkInput): Promise<PageLink> {
     const { parentId, beforeId, ...rest } = data;
     const map = PageLink.createMap(rest);
     const pageLink = page.createTile(map, { parentId, beforeId }) as PageLink;

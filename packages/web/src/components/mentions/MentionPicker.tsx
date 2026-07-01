@@ -11,10 +11,7 @@ export interface MentionPickerProps {
   onClose: () => void;
 }
 
-export default function MentionPicker({
-  onSelect,
-  onClose,
-}: MentionPickerProps) {
+export default function MentionPicker({ onSelect, onClose }: MentionPickerProps) {
   getWorkspaceUsers().catch(handleError);
 
   function handleChange(event: Event) {
@@ -51,9 +48,7 @@ export default function MentionPicker({
               value={user.id}
               label={user.name}
               icon={
-                user.imageUrl ? (
-                  <img className="profile-image" src={user.imageUrl} alt="" />
-                ) : null
+                user.imageUrl ? <img className="profile-image" src={user.imageUrl} alt="" /> : null
               }
             >
               {user.name}

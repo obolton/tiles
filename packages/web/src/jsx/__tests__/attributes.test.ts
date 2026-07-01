@@ -160,10 +160,7 @@ describe("applyClassList", () => {
     const subscribeSpy = vi.spyOn(enabled, "subscribe");
 
     applyClassList(element, { foo: enabled }, controller.signal);
-    expect(subscribeSpy).toHaveBeenCalledWith(
-      expect.any(Function),
-      controller.signal,
-    );
+    expect(subscribeSpy).toHaveBeenCalledWith(expect.any(Function), controller.signal);
   });
 });
 
@@ -255,10 +252,7 @@ describe("applyStyleObject", () => {
     const subscribeSpy = vi.spyOn(color, "subscribe");
 
     applyStyleObject(element, { color }, controller.signal);
-    expect(subscribeSpy).toHaveBeenCalledWith(
-      expect.any(Function),
-      controller.signal,
-    );
+    expect(subscribeSpy).toHaveBeenCalledWith(expect.any(Function), controller.signal);
   });
 });
 

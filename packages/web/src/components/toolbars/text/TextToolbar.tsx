@@ -22,16 +22,10 @@ export interface TextToolbarProps {
   editorView: Reactive<EditorView | null>;
 }
 
-export default function TextToolbar({
-  text,
-  state,
-  editorView,
-}: TextToolbarProps) {
+export default function TextToolbar({ text, state, editorView }: TextToolbarProps) {
   const { align } = text;
 
-  const format = state.derive((value) =>
-    value ? getSelectionFormat(value) : DEFAULT_FORMAT,
-  );
+  const format = state.derive((value) => (value ? getSelectionFormat(value) : DEFAULT_FORMAT));
 
   function performCommand(command: Command) {
     const editor = editorView.value;
@@ -70,22 +64,13 @@ export default function TextToolbar({
               }}
             >
               <ListGroup>
-                <ListOption
-                  icon={<VerticalAlignTopIcon aria-hidden="true" />}
-                  value="TOP"
-                >
+                <ListOption icon={<VerticalAlignTopIcon aria-hidden="true" />} value="TOP">
                   Top
                 </ListOption>
-                <ListOption
-                  icon={<VerticalAlignCenterIcon aria-hidden="true" />}
-                  value="CENTER"
-                >
+                <ListOption icon={<VerticalAlignCenterIcon aria-hidden="true" />} value="CENTER">
                   Center
                 </ListOption>
-                <ListOption
-                  icon={<VerticalAlignBottomIcon aria-hidden="true" />}
-                  value="BOTTOM"
-                >
+                <ListOption icon={<VerticalAlignBottomIcon aria-hidden="true" />} value="BOTTOM">
                   Bottom
                 </ListOption>
               </ListGroup>

@@ -105,12 +105,7 @@ export interface ListItemNode extends BaseNode {
   children: BlockNode[];
 }
 
-export type InlineNode =
-  | TextNode
-  | LinkNode
-  | DateNode
-  | DropdownNode
-  | MentionNode;
+export type InlineNode = TextNode | LinkNode | DateNode | DropdownNode | MentionNode;
 
 export type BlockNode =
   | PendingNode

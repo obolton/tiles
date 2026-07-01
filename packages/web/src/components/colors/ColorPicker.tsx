@@ -46,9 +46,7 @@ export default function ColorPicker({
         aria-haspopup="menu"
         aria-expanded="false"
         classList={{ [styles.picker]: true }}
-        style={value?.derive((v) =>
-          v ? { "--icon-color": toCSSColor(v) } : undefined,
-        )}
+        style={value?.derive((v) => (v ? { "--icon-color": toCSSColor(v) } : undefined))}
       >
         {icon}
         {label}

@@ -1,9 +1,5 @@
 import { describe, test, expect } from "vitest";
-import {
-  findLanguageConfig,
-  loadLanguage,
-  SUPPORTED_LANGUAGES,
-} from "../languages";
+import { findLanguageConfig, loadLanguage, SUPPORTED_LANGUAGES } from "../languages";
 
 describe("SUPPORTED_LANGUAGES", () => {
   test("has Plain Text as the first entry", () => {
@@ -34,9 +30,7 @@ describe("SUPPORTED_LANGUAGES", () => {
     for (const config of SUPPORTED_LANGUAGES) {
       for (const alias of config.aliases) {
         if (ids.has(alias)) {
-          expect.fail(
-            `alias "${alias}" on "${config.id}" collides with another language id`,
-          );
+          expect.fail(`alias "${alias}" on "${config.id}" collides with another language id`);
         }
       }
     }
@@ -45,10 +39,7 @@ describe("SUPPORTED_LANGUAGES", () => {
   test("all non-Plain Text entries have a load function", () => {
     for (const config of SUPPORTED_LANGUAGES) {
       if (config.id !== "") {
-        expect(
-          config.load,
-          `${config.name} is missing a load function`,
-        ).toBeDefined();
+        expect(config.load, `${config.name} is missing a load function`).toBeDefined();
       }
     }
   });

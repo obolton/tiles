@@ -1,10 +1,7 @@
 import { describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { EditorState } from "prosemirror-state";
-import {
-  prosemirrorToYXmlFragment,
-  yXmlFragmentToProseMirrorRootNode,
-} from "y-prosemirror";
+import { prosemirrorToYXmlFragment, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import { schema } from "@/utils/richText/schema";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import type { DestinationMode, RichTextContent } from "doc/richText/events";
@@ -13,9 +10,7 @@ import type { DestinationMode, RichTextContent } from "doc/richText/events";
 
 function definedAttrs(node: Y.XmlElement): Record<string, unknown> {
   return Object.fromEntries(
-    Object.entries(node.getAttributes()).filter(
-      ([, value]) => value !== undefined,
-    ),
+    Object.entries(node.getAttributes()).filter(([, value]) => value !== undefined),
   );
 }
 
@@ -146,20 +141,11 @@ const FIXTURES: { name: string; events: RichTextContent[] }[] = [
   },
   {
     name: "a code block",
-    events: [
-      { type: "code", language: "ts", lineNumbers: false },
-      "const x = 1;",
-    ],
+    events: [{ type: "code", language: "ts", lineNumbers: false }, "const x = 1;"],
   },
   {
     name: "a divider between paragraphs",
-    events: [
-      { type: "paragraph" },
-      "before",
-      { type: "divider" },
-      { type: "paragraph" },
-      "after",
-    ],
+    events: [{ type: "paragraph" }, "before", { type: "divider" }, { type: "paragraph" }, "after"],
   },
   {
     name: "bold within a heading",
@@ -197,11 +183,7 @@ const FIXTURES: { name: string; events: RichTextContent[] }[] = [
   },
   {
     name: "active marks are dropped inside a code block",
-    events: [
-      { bold: true },
-      { type: "code", language: "js", lineNumbers: false },
-      "const x = 1;",
-    ],
+    events: [{ bold: true }, { type: "code", language: "js", lineNumbers: false }, "const x = 1;"],
   },
 ];
 

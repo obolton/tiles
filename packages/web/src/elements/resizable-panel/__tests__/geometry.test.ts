@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  clampSize,
-  isPanelEdge,
-  panelAxis,
-  panelSign,
-  resolveSize,
-} from "../geometry";
+import { clampSize, isPanelEdge, panelAxis, panelSign, resolveSize } from "../geometry";
 
 describe("panelAxis", () => {
   it("resizes left/right panels horizontally", () => {

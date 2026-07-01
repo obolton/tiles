@@ -13,9 +13,7 @@ export default function TableTileThumbnail({ table }: TableTileThumbnailProps) {
     <Tile>
       <div classList={{ [styles.wrapper]: true, "static-table-view": true }}>
         <TableViewContents table={table}>
-          {(value) =>
-            Array.isArray(value) ? <RichText content={value} /> : value
-          }
+          {(value) => (Array.isArray(value) ? <RichText content={value} /> : value)}
         </TableViewContents>
       </div>
     </Tile>

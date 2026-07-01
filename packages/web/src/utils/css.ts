@@ -2,9 +2,7 @@ import type { ClassList } from "@/jsx/html-attributes";
 
 export function classNames(...args: (string | null | undefined | false)[]) {
   return args
-    .filter(
-      (className) => typeof className === "string" && className.length > 0,
-    )
+    .filter((className) => typeof className === "string" && className.length > 0)
     .join(" ");
 }
 
@@ -18,9 +16,7 @@ export function classNames(...args: (string | null | undefined | false)[]) {
  *   { pending: isPending }
  * )
  */
-export function classList(
-  ...sources: (ClassList | undefined | null | false)[]
-): ClassList {
+export function classList(...sources: (ClassList | undefined | null | false)[]): ClassList {
   const result: ClassList = {};
   for (const source of sources) {
     if (source) {

@@ -105,16 +105,12 @@ describe("CREATE_CHART_TOOL", () => {
       MOCK_TOOL_CONTEXT,
     );
 
-    expect(createChart).toHaveBeenCalledWith(
-      expect.objectContaining({ labelColumnId: "col-a" }),
-    );
+    expect(createChart).toHaveBeenCalledWith(expect.objectContaining({ labelColumnId: "col-a" }));
   });
 
   test("passes undefined labelColumnId when labelColumnIndex is null", async () => {
     await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
-    expect(createChart).toHaveBeenCalledWith(
-      expect.objectContaining({ labelColumnId: undefined }),
-    );
+    expect(createChart).toHaveBeenCalledWith(expect.objectContaining({ labelColumnId: undefined }));
   });
 
   test("transforms series color to fill object", async () => {
@@ -147,21 +143,13 @@ describe("CREATE_CHART_TOOL", () => {
   });
 
   test("uses correct dimensions from size", async () => {
-    await CREATE_CHART_TOOL.function(
-      { ...BASE_ARGS, size: "large" },
-      MOCK_TOOL_CONTEXT,
-    );
+    await CREATE_CHART_TOOL.function({ ...BASE_ARGS, size: "large" }, MOCK_TOOL_CONTEXT);
 
-    expect(createChart).toHaveBeenCalledWith(
-      expect.objectContaining({ width: 24, height: 20 }),
-    );
+    expect(createChart).toHaveBeenCalledWith(expect.objectContaining({ width: 24, height: 20 }));
   });
 
   test("returns artifact from createChart", async () => {
-    const result = await CREATE_CHART_TOOL.function(
-      BASE_ARGS,
-      MOCK_TOOL_CONTEXT,
-    );
+    const result = await CREATE_CHART_TOOL.function(BASE_ARGS, MOCK_TOOL_CONTEXT);
     expect(result).toEqual({ artifact: CHART_TILE });
   });
 });

@@ -30,9 +30,7 @@ export default function Themeable<T>({
     if (!Component) {
       throw new Error(`Invalid theme index: ${index}`);
     }
-    return render(
-      <Component {...getProps()}>{contents}</Component>,
-    )[0] as HTMLElement;
+    return render(<Component {...getProps()}>{contents}</Component>)[0] as HTMLElement;
   }
 
   function onThemeChange(event: Event) {
@@ -51,9 +49,7 @@ export default function Themeable<T>({
     <theme-selector
       {...props}
       className={inline ? "inline" : undefined}
-      value={theme.derive((current) =>
-        Math.max(options.indexOf(current), 0).toString(),
-      )}
+      value={theme.derive((current) => Math.max(options.indexOf(current), 0).toString())}
       on:change={onThemeChange}
       max={(options.length - 1).toString()}
       $getItem={getItem}

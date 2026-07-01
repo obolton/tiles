@@ -18,8 +18,7 @@ export interface WorkspaceInvitesProps {
   invites: AppRouterOutputs["workspaces"]["listInvites"];
 }
 
-const InviteModalLoader = () =>
-  import("@/components/modals/invite/InviteModal");
+const InviteModalLoader = () => import("@/components/modals/invite/InviteModal");
 
 export default function WorkspaceInvites({
   workspaceId,
@@ -60,9 +59,7 @@ export default function WorkspaceInvites({
         workspaceId,
         id: invite.id,
       });
-      invites.value = invites.value.filter(
-        (existingInvite) => existingInvite !== invite,
-      );
+      invites.value = invites.value.filter((existingInvite) => existingInvite !== invite);
       showToast(`The invite for ${invite.email} was revoked.`, "success");
     } catch (error) {
       handleError(error);
@@ -104,13 +101,9 @@ export default function WorkspaceInvites({
         results={invites}
         nextCursor={nextCursor}
         query={query}
-        render={(invite) => (
-          <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />
-        )}
+        render={(invite) => <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />}
         renderPlaceholder={(query) => (
-          <Placeholder>
-            {query ? "There are no results" : "No invites"}
-          </Placeholder>
+          <Placeholder>{query ? "There are no results" : "No invites"}</Placeholder>
         )}
       />
 

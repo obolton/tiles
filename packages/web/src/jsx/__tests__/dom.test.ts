@@ -25,26 +25,24 @@ describe("render", () => {
   });
 
   test("sets the attributes of the element", () => {
-    const [element] = render(
-      jsx("div", { id: "test-id", className: "test-class" }),
-    ) as [HTMLElement];
+    const [element] = render(jsx("div", { id: "test-id", className: "test-class" })) as [
+      HTMLElement,
+    ];
     expect(element.id).toBe("test-id");
     expect(element.className).toBe("test-class");
   });
 
   test("sets the properties of the element", () => {
-    const [element] = render(
-      jsx("div", { $id: "test-id", $className: "test-class" }),
-    ) as [HTMLElement];
+    const [element] = render(jsx("div", { $id: "test-id", $className: "test-class" })) as [
+      HTMLElement,
+    ];
     expect(element.id).toBe("test-id");
     expect(element.className).toBe("test-class");
   });
 
   test("assigns a property value as-is", () => {
     const data = { id: "a" };
-    const [element] = render(jsx("test-widget", { $data: data })) as [
-      TestWidget,
-    ];
+    const [element] = render(jsx("test-widget", { $data: data })) as [TestWidget];
 
     // `$` assigns the value itself, with no unwrapping or subscription.
     expect(element.data).toBe(data);
@@ -52,9 +50,7 @@ describe("render", () => {
 
   test("binds a property to a reactive value and keeps it in sync", () => {
     const data = reactive<{ id: string } | null>({ id: "a" });
-    const [element] = render(jsx("test-widget", { "bind:data": data })) as [
-      TestWidget,
-    ];
+    const [element] = render(jsx("test-widget", { "bind:data": data })) as [TestWidget];
 
     expect(element.data).toEqual({ id: "a" });
 
@@ -96,9 +92,9 @@ describe("render", () => {
   });
 
   test("sets the style attribute from a string", () => {
-    const [element] = render(
-      jsx("div", { style: "background-color: red; padding: 0" }),
-    ) as [HTMLElement];
+    const [element] = render(jsx("div", { style: "background-color: red; padding: 0" })) as [
+      HTMLElement,
+    ];
     expect(element.style.backgroundColor).toBe("red");
     expect(element.style.padding).toBe("0px");
   });
@@ -106,30 +102,22 @@ describe("render", () => {
   describe("boolean string attributes", () => {
     describe.for(Array.from(BOOLEAN_STRING_ATTRIBUTES))("%s", (attribute) => {
       test("truthy value", () => {
-        const [element] = render(jsx("div", { [attribute]: 1 })) as [
-          HTMLElement,
-        ];
+        const [element] = render(jsx("div", { [attribute]: 1 })) as [HTMLElement];
         expect(element.getAttribute(attribute)).toBe("true");
       });
 
       test("falsy value", () => {
-        const [element] = render(jsx("div", { [attribute]: 0 })) as [
-          HTMLElement,
-        ];
+        const [element] = render(jsx("div", { [attribute]: 0 })) as [HTMLElement];
         expect(element.getAttribute(attribute)).toBe("false");
       });
 
       test("false", () => {
-        const [element] = render(jsx("div", { [attribute]: "false" })) as [
-          HTMLElement,
-        ];
+        const [element] = render(jsx("div", { [attribute]: "false" })) as [HTMLElement];
         expect(element.getAttribute(attribute)).toBe("false");
       });
 
       test("string value", () => {
-        const [element] = render(jsx("div", { [attribute]: "page" })) as [
-          HTMLElement,
-        ];
+        const [element] = render(jsx("div", { [attribute]: "page" })) as [HTMLElement];
         expect(element.getAttribute(attribute)).toBe("page");
       });
     });
@@ -137,45 +125,38 @@ describe("render", () => {
 
   test("sets an event listener", () => {
     const onclick = vi.fn();
-    const [element] = render(jsx("div", { "on:click": onclick })) as [
-      HTMLElement,
-    ];
+    const [element] = render(jsx("div", { "on:click": onclick })) as [HTMLElement];
     element.click();
     expect(onclick).toHaveBeenCalled();
   });
 
   test("adds a child element", () => {
-    const [element] = render(jsx("div", { children: jsx("span", {}) })) as [
-      HTMLElement,
-    ];
+    const [element] = render(jsx("div", { children: jsx("span", {}) })) as [HTMLElement];
     expect(element.childNodes.length).toBe(1);
     expect(element.children[0]?.tagName).toBe("SPAN");
   });
 
   test("adds a child component", () => {
-    const Component = ({ name }: { name: string }) =>
-      jsx("span", { children: `Hello ${name}` });
-    const [element] = render(
-      jsx("div", { children: jsx(Component, { name: "Test" }) }),
-    ) as [HTMLElement];
+    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
+    const [element] = render(jsx("div", { children: jsx(Component, { name: "Test" }) })) as [
+      HTMLElement,
+    ];
     expect(element.childNodes.length).toBe(1);
     expect(element.children[0]?.tagName).toBe("SPAN");
     expect(element.children[0]?.textContent).toBe("Hello Test");
   });
 
   test("adds multiple children", () => {
-    const [element] = render(
-      jsx("div", { children: [jsx("span", {}), jsx("p", {})] }),
-    ) as [HTMLElement];
+    const [element] = render(jsx("div", { children: [jsx("span", {}), jsx("p", {})] })) as [
+      HTMLElement,
+    ];
     expect(element.childNodes.length).toBe(2);
     expect(element.children[0]?.tagName).toBe("SPAN");
     expect(element.children[1]?.tagName).toBe("P");
   });
 
   test("adds a text child node", () => {
-    const [element] = render(jsx("div", { children: "Hello World" })) as [
-      HTMLElement,
-    ];
+    const [element] = render(jsx("div", { children: "Hello World" })) as [HTMLElement];
     expect(element.childNodes.length).toBe(1);
     expect(element.childNodes[0]?.nodeType).toBe(Node.TEXT_NODE);
     expect(element.childNodes[0]?.textContent).toBe("Hello World");
@@ -206,17 +187,13 @@ describe("render", () => {
   });
 
   test("ignores an undefined child node", () => {
-    const [element] = render(jsx("div", { children: [undefined] })) as [
-      HTMLElement,
-    ];
+    const [element] = render(jsx("div", { children: [undefined] })) as [HTMLElement];
     expect(element.childNodes.length).toBe(0);
   });
 
   test("throws for an invalid child node", () => {
     // @ts-expect-error Intentionally invalid children
-    expect(() => render(jsx("div", { children: { foo: "bar" } }))).toThrowError(
-      "Invalid node",
-    );
+    expect(() => render(jsx("div", { children: { foo: "bar" } }))).toThrowError("Invalid node");
   });
 
   test("renders a class component", () => {
@@ -327,8 +304,7 @@ describe("hydrate", () => {
     const span = document.createElement("span");
     span.appendChild(document.createTextNode("Hello"));
     container.appendChild(span);
-    const Component = ({ name }: { name: string }) =>
-      jsx("span", { children: `Hello ${name}` });
+    const Component = ({ name }: { name: string }) => jsx("span", { children: `Hello ${name}` });
     hydrate(jsx(Component, { name: "World" }), container);
     expect(container.firstElementChild).toBe(span);
     expect(span.firstChild?.nodeValue).toBe("Hello World");
@@ -357,9 +333,7 @@ describe("hydrate", () => {
     const container = document.createElement("div");
     const existing = document.createElement("span");
     container.appendChild(existing);
-    const customHydrate = vi.fn((_target: Element, _index: number) => [
-      existing as Node,
-    ]);
+    const customHydrate = vi.fn((_target: Element, _index: number) => [existing as Node]);
     class Component {
       hydrate(target: Element, index: number) {
         return customHydrate(target, index);
@@ -379,10 +353,7 @@ describe("hydrate", () => {
     const existingP = document.createElement("p");
     existingP.appendChild(document.createTextNode("b"));
     container.append(existingSpan, existingP);
-    hydrate(
-      [jsx("span", { children: "a" }), jsx("p", { children: "b" })],
-      container,
-    );
+    hydrate([jsx("span", { children: "a" }), jsx("p", { children: "b" })], container);
     expect(container.children.length).toBe(2);
     expect(container.children[0]).toBe(existingSpan);
     expect(container.children[1]).toBe(existingP);
@@ -442,9 +413,7 @@ describe("hydrate", () => {
         }),
         container,
       );
-      expect(container.querySelector("div")?.namespaceURI).toBe(
-        XHTML_NAMESPACE,
-      );
+      expect(container.querySelector("div")?.namespaceURI).toBe(XHTML_NAMESPACE);
     });
   });
 });

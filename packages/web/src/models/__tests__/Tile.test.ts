@@ -25,10 +25,7 @@ describe("Tile", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
   function createTile(overrides: Partial<CreateSectionInput> = {}) {
-    return editor.page.createTile(
-      Section.createMap({ ...PROPS, ...overrides }),
-      {},
-    ) as Section;
+    return editor.page.createTile(Section.createMap({ ...PROPS, ...overrides }), {}) as Section;
   }
 
   test("maps properties to reactive values", () => {
@@ -147,9 +144,7 @@ describe("Tile", () => {
 
       expect(tile.themeId.value).toBe(theme.id);
       expect(tile.theme.value).toEqual(theme.serialize());
-      expect(editor.page.doc?.getMap("themes").get(theme.id)).toEqual(
-        theme.serialize(),
-      );
+      expect(editor.page.doc?.getMap("themes").get(theme.id)).toEqual(theme.serialize());
     });
 
     test("overwrites the snapshot on re-apply", () => {

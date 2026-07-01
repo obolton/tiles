@@ -33,11 +33,7 @@ export default function Code({ node }: CodeProps) {
         {code.length > 0 ? (
           <Each items={spans}>
             {(span) =>
-              span.className ? (
-                <span className={span.className}>{span.text}</span>
-              ) : (
-                span.text
-              )
+              span.className ? <span className={span.className}>{span.text}</span> : span.text
             }
           </Each>
         ) : (

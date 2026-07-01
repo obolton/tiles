@@ -30,8 +30,6 @@ export default class PageInvite {
       pageId: this.page.id,
       id: this.id,
     });
-    this.page.invites.value = this.page.invites.value.filter(
-      (i) => i.id !== this.id,
-    );
+    this.page.invites.value = this.page.invites.value.filter((i) => i.id !== this.id);
   }
 }

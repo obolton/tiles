@@ -35,10 +35,5 @@ export function resolveSize(
 }
 
 export function isPanelEdge(value: string | null): value is PanelEdge {
-  return (
-    value === "top" ||
-    value === "bottom" ||
-    value === "left" ||
-    value === "right"
-  );
+  return value === "top" || value === "bottom" || value === "left" || value === "right";
 }

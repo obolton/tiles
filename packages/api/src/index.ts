@@ -33,20 +33,14 @@ const trpcHandler = createHTTPHandler({
 
 const server = createServer(trpcHandler);
 
-const peerConnections = new WeakMap<
-  object,
-  ReturnType<typeof hocuspocus.handleConnection>
->();
+const peerConnections = new WeakMap<object, ReturnType<typeof hocuspocus.handleConnection>>();
 
 const ws = crossws({
   hooks: {
     open(peer) {
       peerConnections.set(
         peer,
-        hocuspocus.handleConnection(
-          peer.websocket as unknown as WebSocket,
-          peer.request,
-        ),
+        hocuspocus.handleConnection(peer.websocket as unknown as WebSocket, peer.request),
       );
     },
     message(peer, message) {

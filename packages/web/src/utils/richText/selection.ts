@@ -1,17 +1,9 @@
-import {
-  ySyncPluginKey,
-  absolutePositionToRelativePosition,
-} from "y-prosemirror";
+import { ySyncPluginKey, absolutePositionToRelativePosition } from "y-prosemirror";
 import * as Y from "yjs";
-import {
-  encodeSelection,
-  type SerializedSelection,
-} from "doc/richText/selection";
+import { encodeSelection, type SerializedSelection } from "doc/richText/selection";
 import type { EditorState } from "prosemirror-state";
 
-export function serializeSelection(
-  state: EditorState,
-): SerializedSelection | null {
+export function serializeSelection(state: EditorState): SerializedSelection | null {
   const ystate = ySyncPluginKey.getState(state);
   const fragment = ystate?.type;
   const mapping = ystate?.binding?.mapping;

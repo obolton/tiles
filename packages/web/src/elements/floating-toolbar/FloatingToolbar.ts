@@ -69,8 +69,7 @@ export default class FloatingToolbar extends HTMLElement {
       orientation: "horizontal",
     });
     this.itemsNav = new KeyboardNavigation(this, {
-      selector:
-        'toolbar-tab[selected] > [role="group"] > :is(button, list-select)',
+      selector: 'toolbar-tab[selected] > [role="group"] > :is(button, list-select)',
       orientation: "horizontal",
     });
 
@@ -132,15 +131,11 @@ export default class FloatingToolbar extends HTMLElement {
   }
 
   private get tabButtons(): HTMLButtonElement[] {
-    return Array.from(
-      this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button"),
-    );
+    return Array.from(this.tabBar.querySelectorAll<HTMLButtonElement>(".tab-button"));
   }
 
   private getTabByName(name: string): ToolbarTab | null {
-    return this.querySelector<ToolbarTab>(
-      `toolbar-tab[name="${CSS.escape(name)}"]`,
-    );
+    return this.querySelector<ToolbarTab>(`toolbar-tab[name="${CSS.escape(name)}"]`);
   }
 
   get selectedTab(): ToolbarTab | null {
@@ -200,9 +195,7 @@ export default class FloatingToolbar extends HTMLElement {
   private updateSelection() {
     const tabs = this.tabs;
     const tabButtons = this.tabButtons;
-    const selectedIndex = this.#selectedTab
-      ? tabs.indexOf(this.#selectedTab)
-      : -1;
+    const selectedIndex = this.#selectedTab ? tabs.indexOf(this.#selectedTab) : -1;
 
     // Update tab panels
     tabs.forEach((tab, i) => {
@@ -226,10 +219,7 @@ export default class FloatingToolbar extends HTMLElement {
   private persistTabSelection() {
     const toolbarName = this.getAttribute("name") || this.id;
     if (toolbarName && this.#selectedTab?.name) {
-      sessionStorage.setItem(
-        `toolbar-tab:${toolbarName}`,
-        this.#selectedTab.name,
-      );
+      sessionStorage.setItem(`toolbar-tab:${toolbarName}`, this.#selectedTab.name);
     }
   }
 
@@ -279,9 +269,7 @@ export default class FloatingToolbar extends HTMLElement {
     // Prevent buttons from stealing focus
     if (
       event.target instanceof Element &&
-      event.target.matches(
-        'button:not([popovertarget]), input[type="button"]:not([popovertarget])',
-      )
+      event.target.matches('button:not([popovertarget]), input[type="button"]:not([popovertarget])')
     ) {
       event.preventDefault();
     }
@@ -291,10 +279,7 @@ export default class FloatingToolbar extends HTMLElement {
 
   private handleTabSelect(event: Event) {
     const target = event.target;
-    if (
-      !(target instanceof HTMLButtonElement) ||
-      !target.classList.contains("tab-button")
-    ) {
+    if (!(target instanceof HTMLButtonElement) || !target.classList.contains("tab-button")) {
       return;
     }
 

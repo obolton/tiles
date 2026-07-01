@@ -99,9 +99,7 @@ export class Database<Schema extends SchemaDefinition> {
 
       // Create indexes that don't exist
       if (storeConfig.indexes) {
-        for (const [indexName, indexConfig] of Object.entries(
-          storeConfig.indexes,
-        )) {
+        for (const [indexName, indexConfig] of Object.entries(storeConfig.indexes)) {
           if (!store.indexNames.contains(indexName)) {
             store.createIndex(indexName, indexConfig.keyPath, {
               unique: indexConfig.unique,

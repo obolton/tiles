@@ -10,12 +10,7 @@ import {
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
 import { serializeStyles } from "@/jsx/attributes";
 import { FONT_IDS, getFontConfig, type FontId } from "api/config/fonts";
-import type {
-  AttributeSpec,
-  NodeSpec,
-  MarkSpec,
-  DOMOutputSpec,
-} from "prosemirror-model";
+import type { AttributeSpec, NodeSpec, MarkSpec, DOMOutputSpec } from "prosemirror-model";
 
 const DOMOutput = {
   paragraph: ["p", 0],
@@ -90,14 +85,7 @@ const attributesSpec = {
   align: {
     default: "left",
     validate(value) {
-      if (
-        !(
-          value === "left" ||
-          value === "center" ||
-          value === "right" ||
-          value === "justify"
-        )
-      ) {
+      if (!(value === "left" || value === "center" || value === "right" || value === "justify")) {
         throw new RangeError(`Invalid paragraph alignment: ${value}`);
       }
     },
@@ -107,9 +95,7 @@ const attributesSpec = {
     validate(value) {
       if (
         value !== undefined &&
-        (typeof value !== "number" ||
-          value < MIN_LINE_HEIGHT ||
-          value > MAX_LINE_HEIGHT)
+        (typeof value !== "number" || value < MIN_LINE_HEIGHT || value > MAX_LINE_HEIGHT)
       ) {
         throw new RangeError(`Invalid line height: ${value}`);
       }
@@ -118,10 +104,7 @@ const attributesSpec = {
   indent: {
     default: undefined,
     validate(value) {
-      if (
-        value !== undefined &&
-        (typeof value !== "number" || value < 1 || value > MAX_INDENT)
-      ) {
+      if (value !== undefined && (typeof value !== "number" || value < 1 || value > MAX_INDENT)) {
         throw new RangeError(`Invalid indent: ${value}`);
       }
     },
@@ -170,8 +153,7 @@ const nodesSpec = {
   },
 
   quote: {
-    content:
-      "(paragraph | heading | ordered_list | unordered_list | check_list | divider)+",
+    content: "(paragraph | heading | ordered_list | unordered_list | check_list | divider)+",
     group: "block",
     defining: true,
     parseDOM: [{ tag: "blockquote" }],
@@ -391,11 +373,7 @@ const nodesSpec = {
 } as const satisfies Record<string, NodeSpec>;
 
 type KeysWithProperty<T, Key, Value> = {
-  [K in keyof T]: Key extends keyof T[K]
-    ? T[K][Key] extends Value
-      ? K
-      : never
-    : never;
+  [K in keyof T]: Key extends keyof T[K] ? (T[K][Key] extends Value ? K : never) : never;
 }[keyof T];
 
 export type BlockNode = KeysWithProperty<typeof nodesSpec, "group", "block">;
@@ -412,11 +390,7 @@ const marksSpec = {
     attrs: {
       size: {
         validate(value) {
-          if (
-            !Number.isNaN(value) ||
-            value < MIN_TEXT_SIZE ||
-            value > MAX_TEXT_SIZE
-          ) {
+          if (!Number.isNaN(value) || value < MIN_TEXT_SIZE || value > MAX_TEXT_SIZE) {
             throw new RangeError(`Invalid font size: ${value}`);
           }
         },
@@ -438,19 +412,13 @@ const marksSpec = {
             size /= 16;
           }
           return {
-            size: Math.min(
-              Math.max(Math.round(size), MIN_TEXT_SIZE),
-              MAX_TEXT_SIZE,
-            ),
+            size: Math.min(Math.max(Math.round(size), MIN_TEXT_SIZE), MAX_TEXT_SIZE),
           };
         },
       },
     ],
     toDOM(mark) {
-      const size = Math.min(
-        Math.max(mark.attrs.size as number, MIN_TEXT_SIZE),
-        MAX_TEXT_SIZE,
-      );
+      const size = Math.min(Math.max(mark.attrs.size as number, MIN_TEXT_SIZE), MAX_TEXT_SIZE);
       return ["span", { style: `font-size: ${size.toFixed(2)}em` }, 0];
     },
   },
@@ -470,11 +438,7 @@ const marksSpec = {
   },
 
   underline: {
-    parseDOM: [
-      { tag: "u" },
-      { tag: ".underline" },
-      { style: "text-decoration=underline" },
-    ],
+    parseDOM: [{ tag: "u" }, { tag: ".underline" }, { style: "text-decoration=underline" }],
     toDOM() {
       return DOMOutput.underline;
     },
@@ -515,11 +479,7 @@ const marksSpec = {
     },
     toDOM(mark) {
       const fontId = mark.attrs.font as FontId;
-      return [
-        "span",
-        { style: `font-family: "${getFontConfig(fontId).family}"` },
-        0,
-      ];
+      return ["span", { style: `font-family: "${getFontConfig(fontId).family}"` }, 0];
     },
   },
 
@@ -540,10 +500,7 @@ const marksSpec = {
   },
 
   smallCaps: {
-    parseDOM: [
-      { tag: "span.small-caps" },
-      { style: "font-variant=small-caps" },
-    ],
+    parseDOM: [{ tag: "span.small-caps" }, { style: "font-variant=small-caps" }],
     toDOM() {
       return DOMOutput.smallCaps;
     },
@@ -557,10 +514,7 @@ const marksSpec = {
   },
 } as const satisfies Record<string, MarkSpec>;
 
-export const schema = new Schema<
-  keyof typeof nodesSpec,
-  keyof typeof marksSpec
->({
+export const schema = new Schema<keyof typeof nodesSpec, keyof typeof marksSpec>({
   nodes: nodesSpec,
   marks: marksSpec,
 });

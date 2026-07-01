@@ -1,12 +1,7 @@
 import { beforeAll, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { generateKeyBetween } from "jittered-fractional-indexing";
-import {
-  getChildren,
-  orderBetween,
-  orderedEntries,
-  type OrderedTile,
-} from "@/placement/ordering";
+import { getChildren, orderBetween, orderedEntries, type OrderedTile } from "@/placement/ordering";
 
 const a = generateKeyBetween(null, null);
 const b = generateKeyBetween(a, null);
@@ -94,9 +89,7 @@ describe("getChildren", () => {
   });
 
   test("selects the children of a section", () => {
-    expect(getChildren(tiles, "section-1")).toEqual([
-      { id: "child", order: b },
-    ]);
+    expect(getChildren(tiles, "section-1")).toEqual([{ id: "child", order: b }]);
   });
 
   test("returns an empty array when the parent has no children", () => {

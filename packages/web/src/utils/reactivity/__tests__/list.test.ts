@@ -47,13 +47,7 @@ describe("applyListChange", () => {
       ],
     };
 
-    expect(applyToArray(["a", "b", "c", "d", "e"], change)).toEqual([
-      "c",
-      "d",
-      "a",
-      "b",
-      "e",
-    ]);
+    expect(applyToArray(["a", "b", "c", "d", "e"], change)).toEqual(["c", "d", "a", "b", "e"]);
   });
 
   test("passes each move's detached handle to its attach", () => {

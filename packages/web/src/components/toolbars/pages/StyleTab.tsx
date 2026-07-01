@@ -72,19 +72,13 @@ export default function StyleTab({ page }: StyleTabProps) {
   }
 
   function setAlignment(event: Event) {
-    page.alignment.value = (event.currentTarget as ListSelect)
-      .value as HorizontalAlignment;
+    page.alignment.value = (event.currentTarget as ListSelect).value as HorizontalAlignment;
   }
 
   return (
     <toolbar-tab name="style" label="Style">
       <ToolbarGroup label="Style">
-        <FontPicker
-          value={font}
-          onChange={setFont}
-          aria-label="Font"
-          data-tooltip="Font"
-        />
+        <FontPicker value={font} onChange={setFont} aria-label="Font" data-tooltip="Font" />
 
         <ThemePicker
           id="page-theme"
@@ -101,12 +95,7 @@ export default function StyleTab({ page }: StyleTabProps) {
           onChange={setColor}
         />
 
-        <list-select
-          label="Page width"
-          value={page.width}
-          showvalue
-          on:change={setWidth}
-        >
+        <list-select label="Page width" value={page.width} showvalue on:change={setWidth}>
           <SizeIcon slot="default-icon" aria-hidden="true" />
           <ListGroup>
             <ListOption value="32">Standard</ListOption>
@@ -116,29 +105,15 @@ export default function StyleTab({ page }: StyleTabProps) {
           </ListGroup>
         </list-select>
 
-        <list-select
-          label="Alignment"
-          value={page.alignment}
-          showvalue
-          on:change={setAlignment}
-        >
+        <list-select label="Alignment" value={page.alignment} showvalue on:change={setAlignment}>
           <ListGroup>
-            <ListOption
-              icon={<AlignLeftIcon aria-hidden="true" />}
-              value="LEFT"
-            >
+            <ListOption icon={<AlignLeftIcon aria-hidden="true" />} value="LEFT">
               Left
             </ListOption>
-            <ListOption
-              icon={<AlignCenterIcon aria-hidden="true" />}
-              value="CENTER"
-            >
+            <ListOption icon={<AlignCenterIcon aria-hidden="true" />} value="CENTER">
               Center
             </ListOption>
-            <ListOption
-              icon={<AlignRightIcon aria-hidden="true" />}
-              value="RIGHT"
-            >
+            <ListOption icon={<AlignRightIcon aria-hidden="true" />} value="RIGHT">
               Right
             </ListOption>
           </ListGroup>

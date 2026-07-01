@@ -6,10 +6,7 @@ export interface SidebarLayoutProps {
   children: JSX.Node;
 }
 
-export default function SidebarLayout({
-  sidebar,
-  children,
-}: SidebarLayoutProps) {
+export default function SidebarLayout({ sidebar, children }: SidebarLayoutProps) {
   return (
     <main className={styles.main}>
       <section className={styles.sidebar}>{sidebar}</section>

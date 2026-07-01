@@ -7,8 +7,7 @@ export const ChartSeriesType = {
   LINE: "LINE",
   AREA: "AREA",
 } as const;
-export type ChartSeriesType =
-  (typeof ChartSeriesType)[keyof typeof ChartSeriesType];
+export type ChartSeriesType = (typeof ChartSeriesType)[keyof typeof ChartSeriesType];
 
 export interface ChartSeries {
   id: string;

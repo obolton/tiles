@@ -39,9 +39,7 @@ export default class Theme {
     this.border = reactive(data.border);
   }
 
-  private update(
-    properties: Omit<AppRouterInputs["themes"]["update"], "id" | "workspaceId">,
-  ) {
+  private update(properties: Omit<AppRouterInputs["themes"]["update"], "id" | "workspaceId">) {
     return client.themes.update.mutate({
       ...properties,
       workspaceId: this.workspaceId,

@@ -171,9 +171,7 @@ describe("SharedList", () => {
 
     expect(removed.disposed).toBe(true);
     expect(collection.value.map((t) => t.id)).toEqual(["b"]);
-    expect(changes).toEqual([
-      { removed: [{ item: removed, index: 0 }], added: [], moved: [] },
-    ]);
+    expect(changes).toEqual([{ removed: [{ item: removed, index: 0 }], added: [], moved: [] }]);
   });
 
   test("reports only a remove when an entry is moved and removed together", () => {
@@ -188,9 +186,7 @@ describe("SharedList", () => {
 
     expect(removed.disposed).toBe(true);
     expect(collection.value.map((t) => t.id)).toEqual(["b"]);
-    expect(changes).toEqual([
-      { removed: [{ item: removed, index: 0 }], added: [], moved: [] },
-    ]);
+    expect(changes).toEqual([{ removed: [{ item: removed, index: 0 }], added: [], moved: [] }]);
   });
 
   test("reports multiple removes by ascending prior index", () => {
@@ -235,13 +231,7 @@ describe("SharedList", () => {
       map.get("b")!.set("order", "y"); // move "b" just before "a"
     });
 
-    expect(collection.value.map((t) => t.id)).toEqual([
-      "c",
-      "d",
-      "e",
-      "b",
-      "a",
-    ]);
+    expect(collection.value.map((t) => t.id)).toEqual(["c", "d", "e", "b", "a"]);
     expect(change).toEqual({
       removed: [],
       added: [],
@@ -307,12 +297,7 @@ describe("SharedList", () => {
       seed(map, "a-id", "m"); // shares "z-id"'s order
     });
 
-    expect(collection.value.map((t) => t.id)).toEqual([
-      "a",
-      "b",
-      "a-id",
-      "z-id",
-    ]);
+    expect(collection.value.map((t) => t.id)).toEqual(["a", "b", "a-id", "z-id"]);
   });
 
   test("emitted changes replay to reproduce value", () => {
@@ -394,9 +379,7 @@ describe("SharedList", () => {
 
   describe("get", () => {
     test("throws for an unknown id", () => {
-      expect(() => collection.get("unknown")).toThrow(
-        "Item not found: unknown",
-      );
+      expect(() => collection.get("unknown")).toThrow("Item not found: unknown");
     });
   });
 
@@ -413,11 +396,7 @@ describe("SharedList", () => {
   });
 
   describe("sort options", () => {
-    function seedTitled(
-      target: Y.Map<Y.Map<unknown>>,
-      id: string,
-      title?: string,
-    ) {
+    function seedTitled(target: Y.Map<Y.Map<unknown>>, id: string, title?: string) {
       const entry = new Y.Map<unknown>();
       if (title !== undefined) {
         entry.set("title", title);
@@ -451,11 +430,7 @@ describe("SharedList", () => {
       });
 
       // "apple" and "APPLE" compare equal, so the id tiebreak orders them.
-      expect(sorted.value.map((t) => t.id)).toEqual([
-        "lower",
-        "upper",
-        "later",
-      ]);
+      expect(sorted.value.map((t) => t.id)).toEqual(["lower", "upper", "later"]);
     });
 
     test("sorts a missing value first", () => {
@@ -517,9 +492,7 @@ describe("SharedList", () => {
       Y.applyUpdate(docB, Y.encodeStateAsUpdate(docA));
       Y.applyUpdate(docA, Y.encodeStateAsUpdate(docB));
 
-      expect(listA.value.map((t) => t.id)).toEqual(
-        listB.value.map((t) => t.id),
-      );
+      expect(listA.value.map((t) => t.id)).toEqual(listB.value.map((t) => t.id));
       // Equal orders ("b5") resolve by id, deterministically on both clients.
       expect(listA.value.map((t) => t.id)).toEqual(["a", "b", "x", "y", "c"]);
     });

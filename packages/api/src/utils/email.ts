@@ -14,10 +14,7 @@ function getClient() {
   }
 
   assert(process.env.AWS_ACCESS_KEY_ID, "AWS_ACCESS_KEY_ID is required");
-  assert(
-    process.env.AWS_SECRET_ACCESS_KEY,
-    "AWS_SECRET_ACCESS_KEY is required",
-  );
+  assert(process.env.AWS_SECRET_ACCESS_KEY, "AWS_SECRET_ACCESS_KEY is required");
   assert(process.env.AWS_REGION, "AWS_REGION is required");
 
   client = new SESv2Client({

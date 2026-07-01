@@ -15,9 +15,10 @@ const ORDER: SortOptions = { key: "order" };
 /**
  * A reactive list backed by a `Y.Map`, transforming each entry into a model instance, with configurable ordering.
  */
-export default class SharedList<
-  Item extends SharedListItem,
-> extends BaseReactive<readonly Item[], ListChange<Item>> {
+export default class SharedList<Item extends SharedListItem> extends BaseReactive<
+  readonly Item[],
+  ListChange<Item>
+> {
   private readonly instances = new Map<string, Item>();
   private items: readonly Item[] = [];
   private readonly index = new Map<Item, number>();
@@ -251,11 +252,7 @@ export default class SharedList<
 
     const moved = this.pendingMoves.difference(this.pendingAdds);
 
-    if (
-      this.pendingRemoves.size === 0 &&
-      this.pendingAdds.size === 0 &&
-      moved.size === 0
-    ) {
+    if (this.pendingRemoves.size === 0 && this.pendingAdds.size === 0 && moved.size === 0) {
       return;
     }
 

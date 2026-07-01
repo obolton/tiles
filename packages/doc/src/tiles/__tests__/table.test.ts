@@ -42,10 +42,7 @@ describe("buildTableMap", () => {
 
     const columns = orderedEntries(map.get("columns") as Y.Map<Y.Map<unknown>>);
     expect(columns.map((c) => c.id)).toEqual(["col-1", "col-2"]);
-    expect(columns.map((c) => c.map.get("title"))).toEqual([
-      "Month",
-      "Revenue",
-    ]);
+    expect(columns.map((c) => c.map.get("title"))).toEqual(["Month", "Revenue"]);
 
     const rows = orderedEntries(map.get("rows") as Y.Map<Y.Map<unknown>>);
     const cells = rows[0]!.map.get("cells") as Y.Map<unknown>;
@@ -127,9 +124,7 @@ describe("parseTableChanges", () => {
 
     row.map.set("height", 64);
 
-    expect(parseTableChanges(events, "rows")).toEqual([
-      { type: "row", rowId: row.id },
-    ]);
+    expect(parseTableChanges(events, "rows")).toEqual([{ type: "row", rowId: row.id }]);
   });
 
   test("emits a moveRow change for an order edit", () => {
@@ -141,9 +136,7 @@ describe("parseTableChanges", () => {
 
     row.map.set("order", "a5");
 
-    expect(parseTableChanges(events, "rows")).toEqual([
-      { type: "moveRow", rowId: row.id },
-    ]);
+    expect(parseTableChanges(events, "rows")).toEqual([{ type: "moveRow", rowId: row.id }]);
   });
 
   test("emits a column change for a field edit", () => {
@@ -155,9 +148,7 @@ describe("parseTableChanges", () => {
 
     column.map.set("title", "Quarter");
 
-    expect(parseTableChanges(events, "columns")).toEqual([
-      { type: "column", columnId: column.id },
-    ]);
+    expect(parseTableChanges(events, "columns")).toEqual([{ type: "column", columnId: column.id }]);
   });
 
   test("emits a moveColumn change for an order edit", () => {

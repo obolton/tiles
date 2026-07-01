@@ -84,9 +84,7 @@ describe("page cache", () => {
       await initializeCache("user-1", "workspace-1");
       await cachePage({ ...PAGE, id: "page-1" });
       await cachePage({ ...PAGE, id: "page-2" });
-      await cacheTiles("page-1", [
-        { ...TEXT_TILE, id: "tile-a", sectionId: null },
-      ]);
+      await cacheTiles("page-1", [{ ...TEXT_TILE, id: "tile-a", sectionId: null }]);
       await cacheTiles("page-2", [
         { ...TEXT_TILE, id: "tile-b", sectionId: null },
         { ...IMAGE_TILE, id: "tile-c", sectionId: null },
@@ -115,12 +113,8 @@ describe("page cache", () => {
       await initializeCache("user-1", "workspace-1");
       await cachePage({ ...PAGE, id: "page-1" });
       await cachePage({ ...PAGE, id: "page-2" });
-      await cacheTiles("page-1", [
-        { ...TEXT_TILE, id: "tile-a", sectionId: null },
-      ]);
-      await cacheTiles("page-2", [
-        { ...TEXT_TILE, id: "tile-b", sectionId: null },
-      ]);
+      await cacheTiles("page-1", [{ ...TEXT_TILE, id: "tile-a", sectionId: null }]);
+      await cacheTiles("page-2", [{ ...TEXT_TILE, id: "tile-b", sectionId: null }]);
 
       await invalidateCachedPageData("page-1");
 
@@ -130,9 +124,7 @@ describe("page cache", () => {
 
     test("is safe to call for a nonexistent page", async () => {
       await initializeCache("user-1", "workspace-1");
-      await expect(
-        invalidateCachedPageData("nonexistent"),
-      ).resolves.not.toThrow();
+      await expect(invalidateCachedPageData("nonexistent")).resolves.not.toThrow();
     });
   });
 

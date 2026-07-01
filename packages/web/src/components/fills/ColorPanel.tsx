@@ -20,25 +20,18 @@ export interface ColorPanelProps {
   onChange: (value: ColorFill | GradientFill) => void;
 }
 
-export default function ColorPanel({
-  themeColors,
-  value,
-  onChange,
-}: ColorPanelProps) {
+export default function ColorPanel({ themeColors, value, onChange }: ColorPanelProps) {
   const activeColor = reactive<ActiveColor>("A");
 
-  const currentEditingColor = combine(
-    { value, activeColor },
-    ({ value, activeColor }) => {
-      if (value?.type === "color") {
-        return value.color;
-      }
-      if (value?.type === "gradient") {
-        return activeColor === "A" ? value.colorA : value.colorB;
-      }
-      return null;
-    },
-  );
+  const currentEditingColor = combine({ value, activeColor }, ({ value, activeColor }) => {
+    if (value?.type === "color") {
+      return value.color;
+    }
+    if (value?.type === "gradient") {
+      return activeColor === "A" ? value.colorA : value.colorB;
+    }
+    return null;
+  });
 
   function handleGradientChange(direction: GradientFill["direction"] | null) {
     const current = value.value;
@@ -98,9 +91,7 @@ export default function ColorPanel({
         colorA={value.derive((fill) =>
           fill?.type === "color" ? fill.color : (fill?.colorA ?? null),
         )}
-        colorB={value.derive((fill) =>
-          fill?.type === "gradient" ? fill.colorB : null,
-        )}
+        colorB={value.derive((fill) => (fill?.type === "gradient" ? fill.colorB : null))}
         active={activeColor}
         showB={value.derive((fill) => fill?.type === "gradient")}
         onSelect={(selected) => {

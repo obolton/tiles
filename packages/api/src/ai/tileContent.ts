@@ -111,10 +111,7 @@ function getTableContent(tile: Y.Map<unknown>): string {
   }
 
   const headers = columns.map(({ map }) => escapeCell(getString(map, "title")));
-  const lines = [
-    `| ${headers.join(" | ")} |`,
-    `| ${headers.map(() => "---").join(" | ")} |`,
-  ];
+  const lines = [`| ${headers.join(" | ")} |`, `| ${headers.map(() => "---").join(" | ")} |`];
 
   for (const { map } of orderedEntries(rowsMap)) {
     const values = columns.map(({ id }) => formatCell(getCell(map, id)));

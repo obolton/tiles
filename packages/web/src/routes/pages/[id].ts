@@ -12,17 +12,9 @@ import { getPageBodyStyle } from "@/utils/themes";
 import { initializeDoc } from "@/collaboration/doc";
 import { notFound } from "@/router/responses";
 import { DEFAULT_FONT } from "api/config/fonts";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-  RouteMetadata,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<PageProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<PageProps> {
   const pageId = parameters.id;
 
   if (!pageId) {
@@ -44,9 +36,7 @@ async function loader({
   pageFonts.delete(DEFAULT_FONT);
 
   return {
-    headers: page.published
-      ? { "Cache-Control": CACHE_CONTROL_VALUE }
-      : undefined,
+    headers: page.published ? { "Cache-Control": CACHE_CONTROL_VALUE } : undefined,
     title: `${page.title} - Tiles`,
     bodyAttributes: {
       "data-page-id": page.id,

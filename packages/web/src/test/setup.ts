@@ -31,9 +31,7 @@ HTMLElement.prototype.showPopover = function () {
     return;
   }
   this.setAttribute("open", "");
-  this.dispatchEvent(
-    new ToggleEvent("toggle", { oldState: "closed", newState: "open" }),
-  );
+  this.dispatchEvent(new ToggleEvent("toggle", { oldState: "closed", newState: "open" }));
 };
 
 HTMLElement.prototype.hidePopover = function () {
@@ -44,9 +42,7 @@ HTMLElement.prototype.hidePopover = function () {
     return;
   }
   this.removeAttribute("open");
-  this.dispatchEvent(
-    new ToggleEvent("toggle", { oldState: "open", newState: "closed" }),
-  );
+  this.dispatchEvent(new ToggleEvent("toggle", { oldState: "open", newState: "closed" }));
 };
 
 Object.defineProperty(ElementInternals.prototype, "states", {

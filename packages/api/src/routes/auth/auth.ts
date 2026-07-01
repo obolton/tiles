@@ -13,11 +13,7 @@ type SendWelcomeEmailOptions = {
   email: string;
 };
 
-async function sendWelcomeEmail({
-  userId,
-  name,
-  email,
-}: SendWelcomeEmailOptions) {
+async function sendWelcomeEmail({ userId, name, email }: SendWelcomeEmailOptions) {
   try {
     await sendEmail(email, signUpEmail({ id: userId, name }));
   } catch (error) {

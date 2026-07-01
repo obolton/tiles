@@ -88,11 +88,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
           <div>
             {imageUrl.derive((url) =>
               url ? (
-                <img
-                  className={styles.image}
-                  src={imageUrl}
-                  alt="The generated image"
-                />
+                <img className={styles.image} src={imageUrl} alt="The generated image" />
               ) : (
                 <Placeholder className={styles.placeholder} />
               ),

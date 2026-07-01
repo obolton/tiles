@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Profile, { type ProfileProps } from "@/pages/settings/Profile";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<ProfileProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<ProfileProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
     return notFound();
@@ -50,6 +43,5 @@ export default {
   loader,
   component: Profile,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<ProfileProps>;

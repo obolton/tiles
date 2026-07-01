@@ -36,12 +36,7 @@ function renderPlaceholder(query: string) {
   );
 }
 
-export default function Trash({
-  workspace,
-  folders,
-  pages: initialPages,
-  user,
-}: TrashProps) {
+export default function Trash({ workspace, folders, pages: initialPages, user }: TrashProps) {
   const query = reactive("");
   const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
   const pages = reactive(initialPages.pages);
@@ -78,13 +73,7 @@ export default function Trash({
       }
     >
       <SidebarLayout
-        sidebar={
-          <Sidebar
-            workspace={workspace}
-            folders={folders}
-            selectedFolderId="TRASH"
-          />
-        }
+        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="TRASH" />}
       >
         <If condition={pages.derive((p) => p.length > 0)}>
           <aside className={styles.aside}>

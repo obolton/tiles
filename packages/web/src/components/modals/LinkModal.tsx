@@ -14,9 +14,7 @@ import type { PageLinkTile } from "doc/types/tiles";
 
 type LinkedPage = NonNullable<PageLinkTile["linkedPage"]>;
 
-export type LinkModalResult =
-  | { linkedPage: LinkedPage }
-  | { url: string | null };
+export type LinkModalResult = { linkedPage: LinkedPage } | { url: string | null };
 
 export interface LinkModalProps extends ModalProps<LinkModalResult> {
   workspaceId: string;
@@ -40,12 +38,11 @@ export default function LinkModal({
 
   const search = async (query: string, cursor: string | null) => {
     try {
-      const { pages: resultPages, nextCursor: resultNextCursor } =
-        await client.pages.list.query({
-          workspaceId,
-          query: query || undefined,
-          cursor: cursor ?? undefined,
-        });
+      const { pages: resultPages, nextCursor: resultNextCursor } = await client.pages.list.query({
+        workspaceId,
+        query: query || undefined,
+        cursor: cursor ?? undefined,
+      });
       if (!cursor) {
         pages.value = resultPages;
       } else {
@@ -168,9 +165,7 @@ export default function LinkModal({
               results={pages}
               nextCursor={nextCursor}
               query={query}
-              render={(page) =>
-                page.id === pageId ? null : <LibraryCard page={page} />
-              }
+              render={(page) => (page.id === pageId ? null : <LibraryCard page={page} />)}
               renderPlaceholder={() => <p>There are no results.</p>}
             />
           </section>

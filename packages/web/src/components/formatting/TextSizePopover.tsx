@@ -12,12 +12,7 @@ export interface TextSizePopoverProps extends Omit<
   onChange: (value: number) => void;
 }
 
-export default function TextSizePopover({
-  id,
-  value,
-  onChange,
-  ...props
-}: TextSizePopoverProps) {
+export default function TextSizePopover({ id, value, onChange, ...props }: TextSizePopoverProps) {
   return (
     <anchored-popover {...props} id={id} className={styles.popover}>
       <Stepper

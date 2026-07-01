@@ -6,10 +6,7 @@ export interface HighlightedSpan {
   className: string | null;
 }
 
-export async function highlight(
-  code: string,
-  language: string,
-): Promise<HighlightedSpan[]> {
+export async function highlight(code: string, language: string): Promise<HighlightedSpan[]> {
   const languageSupport = await loadLanguage(language);
 
   if (!languageSupport?.language) {

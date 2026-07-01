@@ -1,11 +1,7 @@
 import { describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { EditorState, TextSelection } from "prosemirror-state";
-import {
-  ySyncPlugin,
-  prosemirrorToYXmlFragment,
-  initProseMirrorDoc,
-} from "y-prosemirror";
+import { ySyncPlugin, prosemirrorToYXmlFragment, initProseMirrorDoc } from "y-prosemirror";
 import { schema } from "@/utils/richText/schema";
 import { decodeSelection } from "doc/richText/selection";
 import { serializeSelection } from "../selection";

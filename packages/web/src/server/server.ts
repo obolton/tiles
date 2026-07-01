@@ -12,11 +12,7 @@ import type { RouteMetadata, RouteMatch, APIRoute } from "@/router/router";
 
 const router = getRouter();
 
-function inspectModuleStylesheets(
-  module: ModuleNode,
-  stylesheets: string[],
-  seen: Set<string>,
-) {
+function inspectModuleStylesheets(module: ModuleNode, stylesheets: string[], seen: Set<string>) {
   const id = module.id;
   if (!id || seen.has(id)) {
     return;
@@ -30,10 +26,7 @@ function inspectModuleStylesheets(
   }
 }
 
-async function collectStylesheets(
-  moduleUrl: string,
-  viteDevServer?: ViteDevServer,
-) {
+async function collectStylesheets(moduleUrl: string, viteDevServer?: ViteDevServer) {
   const stylesheets: string[] = [];
   const seen = new Set<string>();
   const module = await viteDevServer?.moduleGraph.getModuleByUrl(moduleUrl);
@@ -64,12 +57,7 @@ interface PageStartChunkOptions {
   hydrate?: "immediate" | "deferred" | null;
 }
 
-function getPageStartChunk({
-  stylesheets,
-  metadata,
-  title,
-  hydrate,
-}: PageStartChunkOptions) {
+function getPageStartChunk({ stylesheets, metadata, title, hydrate }: PageStartChunkOptions) {
   let chunk = "<!doctype html><html><head>";
   chunk += tag("meta", { charset: "utf-8" });
 
@@ -213,18 +201,9 @@ async function renderRoute(
     return loaderResult;
   }
 
-  const {
-    headers = {},
-    bodyAttributes = {},
-    metadata: loaderMetadata,
-    data,
-  } = loaderResult ?? {};
+  const { headers = {}, bodyAttributes = {}, metadata: loaderMetadata, data } = loaderResult ?? {};
 
-  const mergedMetadata = mergeRouteMetadata(
-    globalMetadata,
-    metadata,
-    loaderMetadata ?? {},
-  );
+  const mergedMetadata = mergeRouteMetadata(globalMetadata, metadata, loaderMetadata ?? {});
 
   const resources: LinkResource[] = [
     ...stylesheets.map((href) => ({ href, type: "style" as const })),
@@ -274,10 +253,7 @@ async function renderRoute(
   });
 }
 
-export default async function respond(
-  request: Request,
-  viteDevServer?: ViteDevServer,
-) {
+export default async function respond(request: Request, viteDevServer?: ViteDevServer) {
   const url = new URL(request.url);
   const route = router.match(url.pathname);
 

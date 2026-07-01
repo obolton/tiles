@@ -8,7 +8,5 @@ interface ModalFooterProps {
 }
 
 export default function ModalFooter({ className, children }: ModalFooterProps) {
-  return (
-    <footer className={classNames(styles.footer, className)}>{children}</footer>
-  );
+  return <footer className={classNames(styles.footer, className)}>{children}</footer>;
 }

@@ -200,12 +200,8 @@ describe("getComplementaryColor", () => {
     const dark = formatColor(oklchToP3({ l: 0.3, c: 0.1, h: 120 }));
     const light = formatColor(oklchToP3({ l: 0.8, c: 0.1, h: 120 }));
 
-    const darkComplementary = p3ToOklch(
-      parseColor(getComplementaryColor(dark)),
-    );
-    const lightComplementary = p3ToOklch(
-      parseColor(getComplementaryColor(light)),
-    );
+    const darkComplementary = p3ToOklch(parseColor(getComplementaryColor(dark)));
+    const lightComplementary = p3ToOklch(parseColor(getComplementaryColor(light)));
 
     expect(darkComplementary.l).toBeCloseTo(0.3, 1);
     expect(lightComplementary.l).toBeCloseTo(0.8, 1);

@@ -1,9 +1,5 @@
 import prisma from "@/database/prisma";
-import type {
-  CreateImageSchema,
-  UpdateImageSchema,
-  DeleteImageSchema,
-} from "./schema";
+import type { CreateImageSchema, UpdateImageSchema, DeleteImageSchema } from "./schema";
 import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { IMAGE_FIELDS } from "./fields";
 

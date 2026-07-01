@@ -24,9 +24,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class FilmstripView extends HTMLElement {
-  static readonly observedAttributes: (keyof FilmstripViewAttributes)[] = [
-    "allowdrag",
-  ] as const;
+  static readonly observedAttributes: (keyof FilmstripViewAttributes)[] = ["allowdrag"] as const;
 
   private internals: ElementInternals;
   private abortController?: AbortController;
@@ -71,11 +69,7 @@ export default class FilmstripView extends HTMLElement {
     this.detachDrag();
   }
 
-  attributeChangedCallback(
-    name: string,
-    _oldValue: string | null,
-    newValue: string | null,
-  ) {
+  attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null) {
     if (name === "allowdrag") {
       if (newValue !== null) {
         this.attachDrag();
@@ -132,10 +126,7 @@ export default class FilmstripView extends HTMLElement {
 
   private handleIntersect(entries: IntersectionObserverEntry[]) {
     for (const entry of entries) {
-      if (
-        !entry.isIntersecting ||
-        entry.intersectionRatio <= ACTIVE_THRESHOLD
-      ) {
+      if (!entry.isIntersecting || entry.intersectionRatio <= ACTIVE_THRESHOLD) {
         continue;
       }
 
@@ -194,9 +185,7 @@ export default class FilmstripView extends HTMLElement {
       return;
     }
 
-    const next = this.querySelector<HTMLElement>(
-      `[aria-controls="${CSS.escape(slideId)}"]`,
-    );
+    const next = this.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(slideId)}"]`);
 
     if (next) {
       next.ariaSelected = "true";

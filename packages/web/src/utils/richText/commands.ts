@@ -1,11 +1,7 @@
 import { toggleMark, wrapIn, lift } from "prosemirror-commands";
 import { liftListItem, wrapRangeInList } from "prosemirror-schema-list";
 import { schema, type TextAlignment } from "./schema";
-import {
-  closest,
-  getSelectionHeadingLevel,
-  getSelectionBlockNodeTypes,
-} from "./helpers";
+import { closest, getSelectionHeadingLevel, getSelectionBlockNodeTypes } from "./helpers";
 import { MAX_INDENT } from "@/constants/formatting";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
@@ -127,16 +123,11 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
       const tr = state.tr;
       const selection = tr.selection;
       for (const range of selection.ranges) {
-        tr.setBlockType(
-          range.$from.pos,
-          range.$to.pos,
-          schema.nodes.paragraph,
-          (oldNode) => ({
-            align: oldNode.attrs.align as TextAlignment | undefined,
-            lineHeight: oldNode.attrs.lineHeight as number | undefined,
-            indent: oldNode.attrs.indent as number | undefined,
-          }),
-        );
+        tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.paragraph, (oldNode) => ({
+          align: oldNode.attrs.align as TextAlignment | undefined,
+          lineHeight: oldNode.attrs.lineHeight as number | undefined,
+          indent: oldNode.attrs.indent as number | undefined,
+        }));
       }
       if (dispatch) {
         dispatch(tr);
@@ -150,15 +141,10 @@ export function toggleHeading(level: 1 | 2 | 3): Command {
       const tr = view.state.tr;
       const selection = tr.selection;
       for (const range of selection.ranges) {
-        tr.setBlockType(
-          range.$from.pos,
-          range.$to.pos,
-          schema.nodes.heading,
-          (oldNode) => ({
-            ...oldNode.attrs,
-            level,
-          }),
-        );
+        tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.heading, (oldNode) => ({
+          ...oldNode.attrs,
+          level,
+        }));
       }
       if (dispatch) {
         dispatch(tr);
@@ -172,15 +158,10 @@ export const resetBlockFormat: Command = (state, dispatch) => {
   const tr = state.tr;
   const selection = tr.selection;
   for (const range of selection.ranges) {
-    tr.setBlockType(
-      range.$from.pos,
-      range.$to.pos,
-      schema.nodes.paragraph,
-      (oldNode) => ({
-        align: oldNode.attrs.align as TextAlignment | undefined,
-        lineHeight: oldNode.attrs.lineHeight as number | undefined,
-      }),
-    );
+    tr.setBlockType(range.$from.pos, range.$to.pos, schema.nodes.paragraph, (oldNode) => ({
+      align: oldNode.attrs.align as TextAlignment | undefined,
+      lineHeight: oldNode.attrs.lineHeight as number | undefined,
+    }));
   }
   if (dispatch) {
     dispatch(tr);
@@ -197,9 +178,7 @@ const listNodeTypes = new Set([
 export function toggleList(nodeType: NodeType): Command {
   return function (state, dispatch, view) {
     const { selection } = state;
-    const list = closest(selection.$from, (node) =>
-      listNodeTypes.has(node.type),
-    );
+    const list = closest(selection.$from, (node) => listNodeTypes.has(node.type));
     if (list) {
       if (list.node.type === nodeType) {
         return liftListItem(schema.nodes.list_item)(state, dispatch, view);
@@ -209,22 +188,12 @@ export function toggleList(nodeType: NodeType): Command {
       }
     } else {
       const tr = state.tr;
-      tr.setBlockType(
-        tr.selection.from,
-        tr.selection.to,
-        schema.nodes.paragraph,
-        null,
-      );
+      tr.setBlockType(tr.selection.from, tr.selection.to, schema.nodes.paragraph, null);
       const range = tr.selection.$from.blockRange(tr.selection.$to);
       if (!range) {
         return false;
       }
-      const canWrap = wrapRangeInList(
-        dispatch ? tr : null,
-        range,
-        nodeType,
-        null,
-      );
+      const canWrap = wrapRangeInList(dispatch ? tr : null, range, nodeType, null);
       if (!canWrap) {
         return false;
       }
@@ -242,10 +211,7 @@ export const toggleCheckList = toggleList(schema.nodes.check_list);
 
 export function unwrap(nodeType: NodeType): Command {
   return function (state, dispatch) {
-    const resolved = closest(
-      state.selection.$from,
-      (node) => node.type === nodeType,
-    );
+    const resolved = closest(state.selection.$from, (node) => node.type === nodeType);
 
     if (!resolved) {
       return false;
@@ -263,10 +229,7 @@ export function unwrap(nodeType: NodeType): Command {
 
 export function deleteNode(nodeType: NodeType): Command {
   return function (state, dispatch) {
-    const resolved = closest(
-      state.selection.$from,
-      (node) => node.type === nodeType,
-    );
+    const resolved = closest(state.selection.$from, (node) => node.type === nodeType);
 
     if (!resolved) {
       return false;
@@ -355,20 +318,13 @@ export function setCodeBlockLanguage(language: string): Command {
 }
 
 export const toggleCodeBlockLineNumbers: Command = (state, dispatch) => {
-  const codeBlock = closest(
-    state.selection.$from,
-    (node) => node.type === schema.nodes.codeBlock,
-  );
+  const codeBlock = closest(state.selection.$from, (node) => node.type === schema.nodes.codeBlock);
   if (!codeBlock) {
     return false;
   }
   if (dispatch) {
     dispatch(
-      state.tr.setNodeAttribute(
-        codeBlock.pos,
-        "lineNumbers",
-        !codeBlock.node.attrs.lineNumbers,
-      ),
+      state.tr.setNodeAttribute(codeBlock.pos, "lineNumbers", !codeBlock.node.attrs.lineNumbers),
     );
   }
   return true;
@@ -422,9 +378,7 @@ export function insertDropdown(dropdownType: string, value: string): Command {
   return function (state, dispatch) {
     if (dispatch) {
       dispatch(
-        state.tr.replaceSelectionWith(
-          schema.nodes.dropdown.create({ dropdownType, value }),
-        ),
+        state.tr.replaceSelectionWith(schema.nodes.dropdown.create({ dropdownType, value })),
       );
     }
     return true;
@@ -434,11 +388,7 @@ export function insertDropdown(dropdownType: string, value: string): Command {
 export function insertMention(userId: string, displayName: string): Command {
   return function (state, dispatch) {
     if (dispatch) {
-      dispatch(
-        state.tr.replaceSelectionWith(
-          schema.nodes.mention.create({ userId, displayName }),
-        ),
-      );
+      dispatch(state.tr.replaceSelectionWith(schema.nodes.mention.create({ userId, displayName })));
     }
     return true;
   };
@@ -475,9 +425,7 @@ export const togglePrompt: Command = (state, dispatch, view) => {
 export const openMentionPicker: Command = (state, dispatch) => {
   if (dispatch) {
     const { from } = state.selection;
-    dispatch(
-      state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: from } as MentionMeta),
-    );
+    dispatch(state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: from } as MentionMeta));
   }
   return true;
 };

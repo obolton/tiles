@@ -93,13 +93,7 @@ export async function listFolders(
 }
 
 export async function listPages(
-  {
-    id,
-    query,
-    cursor,
-    sortBy = "updatedAt",
-    sortDirection = "desc",
-  }: ListPagesSchema,
+  { id, query, cursor, sortBy = "updatedAt", sortDirection = "desc" }: ListPagesSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.$transaction(async (transaction) => {

@@ -134,9 +134,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
       return;
     }
 
-    const dropdown = Editor.current.page.dropdowns.value.find(
-      (d) => d.id === this.dropdownType,
-    );
+    const dropdown = Editor.current.page.dropdowns.value.find((d) => d.id === this.dropdownType);
     if (!dropdown) {
       return;
     }
@@ -213,9 +211,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     // Selection change (from FilterSelect)
     const selectedValue = this.editor.value;
     if (selectedValue) {
-      this.view.dispatch(
-        this.view.state.tr.setNodeAttribute(pos, "value", selectedValue),
-      );
+      this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "value", selectedValue));
       this.close();
       return;
     }
@@ -225,9 +221,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
     if (newValue) {
       dropdown.addOption(newValue);
       this.populateOptions(dropdown);
-      this.view.dispatch(
-        this.view.state.tr.setNodeAttribute(pos, "value", newValue),
-      );
+      this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "value", newValue));
       this.close();
     }
   }

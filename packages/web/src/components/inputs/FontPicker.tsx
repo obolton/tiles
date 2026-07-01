@@ -14,17 +14,12 @@ export interface FontPickerProps extends JSX.Attributes<"list-select"> {
   onChange: (value: FontId) => void;
 }
 
-export default function FontPicker({
-  value,
-  onChange,
-  ...props
-}: FontPickerProps) {
+export default function FontPicker({ value, onChange, ...props }: FontPickerProps) {
   if (!import.meta.env.SSR) {
     loadFontPreviews(...FONT_IDS).catch(handleError);
   }
 
-  const setFont = (event: Event) =>
-    void onChange((event.target as ListSelect).value as FontId);
+  const setFont = (event: Event) => void onChange((event.target as ListSelect).value as FontId);
 
   return (
     <list-select

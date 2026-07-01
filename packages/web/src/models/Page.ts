@@ -73,10 +73,7 @@ export default class Page {
   }
 
   /** The docked tiles per edge, as controller-maintained views. */
-  get dockedTiles(): Record<
-    "TOP" | "LEFT" | "RIGHT" | "BOTTOM",
-    TileCollection
-  > {
+  get dockedTiles(): Record<"TOP" | "LEFT" | "RIGHT" | "BOTTOM", TileCollection> {
     return {
       TOP: this.placement.getCollection(dockParentId("TOP")),
       LEFT: this.placement.getCollection(dockParentId("LEFT")),
@@ -102,9 +99,8 @@ export default class Page {
     this.font = this.metadataBinding.field("font", null);
     this.width = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
     this.alignment = this.metadataBinding.field("alignment", "CENTER");
-    this.theme = combine(
-      { id: this.themeId, themes: this.themes },
-      ({ id, themes }) => (id ? (themes.get(id) ?? null) : null),
+    this.theme = combine({ id: this.themeId, themes: this.themes }, ({ id, themes }) =>
+      id ? (themes.get(id) ?? null) : null,
     );
     this.dockSizes = {
       TOP: this.metadataBinding.field("dockTop", DEFAULT_DOCK_SIZE),
@@ -170,9 +166,7 @@ export default class Page {
       pageId: this.id,
       userId,
     });
-    this.access.value = this.access.value.filter(
-      (access) => access.user.id !== userId,
-    );
+    this.access.value = this.access.value.filter((access) => access.user.id !== userId);
   }
 
   getTile(id: string): Tile;

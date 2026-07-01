@@ -12,10 +12,7 @@ describe("Text", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
 
   function createText(overrides: Partial<CreateTextInput> = {}): Text {
-    return editor.page.createTile(
-      Text.createMap({ ...TEXT_PROPS, ...overrides }),
-      {},
-    ) as Text;
+    return editor.page.createTile(Text.createMap({ ...TEXT_PROPS, ...overrides }), {}) as Text;
   }
 
   test("maps properties to reactive values", () => {

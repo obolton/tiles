@@ -15,13 +15,7 @@ export interface MapPinProps {
   signal?: AbortSignal;
 }
 
-export default function MapPin({
-  tile,
-  editor,
-  tabindex,
-  resize,
-  signal,
-}: MapPinProps) {
+export default function MapPin({ tile, editor, tabindex, resize, signal }: MapPinProps) {
   const imageUrl = tile instanceof ImageModel ? tile.imageUrl : null;
   function onPointerDown(event: PointerEvent) {
     if (event.button !== PRIMARY_MOUSE_BUTTON) {
@@ -46,18 +40,9 @@ export default function MapPin({
       long={tile.coordinates.derive((c) => c?.long ?? null)}
       on:pointerdown={onPointerDown}
     >
-      <div
-        ref={handleRef}
-        className={styles.handle}
-        on:dnd-dragstart={onDragStart}
-      >
+      <div ref={handleRef} className={styles.handle} on:dnd-dragstart={onDragStart}>
         {imageUrl ? (
-          <img
-            className={styles.image}
-            src={imageUrl}
-            alt=""
-            draggable="false"
-          />
+          <img className={styles.image} src={imageUrl} alt="" draggable="false" />
         ) : (
           <span className={styles.dot} />
         )}

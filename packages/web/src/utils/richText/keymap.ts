@@ -1,9 +1,5 @@
 import { toggleMark } from "prosemirror-commands";
-import {
-  splitListItem,
-  liftListItem,
-  sinkListItem,
-} from "prosemirror-schema-list";
+import { splitListItem, liftListItem, sinkListItem } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
 import { schema } from "./schema";
 import { togglePrompt, indent, outdent } from "./commands";

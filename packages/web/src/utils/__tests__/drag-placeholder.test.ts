@@ -35,14 +35,8 @@ describe("createDragPlaceholder", () => {
       height: 150,
       rowSpan: 2,
     });
-    expect(withDimensions.style.getPropertyValue("--placeholder-width")).toBe(
-      "200",
-    );
-    expect(withDimensions.style.getPropertyValue("--placeholder-height")).toBe(
-      "150",
-    );
-    expect(withDimensions.style.getPropertyValue("--placeholder-rows")).toBe(
-      "2",
-    );
+    expect(withDimensions.style.getPropertyValue("--placeholder-width")).toBe("200");
+    expect(withDimensions.style.getPropertyValue("--placeholder-height")).toBe("150");
+    expect(withDimensions.style.getPropertyValue("--placeholder-rows")).toBe("2");
   });
 });

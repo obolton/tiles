@@ -162,9 +162,7 @@ describe("toCSSProperties", () => {
       codeFont: null,
       borderColor: null,
     });
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 0.5000 0.5000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 0.5000 0.5000)");
   });
 
   test("converts text color to CSS custom property", () => {
@@ -177,9 +175,7 @@ describe("toCSSProperties", () => {
       codeFont: null,
       borderColor: null,
     });
-    expect(result["--text-color"]).toBe(
-      "color(display-p3 0.0000 0.0000 0.0000)",
-    );
+    expect(result["--text-color"]).toBe("color(display-p3 0.0000 0.0000 0.0000)");
   });
 
   test("converts accent color to CSS custom property", () => {
@@ -192,9 +188,7 @@ describe("toCSSProperties", () => {
       codeFont: null,
       borderColor: null,
     });
-    expect(result["--accent-color"]).toBe(
-      "color(display-p3 0.0000 1.0000 1.0000)",
-    );
+    expect(result["--accent-color"]).toBe("color(display-p3 0.0000 1.0000 1.0000)");
   });
 
   test("includes font as CSS custom property", () => {
@@ -246,9 +240,7 @@ describe("toCSSProperties", () => {
       codeFont: null,
       borderColor: "ffff00000000",
     });
-    expect(result["--border-color"]).toBe(
-      "color(display-p3 1.0000 0.0000 0.0000)",
-    );
+    expect(result["--border-color"]).toBe("color(display-p3 1.0000 0.0000 0.0000)");
   });
 
   test("omits properties with null values", () => {
@@ -293,21 +285,15 @@ describe("toCSSProperties", () => {
 describe("getThemeStyles", () => {
   test("returns CSS properties from theme", () => {
     const result = getThemeStyles(THEME, {});
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 1.0000 1.0000)",
-    );
-    expect(result["--text-color"]).toBe(
-      "color(display-p3 0.0000 0.0000 0.0000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 1.0000 1.0000)");
+    expect(result["--text-color"]).toBe("color(display-p3 0.0000 0.0000 0.0000)");
   });
 
   test("applies overrides", () => {
     const result = getThemeStyles(THEME, {
       background: { type: "color", color: "ffff80008000" },
     });
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 0.5000 0.5000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 0.5000 0.5000)");
   });
 });
 
@@ -376,12 +362,8 @@ describe("getPageBodyStyle", () => {
     const doc = docWithTheme();
     const result = getPageBodyStyle(doc);
 
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 1.0000 1.0000)",
-    );
-    expect(result["--text-color"]).toBe(
-      "color(display-p3 0.0000 0.0000 0.0000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 1.0000 1.0000)");
+    expect(result["--text-color"]).toBe("color(display-p3 0.0000 0.0000 0.0000)");
   });
 
   test("doc backgroundColor metadata overrides the theme background", () => {
@@ -389,9 +371,7 @@ describe("getPageBodyStyle", () => {
     doc.getMap("metadata").set("backgroundColor", "ffff80008000");
     const result = getPageBodyStyle(doc);
 
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 0.5000 0.5000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 0.5000 0.5000)");
   });
 
   test("doc font metadata overrides the theme body font", () => {
@@ -418,9 +398,7 @@ describe("getPageBodyStyle", () => {
     doc.getMap("metadata").set("font", "inter");
     const result = getPageBodyStyle(doc);
 
-    expect(result["--background"]).toBe(
-      "color(display-p3 1.0000 0.5000 0.5000)",
-    );
+    expect(result["--background"]).toBe("color(display-p3 1.0000 0.5000 0.5000)");
     expect(result["--font"]).toBe('"Inter", sans-serif');
   });
 });

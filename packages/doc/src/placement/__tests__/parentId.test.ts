@@ -1,10 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  DOCK_PARENT_PREFIX,
-  dockParentId,
-  parseParentId,
-  toParentId,
-} from "@/placement/parentId";
+import { DOCK_PARENT_PREFIX, dockParentId, parseParentId, toParentId } from "@/placement/parentId";
 
 describe("dockParentId", () => {
   test("prefixes the edge", () => {

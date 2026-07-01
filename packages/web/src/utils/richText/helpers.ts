@@ -22,10 +22,7 @@ export function closest(
   return null;
 }
 
-export function findInSelection(
-  state: EditorState,
-  predicate: (node: Node) => boolean,
-) {
+export function findInSelection(state: EditorState, predicate: (node: Node) => boolean) {
   const {
     selection: { from, to },
   } = state;
@@ -61,9 +58,7 @@ export function getSelectionMarks(state: EditorState) {
 }
 
 export function getSelectionBlockNodeTypes(state: EditorState): Set<NodeType> {
-  return new Set(
-    findInSelection(state, (node) => node.isBlock).map((node) => node.type),
-  );
+  return new Set(findInSelection(state, (node) => node.isBlock).map((node) => node.type));
 }
 
 export function getSelectionHeadingLevel(state: EditorState): number | null {
@@ -82,10 +77,7 @@ export function findMark(node: Node, markType: MarkType) {
 }
 
 export function getLink(state: EditorState) {
-  return closest(
-    state.selection.$from,
-    (node) => node.type === schema.nodes.link,
-  );
+  return closest(state.selection.$from, (node) => node.type === schema.nodes.link);
 }
 
 export interface CodeBlockAttrs {
@@ -94,10 +86,7 @@ export interface CodeBlockAttrs {
 }
 
 export function getCodeBlockAttrs(state: EditorState): CodeBlockAttrs | null {
-  const codeBlock = closest(
-    state.selection.$from,
-    (node) => node.type === schema.nodes.codeBlock,
-  );
+  const codeBlock = closest(state.selection.$from, (node) => node.type === schema.nodes.codeBlock);
   if (!codeBlock) {
     return null;
   }
@@ -107,25 +96,20 @@ export function getCodeBlockAttrs(state: EditorState): CodeBlockAttrs | null {
   };
 }
 
-export function getSelectionAlignment(
-  state: EditorState,
-): TextAlignment | undefined {
+export function getSelectionAlignment(state: EditorState): TextAlignment | undefined {
   const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
-  return textBlock
-    ? (textBlock.node.attrs.align as TextAlignment | undefined)
-    : undefined;
+  return textBlock ? (textBlock.node.attrs.align as TextAlignment | undefined) : undefined;
 }
 
 export function getSelectionLineHeight(state: EditorState): number | undefined {
   const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
-  return textBlock
-    ? (textBlock.node.attrs.lineHeight as number | undefined)
-    : undefined;
+  return textBlock ? (textBlock.node.attrs.lineHeight as number | undefined) : undefined;
 }
 
 export function getSelectionIndent(state: EditorState): number | undefined {
-  return closest(state.selection.$from, (node) => node.isTextblock)?.node.attrs
-    .indent as number | undefined;
+  return closest(state.selection.$from, (node) => node.isTextblock)?.node.attrs.indent as
+    | number
+    | undefined;
 }
 
 export function isInList(state: EditorState): boolean {
@@ -146,11 +130,7 @@ export function getSelectionList(state: EditorState): ListType | null {
   return null;
 }
 
-export function getMarkRange(
-  state: EditorState,
-  pos: number,
-  markType: MarkType,
-) {
+export function getMarkRange(state: EditorState, pos: number, markType: MarkType) {
   const doc = state.doc;
   let from = pos;
   let to = pos;

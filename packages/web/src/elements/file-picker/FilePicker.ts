@@ -18,9 +18,7 @@ declare module "@/jsx/html-attributes" {
 }
 
 export default class FilePicker extends HTMLElement {
-  static observedAttributes: (keyof FilePickerAttributes)[] = [
-    "accept",
-  ] as const;
+  static observedAttributes: (keyof FilePickerAttributes)[] = ["accept"] as const;
 
   private readonly internals: ElementInternals;
 
@@ -61,12 +59,8 @@ export default class FilePicker extends HTMLElement {
           this.shadowRoot?.querySelector("input")?.removeAttribute("accept");
           this.acceptContentTypes = undefined;
         } else {
-          this.shadowRoot
-            ?.querySelector("input")
-            ?.setAttribute("accept", value);
-          this.acceptContentTypes = new Set(
-            value.split(",").map((type) => type.trim()),
-          );
+          this.shadowRoot?.querySelector("input")?.setAttribute("accept", value);
+          this.acceptContentTypes = new Set(value.split(",").map((type) => type.trim()));
         }
         break;
     }
@@ -107,10 +101,7 @@ export default class FilePicker extends HTMLElement {
       return;
     }
 
-    const item = getAcceptableDragItem(
-      event.dataTransfer,
-      this.acceptContentTypes,
-    );
+    const item = getAcceptableDragItem(event.dataTransfer, this.acceptContentTypes);
 
     if (!item) {
       return;
@@ -136,10 +127,7 @@ export default class FilePicker extends HTMLElement {
       return;
     }
 
-    const file = getAcceptableDragItem(
-      event.dataTransfer,
-      this.acceptContentTypes,
-    )?.getAsFile();
+    const file = getAcceptableDragItem(event.dataTransfer, this.acceptContentTypes)?.getAsFile();
 
     if (!file) {
       return;

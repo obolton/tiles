@@ -10,11 +10,7 @@ export interface InsertButtonProps extends JSX.Attributes<"button"> {
   id: string;
 }
 
-export default function InsertButton({
-  id,
-  classList,
-  ...props
-}: InsertButtonProps) {
+export default function InsertButton({ id, classList, ...props }: InsertButtonProps) {
   return (
     <>
       <button

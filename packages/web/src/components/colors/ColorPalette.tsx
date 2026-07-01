@@ -122,9 +122,7 @@ export default function ColorPalette({
         checked.checked = false;
       }
     } else {
-      const input = fieldset.querySelector<HTMLInputElement>(
-        `input[value="${color}"]`,
-      );
+      const input = fieldset.querySelector<HTMLInputElement>(`input[value="${color}"]`);
       if (input) {
         input.checked = true;
       }
@@ -165,11 +163,7 @@ export default function ColorPalette({
             row={`palette ${Math.floor(i / columns) + 1}`}
           />
         ) : (
-          <ColorSwatch
-            color={item.color}
-            name={item.name}
-            checked={isChecked(item.color)}
-          />
+          <ColorSwatch color={item.color} name={item.name} checked={isChecked(item.color)} />
         ),
       )}
     </fieldset>

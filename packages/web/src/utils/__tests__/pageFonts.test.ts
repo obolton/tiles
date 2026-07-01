@@ -29,10 +29,7 @@ function addTile(doc: Y.Doc, id: string, map: Y.Map<unknown>): void {
 function addTextTile(doc: Y.Doc, id: string, content: RichText): void {
   const map = Text.createMap({});
   addTile(doc, id, map);
-  prosemirrorToYXmlFragment(
-    deserialize(content),
-    map.get("content") as Y.XmlFragment,
-  );
+  prosemirrorToYXmlFragment(deserialize(content), map.get("content") as Y.XmlFragment);
 }
 
 function fontParagraph(font: string): RichText {
@@ -57,9 +54,7 @@ describe("getPageFonts", () => {
   });
 
   test("includes all three fonts of a theme snapshot", () => {
-    expect(getPageFonts(createDoc([THEME]))).toEqual(
-      new Set(["lora", "inter", "jetbrains-mono"]),
-    );
+    expect(getPageFonts(createDoc([THEME]))).toEqual(new Set(["lora", "inter", "jetbrains-mono"]));
   });
 
   test("merges fonts across multiple theme snapshots", () => {
@@ -96,9 +91,7 @@ describe("getPageFonts", () => {
   test("merges mark fonts with theme fonts", () => {
     const doc = createDoc([THEME]);
     addTextTile(doc, "text-1", fontParagraph("dynapuff"));
-    expect(getPageFonts(doc)).toEqual(
-      new Set(["lora", "inter", "jetbrains-mono", "dynapuff"]),
-    );
+    expect(getPageFonts(doc)).toEqual(new Set(["lora", "inter", "jetbrains-mono", "dynapuff"]));
   });
 });
 

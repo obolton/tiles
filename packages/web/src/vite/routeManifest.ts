@@ -31,13 +31,7 @@ function recursivelyCollectStylesheets(
 
   if (chunk.imports) {
     for (const importPath of chunk.imports) {
-      recursivelyCollectStylesheets(
-        importPath,
-        manifest,
-        basePath,
-        seen,
-        stylesheets,
-      );
+      recursivelyCollectStylesheets(importPath, manifest, basePath, seen, stylesheets);
     }
   }
 }
@@ -76,9 +70,7 @@ export default function routeManifestPlugin(): Plugin {
       }
 
       const viteManifestPath = resolve(outDir, "./.vite/manifest.json");
-      const viteManifest = JSON.parse(
-        await readFile(viteManifestPath, "utf-8"),
-      ) as Manifest;
+      const viteManifest = JSON.parse(await readFile(viteManifestPath, "utf-8")) as Manifest;
 
       const routeModules = Object.keys(viteManifest).filter((path) =>
         path.startsWith("src/routes/"),

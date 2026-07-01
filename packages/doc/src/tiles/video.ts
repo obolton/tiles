@@ -13,8 +13,7 @@ export interface VideoMapInput extends Omit<CreateTileInput, "type"> {
 export function buildVideoMap(
   properties: Omit<VideoMapInput, "parentId" | "beforeId">,
 ): Y.Map<unknown> {
-  const { videoType, videoId, title, description, imageUrl, ...baseProps } =
-    properties;
+  const { videoType, videoId, title, description, imageUrl, ...baseProps } = properties;
   const map = buildBaseTileMap({ ...baseProps, type: "VIDEO" });
   map.set("videoType", videoType);
   map.set("videoId", videoId);

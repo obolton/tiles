@@ -33,10 +33,7 @@ export default function MovableImage({
     const initialPointerY = event.pageY;
     const initialX = origin.value.x;
     const initialY = origin.value.y;
-    const scale = Math.max(
-      image.width / image.naturalWidth,
-      image.height / image.naturalHeight,
-    );
+    const scale = Math.max(image.width / image.naturalWidth, image.height / image.naturalHeight);
     const width = image.naturalWidth * scale;
     const height = image.naturalHeight * scale;
 

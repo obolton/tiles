@@ -40,9 +40,7 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-export default function InsertMenu({
-  ...props
-}: JSX.Attributes<"popover-menu">) {
+export default function InsertMenu({ ...props }: JSX.Attributes<"popover-menu">) {
   function onClick(event: PointerEvent) {
     const button = event.currentTarget as HTMLButtonElement;
     const tileType = button.dataset.tileType as TileType;
@@ -193,49 +191,30 @@ export default function InsertMenu({
     <popover-menu {...props}>
       <MenuItemGroup>
         {BUTTONS.map(({ label, type, Icon }) => (
-          <MenuItem
-            icon={<Icon aria-hidden="true" />}
-            data-tile-type={type}
-            on:click={onClick}
-          >
+          <MenuItem icon={<Icon aria-hidden="true" />} data-tile-type={type} on:click={onClick}>
             {label}
           </MenuItem>
         ))}
       </MenuItemGroup>
 
       <MenuItemGroup>
-        <MenuItem
-          icon={<GridLayoutIcon aria-hidden="true" />}
-          on:click={createGrid}
-        >
+        <MenuItem icon={<GridLayoutIcon aria-hidden="true" />} on:click={createGrid}>
           Grid
         </MenuItem>
 
-        <MenuItem
-          icon={<HorizontalLayoutIcon aria-hidden="true" />}
-          on:click={createHorizontal}
-        >
+        <MenuItem icon={<HorizontalLayoutIcon aria-hidden="true" />} on:click={createHorizontal}>
           Horizontal
         </MenuItem>
 
-        <MenuItem
-          icon={<VerticalLayoutIcon aria-hidden="true" />}
-          on:click={createVertical}
-        >
+        <MenuItem icon={<VerticalLayoutIcon aria-hidden="true" />} on:click={createVertical}>
           Vertical
         </MenuItem>
 
-        <MenuItem
-          icon={<FreeformLayoutIcon aria-hidden="true" />}
-          on:click={createFreeform}
-        >
+        <MenuItem icon={<FreeformLayoutIcon aria-hidden="true" />} on:click={createFreeform}>
           Freeform
         </MenuItem>
 
-        <MenuItem
-          icon={<CalendarLayoutIcon aria-hidden="true" />}
-          on:click={createCalendar}
-        >
+        <MenuItem icon={<CalendarLayoutIcon aria-hidden="true" />} on:click={createCalendar}>
           Calendar
         </MenuItem>
 

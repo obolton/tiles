@@ -103,9 +103,7 @@ export default class SwipeView extends HTMLElement {
       },
     );
 
-    this.resizeObserver = new ResizeObserver(
-      this.resizeObserverCallback.bind(this),
-    );
+    this.resizeObserver = new ResizeObserver(this.resizeObserverCallback.bind(this));
   }
 
   connectedCallback() {
@@ -273,9 +271,7 @@ export default class SwipeView extends HTMLElement {
     let top = 0;
 
     this.itemHeights.forEach((height, index) => {
-      const element = this.items.querySelector<HTMLLIElement>(
-        `li[value="${index}"]`,
-      );
+      const element = this.items.querySelector<HTMLLIElement>(`li[value="${index}"]`);
       element?.style.setProperty("--top", top + "px");
 
       if (index === this.value) {
@@ -295,9 +291,7 @@ export default class SwipeView extends HTMLElement {
   }
 
   previous() {
-    const item = this.items.querySelector<HTMLLIElement>(
-      `li[value="${this.value - 1}"]`,
-    );
+    const item = this.items.querySelector<HTMLLIElement>(`li[value="${this.value - 1}"]`);
     if (item) {
       this.carousel.scroll({
         top: parseFloat(item.style.getPropertyValue("--top")),
@@ -307,9 +301,7 @@ export default class SwipeView extends HTMLElement {
   }
 
   next() {
-    const item = this.items.querySelector<HTMLLIElement>(
-      `li[value="${this.value + 1}"]`,
-    );
+    const item = this.items.querySelector<HTMLLIElement>(`li[value="${this.value + 1}"]`);
     if (item) {
       this.carousel.scroll({
         top: parseFloat(item.style.getPropertyValue("--top")),
@@ -319,9 +311,7 @@ export default class SwipeView extends HTMLElement {
   }
 
   private select(element: HTMLLIElement) {
-    this.items
-      .querySelector('li[aria-selected="true"]')
-      ?.setAttribute("aria-selected", "false");
+    this.items.querySelector('li[aria-selected="true"]')?.setAttribute("aria-selected", "false");
     element.setAttribute("aria-selected", "true");
 
     if (this.value !== element.value) {
@@ -373,9 +363,7 @@ export default class SwipeView extends HTMLElement {
       if (event.altKey) {
         this.previous();
       } else {
-        document
-          .getSelection()
-          ?.modify(event.shiftKey ? "extend" : "move", "backward", "line");
+        document.getSelection()?.modify(event.shiftKey ? "extend" : "move", "backward", "line");
       }
       return;
     }
@@ -386,9 +374,7 @@ export default class SwipeView extends HTMLElement {
       if (event.altKey) {
         this.next();
       } else {
-        document
-          .getSelection()
-          ?.modify(event.shiftKey ? "extend" : "move", "forward", "line");
+        document.getSelection()?.modify(event.shiftKey ? "extend" : "move", "forward", "line");
       }
       return;
     }

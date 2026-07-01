@@ -1,8 +1,4 @@
-import {
-  LanguageSupport,
-  StreamLanguage,
-  type StreamParser,
-} from "@codemirror/language";
+import { LanguageSupport, StreamLanguage, type StreamParser } from "@codemirror/language";
 
 export interface LanguageConfig {
   id: string;
@@ -11,13 +7,8 @@ export interface LanguageConfig {
   load?: () => Promise<LanguageSupport>;
 }
 
-function legacy<T>(
-  importParser: () => Promise<StreamParser<T>>,
-): () => Promise<LanguageSupport> {
-  return () =>
-    importParser().then(
-      (parser) => new LanguageSupport(StreamLanguage.define(parser)),
-    );
+function legacy<T>(importParser: () => Promise<StreamParser<T>>): () => Promise<LanguageSupport> {
+  return () => importParser().then((parser) => new LanguageSupport(StreamLanguage.define(parser)));
 }
 
 export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
@@ -42,9 +33,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "csharp",
     name: "C#",
     aliases: ["cs"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/clike").then((m) => m.csharp),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/clike").then((m) => m.csharp)),
   },
   {
     id: "css",
@@ -56,26 +45,20 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "dart",
     name: "Dart",
     aliases: [],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/clike").then((m) => m.dart),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/clike").then((m) => m.dart)),
   },
   {
     id: "diff",
     name: "Diff",
     aliases: ["patch"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/diff").then((m) => m.diff),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/diff").then((m) => m.diff)),
   },
   {
     id: "dockerfile",
     name: "Dockerfile",
     aliases: ["docker"],
     load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/dockerfile").then(
-        (m) => m.dockerFile,
-      ),
+      import("@codemirror/legacy-modes/mode/dockerfile").then((m) => m.dockerFile),
     ),
   },
   {
@@ -115,9 +98,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "kotlin",
     name: "Kotlin",
     aliases: ["kt", "kts"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/clike").then((m) => m.kotlin),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/clike").then((m) => m.kotlin)),
   },
   {
     id: "less",
@@ -129,9 +110,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "lua",
     name: "Lua",
     aliases: [],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/lua").then((m) => m.lua),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/lua").then((m) => m.lua)),
   },
   {
     id: "markdown",
@@ -143,9 +122,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "perl",
     name: "Perl",
     aliases: ["pl", "pm"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/perl").then((m) => m.perl),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/perl").then((m) => m.perl)),
   },
   {
     id: "php",
@@ -158,9 +135,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     name: "PowerShell",
     aliases: ["ps1", "psm1"],
     load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/powershell").then(
-        (m) => m.powerShell,
-      ),
+      import("@codemirror/legacy-modes/mode/powershell").then((m) => m.powerShell),
     ),
   },
   {
@@ -173,17 +148,13 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "r",
     name: "R",
     aliases: ["rscript"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/r").then((m) => m.r),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/r").then((m) => m.r)),
   },
   {
     id: "ruby",
     name: "Ruby",
     aliases: ["rb"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/ruby").then((m) => m.ruby),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/ruby").then((m) => m.ruby)),
   },
   {
     id: "rust",
@@ -195,9 +166,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "scala",
     name: "Scala",
     aliases: [],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/clike").then((m) => m.scala),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/clike").then((m) => m.scala)),
   },
   {
     id: "scss",
@@ -209,9 +178,7 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "shell",
     name: "Shell",
     aliases: ["bash", "sh", "zsh", "fish"],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/shell").then((m) => m.shell),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/shell").then((m) => m.shell)),
   },
   {
     id: "sql",
@@ -223,17 +190,13 @@ export const SUPPORTED_LANGUAGES: LanguageConfig[] = [
     id: "swift",
     name: "Swift",
     aliases: [],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/swift").then((m) => m.swift),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/swift").then((m) => m.swift)),
   },
   {
     id: "toml",
     name: "TOML",
     aliases: [],
-    load: legacy(() =>
-      import("@codemirror/legacy-modes/mode/toml").then((m) => m.toml),
-    ),
+    load: legacy(() => import("@codemirror/legacy-modes/mode/toml").then((m) => m.toml)),
   },
   {
     id: "typescript",
@@ -269,15 +232,11 @@ for (const config of SUPPORTED_LANGUAGES) {
 // Cache for loaded language extensions
 const languageCache = new Map<string, LanguageSupport>();
 
-export function findLanguageConfig(
-  language: string,
-): LanguageConfig | undefined {
+export function findLanguageConfig(language: string): LanguageConfig | undefined {
   return languageLookup.get(language.toLowerCase());
 }
 
-export async function loadLanguage(
-  language: string,
-): Promise<LanguageSupport | null> {
+export async function loadLanguage(language: string): Promise<LanguageSupport | null> {
   const config = findLanguageConfig(language);
   if (!config?.load) {
     return null;

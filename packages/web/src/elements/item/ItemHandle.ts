@@ -1,9 +1,6 @@
 import css from "./ItemHandle.css?inline";
 import { PageItemEvent } from "@/elements/item/events";
-import {
-  getResizeHandleDirections,
-  type ResizeHandleDirection,
-} from "@/elements/item/resize";
+import { getResizeHandleDirections, type ResizeHandleDirection } from "@/elements/item/resize";
 import { makeDraggable } from "@/utils/drag";
 import { trackAnchor } from "@/utils/anchor";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
@@ -42,10 +39,7 @@ export default class ItemHandle extends HTMLElement {
 
   private readonly internals: ElementInternals;
   private drag: HTMLElement | null = null;
-  private readonly resizeHandles = new Map<
-    ResizeHandleDirection,
-    HTMLElement
-  >();
+  private readonly resizeHandles = new Map<ResizeHandleDirection, HTMLElement>();
 
   private dragAbortController: AbortController | null = null;
   private trackingAbortController: AbortController | null = null;
@@ -244,8 +238,7 @@ export default class ItemHandle extends HTMLElement {
     event.stopPropagation();
 
     const target = event.target as HTMLElement;
-    this.resizeDirection =
-      (target.dataset.direction as ResizeHandleDirection) || null;
+    this.resizeDirection = (target.dataset.direction as ResizeHandleDirection) || null;
 
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;
@@ -415,9 +408,7 @@ export default class ItemHandle extends HTMLElement {
     this.internals.states.add("resizing");
 
     // Focus the active resize handle and mark the others as inactive.
-    const activeHandle = this.resizeDirection
-      ? this.resizeHandles.get(this.resizeDirection)
-      : null;
+    const activeHandle = this.resizeDirection ? this.resizeHandles.get(this.resizeDirection) : null;
 
     for (const handle of this.resizeHandles.values()) {
       if (handle !== activeHandle) {

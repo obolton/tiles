@@ -1,9 +1,5 @@
 import { Plugin } from "prosemirror-state";
-import type {
-  EditorView,
-  NodeView,
-  ViewMutationRecord,
-} from "prosemirror-view";
+import type { EditorView, NodeView, ViewMutationRecord } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
 import Themeable from "@/components/themes/Themeable";
 import { render } from "@/jsx/dom";
@@ -72,9 +68,7 @@ class LinkNodeView implements NodeView {
       return;
     }
     this.theme.value = value;
-    this.view.dispatch(
-      this.view.state.tr.setNodeAttribute(pos, "theme", value),
-    );
+    this.view.dispatch(this.view.state.tr.setNodeAttribute(pos, "theme", value));
   }
 }
 

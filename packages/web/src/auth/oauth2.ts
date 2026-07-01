@@ -142,22 +142,10 @@ export function setOAuth2Cookies({
 export function clearOAuth2Cookies(): [string, string][] {
   const expireOptions = { ...OAUTH2_COOKIE_OPTIONS, maxAge: 0 };
   return [
-    [
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", expireOptions),
-    ],
-    [
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, "", expireOptions),
-    ],
-    [
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, "", expireOptions),
-    ],
-    [
-      "Set-Cookie",
-      cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions),
-    ],
+    ["Set-Cookie", cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", expireOptions)],
+    ["Set-Cookie", cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, "", expireOptions)],
+    ["Set-Cookie", cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, "", expireOptions)],
+    ["Set-Cookie", cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions)],
   ];
 }
 
@@ -207,10 +195,7 @@ export async function getOAuth2AccessToken({
   if (typeof data !== "object" || data === null) {
     throw new Error("Invalid token response");
   }
-  const { access_token: accessToken, id_token: idToken } = data as Record<
-    string,
-    unknown
-  >;
+  const { access_token: accessToken, id_token: idToken } = data as Record<string, unknown>;
   if (typeof accessToken !== "string") {
     throw new Error("Invalid access token");
   }

@@ -14,10 +14,7 @@ describe("CREATE_SECTION_TOOL", () => {
   });
 
   test("creates a section tile with the given layout", async () => {
-    const result = await CREATE_SECTION_TOOL.function(
-      { size: "medium", layout: "GRID" },
-      context,
-    );
+    const result = await CREATE_SECTION_TOOL.function({ size: "medium", layout: "GRID" }, context);
 
     const map = getCreatedTile(doc, result);
     expect(map.get("type")).toBe("SECTION");
@@ -34,10 +31,7 @@ describe("CREATE_SECTION_TOOL", () => {
   });
 
   test("sets dimensions for the given size", async () => {
-    const result = await CREATE_SECTION_TOOL.function(
-      { size: "large", layout: "GRID" },
-      context,
-    );
+    const result = await CREATE_SECTION_TOOL.function({ size: "large", layout: "GRID" }, context);
 
     const map = getCreatedTile(doc, result);
     expect(map.get("width")).toBe(24);

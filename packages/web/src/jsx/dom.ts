@@ -1,11 +1,6 @@
 import { isReactive } from "@/utils/reactivity";
 import { isClassComponent } from "./jsx";
-import {
-  isEmptyNode,
-  isTextNode,
-  isElementNode,
-  toNodeArray,
-} from "./node-types";
+import { isEmptyNode, isTextNode, isElementNode, toNodeArray } from "./node-types";
 import {
   BOOLEAN_STRING_ATTRIBUTES,
   applyClassList,
@@ -44,9 +39,7 @@ function getNamespace(tagName: string) {
 }
 
 function createElement(tagName: string, namespace?: string | null) {
-  return namespace
-    ? document.createElementNS(namespace, tagName)
-    : document.createElement(tagName);
+  return namespace ? document.createElementNS(namespace, tagName) : document.createElement(tagName);
 }
 
 function getNextSiblings(node: Node, count: number) {
@@ -62,10 +55,7 @@ function getNextSiblings(node: Node, count: number) {
   return nodes;
 }
 
-function combineSignal(
-  context: RenderContext,
-  signal: AbortSignal,
-): RenderContext {
+function combineSignal(context: RenderContext, signal: AbortSignal): RenderContext {
   return {
     ...context,
     signal: context.signal ? AbortSignal.any([context.signal, signal]) : signal,
@@ -82,17 +72,9 @@ function setAttributes<T extends Element>(
       continue;
     }
     if (name.startsWith("on:") && typeof value === "function") {
-      element.addEventListener(
-        name.slice(3).toLowerCase(),
-        value as EventListener,
-        { signal },
-      );
+      element.addEventListener(name.slice(3).toLowerCase(), value as EventListener, { signal });
     } else if (name.startsWith("on") && typeof value === "function") {
-      element.addEventListener(
-        name.slice(2).toLowerCase(),
-        value as EventListener,
-        { signal },
-      );
+      element.addEventListener(name.slice(2).toLowerCase(), value as EventListener, { signal });
     } else if (name.startsWith("bind:")) {
       const property = name.slice(5) as keyof T;
       if (property in element) {
@@ -116,12 +98,7 @@ function setAttributes<T extends Element>(
   }
 }
 
-function setAttribute(
-  element: Element,
-  name: string,
-  value: unknown,
-  signal?: AbortSignal,
-) {
+function setAttribute(element: Element, name: string, value: unknown, signal?: AbortSignal) {
   if (name === "signal") {
     return;
   }
@@ -141,21 +118,14 @@ function setAttribute(
   ) {
     applyStyleObject(element, value as StyleDeclaration, signal);
   } else if (BOOLEAN_STRING_ATTRIBUTES.has(mappedName)) {
-    element.setAttribute(
-      mappedName,
-      typeof value === "string" ? value : value ? "true" : "false",
-    );
+    element.setAttribute(mappedName, typeof value === "string" ? value : value ? "true" : "false");
   } else if (typeof value === "boolean") {
     if (value) {
       element.setAttribute(mappedName, "");
     } else {
       element.removeAttribute(mappedName);
     }
-  } else if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "bigint"
-  ) {
+  } else if (typeof value === "string" || typeof value === "number" || typeof value === "bigint") {
     element.setAttribute(mappedName, value.toString());
   } else {
     throw new Error(`Invalid attribute value for "${name}": ${value}`);
@@ -171,11 +141,7 @@ function ensureTextNode(node: Node, value: string) {
   return textNode;
 }
 
-function ensureElementNode(
-  node: Node,
-  tagName: string,
-  namespace?: string | null,
-) {
+function ensureElementNode(node: Node, tagName: string, namespace?: string | null) {
   if (node instanceof Element && node.tagName.toLowerCase() === tagName) {
     return node;
   }
@@ -236,12 +202,7 @@ function hydrateElementNode(
     return hydrateNode(instance.render(), container, index, context);
   }
 
-  return hydrateNode(
-    type({ ...properties, signal: context.signal }),
-    container,
-    index,
-    context,
-  );
+  return hydrateNode(type({ ...properties, signal: context.signal }), container, index, context);
 }
 
 function hydrateDOMElement(
@@ -262,12 +223,7 @@ function hydrateDOMElement(
   if (node) {
     const element = ensureElementNode(node, tagName, elementNamespace);
     setAttributes(element, attributes, context.signal);
-    hydrateFragment(
-      toNodeArray(attributes.children),
-      element,
-      0,
-      childrenContext,
-    );
+    hydrateFragment(toNodeArray(attributes.children), element, 0, childrenContext);
     if (attributes.ref) {
       attributes.ref(element);
     }
@@ -275,10 +231,7 @@ function hydrateDOMElement(
   } else {
     const element = createElement(tagName, elementNamespace);
     setAttributes(element, attributes, context.signal);
-    const childNodes = renderFragment(
-      toNodeArray(attributes.children),
-      childrenContext,
-    );
+    const childNodes = renderFragment(toNodeArray(attributes.children), childrenContext);
     element.append(...childNodes);
 
     if (attributes.ref) {
@@ -298,9 +251,7 @@ function hydrateFragment(
   const hydrated: Node[] = [];
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]!;
-    hydrated.push(
-      ...hydrateNode(node, container, start + hydrated.length, context),
-    );
+    hydrated.push(...hydrateNode(node, container, start + hydrated.length, context));
   }
   return hydrated;
 }
@@ -373,10 +324,7 @@ function updateRange(range: MutableRange, context: RenderContext) {
   range.abort = new AbortController();
   const childContext = combineSignal(context, range.abort.signal);
 
-  const existingNodes = [
-    range.anchor,
-    ...getNextSiblings(range.anchor, range.length - 1),
-  ];
+  const existingNodes = [range.anchor, ...getNextSiblings(range.anchor, range.length - 1)];
 
   const nextNode = existingNodes[existingNodes.length - 1]?.nextSibling ?? null;
 
@@ -396,10 +344,7 @@ function updateRange(range: MutableRange, context: RenderContext) {
   }
 }
 
-function renderDOMElement(
-  node: JSX.Element<keyof JSX.IntrinsicElements>,
-  context: RenderContext,
-) {
+function renderDOMElement(node: JSX.Element<keyof JSX.IntrinsicElements>, context: RenderContext) {
   const { type, properties } = node;
   const elementNamespace = getNamespace(type) ?? context.namespace;
 
@@ -503,10 +448,6 @@ export function render(node: JSX.Node, context: RenderContext = {}): Node[] {
   throw new Error("Invalid node");
 }
 
-export function hydrate(
-  node: JSX.Node,
-  container: Element,
-  context: RenderContext = {},
-) {
+export function hydrate(node: JSX.Node, container: Element, context: RenderContext = {}) {
   hydrateNode(node, container, 0, context);
 }

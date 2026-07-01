@@ -13,9 +13,7 @@ describe("Each", () => {
     test("renders an element for each item in order", () => {
       const items = reactive(["a", "b", "c"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
       expect(container.children.length).toBe(3);
       expect(container.children[0]?.textContent).toBe("a");
@@ -40,9 +38,7 @@ describe("Each", () => {
     test("renders nothing when items is empty", () => {
       const items = reactive<string[]>([]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
       expect(container.children.length).toBe(0);
     });
@@ -52,9 +48,7 @@ describe("Each", () => {
     test("appends new items", () => {
       const items = reactive(["a", "b"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
 
       items.value = ["a", "b", "c"];
@@ -65,9 +59,7 @@ describe("Each", () => {
     test("prepends new items", () => {
       const items = reactive(["b", "c"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
 
       items.value = ["a", "b", "c"];
@@ -80,9 +72,7 @@ describe("Each", () => {
     test("removes items that are no longer in the list", () => {
       const items = reactive(["a", "b", "c"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
 
       items.value = ["a", "c"];
@@ -94,9 +84,7 @@ describe("Each", () => {
     test("preserves DOM nodes for items that move", () => {
       const items = reactive(["a", "b", "c"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
       const originalA = container.children[0];
       const originalB = container.children[1];
@@ -127,9 +115,7 @@ describe("Each", () => {
     test("renders new items after starting empty", () => {
       const items = reactive<string[]>([]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
       expect(container.children.length).toBe(0);
 
@@ -142,9 +128,7 @@ describe("Each", () => {
     test("removes all items when emptied", () => {
       const items = reactive(["a", "b"]);
       const container = document.createElement("div");
-      const nodes = render(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
 
       items.value = [];
@@ -156,18 +140,14 @@ describe("Each", () => {
     test("renders an element for each item", () => {
       vi.stubEnv("SSR", true);
       const items = reactive(["a", "b", "c"]);
-      const html = renderToString(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const html = renderToString(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       expect(html).toBe("<span>a</span><span>b</span><span>c</span>");
     });
 
     test("renders nothing for an empty list", () => {
       vi.stubEnv("SSR", true);
       const items = reactive<string[]>([]);
-      const html = renderToString(
-        <Each items={items}>{(item) => <span>{item}</span>}</Each>,
-      );
+      const html = renderToString(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       expect(html).toBe("");
     });
   });

@@ -46,10 +46,10 @@ declare module "@/jsx/html-attributes" {
 export default class CalendarGrid extends HTMLElement {
   static observedAttributes = ["year", "month", "editable"];
 
-  private static headingFormatter = new Intl.DateTimeFormat(
-    navigator.language,
-    { month: "long", year: "numeric" },
-  );
+  private static headingFormatter = new Intl.DateTimeFormat(navigator.language, {
+    month: "long",
+    year: "numeric",
+  });
 
   private readonly internals: ElementInternals;
   private readonly shadow: ShadowRoot;
@@ -81,10 +81,7 @@ export default class CalendarGrid extends HTMLElement {
     end: string;
     elements: HTMLElement[];
   } | null = null;
-  private gridPositions = new Map<
-    string,
-    { week: number; start: number; end: number }
-  >();
+  private gridPositions = new Map<string, { week: number; start: number; end: number }>();
 
   get year(): number {
     return Number(this.getAttribute("year")) || new Date().getFullYear();
@@ -112,11 +109,7 @@ export default class CalendarGrid extends HTMLElement {
     return null;
   }
 
-  dateRangeFromPoint(
-    x: number,
-    y: number,
-    days: number,
-  ): { start: string; end: string } | null {
+  dateRangeFromPoint(x: number, y: number, days: number): { start: string; end: string } | null {
     const start = this.dateFromPoint(x, y);
     if (!start) {
       return null;
@@ -128,9 +121,7 @@ export default class CalendarGrid extends HTMLElement {
   highlightDates(from: string | null, to: string | null = from) {
     const start = from && to && to < from ? to : from;
     const end = from && to && to > from ? to : from;
-    for (const day of this.shadow.querySelectorAll<HTMLTimeElement>(
-      "time.day",
-    )) {
+    for (const day of this.shadow.querySelectorAll<HTMLTimeElement>("time.day")) {
       day.classList.toggle(
         "highlight",
         !!start && day.dateTime >= start && day.dateTime <= (end ?? start),
@@ -194,12 +185,7 @@ export default class CalendarGrid extends HTMLElement {
     this.header.id = "header";
     this.header.role = "navigation";
     this.header.ariaLabel = "Calendar navigation";
-    this.header.append(
-      this.monthTitle,
-      this.previousButton,
-      this.todayButton,
-      this.nextButton,
-    );
+    this.header.append(this.monthTitle, this.previousButton, this.todayButton, this.nextButton);
 
     this.container = document.createElement("div");
     this.container.id = "month";
@@ -208,9 +194,7 @@ export default class CalendarGrid extends HTMLElement {
     this.createWeekdayHeaders();
 
     this.mutationObserver = new MutationObserver(() => this.layout());
-    this.resizeObserver = new ResizeObserver((entries) =>
-      this.syncSegmentHeights(entries),
-    );
+    this.resizeObserver = new ResizeObserver((entries) => this.syncSegmentHeights(entries));
 
     this.shadow.addEventListener("pointerdown", this);
     this.shadow.addEventListener("click", this);
@@ -608,10 +592,7 @@ export default class CalendarGrid extends HTMLElement {
       this.weeks.push(container);
     }
 
-    this.container.replaceChildren(
-      ...this.container.querySelectorAll(".weekday"),
-      ...this.weeks,
-    );
+    this.container.replaceChildren(...this.container.querySelectorAll(".weekday"), ...this.weeks);
     this.layout();
 
     this.monthTitle.textContent = CalendarGrid.headingFormatter.format(
@@ -697,9 +678,7 @@ export default class CalendarGrid extends HTMLElement {
 
     const lastWeek = endPos ? endPos.week : this.weeks.length - 1;
     for (let w = startPos.week + 1; w <= lastWeek; w++) {
-      segments.push(
-        this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`, item),
-      );
+      segments.push(this.createSegment(w, `1 / ${this.endColumn(endPos, w)}`, item));
     }
 
     segments[0]?.classList.add("segment-start");
@@ -708,18 +687,11 @@ export default class CalendarGrid extends HTMLElement {
     return segments;
   }
 
-  private endColumn(
-    endPos: { week: number; end: number } | undefined,
-    week: number,
-  ): number {
+  private endColumn(endPos: { week: number; end: number } | undefined, week: number): number {
     return endPos?.week === week ? endPos.end : -1;
   }
 
-  private createSegment(
-    week: number,
-    gridColumn: string,
-    item?: CalendarDate,
-  ): HTMLElement {
+  private createSegment(week: number, gridColumn: string, item?: CalendarDate): HTMLElement {
     const segment = document.createElement("div");
     segment.classList.add("segment");
     segment.style.gridColumn = gridColumn;

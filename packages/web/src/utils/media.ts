@@ -1,14 +1,7 @@
 import { user } from "@/utils/sessions";
 
-export const ACCEPT_IMAGE_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-]);
-export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(
-  ACCEPT_IMAGE_TYPES,
-);
+export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(ACCEPT_IMAGE_TYPES);
 export const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
 export const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
 
@@ -77,9 +70,7 @@ export function getAcceptableDragItem(
   if (!dataTransfer.items) {
     return undefined;
   }
-  return Array.from(dataTransfer.items).find((item) =>
-    contentTypes.has(item.type),
-  );
+  return Array.from(dataTransfer.items).find((item) => contentTypes.has(item.type));
 }
 
 export function isImage(item: DataTransferItem) {

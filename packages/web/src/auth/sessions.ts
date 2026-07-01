@@ -1,10 +1,7 @@
 import assert from "node:assert";
 import * as cookie from "cookie";
 import client, { type AppRouterInputs } from "../api/client";
-import {
-  SESSION_COOKIE_NAME,
-  SIGNED_IN_FLAG_COOKIE_NAME,
-} from "api/constants/cookies";
+import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
 
 assert(import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN);

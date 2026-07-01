@@ -64,11 +64,7 @@ export default class Presentation {
     const navGroup = document.createElement("div");
     navGroup.role = "group";
     navGroup.ariaLabel = "Navigation";
-    this.prevButton = this.createButton(
-      "previous",
-      arrowLeftIcon,
-      "Previous slide",
-    );
+    this.prevButton = this.createButton("previous", arrowLeftIcon, "Previous slide");
     this.counter = document.createElement("span");
     this.counter.className = "slide-counter";
     this.nextButton = this.createButton("next", arrowRightIcon, "Next slide");
@@ -77,17 +73,9 @@ export default class Presentation {
     const controlGroup = document.createElement("div");
     controlGroup.role = "group";
     controlGroup.ariaLabel = "Controls";
-    this.fullscreenButton = this.createButton(
-      "fullscreen",
-      fullscreenIcon,
-      "Fullscreen",
-    );
+    this.fullscreenButton = this.createButton("fullscreen", fullscreenIcon, "Fullscreen");
     this.fullscreenButton.append("Fullscreen");
-    const closeButton = this.createButton(
-      "close",
-      closeIcon,
-      "Exit presentation",
-    );
+    const closeButton = this.createButton("close", closeIcon, "Exit presentation");
     controlGroup.append(this.fullscreenButton, closeButton);
 
     tab.append(navGroup, controlGroup);
@@ -241,9 +229,7 @@ export default class Presentation {
 
   private onClick(event: Event) {
     const button =
-      event.target instanceof Element
-        ? event.target.closest<HTMLElement>("[data-action]")
-        : null;
+      event.target instanceof Element ? event.target.closest<HTMLElement>("[data-action]") : null;
 
     switch (button?.dataset.action) {
       case "previous":
@@ -266,10 +252,7 @@ export default class Presentation {
     clearTimeout(this.idleTimer);
 
     if (!this.toolbar.contains(event.target as Node)) {
-      this.idleTimer = window.setTimeout(
-        () => this.hideControls(),
-        IDLE_TIMEOUT,
-      );
+      this.idleTimer = window.setTimeout(() => this.hideControls(), IDLE_TIMEOUT);
     }
   }
 
@@ -318,10 +301,7 @@ export default class Presentation {
             continue;
           }
 
-          const index = Array.prototype.indexOf.call(
-            this.container.children,
-            entry.target,
-          );
+          const index = Array.prototype.indexOf.call(this.container.children, entry.target);
 
           if (index >= 0 && index !== this.currentIndex) {
             this.currentIndex = index;
@@ -354,11 +334,7 @@ export default class Presentation {
     this.toolbar.classList.remove("visible");
   }
 
-  private createButton(
-    action: string,
-    icon: string,
-    label: string,
-  ): HTMLButtonElement {
+  private createButton(action: string, icon: string, label: string): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "floating";

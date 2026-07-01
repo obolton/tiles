@@ -16,11 +16,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
   const table = Editor.current.page.getTile(chart.tableId.value, Table);
 
   return (
-    <floating-toolbar
-      className="primary"
-      data-tooltip-position="bottom"
-      aria-label="Chart tools"
-    >
+    <floating-toolbar className="primary" data-tooltip-position="bottom" aria-label="Chart tools">
       <toolbar-tab name="chart" label="Chart">
         <ToolbarGroup label="Chart tools">
           <ToolbarButton
@@ -33,11 +29,7 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
             Series
           </ToolbarButton>
 
-          <SeriesPanel
-            id={`${chart.id}-series-panel`}
-            chart={chart}
-            table={table}
-          />
+          <SeriesPanel id={`${chart.id}-series-panel`} chart={chart} table={table} />
         </ToolbarGroup>
       </toolbar-tab>
 

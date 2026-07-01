@@ -57,11 +57,7 @@ export default class TilePlacement {
    * a tile from comparison (e.g. when repositioning a tile within its current
    * collection).
    */
-  orderBefore(
-    parentId: string | null,
-    beforeId: string | null | undefined,
-    skip?: Tile,
-  ): string {
+  orderBefore(parentId: string | null, beforeId: string | null | undefined, skip?: Tile): string {
     const siblings = this.getCollection(parentId)
       .value.values()
       .map((tile) => ({ id: tile.id, order: tile.order.value }));
@@ -91,9 +87,7 @@ export default class TilePlacement {
     if (parent.type === "section" && !this.page.index.has(parent.sectionId)) {
       tile.parent?.remove(tile);
       if (import.meta.env.DEV) {
-        console.warn(
-          `Tile ${tile.id} references missing parent ${parent.sectionId}; not rendered`,
-        );
+        console.warn(`Tile ${tile.id} references missing parent ${parent.sectionId}; not rendered`);
       }
       return;
     }
@@ -135,10 +129,7 @@ export default class TilePlacement {
         // A nested tile map changed. Only parentId/order affect placement;
         // x/y/style writes are ignored so they don't fight other writers.
         const id = event.path[0];
-        if (
-          typeof id === "string" &&
-          PLACEMENT_KEYS.some((key) => event.keysChanged.has(key))
-        ) {
+        if (typeof id === "string" && PLACEMENT_KEYS.some((key) => event.keysChanged.has(key))) {
           moved.add(id);
         }
       }

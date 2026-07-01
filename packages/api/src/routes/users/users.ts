@@ -2,30 +2,17 @@ import assert from "node:assert";
 import crypto from "node:crypto";
 import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
 import { upload } from "@/utils/storage.ts";
-import {
-  IMAGE_CONTENT_TYPES,
-  IMAGE_FILE_EXTENSIONS,
-} from "@/constants/images.ts";
+import { IMAGE_CONTENT_TYPES, IMAGE_FILE_EXTENSIONS } from "@/constants/images.ts";
 import { getStream } from "@/utils/http.ts";
-import type {
-  CreateUserSchema,
-  UpdateUserSchema,
-  IsUsernameAvailableSchema,
-} from "./schema.ts";
+import type { CreateUserSchema, UpdateUserSchema, IsUsernameAvailableSchema } from "./schema.ts";
 import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 import { USER_FIELDS } from "./fields";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
 export async function storeProfileImage(userId: string, imageUrl: string) {
-  assert(
-    PROFILE_IMAGES_BUCKET,
-    "CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES is not defined.",
-  );
-  const { stream, contentType } = await getStream(
-    imageUrl,
-    IMAGE_CONTENT_TYPES,
-  );
+  assert(PROFILE_IMAGES_BUCKET, "CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES is not defined.");
+  const { stream, contentType } = await getStream(imageUrl, IMAGE_CONTENT_TYPES);
   const extension = IMAGE_FILE_EXTENSIONS[contentType];
   const imageId = crypto.randomUUID();
   const imageKey = `${userId}/${imageId}.${extension}`;
@@ -67,11 +54,10 @@ export async function getSessionContext(sessionId: string) {
 }
 
 export async function getUserInfo({ userId }: AuthenticatedRequestContext) {
-  const { workspaceMemberships, ...userProperties } =
-    await prisma.user.findUniqueOrThrow({
-      where: { id: userId },
-      select: USER_FIELDS,
-    });
+  const { workspaceMemberships, ...userProperties } = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: USER_FIELDS,
+  });
   return {
     ...userProperties,
     workspaces: workspaceMemberships.map((membership) => membership.workspace),

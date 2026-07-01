@@ -2,11 +2,7 @@ import { Database } from "@/utils/idb";
 import ThemeModel from "@/models/Theme";
 import type { Theme } from "api/types/themes";
 import { CacheCollection } from "./collection";
-import {
-  pageStoresSchema,
-  initializePageCache,
-  invalidateAllPages,
-} from "./pages";
+import { pageStoresSchema, initializePageCache, invalidateAllPages } from "./pages";
 
 export type { CacheMeta } from "./collection";
 
@@ -80,10 +76,7 @@ let currentWorkspaceId: string | null = null;
 /**
  * Initializes the cache database for the current user and workspace.
  */
-export async function initializeCache(
-  userId: string,
-  workspaceId: string,
-): Promise<void> {
+export async function initializeCache(userId: string, workspaceId: string): Promise<void> {
   if (db) {
     if (currentWorkspaceId === workspaceId) {
       return; // Already initialized for this workspace

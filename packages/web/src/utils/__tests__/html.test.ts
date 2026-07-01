@@ -1,11 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  VOID_ELEMENTS,
-  closeTag,
-  escapeTagContents,
-  openTag,
-  tag,
-} from "../html";
+import { VOID_ELEMENTS, closeTag, escapeTagContents, openTag, tag } from "../html";
 
 describe("tag", () => {
   test("returns just the open tag for void elements", () => {
@@ -21,9 +15,7 @@ describe("tag", () => {
   });
 
   test("emits an empty close for non-void elements with no content", () => {
-    expect(tag("script", { src: "/main.js" })).toBe(
-      `<script src="/main.js"></script>`,
-    );
+    expect(tag("script", { src: "/main.js" })).toBe(`<script src="/main.js"></script>`);
   });
 
   test("escapes attribute values", () => {
@@ -39,15 +31,13 @@ describe("tag", () => {
   });
 
   test("omits boolean attributes when false", () => {
-    expect(tag("link", { rel: "preload", crossorigin: false })).toBe(
-      `<link rel="preload">`,
-    );
+    expect(tag("link", { rel: "preload", crossorigin: false })).toBe(`<link rel="preload">`);
   });
 
   test("omits attributes when value is undefined", () => {
-    expect(
-      tag("link", { rel: "preload", as: undefined, type: undefined }),
-    ).toBe(`<link rel="preload">`);
+    expect(tag("link", { rel: "preload", as: undefined, type: undefined })).toBe(
+      `<link rel="preload">`,
+    );
   });
 
   test("serializes number attribute values", () => {
@@ -57,9 +47,7 @@ describe("tag", () => {
   });
 
   test("ignores content for void elements", () => {
-    expect(tag("link", { rel: "preload" }, "ignored")).toBe(
-      `<link rel="preload">`,
-    );
+    expect(tag("link", { rel: "preload" }, "ignored")).toBe(`<link rel="preload">`);
   });
 
   test("does not escape content (caller's responsibility)", () => {
@@ -80,9 +68,7 @@ describe("openTag", () => {
   });
 
   test("serializes attributes", () => {
-    expect(openTag("a", { href: "/x", title: "hi" })).toBe(
-      `<a href="/x" title="hi">`,
-    );
+    expect(openTag("a", { href: "/x", title: "hi" })).toBe(`<a href="/x" title="hi">`);
   });
 
   test("does not special-case void elements", () => {

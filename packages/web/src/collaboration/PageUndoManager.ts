@@ -26,14 +26,10 @@ export class PageUndoManager {
 
     const { onRecord, onApply } = hooks ?? {};
     if (onRecord) {
-      this.manager.on("stack-item-added", ({ stackItem }) =>
-        onRecord(stackItem.meta),
-      );
+      this.manager.on("stack-item-added", ({ stackItem }) => onRecord(stackItem.meta));
     }
     if (onApply) {
-      this.manager.on("stack-item-popped", ({ stackItem }) =>
-        onApply(stackItem.meta),
-      );
+      this.manager.on("stack-item-popped", ({ stackItem }) => onApply(stackItem.meta));
     }
   }
 

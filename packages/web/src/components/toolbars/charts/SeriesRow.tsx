@@ -18,12 +18,7 @@ export interface SeriesRowProps {
   onDelete: (series: Series) => void;
 }
 
-export default function SeriesRow({
-  series,
-  onSetChartType,
-  onSetFill,
-  onDelete,
-}: SeriesRowProps) {
+export default function SeriesRow({ series, onSetChartType, onSetFill, onDelete }: SeriesRowProps) {
   return (
     <Row
       title={series.column.derive((column) => column.title || "Column")}
@@ -48,30 +43,18 @@ export default function SeriesRow({
             align="center"
             value={series.type}
             on:change={(event) => {
-              const type = (event.currentTarget as ListSelect).value as
-                | "BAR"
-                | "LINE"
-                | "AREA";
+              const type = (event.currentTarget as ListSelect).value as "BAR" | "LINE" | "AREA";
               onSetChartType(type, series);
             }}
           >
             <ListGroup>
-              <ListOption
-                icon={<BarChartIcon aria-hidden="true" />}
-                value="BAR"
-              >
+              <ListOption icon={<BarChartIcon aria-hidden="true" />} value="BAR">
                 Bar chart
               </ListOption>
-              <ListOption
-                icon={<LineChartIcon aria-hidden="true" />}
-                value="LINE"
-              >
+              <ListOption icon={<LineChartIcon aria-hidden="true" />} value="LINE">
                 Line chart
               </ListOption>
-              <ListOption
-                icon={<AreaChartIcon aria-hidden="true" />}
-                value="AREA"
-              >
+              <ListOption icon={<AreaChartIcon aria-hidden="true" />} value="AREA">
                 Area chart
               </ListOption>
             </ListGroup>

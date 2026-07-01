@@ -1,9 +1,6 @@
 import { handleError } from "@/utils/errors";
 import { moveBefore } from "@/utils/dom";
-import {
-  createDragPlaceholder,
-  getDragPosition,
-} from "@/utils/drag-placeholder";
+import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";
 import { dockParentId } from "@/models/parentId";
 import type Page from "@/models/Page";
@@ -37,13 +34,7 @@ export default class DockLayoutEditor {
   private beforeId: string | null = null;
   private dividers: HTMLElement[] = [];
 
-  constructor({
-    element,
-    edge,
-    page,
-    isEditable,
-    signal,
-  }: DockLayoutEditorOptions) {
+  constructor({ element, edge, page, isEditable, signal }: DockLayoutEditorOptions) {
     this.elementRef = new WeakRef(element);
     this.edge = edge;
     this.page = page;
@@ -112,18 +103,13 @@ export default class DockLayoutEditor {
     }
 
     const direction = this.isHorizontal ? "horizontal" : "vertical";
-    const position = getDragPosition(
-      this.element,
-      event.clientX,
-      event.clientY,
-      direction,
-      (el) => this.isOrderedElement(el),
+    const position = getDragPosition(this.element, event.clientX, event.clientY, direction, (el) =>
+      this.isOrderedElement(el),
     );
 
     if (position) {
       const { next } = position;
-      this.beforeId =
-        next instanceof HTMLElement ? next.dataset.id || next.id : null;
+      this.beforeId = next instanceof HTMLElement ? next.dataset.id || next.id : null;
       moveBefore(this.element, this.dragPlaceholder, next);
     }
   }
@@ -181,15 +167,9 @@ export default class DockLayoutEditor {
     this.dragPlaceholder = createDragPlaceholder();
 
     if (this.isHorizontal && tile.width.value != null) {
-      this.dragPlaceholder.style.setProperty(
-        "--width",
-        tile.width.value.toString(),
-      );
+      this.dragPlaceholder.style.setProperty("--width", tile.width.value.toString());
     } else {
-      this.dragPlaceholder.style.setProperty(
-        "--height",
-        tile.height.value.toString(),
-      );
+      this.dragPlaceholder.style.setProperty("--height", tile.height.value.toString());
     }
 
     this.element.appendChild(this.dragPlaceholder);
@@ -201,10 +181,7 @@ export default class DockLayoutEditor {
   }
 
   private isOrderedElement(element: Element) {
-    return (
-      element !== this.dragPlaceholder &&
-      !element.matches(":popover-open, resize-handle")
-    );
+    return element !== this.dragPlaceholder && !element.matches(":popover-open, resize-handle");
   }
 
   // Divider management
@@ -242,10 +219,7 @@ export default class DockLayoutEditor {
 
   private createDivider(beforeId: string, afterId: string): HTMLElement {
     const divider = document.createElement("resize-handle");
-    divider.setAttribute(
-      "direction",
-      this.isHorizontal ? "horizontal" : "vertical",
-    );
+    divider.setAttribute("direction", this.isHorizontal ? "horizontal" : "vertical");
     divider.classList.add("tile-divider");
     divider.dataset.beforeId = beforeId;
     divider.dataset.afterId = afterId;
@@ -254,10 +228,7 @@ export default class DockLayoutEditor {
 
   private handleDividerResizeEnd(event: ResizeEvent) {
     const target = event.target;
-    if (
-      !(target instanceof HTMLElement) ||
-      !target.classList.contains("tile-divider")
-    ) {
+    if (!(target instanceof HTMLElement) || !target.classList.contains("tile-divider")) {
       return;
     }
 
@@ -287,9 +258,7 @@ export default class DockLayoutEditor {
 
     const size = this.isHorizontal ? "width" : "height";
     const fallback = this.isHorizontal ? this.page.width.value : 0;
-    const combined =
-      (beforeTile[size].value ?? fallback) +
-      (afterTile[size].value ?? fallback);
+    const combined = (beforeTile[size].value ?? fallback) + (afterTile[size].value ?? fallback);
     const combinedPixels = beforeRect[size] + afterRect[size];
     const newBeforePixels = beforeRect[size] + delta;
 

@@ -10,11 +10,7 @@ const GET: APIRequestHandler = async () => {
     email: "test@test.com",
     emailVerified: true,
   });
-  return redirect(
-    "/",
-    302,
-    setAuthenticationCookies(session.id, new Date(session.expiresAt)),
-  );
+  return redirect("/", 302, setAuthenticationCookies(session.id, new Date(session.expiresAt)));
 };
 
 export default {

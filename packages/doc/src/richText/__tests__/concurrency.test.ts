@@ -23,9 +23,7 @@ function textOf(fragment: Y.XmlFragment, index: number): string {
   const text = block.get(0) as Y.XmlText;
   return text
     .toDelta()
-    .map((op: { insert?: unknown }) =>
-      typeof op.insert === "string" ? op.insert : "",
-    )
+    .map((op: { insert?: unknown }) => (typeof op.insert === "string" ? op.insert : ""))
     .join("");
 }
 

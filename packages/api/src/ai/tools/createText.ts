@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { buildTextMap } from "doc/tiles/text";
-import {
-  SizeSchema,
-  getDimensions,
-  CoordinatesSchema,
-  resolveParentId,
-} from "./schema";
+import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateTextSchema = z.strictObject({

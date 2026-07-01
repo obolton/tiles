@@ -88,15 +88,11 @@ export function toCSSProperties(styles: ResolvedStyles): {
   return {
     "--background": getBackgroundStyle(styles.background)?.background,
     "--text-color": styles.textColor ? toCSSColor(styles.textColor) : undefined,
-    "--accent-color": styles.accentColor
-      ? toCSSColor(styles.accentColor)
-      : undefined,
+    "--accent-color": styles.accentColor ? toCSSColor(styles.accentColor) : undefined,
     "--font": styles.font ?? undefined,
     "--heading-font": styles.headingFont ?? undefined,
     "--code-font": styles.codeFont ?? undefined,
-    "--border-color": styles.borderColor
-      ? toCSSColor(styles.borderColor)
-      : undefined,
+    "--border-color": styles.borderColor ? toCSSColor(styles.borderColor) : undefined,
   };
 }
 
@@ -162,24 +158,17 @@ export async function loadThemeFonts(themeId: string) {
 
 export function getPageTheme(doc: Y.Doc): ThemeData | null {
   const themeId = doc.getMap("metadata").get("themeId") as string | null;
-  return themeId
-    ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null)
-    : null;
+  return themeId ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null) : null;
 }
 
 export function getPageFont(doc: Y.Doc): FontId | null {
   return (doc.getMap("metadata").get("font") as FontId | null) ?? null;
 }
 
-export function getPageBodyStyle(
-  doc: Y.Doc,
-): ReturnType<typeof toCSSProperties> {
-  const backgroundColor =
-    (doc.getMap("metadata").get("backgroundColor") as Color | null) ?? null;
+export function getPageBodyStyle(doc: Y.Doc): ReturnType<typeof toCSSProperties> {
+  const backgroundColor = (doc.getMap("metadata").get("backgroundColor") as Color | null) ?? null;
   return getThemeStyles(getPageTheme(doc), {
-    background: backgroundColor
-      ? { type: "color", color: backgroundColor }
-      : null,
+    background: backgroundColor ? { type: "color", color: backgroundColor } : null,
     font: getPageFont(doc),
   });
 }

@@ -16,9 +16,8 @@ export type PrismaTransactionClient = Parameters<
   Parameters<ExtendedPrismaClient["$transaction"]>[0]
 >[0];
 
-type PrismaClientExtensionArgs<
-  T extends (client: unknown) => { $extends: { extArgs: unknown } },
-> = ReturnType<T>["$extends"]["extArgs"];
+type PrismaClientExtensionArgs<T extends (client: unknown) => { $extends: { extArgs: unknown } }> =
+  ReturnType<T>["$extends"]["extArgs"];
 
 export type ExtensionArgs = PrismaClientExtensionArgs<typeof images> &
   PrismaClientExtensionArgs<typeof backgrounds> &

@@ -1,9 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
-import {
-  getWorkspaceThemes,
-  invalidateWorkspaceThemes,
-} from "../workspaceThemes";
+import { getWorkspaceThemes, invalidateWorkspaceThemes } from "../workspaceThemes";
 import { initializeCache, destroyCache, themesCache } from "../cache";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
 import client from "@/api/client";
@@ -33,9 +30,7 @@ describe("workspaceThemes", () => {
 
   describe("getWorkspaceThemes", () => {
     test("returns cached value without fetching when cache exists", async () => {
-      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
-        mockThemesResponse,
-      );
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(mockThemesResponse);
       await getWorkspaceThemes();
 
       vi.clearAllMocks();
@@ -47,9 +42,7 @@ describe("workspaceThemes", () => {
     });
 
     test("fetches and caches themes when cache is empty", async () => {
-      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
-        mockThemesResponse,
-      );
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(mockThemesResponse);
 
       const result = await getWorkspaceThemes();
 
@@ -59,17 +52,13 @@ describe("workspaceThemes", () => {
       expect(result.map((t) => t.serialize())).toEqual(mockThemesResponse);
 
       const cached = await themesCache.getCached();
-      expect(cached?.items.map((t) => t.serialize())).toEqual(
-        mockThemesResponse,
-      );
+      expect(cached?.items.map((t) => t.serialize())).toEqual(mockThemesResponse);
     });
   });
 
   describe("invalidateWorkspaceThemes", () => {
     test("removes the cached themes list", async () => {
-      vi.mocked(client.themes.list.query).mockResolvedValueOnce(
-        mockThemesResponse,
-      );
+      vi.mocked(client.themes.list.query).mockResolvedValueOnce(mockThemesResponse);
       await getWorkspaceThemes();
 
       // Verify cache exists

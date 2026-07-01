@@ -8,10 +8,7 @@ export async function initBookmarkStatus(pageId: string) {
   isBookmarked.value = await getIsBookmarked(pageId);
 }
 
-export async function setIsBookmarked(
-  pageId: string,
-  isBookmarked: boolean,
-): Promise<void> {
+export async function setIsBookmarked(pageId: string, isBookmarked: boolean): Promise<void> {
   if (isBookmarked) {
     await client.bookmarks.create.mutate({ pageId });
     await bookmarksCache.append([{ id: pageId }]);

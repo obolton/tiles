@@ -28,11 +28,7 @@ export interface FolderProps {
 }
 
 function renderPlaceholder(query: string) {
-  return (
-    <Placeholder>
-      {query ? "There are no results." : "The folder is empty."}
-    </Placeholder>
-  );
+  return <Placeholder>{query ? "There are no results." : "The folder is empty."}</Placeholder>;
 }
 
 export default function Folder({
@@ -63,13 +59,7 @@ export default function Folder({
       }
     >
       <SidebarLayout
-        sidebar={
-          <Sidebar
-            workspace={workspace}
-            folders={folders}
-            selectedFolderId={id}
-          />
-        }
+        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId={id} />}
       >
         <PagesGrid
           workspaceId={workspace.id}

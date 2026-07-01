@@ -37,10 +37,7 @@ describe("CREATE_TEXT_TOOL", () => {
   });
 
   test("sets dimensions for small size", async () => {
-    const result = await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, size: "small" },
-      context,
-    );
+    const result = await CREATE_TEXT_TOOL.function({ ...BASE_ARGS, size: "small" }, context);
 
     const map = tile(result);
     expect(map.get("width")).toBe(12);
@@ -63,10 +60,7 @@ describe("CREATE_TEXT_TOOL", () => {
   });
 
   test("resolves an args parentId to the parent", async () => {
-    const result = await CREATE_TEXT_TOOL.function(
-      { ...BASE_ARGS, parentId: 0 },
-      context,
-    );
+    const result = await CREATE_TEXT_TOOL.function({ ...BASE_ARGS, parentId: 0 }, context);
 
     expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(tile(result).get("parentId")).toBe("resolved-0");

@@ -12,8 +12,7 @@ export async function getStream<T extends readonly ContentType[]>(
   if (!response.ok) {
     throw new Error(`getStream: ${response.status}: ${response.statusText}`);
   }
-  const contentType = (response.headers.get("Content-Type")?.toLowerCase() ??
-    "") as T[number];
+  const contentType = (response.headers.get("Content-Type")?.toLowerCase() ?? "") as T[number];
   if (!contentType) {
     throw new Error(`getStream: No Content-Type header.`);
   }

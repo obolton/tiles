@@ -19,11 +19,7 @@ interface PlaceModalProps extends ModalProps<PlaceModalResult> {
   boundingBox?: [number, number, number, number];
 }
 
-export default function PlaceModal({
-  boundingBox,
-  cancel,
-  confirm,
-}: PlaceModalProps) {
+export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalProps) {
   const isPending = new ReactiveValue(false);
   const location = new ReactiveValue<GeolocationPosition | null>(null);
   const results = new ReactiveValue<Place[]>([]);

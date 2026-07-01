@@ -10,10 +10,7 @@ const GET: APIRequestHandler = async ({ headers, parameters }) => {
   }
   const sessionId = getSessionId(headers);
   if (!sessionId) {
-    return redirect(
-      `/sign-in?destination=${encodeURIComponent(`invites/accept/${key}`)}`,
-      302,
-    );
+    return redirect(`/sign-in?destination=${encodeURIComponent(`invites/accept/${key}`)}`, 302);
   }
   const { pageId } = await client.collaboration.acceptPageInvite.mutate(
     { key },

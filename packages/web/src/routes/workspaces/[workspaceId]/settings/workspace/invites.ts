@@ -5,16 +5,9 @@ import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Invites, { type InvitesProps } from "@/pages/settings/Invites";
 import { notFound, forbidden } from "@/router/responses";
-import type {
-  Route,
-  RequestProperties,
-  RouteLoaderResult,
-} from "@/router/router";
+import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
-async function loader({
-  headers,
-  parameters,
-}: RequestProperties): RouteLoaderResult<InvitesProps> {
+async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<InvitesProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
     return notFound();
@@ -51,6 +44,5 @@ export default {
   loader,
   component: Invites,
   hydrate: "immediate",
-  beforeHydrate: ({ parameters, data }) =>
-    initRoute(parameters.workspaceId, data.user),
+  beforeHydrate: ({ parameters, data }) => initRoute(parameters.workspaceId, data.user),
 } satisfies Route<InvitesProps>;

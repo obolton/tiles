@@ -10,17 +10,13 @@ import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
 import type { JSX } from "@/jsx/jsx";
 
-const InviteModalLoader = () =>
-  import("@/components/modals/invite/InviteModal");
+const InviteModalLoader = () => import("@/components/modals/invite/InviteModal");
 
 export interface CollaborationPopoverProps extends JSX.Attributes<"anchored-popover"> {
   page: Page;
 }
 
-export default function CollaborationPopover({
-  page,
-  ...props
-}: CollaborationPopoverProps) {
+export default function CollaborationPopover({ page, ...props }: CollaborationPopoverProps) {
   const { access, invites, isPublished } = page;
 
   function setPublished(event: Event) {
@@ -55,9 +51,7 @@ export default function CollaborationPopover({
   function deleteInvite(invite: PageInvite) {
     invite
       .delete()
-      .then(() =>
-        showToast(`The invite for ${invite.email} was cancelled.`, "success"),
-      )
+      .then(() => showToast(`The invite for ${invite.email} was cancelled.`, "success"))
       .catch(handleError);
   }
 
@@ -105,11 +99,7 @@ export default function CollaborationPopover({
         {invites.derive((items) =>
           items.map((invite) => (
             <li>
-              <InviteRow
-                invite={invite}
-                showRemoveButton
-                onRemove={deleteInvite}
-              />
+              <InviteRow invite={invite} showRemoveButton onRemove={deleteInvite} />
             </li>
           )),
         )}

@@ -35,13 +35,7 @@ export default function LinkTile({ link, showToolbar }: LinkTileProps) {
 
   return (
     <Tile>
-      <a
-        className={styles.link}
-        href={url}
-        target="_blank"
-        rel="noreferrer ugc"
-        on:click={onClick}
-      >
+      <a className={styles.link} href={url} target="_blank" rel="noreferrer ugc" on:click={onClick}>
         {contents}
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </a>

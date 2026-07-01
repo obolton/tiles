@@ -1,10 +1,5 @@
 import { BaseReactive } from "./base";
-import type {
-  Reactive,
-  UnsubscribeCallback,
-  ReactiveType,
-  SubscribeCallback,
-} from "./types";
+import type { Reactive, UnsubscribeCallback, ReactiveType, SubscribeCallback } from "./types";
 
 type ReactiveInputs = Record<string, Reactive<any, unknown>>;
 
@@ -73,9 +68,7 @@ export class Combined<T extends ReactiveInputs, V> extends BaseReactive<V> {
 
 const identity = <T>(value: T): T => value;
 
-export function combine<T extends ReactiveInputs>(
-  inputs: T,
-): Combined<T, CombinedValue<T>>;
+export function combine<T extends ReactiveInputs>(inputs: T): Combined<T, CombinedValue<T>>;
 export function combine<T extends ReactiveInputs, V>(
   inputs: T,
   transform: (values: CombinedValue<T>) => V,
