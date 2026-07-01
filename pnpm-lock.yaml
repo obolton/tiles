@@ -11,6 +11,9 @@ importers:
       '@playwright/test':
         specifier: ^1.59.1
         version: 1.59.1
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
       '@vitest/coverage-v8':
         specifier: ^4.1.9
         version: 4.1.9(@vitest/browser@4.1.9)(vitest@4.1.9)
@@ -20,9 +23,6 @@ importers:
       oxlint:
         specifier: ^1.70.0
         version: 1.70.0
-      prettier:
-        specifier: ^3.8.1
-        version: 3.8.1
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -277,10 +277,10 @@ importers:
         version: 1.1.0(typescript@6.0.3)
       '@storybook/addon-a11y':
         specifier: ^10.4.6
-        version: 10.4.6(storybook@10.4.6(prettier@3.8.1))
+        version: 10.4.6(storybook@10.4.6)
       '@storybook/html-vite':
         specifier: ^10.4.6
-        version: 10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
+        version: 10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
@@ -301,7 +301,7 @@ importers:
         version: 1.8.1
       storybook:
         specifier: ^10.4.6
-        version: 10.4.6(prettier@3.8.1)
+        version: 10.4.6
       stylelint:
         specifier: ^17.13.0
         version: 17.13.0(typescript@6.0.3)
@@ -3770,11 +3770,6 @@ packages:
   potpack@2.1.0:
     resolution: {integrity: sha512-pcaShQc1Shq0y+E7GqJqvZj8DTthWV1KeHGdi0Z6IAin2Oi3JnLCOfwnCo84qc+HAp52wT9nK9H7FAJp5a44GQ==}
 
-  prettier@3.8.1:
-    resolution: {integrity: sha512-UOnG6LftzbdaHZcKoPFtOcCKztrQ57WkHDeRD9t/PTQtmT0NHSeWWepj6pS0z/N7+08BHFDQVUrfmfMRcZwbMg==}
-    engines: {node: '>=14'}
-    hasBin: true
-
   prisma@7.8.0:
     resolution: {integrity: sha512-yfN4yrw7HV9kEJhoy1+jgah0jafEIQsf7uWouSsM8MvJtlubsk+kM7AIBWZ8+GJl74Yj3c+nbYqBkMOxtsZ3Lw==}
     engines: {node: ^20.19 || ^22.12 || >=24.0}
@@ -6505,16 +6500,16 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@storybook/addon-a11y@10.4.6(storybook@10.4.6(prettier@3.8.1))':
+  '@storybook/addon-a11y@10.4.6(storybook@10.4.6)':
     dependencies:
       '@storybook/global': 5.0.0
       axe-core: 4.11.2
-      storybook: 10.4.6(prettier@3.8.1)
+      storybook: 10.4.6
 
-  '@storybook/builder-vite@10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
+  '@storybook/builder-vite@10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
     dependencies:
-      '@storybook/csf-plugin': 10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
-      storybook: 10.4.6(prettier@3.8.1)
+      '@storybook/csf-plugin': 10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
+      storybook: 10.4.6
       ts-dedent: 2.3.0
       vite: 8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)
     transitivePeerDependencies:
@@ -6522,9 +6517,9 @@ snapshots:
       - rollup
       - webpack
 
-  '@storybook/csf-plugin@10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
+  '@storybook/csf-plugin@10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
     dependencies:
-      storybook: 10.4.6(prettier@3.8.1)
+      storybook: 10.4.6
       unplugin: 2.3.11
     optionalDependencies:
       esbuild: 0.28.1
@@ -6532,21 +6527,21 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/html-vite@10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
+  '@storybook/html-vite@10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))':
     dependencies:
-      '@storybook/builder-vite': 10.4.6(esbuild@0.28.1)(storybook@10.4.6(prettier@3.8.1))(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
-      '@storybook/html': 10.4.6(storybook@10.4.6(prettier@3.8.1))
-      storybook: 10.4.6(prettier@3.8.1)
+      '@storybook/builder-vite': 10.4.6(esbuild@0.28.1)(storybook@10.4.6)(vite@8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
+      '@storybook/html': 10.4.6(storybook@10.4.6)
+      storybook: 10.4.6
       vite: 8.0.16(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)
     transitivePeerDependencies:
       - esbuild
       - rollup
       - webpack
 
-  '@storybook/html@10.4.6(storybook@10.4.6(prettier@3.8.1))':
+  '@storybook/html@10.4.6(storybook@10.4.6)':
     dependencies:
       '@storybook/global': 5.0.0
-      storybook: 10.4.6(prettier@3.8.1)
+      storybook: 10.4.6
       ts-dedent: 2.3.0
 
   '@storybook/icons@2.0.2': {}
@@ -8088,8 +8083,6 @@ snapshots:
 
   potpack@2.1.0: {}
 
-  prettier@3.8.1: {}
-
   prisma@7.8.0(magicast@0.5.3)(typescript@6.0.3):
     dependencies:
       '@prisma/config': 7.8.0(magicast@0.5.3)
@@ -8334,7 +8327,7 @@ snapshots:
 
   std-env@4.1.0: {}
 
-  storybook@10.4.6(prettier@3.8.1):
+  storybook@10.4.6:
     dependencies:
       '@storybook/global': 5.0.0
       '@storybook/icons': 2.0.2
@@ -8351,8 +8344,6 @@ snapshots:
       semver: 7.8.5
       use-sync-external-store: 1.6.0
       ws: 8.21.0
-    optionalDependencies:
-      prettier: 3.8.1
     transitivePeerDependencies:
       - '@testing-library/dom'
       - bufferutil
