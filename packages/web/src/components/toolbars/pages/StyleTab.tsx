@@ -14,7 +14,7 @@ import { toCSSColor, type Color } from "@/utils/color";
 import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
 import { loadFonts } from "@/utils/fonts";
 import { getFontConfig, type FontId } from "api/config/fonts";
-import type { HorizontalAlignment } from "api/types/pages";
+import type { HorizontalAlignment } from "doc/types/enums";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
 import type Theme from "@/models/Theme";

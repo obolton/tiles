@@ -106,8 +106,6 @@ export const PAGE_LINK_TILE: PageLinkTile = {
   linkedPage: {
     id: "linked-page-id",
     title: "Linked Page",
-    background: null,
-    font: "lora",
   },
 };
 
