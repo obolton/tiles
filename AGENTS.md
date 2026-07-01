@@ -6,7 +6,8 @@ Some notable features:
 
 - An intuitive WYSIWYG page editor with view/edit modes and drag-and-drop functionality.
 - A variety of dynamic content types, including text, images, videos, maps, tables, charts and links.
-- Support for rich text (using a ProseMirror-based editor) with a wide range of formatting options, including advanced node types like dropdowns, mentions, code blocks, checklists and dates.
+- Support for rich text (using a `ProseMirror`-based editor) with a wide range of formatting options, including advanced node types like dropdowns, mentions, code blocks, checklists and dates.
+- Realtime collaboration, built on `Y.js` and `Hocuspocus`.
 - Section containers that can be used to create a variety of layouts, including freeform sections (useful for creating presentation slides, for example) and horizontal, vertical and grid containers (useful for creating galleries or lists).
 - Theming and styling features, with customizable text colors, backgrounds, gradients, fonts and animations.
 - Dock zones to attach items to the edges of the viewport.
@@ -16,38 +17,65 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 ## Project Structure
 
 - Monorepo with packages in `packages/*`.
-  - `packages/api`: API server using Node with tRPC and Prisma.
-  - `packages/web`: Web frontend using Vite, Web Components and a custom JSX runtime.
+  - `api`: API server using Node with tRPC and Prisma.
+  - `doc`: Document schema and utilities.
+  - `web`: Web frontend using Vite, Web Components and a custom JSX runtime.
     - `src/elements`: Web Components
     - `src/components`: JSX components
     - `src/routes`: Routing
     - `src/jsx`: JSX runtime
     - `src/utils`: Utilities
-  - `packages/image-upload-worker`: Cloudflare Worker for media uploads.
+  - `image-upload-worker`: Cloudflare Worker for media uploads.
 - Shared config files live in the repo root.
-- Uses `pnpm` for package management and scripts.
+
+## Dependencies
+
+- Use `pnpm` for dependency management and scripts.
+- Always request permission before modifying dependencies.
+
+## Workflow
+
+- After making changes, run the check script (`pnpm check`) to check types, linting, formatting and run unit tests.
+- Fix any failures reported and re-run until it passes.
+- Formatting failures can be auto-fixed with `pnpm format`.
+- Run `pnpm generate` to generate updated types after changing the Prisma schema, CSS Modules, or Worker bindings.
 
 ## Scripts
 
-- `pnpm generate`: Generate types for all packages (e.g. CSS Modules, Prisma client, Cloudflare workers).
-- `pnpm check`: Check types, linting and formatting for all packages.
-- `pnpm typecheck`: Check types only.
-- `pnpm lint`: Lint TypeScript and CSS files.
-- `pnpm test`: Run Vitest test suites.
+**Note**: Always use `pnpm` for running scripts. Do not use `npm` or `npx`.
+
+- `pnpm check`: Run all status checks (typecheck, lint, format, tests).
+- `pnpm generate`: Generate TypeScript types (e.g. for CSS Modules, Prisma client, Cloudflare workers).
+- `pnpm typecheck`: Check types.
+- `pnpm lint:compact`: Lint TypeScript and CSS files (with concise, LLM-friendly output).
+- `pnpm format`: Format files with oxfmt.
+- `pnpm format:check`: Check formatting without writing changes.
+- `pnpm test:compact`: Run unit tests with Vitest (with concise, LLM-friendly output).
 - `pnpm build`: Build all packages in dependency order.
-- `pnpm format` Format files with Prettier.
 - `pnpm storybook`: Run Storybook for UI component development.
+
+### Testing tiers
+
+- `pnpm test:compact` runs unit tests across all packages (included in `pnpm check`).
+- `pnpm --filter web test:browser` runs browser-based tests with Playwright (not included in `pnpm check`).
+- `pnpm test:e2e` runs the end-to-end tests with Playwright (not part of `pnpm check`).
 
 ### Important notes
 
-- All scripts are fast, so prefer running them across the whole workspace. However, scripts can be run for a specific package using the pnpm `--filter <package>` option, e.g. `pnpm --filter api test` to run tests for the `api` package only.
+- Typecheck, lint and format scripts are fast and can be run across the whole workspace. Avoid scoping scripts to packages unless specifically needed.
+- Scripts can be scoped to a package using `pnpm --filter <package>`, e.g. `pnpm --filter api typecheck` to typecheck the `api` package only.
 
 ## Coding Style
 
+### General
+
 - Use TypeScript with ES modules and two-space indentation.
-- Use the `@/*` path alias that resolves to each package's `src` directory; avoid relative `../../` imports.
-- Prefer pure functions and typed helpers; keep tRPC routers, JSX components, and Workers focused on orchestration and call shared utilities.
-- Prefer `instanceof` checks over type assertions for type narrowing.
+- Comments should be terse and used sparingly to explain subtle behavior or constraints, not simply describing what code is doing.
+- Use the `@/*` path alias that resolves to each package's `src` directory and avoid relative `../../` imports.
+- Avoid type assertions (e.g. the `!` operator and `as type`) in favor of more type-safe options where possible.
+
+### CSS
+
 - Use CSS Modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
 - Use shared class names and nested rules to reduce duplication in CSS files.
 
@@ -64,7 +92,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Use `__tests__/*.test.ts` files.
 - Use `describe` blocks for each function being tested and to provide structure to test suites.
 - Mock external services (database, external APIs etc).
-- Run tests with `pnpm test` and check coverage with `pnpm test:coverage`.
+- Run tests with `pnpm test:compact` and check coverage with `pnpm test:coverage`.
 
 ### Storybook stories
 
@@ -75,11 +103,3 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Use Shadow DOM to isolate structure and style, with adopted stylesheets imported via `?inline`.
 - Use the `handleEvent` pattern for event handling within components.
 - Reflect element properties to attributes and vice versa.
-
-## UI Patterns
-
-- Use optimistic UI updates where possible.
-
-## Environment & Security Notes
-
-- During development, environment variables are loaded from an untracked `.env` file. Never commit secrets.
