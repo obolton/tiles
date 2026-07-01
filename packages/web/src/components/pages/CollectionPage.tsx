@@ -44,13 +44,7 @@ export default function CollectionPage({
       data-page-type="COLLECTION"
     >
       <Each items={tiles}>
-        {(tile) => (
-          <Item
-            tile={tile}
-            tabindex={tabindex}
-            resize={resize}
-          />
-        )}
+        {(tile) => <Item tile={tile} tabindex={tabindex} resize={resize} />}
       </Each>
     </main>
   );

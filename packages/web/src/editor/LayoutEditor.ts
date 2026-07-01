@@ -531,7 +531,10 @@ export default class LayoutEditor {
       const gridWidth = this.gridRect.width / this.scale;
       const columnWidth = (gridWidth - gap * (columns - 1)) / columns;
       const cellSpan = (size: number) =>
-        Math.max(Math.round((size / this.scale + gap) / (columnWidth + gap)), 1);
+        Math.max(
+          Math.round((size / this.scale + gap) / (columnWidth + gap)),
+          1,
+        );
       this.resizing.width.value = Math.min(cellSpan(rect.width), columns);
       this.resizing.rowSpan.value = cellSpan(rect.height);
     } else {
