@@ -5,7 +5,6 @@ import PresentationIcon from "@/icons/presentation.svg?jsx";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import { makeDraggable } from "@/utils/drag";
-import { getThemeStyles } from "@/utils/themes";
 import { formatRelativeDate } from "@/utils/dates";
 import styles from "./LibraryCard.module.css";
 import type { Reactive } from "@/utils/reactivity";
@@ -97,10 +96,6 @@ export default function LibraryCard({
         [styles.card]: true,
         [styles.selected]: selected,
       }}
-      style={getThemeStyles(page.theme, {
-        background: page.background,
-        font: page.font,
-      })}
       data-id={page.id}
     >
       {link ? (

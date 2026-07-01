@@ -23,15 +23,7 @@ export default function PageLinkTileThumbnail({
   return (
     <Tile classList={{ [styles.tile]: true }}>
       <div className={styles.link}>
-        <p
-          classList={{
-            [styles.text]: true,
-            [styles["with-image"]]:
-              linkedPage.value?.background?.type === "image",
-          }}
-        >
-          {linkedPage.value?.title}
-        </p>
+        <p className={styles.text}>{linkedPage.value?.title}</p>
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </div>
     </Tile>

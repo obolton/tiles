@@ -47,14 +47,7 @@ export default function PageLinkTile({
         target="_blank"
         on:click={onClick}
       >
-        <p
-          classList={{
-            [styles.text]: true,
-            [styles["with-image"]]: linkedPage.background?.type === "image",
-          }}
-        >
-          {linkedPage.title}
-        </p>
+        <p className={styles.text}>{linkedPage.title}</p>
 
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </a>
