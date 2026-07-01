@@ -44,30 +44,9 @@ function computeFill({
   return null;
 }
 
-function computeBackground({
-  backgroundColor,
-  backgroundGradient,
-  backgroundImageId,
-}: {
-  backgroundColor: Uint8Array | null;
-  backgroundGradient?: GradientDirection | null;
-  backgroundImageId?: string | null;
-}): Background {
-  if (backgroundImageId) {
-    return { type: "image", imageId: backgroundImageId };
-  }
-  return computeFill({ color: backgroundColor, gradient: backgroundGradient });
-}
-
 export default Prisma.defineExtension({
   name: "backgrounds-extension",
   result: {
-    page: {
-      background: {
-        needs: { backgroundColor: true },
-        compute: computeBackground,
-      },
-    },
     theme: {
       background: {
         needs: { backgroundColor: true, backgroundGradient: true },

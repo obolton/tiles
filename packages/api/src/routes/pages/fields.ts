@@ -1,6 +1,5 @@
 import prisma from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
-import { THEME_FIELDS } from "@/routes/themes/fields";
 import {
   PAGE_ACCESS_FIELDS,
   PAGE_INVITE_FIELDS,
@@ -42,11 +41,6 @@ export const LIBRARY_PAGE_FIELDS = {
   updatedAt: true,
   published: true,
   folderId: true,
-  background: true,
-  font: true,
-  theme: {
-    select: THEME_FIELDS,
-  },
   author: {
     select: {
       id: true,
