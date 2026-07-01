@@ -13,26 +13,20 @@ enum PageType {
 }
 
 model Page {
-  id              String              @id @default(uuid()) @db.Uuid
-  createdAt       DateTime            @default(now()) @map("created_at")
-  updatedAt       DateTime            @updatedAt @map("updated_at")
-  deletedAt       DateTime?           @map("deleted_at")
-  workspaceId     String              @map("workspace_id") @db.Uuid
-  authorId        String              @map("author_id") @db.Uuid
-  folderId        String?             @map("folder_id") @db.Uuid
-  themeId         String?             @map("theme_id") @db.Uuid
-  published       Boolean             @default(false)
-  title           String              @db.VarChar(100)
-  backgroundColor Bytes?              @map("background_color") @db.ByteA
-  font            String?
-  width           Int                 @default(32) @db.SmallInt
-  alignment       HorizontalAlignment @default(CENTER)
-  type            PageType            @default(FREE)
+  id          String    @id @default(uuid()) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  workspaceId String    @map("workspace_id") @db.Uuid
+  authorId    String    @map("author_id") @db.Uuid
+  folderId    String?   @map("folder_id") @db.Uuid
+  published   Boolean   @default(false)
+  title       String    @db.VarChar(100)
+  type        PageType  @default(FREE)
 
   documentId String @unique @map("document_id") @db.Uuid
 
   workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  theme     Theme?       @relation(fields: [themeId], references: [id], onDelete: SetNull)
   author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
   folder    Folder?      @relation(fields: [folderId], references: [id], onDelete: SetNull)
   bookmarks Bookmark[]
