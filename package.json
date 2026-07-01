@@ -15,7 +15,7 @@
     "test:e2e": "playwright test",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint": "pnpm -r --parallel lint",
+    "lint": "oxlint && pnpm --filter web lint:css",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check",
     "storybook": "pnpm --filter web storybook",
     "cdn:purge": "pnpm --filter api cdn:purge",
