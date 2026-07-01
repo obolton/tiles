@@ -22,8 +22,8 @@
     "cdn:purge": "pnpm --filter api cdn:purge",
     "typecheck": "tsc --build",
     "build": "pnpm -r --if-present build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "generate": "pnpm -r --parallel generate"
   },
   "devDependencies": {
