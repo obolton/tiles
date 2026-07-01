@@ -6,10 +6,8 @@ import SharedList from "@/collaboration/SharedList";
 import { createId } from "doc/id";
 import { orderBetween, orderedEntries } from "doc/placement/ordering";
 import type { Reactive } from "@/utils/reactivity";
-import type { ChartType } from "@/models/Series";
 import type Page from "@/models/Page";
 import type { ChartTile } from "doc/types/tiles";
-import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { Property } from "doc/types/chart";
 
 export interface CreateChartInput extends ChartMapInput {
@@ -68,28 +66,12 @@ export default class Chart extends Tile {
     };
   }
 
-  setLabel(property: Property | null) {
-    this.label.value = property;
-  }
-
   addSeries(column: Property) {
     const order = orderBetween(orderedEntries(this.seriesMap), null);
     this.seriesMap.set(
       createId(),
       Series.createMap(order, { type: "BAR", column, fill: null }),
     );
-  }
-
-  setSeriesChartType(id: string, type: ChartType) {
-    this.series.get(id).type.value = type;
-  }
-
-  setSeriesFill(id: string, fill: ColorFill | GradientFill | null) {
-    this.series.get(id).fill.value = fill;
-  }
-
-  deleteSeries(id: string) {
-    this.series.remove(id);
   }
 
   dispose() {

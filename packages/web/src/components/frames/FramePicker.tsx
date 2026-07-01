@@ -36,7 +36,7 @@ export default function FramePicker({ tile, onChange }: FramePickerProps) {
   function handleRadiusChange(event: Event) {
     const element = event.target as HTMLInputElement;
     const value = parseInt(element.value, 10);
-    tile.setCornerRadius(value === DEFAULT_CORNER_RADIUS ? null : value);
+    tile.cornerRadius.value = value === DEFAULT_CORNER_RADIUS ? null : value;
   }
 
   const parent = parseParentId(tile.parentId.value);

@@ -6,7 +6,6 @@ import Editor from "@/editor/Editor";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
-import type { Animation } from "doc/types/enums";
 
 // Tile is abstract; exercise its base behavior via Section.
 const PROPS: CreateSectionInput = {
@@ -43,25 +42,6 @@ describe("Tile", () => {
     expect(tile.rowSpan.value).toBe(PROPS.rowSpan);
     expect(tile.animation.value).toBe(PROPS.animation);
     expect(tile.hide.value).toBe(PROPS.hide);
-  });
-
-  describe("setAnimation", () => {
-    test("updates the animation", () => {
-      const tile = createTile();
-      const animation: Animation = "GROW";
-
-      tile.setAnimation(animation);
-
-      expect(tile.animation.value).toBe(animation);
-    });
-
-    test("clears the animation", () => {
-      const tile = createTile();
-
-      tile.setAnimation(null);
-
-      expect(tile.animation.value).toBeNull();
-    });
   });
 
   describe("setSizing", () => {
@@ -125,16 +105,6 @@ describe("Tile", () => {
       tile.setSize({ width: null });
 
       expect(tile.width.value).toBeNull();
-    });
-  });
-
-  describe("setHidden", () => {
-    test("updates the hidden state", () => {
-      const tile = createTile();
-
-      tile.setHidden(true);
-
-      expect(tile.hide.value).toBe(true);
     });
   });
 

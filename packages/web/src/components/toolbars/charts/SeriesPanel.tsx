@@ -39,9 +39,9 @@ export default function SeriesPanel({
     const select = event.currentTarget as ListSelect;
     const value = select.value;
     const column = table.columns.value.find((c) => c.id === value);
-    chart.setLabel(
-      column ? { id: column.id, title: column.title.value } : null,
-    );
+    chart.label.value = column
+      ? { id: column.id, title: column.title.value }
+      : null;
   }
 
   function addSeries(event: Event) {
@@ -54,18 +54,18 @@ export default function SeriesPanel({
   }
 
   function setChartType(type: ChartType, series: Series) {
-    chart.setSeriesChartType(series.id, type);
+    series.type.value = type;
   }
 
   function setSeriesFill(
     fill: ColorFill | GradientFill | null,
     series: Series,
   ) {
-    chart.setSeriesFill(series.id, fill);
+    series.fill.value = fill;
   }
 
   function deleteSeries(series: Series) {
-    chart.deleteSeries(series.id);
+    chart.series.remove(series.id);
   }
 
   return (

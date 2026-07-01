@@ -63,7 +63,9 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           icon={<TextColorIcon aria-hidden="true" />}
           label="Text"
           value={textColor}
-          onChange={(color) => viewTransition(() => tile.setTextColor(color))}
+          onChange={(color) =>
+            viewTransition(() => (tile.textColor.value = color))
+          }
           themeColors={themeColors}
         />
 
@@ -78,7 +80,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
 
         <AnimationPicker
           value={animation}
-          onChange={(animation) => tile.setAnimation(animation)}
+          onChange={(animation) => (tile.animation.value = animation)}
         />
 
         <FramePicker

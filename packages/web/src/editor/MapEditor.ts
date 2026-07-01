@@ -94,7 +94,7 @@ export default class MapEditor {
     const { lat, long } = this.drag;
     this.drag = null;
 
-    tile.setCoordinates({ lat, long });
+    tile.coordinates.value = { lat, long };
 
     if (tile.parentId.value !== this.sectionId) {
       tile.move({ parentId: this.sectionId });

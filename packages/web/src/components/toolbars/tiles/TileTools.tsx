@@ -31,7 +31,7 @@ export default function TileTools({ tile }: TileToolsProps) {
   }
 
   function toggleHide() {
-    tile.setHidden(!tile.hide.value);
+    tile.hide.value = !tile.hide.value;
   }
 
   function handleDelete() {

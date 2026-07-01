@@ -275,27 +275,11 @@ export default abstract class Tile {
     });
   }
 
-  setCoordinates(coordinates: { lat: number; long: number } | null) {
-    this.coordinates.value = coordinates;
-  }
-
   setDates(startDate: string | null, endDate: string | null) {
     this.page.doc.transact(() => {
       this.startDate.value = startDate;
       this.endDate.value = endDate;
     });
-  }
-
-  setAnimation(animation: Animation | null) {
-    this.animation.value = animation;
-  }
-
-  setCornerRadius(cornerRadius: number | null) {
-    this.cornerRadius.value = cornerRadius;
-  }
-
-  setHidden(hide: boolean) {
-    this.hide.value = hide;
   }
 
   setTheme(theme: Theme | null) {
@@ -305,10 +289,6 @@ export default abstract class Tile {
       }
       this.themeId.value = theme?.id ?? null;
     });
-  }
-
-  setTextColor(textColor: Color | null) {
-    this.textColor.value = textColor;
   }
 
   moveUp() {
