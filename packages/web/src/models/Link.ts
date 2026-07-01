@@ -5,7 +5,6 @@ import { type Reactive } from "@/utils/reactivity";
 import client from "@/api/client";
 import Video from "./Video";
 import type Page from "@/models/Page";
-import type { LinkTile } from "doc/types/tiles";
 
 export interface CreateLinkInput extends Omit<CreateTileInput, "type"> {
   url: string;
@@ -71,18 +70,6 @@ export default class Link extends Tile {
     this.description = this.binding.field("description", null);
     this.siteName = this.binding.field("siteName", null);
     this.imageId = this.binding.field("imageId", null);
-  }
-
-  serialize(): LinkTile {
-    return {
-      ...super.serialize(),
-      type: "LINK",
-      url: this.url.value,
-      title: this.title.value,
-      description: this.description.value,
-      siteName: this.siteName.value,
-      imageId: this.imageId.value,
-    };
   }
 
   async setUrl(url: string) {

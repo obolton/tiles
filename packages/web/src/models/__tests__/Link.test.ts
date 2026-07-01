@@ -45,17 +45,6 @@ describe("Link", () => {
     expect(link.imageId.value).toBe(LINK_PROPS.imageId);
   });
 
-  test("serialize", () => {
-    const link = createLink();
-    const data = link.serialize();
-
-    expect(data.type).toBe("LINK");
-    expect(data.url).toBe(LINK_PROPS.url);
-    expect(data.title).toBe(LINK_PROPS.title);
-    expect(data.description).toBe(LINK_PROPS.description);
-    expect(data.siteName).toBe(LINK_PROPS.siteName);
-  });
-
   test("updates the url and refreshes metadata from the server", async () => {
     const link = createLink();
     const nextUrl = "https://tiles.dev/updated";

@@ -23,15 +23,6 @@ export default class Column {
     this.style = this.background.derive(getBackgroundStyle);
   }
 
-  serialize() {
-    return {
-      id: this.id,
-      title: this.title.value,
-      width: this.width.value,
-      background: this.background.value,
-    };
-  }
-
   dispose() {
     this.binding.dispose();
   }

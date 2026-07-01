@@ -46,16 +46,6 @@ describe("Image", () => {
     expect(image.state.value).toBeNull();
   });
 
-  test("serialize", () => {
-    const image = createImage();
-    const data = image.serialize();
-
-    expect(data.type).toBe("IMAGE");
-    expect(data.image).toEqual(IMAGE_PROPS.size);
-    expect(data.alt).toBe(IMAGE_PROPS.alt);
-    expect(data.text).toEqual(IMAGE_TEXT);
-  });
-
   describe("persistText", () => {
     test("clears text when no editor state is present", () => {
       const image = createImage();

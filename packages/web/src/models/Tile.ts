@@ -4,7 +4,6 @@ import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type { TileBase } from "doc/types/tiles";
 import type {
   Sizing,
   Animation,
@@ -15,7 +14,6 @@ import type {
 import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
-import { parseParentId } from "./parentId";
 import type TileCollection from "./TileCollection";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
@@ -105,33 +103,6 @@ export default abstract class Tile {
 
   dispose() {
     this.binding?.dispose();
-  }
-
-  serialize(): TileBase {
-    const parent = parseParentId(this.parentId.value);
-    return {
-      id: this.id,
-      type: this.type,
-      sectionId: parent.type === "section" ? parent.sectionId : null,
-      order: this.order.value,
-      sizing: this.sizing.value,
-      x: this.x.value,
-      y: this.y.value,
-      width: this.width.value,
-      height: this.height.value,
-      rowSpan: this.rowSpan.value,
-      startDate: this.startDate.value,
-      endDate: this.endDate.value,
-      lat: this.coordinates.value?.lat ?? null,
-      long: this.coordinates.value?.long ?? null,
-      cornerRadius: this.cornerRadius.value,
-      animation: this.animation.value,
-      frame: this.frame.value,
-      hide: this.hide.value,
-      dock: parent.type === "dock" ? parent.edge : null,
-      textColor: this.textColor.value,
-      background: this.background.value,
-    };
   }
 
   get index(): number | null {

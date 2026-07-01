@@ -29,12 +29,4 @@ describe("PageLink", () => {
     expect(pageLink.type).toBe("PAGE_LINK");
     expect(pageLink.linkedPage.value).toEqual(LINKED_PAGE);
   });
-
-  test("serialize", () => {
-    const pageLink = createPageLink();
-    const data = pageLink.serialize();
-
-    expect(data.type).toBe("PAGE_LINK");
-    expect(data.linkedPage).toEqual(LINKED_PAGE);
-  });
 });

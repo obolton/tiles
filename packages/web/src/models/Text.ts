@@ -51,13 +51,4 @@ export default class Text extends Tile {
     }
     this.contentFragment = fragment;
   }
-
-  serialize(): TextTile {
-    return {
-      ...super.serialize(),
-      type: "TEXT",
-      content: [],
-      align: this.align.value,
-    };
-  }
 }

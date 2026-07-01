@@ -7,7 +7,6 @@ import { createId } from "doc/id";
 import { orderBetween, orderedEntries } from "doc/placement/ordering";
 import type { Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { ChartTile } from "doc/types/tiles";
 import type { Property } from "doc/types/chart";
 
 export interface CreateChartInput extends ChartMapInput {
@@ -49,21 +48,6 @@ export default class Chart extends Tile {
       this.seriesMap,
       (id, map) => new Series(id, map),
     );
-  }
-
-  serialize(): ChartTile {
-    return {
-      ...super.serialize(),
-      type: "CHART",
-      tableId: this.tableId.value,
-      label: this.label.value,
-      series: this.series.value.map((s) => ({
-        id: s.id,
-        type: s.type.value,
-        column: s.column.value,
-        fill: s.fill.value,
-      })),
-    };
   }
 
   addSeries(column: Property) {

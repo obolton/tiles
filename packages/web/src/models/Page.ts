@@ -128,25 +128,6 @@ export default class Page {
     return this.editor?.collaboration?.awareness ?? null;
   }
 
-  serialize(): Omit<PageData, "tiles" | "document"> {
-    return {
-      id: this.id,
-      workspaceId: this.workspaceId,
-      updatedAt: this.updatedAt.toISOString(),
-      author: this.author,
-      type: this.type,
-      title: this.title.value,
-      published: this.isPublished.value,
-      folderId: this.folderId.value,
-      access: this.access.value,
-      invites: this.invites.value.map((i) => ({
-        id: i.id,
-        email: i.email,
-        createdAt: i.createdAt,
-      })),
-    };
-  }
-
   createDropdown(entry: Y.Map<unknown>): Dropdown {
     const id = createId();
     this.dropdownsMap.set(id, entry);

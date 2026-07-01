@@ -30,16 +30,4 @@ describe("Video", () => {
     expect(video.description.value).toBe(VIDEO_PROPS.description);
     expect(video.title.value).toBe(VIDEO_PROPS.title);
   });
-
-  test("serialize", () => {
-    const video = createVideo();
-    const data = video.serialize();
-
-    expect(data.type).toBe("VIDEO");
-    expect(data.videoType).toBe(VIDEO_PROPS.videoType);
-    expect(data.videoId).toBe(VIDEO_PROPS.videoId);
-    expect(data.imageUrl).toBe(VIDEO_PROPS.imageUrl);
-    expect(data.description).toBe(VIDEO_PROPS.description);
-    expect(data.title).toBe(VIDEO_PROPS.title);
-  });
 });

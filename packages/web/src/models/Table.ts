@@ -17,7 +17,6 @@ import { createId } from "doc/id";
 import YReactive from "@/collaboration/YReactive";
 import type { Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { TableTile } from "doc/types/tiles";
 
 export type { CellValue };
 
@@ -91,15 +90,6 @@ export default class Table extends Tile {
     return this.rowsContent.derive((rows) =>
       orderedEntries(rows).map(({ map }) => getCell<CellValue>(map, columnId)),
     );
-  }
-
-  serialize(): TableTile {
-    return {
-      ...super.serialize(),
-      type: "TABLE",
-      columns: this.columns.value.map((column) => column.serialize()),
-      rows: this.rows.value.map((row) => row.serialize()),
-    };
   }
 
   // Columns

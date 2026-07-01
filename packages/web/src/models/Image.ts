@@ -60,19 +60,6 @@ export default class Image extends Tile {
     this.state = reactive(null);
   }
 
-  serialize(): ImageTile {
-    return {
-      ...super.serialize(),
-      type: "IMAGE",
-      imageId: this.imageId.value,
-      image: this.size.value,
-      alt: this.alt.value,
-      originX: this.origin.value.x,
-      originY: this.origin.value.y,
-      text: this.text.value,
-    };
-  }
-
   persistText() {
     const state = this.state.value;
     this.text.value = state ? serialize(state) : null;

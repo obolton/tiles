@@ -35,23 +35,6 @@ export default class Row {
     return this.cells.get(columnId) ?? null;
   }
 
-  get data(): Record<string, CellValue> {
-    const data: Record<string, CellValue> = {};
-    for (const [columnId, value] of this.cells) {
-      data[columnId] = value;
-    }
-    return data;
-  }
-
-  serialize() {
-    return {
-      id: this.id,
-      height: this.height.value,
-      background: this.background.value,
-      data: this.data,
-    };
-  }
-
   dispose() {
     this.binding.dispose();
   }

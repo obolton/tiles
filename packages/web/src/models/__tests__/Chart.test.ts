@@ -36,31 +36,6 @@ describe("Chart", () => {
     expect(chart.series.value[0]?.fill.value).toBeNull();
   });
 
-  test("serialize", () => {
-    const chart = createChart();
-    const [first, second] = chart.series.value;
-
-    expect(chart.serialize()).toMatchObject({
-      type: "CHART",
-      tableId: "table-id",
-      label: { id: "col-1", title: "Revenue" },
-      series: [
-        {
-          id: first?.id,
-          type: "BAR",
-          column: { id: "col-2", title: "Expenses" },
-          fill: null,
-        },
-        {
-          id: second?.id,
-          type: "BAR",
-          column: { id: "col-3", title: "Profit" },
-          fill: null,
-        },
-      ],
-    });
-  });
-
   describe("addSeries", () => {
     test("appends a new series", () => {
       const chart = createChart();

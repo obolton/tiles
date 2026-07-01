@@ -42,12 +42,4 @@ export default class PageLink extends Tile {
 
     this.linkedPage = this.binding.field("linkedPage", null);
   }
-
-  serialize(): PageLinkTile {
-    return {
-      ...super.serialize(),
-      type: "PAGE_LINK",
-      linkedPage: this.linkedPage.value,
-    };
-  }
 }

@@ -33,16 +33,6 @@ describe("Page", () => {
     vi.clearAllMocks();
   });
 
-  test("serialize", () => {
-    const page = new Page(PAGE, new Y.Doc());
-    const { document: __, ...expected } = PAGE;
-
-    expect(page.serialize()).toEqual({
-      ...expected,
-      updatedAt: new Date(PAGE.updatedAt).toISOString(),
-    });
-  });
-
   test("maps properties to reactive values", () => {
     const page = new Page(PAGE, new Y.Doc());
 

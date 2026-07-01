@@ -3,7 +3,6 @@ import Tile from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import { type Reactive } from "@/utils/reactivity";
 import type Page from "@/models/Page";
-import type { VideoTile } from "doc/types/tiles";
 import type { VideoType } from "doc/types/tiles/video";
 
 export type { VideoType };
@@ -32,17 +31,5 @@ export default class Video extends Tile {
     this.imageUrl = this.binding.field("imageUrl", null);
     this.description = this.binding.field("description", null);
     this.title = this.binding.field("title", "");
-  }
-
-  serialize(): VideoTile {
-    return {
-      ...super.serialize(),
-      type: "VIDEO",
-      videoType: this.videoType.value,
-      videoId: this.videoId.value,
-      imageUrl: this.imageUrl.value,
-      description: this.description.value,
-      title: this.title.value,
-    };
   }
 }

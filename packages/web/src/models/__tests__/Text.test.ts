@@ -24,12 +24,4 @@ describe("Text", () => {
     expect(text.align.value).toBe(TEXT_PROPS.align);
     expect(text.contentFragment).toBeInstanceOf(Y.XmlFragment);
   });
-
-  test("serialize", () => {
-    const text = createText();
-    const data = text.serialize();
-
-    expect(data.type).toBe("TEXT");
-    expect(data.align).toBe(TEXT_PROPS.align);
-  });
 });

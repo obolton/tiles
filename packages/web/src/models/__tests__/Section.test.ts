@@ -42,16 +42,6 @@ describe("Section", () => {
     });
   });
 
-  test("serialize", () => {
-    const section = createSection();
-    const data = section.serialize();
-
-    expect(data.type).toBe("SECTION");
-    expect(data.layout).toBe(SECTION_PROPS.layout);
-    expect(data.mapStyle).toBe(SECTION_PROPS.mapStyle);
-    expect(data.columns).toBe(SECTION_PROPS.columns);
-  });
-
   test("maps properties to reactive values", () => {
     const section = createSection();
 
