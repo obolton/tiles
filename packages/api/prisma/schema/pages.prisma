@@ -1,9 +1,3 @@
-enum HorizontalAlignment {
-  LEFT
-  CENTER
-  RIGHT
-}
-
 enum GradientDirection {
   VERTICAL
   HORIZONTAL

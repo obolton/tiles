@@ -47,3 +47,11 @@ export const DockEdge = {
   BOTTOM: "BOTTOM",
 } as const;
 export type DockEdge = (typeof DockEdge)[keyof typeof DockEdge];
+
+export const HorizontalAlignment = {
+  LEFT: "LEFT",
+  CENTER: "CENTER",
+  RIGHT: "RIGHT",
+} as const;
+export type HorizontalAlignment =
+  (typeof HorizontalAlignment)[keyof typeof HorizontalAlignment];
