@@ -4,13 +4,7 @@ import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type {
-  Sizing,
-  Animation,
-  FrameStyle,
-  TileType,
-  DockEdge,
-} from "doc/types/enums";
+import type { Sizing, Animation, FrameStyle, TileType, DockEdge } from "doc/types/enums";
 import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";

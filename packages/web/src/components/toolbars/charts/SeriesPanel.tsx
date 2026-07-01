@@ -35,9 +35,7 @@ export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps
     const select = event.currentTarget as ListSelect;
     const value = select.value;
     const column = table.columns.value.find((c) => c.id === value);
-    chart.label.value = column
-      ? { id: column.id, title: column.title.value }
-      : null;
+    chart.label.value = column ? { id: column.id, title: column.title.value } : null;
   }
 
   function addSeries(event: Event) {
@@ -53,10 +51,7 @@ export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps
     series.type.value = type;
   }
 
-  function setSeriesFill(
-    fill: ColorFill | GradientFill | null,
-    series: Series,
-  ) {
+  function setSeriesFill(fill: ColorFill | GradientFill | null, series: Series) {
     series.fill.value = fill;
   }
 

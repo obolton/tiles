@@ -53,5 +53,4 @@ export const HorizontalAlignment = {
   CENTER: "CENTER",
   RIGHT: "RIGHT",
 } as const;
-export type HorizontalAlignment =
-  (typeof HorizontalAlignment)[keyof typeof HorizontalAlignment];
+export type HorizontalAlignment = (typeof HorizontalAlignment)[keyof typeof HorizontalAlignment];
