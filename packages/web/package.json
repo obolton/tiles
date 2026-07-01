@@ -1,9 +1,9 @@
 {
   "name": "web",
-  "type": "module",
   "version": "0.0.1",
-  "description": "Web frontend",
   "private": true,
+  "description": "Web frontend",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=\"../../../.env\" --clear-screen=false scripts/dev.ts",
     "build:client": "vite build --outDir dist",

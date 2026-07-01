@@ -4,6 +4,5 @@
   "tabWidth": 2,
   "semi": true,
   "singleQuote": false,
-  "printWidth": 80,
-  "sortPackageJson": false
+  "printWidth": 80
 }

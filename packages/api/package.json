@@ -1,9 +1,9 @@
 {
   "name": "api",
-  "type": "module",
   "version": "0.0.1",
-  "description": "API",
   "private": true,
+  "description": "API",
+  "type": "module",
   "exports": {
     "./*.json": "./src/*.json",
     "./*": "./src/*.ts"

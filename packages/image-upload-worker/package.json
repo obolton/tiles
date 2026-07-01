@@ -1,9 +1,9 @@
 {
   "name": "image-upload-worker",
-  "type": "module",
   "version": "0.0.1",
-  "description": "Image upload worker",
   "private": true,
+  "description": "Image upload worker",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev --env-file=\"../../../.env\"",
     "test": "vitest run",
