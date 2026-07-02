@@ -7,23 +7,20 @@
   background: var(--background, var(--background-fallback, #fff));
   color: var(--text-color);
   font-family: var(--font);
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 8%);
+  outline: 1px solid rgb(0 0 0 / 20%);
+  outline-offset: 4px;
   font-size: 4px;
   cursor: pointer;
-  container-type: size;
-  outline: 1px solid transparent;
-  outline-offset: 2px;
   view-transition-name: match-element;
-  transition:
-    outline-color var(--animation-duration-short) var(--easing),
-    opacity var(--animation-duration) var(--easing);
+  transition: opacity var(--animation-duration) var(--easing);
 
   &:hover {
-    outline-color: rgb(0 0 0 / 16%);
+    outline-color: rgb(0 0 0 / 20%);
+    outline-width: 2px;
   }
 
   &[aria-selected="true"] {
-    outline-color: var(--accent-color);
+    outline-color: var(--ui-selection-color);
     outline-width: 2px;
   }
 
