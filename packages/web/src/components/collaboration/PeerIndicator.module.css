@@ -1,0 +1,23 @@
+.indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: var(--border-radius, 0);
+  outline: 3px solid var(--peer-color);
+  outline-offset: 4px;
+  opacity: 1;
+  transition: opacity var(--animation-duration-short) var(--easing);
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+.stack {
+  position: absolute;
+  inset-block-end: 100%;
+  inset-inline-start: 0;
+  margin-block-end: 12px;
+  pointer-events: auto;
+}
