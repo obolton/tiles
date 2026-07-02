@@ -6,12 +6,14 @@ import ToggleEvent from "./mocks/ToggleEvent";
 import DragEvent from "./mocks/DragEvent";
 import CSS from "./mocks/CSS";
 import FontFace from "./mocks/FontFace";
+import IntersectionObserver from "./mocks/IntersectionObserver";
 
 vi.stubGlobal("DOMPoint", DOMPoint);
 vi.stubGlobal("ToggleEvent", ToggleEvent);
 vi.stubGlobal("DragEvent", DragEvent);
 vi.stubGlobal("CSS", CSS);
 vi.stubGlobal("FontFace", FontFace);
+vi.stubGlobal("IntersectionObserver", IntersectionObserver);
 
 Object.defineProperty(document, "fonts", {
   configurable: true,

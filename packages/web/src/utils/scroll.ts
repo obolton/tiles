@@ -72,3 +72,42 @@ export function scrollIntoViewIfNeeded(element: Element, options?: ScrollIntoVie
     element.scrollIntoView(options);
   }
 }
+
+export interface WhenVisibleOptions extends IntersectionObserverInit {
+  signal?: AbortSignal;
+}
+
+/**
+ * Returns a promise that resolves when `element` becomes visible.
+ */
+export function whenVisible(
+  element: Element,
+  { signal = AbortSignal.timeout(1000), ...options }: WhenVisibleOptions = {},
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    if (signal.aborted) {
+      reject(signal.reason);
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        cleanup();
+        resolve();
+      }
+    }, options);
+
+    function cleanup() {
+      observer.disconnect();
+      signal.removeEventListener("abort", onAbort);
+    }
+
+    function onAbort() {
+      cleanup();
+      reject(signal.reason);
+    }
+
+    signal.addEventListener("abort", onAbort);
+    observer.observe(element);
+  });
+}

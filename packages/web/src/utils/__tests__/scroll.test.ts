@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { reveal, scrollIntoViewIfNeeded } from "../scroll";
+import { reveal, scrollIntoViewIfNeeded, whenVisible } from "../scroll";
+import IntersectionObserver from "@/test/mocks/IntersectionObserver";
 
 describe("reveal", () => {
   beforeEach(() => {
@@ -273,5 +274,88 @@ describe("scrollIntoViewIfNeeded", () => {
     const scrollIntoView = vi.spyOn(element, "scrollIntoView");
     scrollIntoViewIfNeeded(element, options);
     expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+});
+
+describe("whenVisible", () => {
+  beforeEach(() => {
+    IntersectionObserver.instances = [];
+  });
+
+  function lastObserver() {
+    const observer = IntersectionObserver.instances.at(-1);
+    if (!observer) {
+      throw new Error("no IntersectionObserver was created");
+    }
+    return observer;
+  }
+
+  test("resolves and disconnects once the element intersects", async () => {
+    const element = document.createElement("div");
+    const promise = whenVisible(element, {
+      signal: new AbortController().signal,
+    });
+
+    const observer = lastObserver();
+    expect(observer.observe).toHaveBeenCalledWith(element);
+
+    observer.trigger(true);
+
+    await expect(promise).resolves.toBeUndefined();
+    expect(observer.disconnect).toHaveBeenCalled();
+  });
+
+  test("ignores entries that are not intersecting", async () => {
+    let resolved = false;
+    const promise = whenVisible(document.createElement("div"), {
+      signal: new AbortController().signal,
+    }).then(() => {
+      resolved = true;
+    });
+
+    lastObserver().trigger(false);
+    await Promise.resolve();
+    expect(resolved).toBe(false);
+
+    lastObserver().trigger(true);
+    await promise;
+    expect(resolved).toBe(true);
+  });
+
+  test("rejects with the abort reason and disconnects", async () => {
+    const controller = new AbortController();
+    const reason = new Error("aborted");
+    const promise = whenVisible(document.createElement("div"), {
+      signal: controller.signal,
+    });
+
+    controller.abort(reason);
+
+    await expect(promise).rejects.toBe(reason);
+    expect(lastObserver().disconnect).toHaveBeenCalled();
+  });
+
+  test("rejects immediately when the signal is already aborted", async () => {
+    const controller = new AbortController();
+    const reason = new Error("already aborted");
+    controller.abort(reason);
+
+    await expect(
+      whenVisible(document.createElement("div"), { signal: controller.signal }),
+    ).rejects.toBe(reason);
+    expect(IntersectionObserver.instances).toHaveLength(0);
+  });
+
+  test("forwards observer options and omits the signal", () => {
+    whenVisible(document.createElement("div"), {
+      signal: new AbortController().signal,
+      rootMargin: "-80px",
+      threshold: 0.5,
+    });
+
+    expect(lastObserver().options).toEqual({
+      rootMargin: "-80px",
+      threshold: 0.5,
+    });
   });
 });
