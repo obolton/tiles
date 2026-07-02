@@ -44,7 +44,10 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
     <>
       {editor.isCollaborating.derive(() =>
         editor.collaboration ? (
-          <CollaboratorList presence={editor.collaboration.presence} />
+          <CollaboratorList
+            presence={editor.collaboration.presence}
+            editor={editor}
+          />
         ) : null,
       )}
 
