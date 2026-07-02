@@ -256,9 +256,7 @@ export default function Item({ classList, style, tile, tabindex, resize, draggab
         {getTileComponent(tile, showToolbar)}
         {editor.isCollaborating.derive(() =>
           editor.collaboration ? (
-            <PeerIndicator
-              peers={editor.collaboration.presence.peersForTile(id)}
-            />
+            <PeerIndicator peers={editor.collaboration.presence.peersForTile(id)} />
           ) : null,
         )}
       </page-item>

@@ -31,9 +31,7 @@ const meta = {
 export default meta;
 
 export const Default: Story = {
-  render: () => (
-    <ProfileImageStack peers={peers(3)} aria-label="Collaborators" />
-  ),
+  render: () => <ProfileImageStack peers={peers(3)} aria-label="Collaborators" />,
 };
 
 export const Single: Story = {
@@ -50,10 +48,6 @@ export const Unbordered: Story = {
 
 export const Interactive: Story = {
   render: () => (
-    <ProfileImageStack
-      peers={peers(3)}
-      aria-label="Collaborators"
-      onSelect={action("onSelect")}
-    />
+    <ProfileImageStack peers={peers(3)} aria-label="Collaborators" onSelect={action("onSelect")} />
   ),
 };

@@ -406,9 +406,7 @@ export default class Editor {
   }
 
   private publishSelection() {
-    this.collaboration?.publishSelection(
-      Array.from(this.selection.value, (tile) => tile.id),
-    );
+    this.collaboration?.publishSelection(Array.from(this.selection.value, (tile) => tile.id));
   }
 
   deleteSelection() {

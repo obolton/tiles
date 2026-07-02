@@ -70,10 +70,7 @@ export function fadeOut(
 
 export function pulse(
   element: Element,
-  {
-    scale = 1.03,
-    timing = DEFAULT_TIMING,
-  }: { scale?: number; timing?: EffectTiming } = {},
+  { scale = 1.03, timing = DEFAULT_TIMING }: { scale?: number; timing?: EffectTiming } = {},
 ) {
   const animation = element.animate(
     [{ scale: "1" }, { scale: `${scale}` }, { scale: "1" }],

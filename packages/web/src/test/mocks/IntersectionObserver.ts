@@ -1,8 +1,6 @@
 import { vi } from "vitest";
 
-export default class IntersectionObserver
-  implements globalThis.IntersectionObserver
-{
+export default class IntersectionObserver implements globalThis.IntersectionObserver {
   static instances: IntersectionObserver[] = [];
 
   readonly root: Document | Element | null = null;

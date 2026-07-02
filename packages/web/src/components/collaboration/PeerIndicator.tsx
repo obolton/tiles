@@ -16,11 +16,7 @@ export default function PeerIndicator({ peers }: PeerIndicatorProps) {
         aria-hidden="true"
         style={peers.derive((list) => ({ "--peer-color": list[0]?.color }))}
       >
-        <ProfileImageStack
-          peers={peers}
-          bordered={false}
-          classList={{ [styles.stack]: true }}
-        />
+        <ProfileImageStack peers={peers} bordered={false} classList={{ [styles.stack]: true }} />
       </div>
     </If>
   );

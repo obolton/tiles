@@ -7,12 +7,7 @@ interface ProfileImageProps {
   color?: string;
 }
 
-export default function ProfileImage({
-  imageUrl,
-  name,
-  size = "small",
-  color,
-}: ProfileImageProps) {
+export default function ProfileImage({ imageUrl, name, size = "small", color }: ProfileImageProps) {
   if (imageUrl) {
     return (
       <img

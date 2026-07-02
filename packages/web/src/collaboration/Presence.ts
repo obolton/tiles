@@ -194,9 +194,7 @@ export default class Presence extends BaseReactive<readonly Peer[]> {
   }
 }
 
-function readSelection(
-  state: Record<string, unknown> | undefined,
-): Set<string> {
+function readSelection(state: Record<string, unknown> | undefined): Set<string> {
   const raw = state?.selection;
   if (!Array.isArray(raw)) {
     return new Set();

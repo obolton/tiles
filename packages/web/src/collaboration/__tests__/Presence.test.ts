@@ -23,19 +23,10 @@ function setSelection(instance: Awareness, tileIds: string[]) {
 }
 
 function sync(local: Awareness, remote: Awareness) {
-  applyAwarenessUpdate(
-    local,
-    encodeAwarenessUpdate(remote, [remote.clientID]),
-    "remote",
-  );
+  applyAwarenessUpdate(local, encodeAwarenessUpdate(remote, [remote.clientID]), "remote");
 }
 
-function peer(
-  client: Awareness,
-  id: string,
-  name: string,
-  extra: Partial<Peer> = {},
-): Peer {
+function peer(client: Awareness, id: string, name: string, extra: Partial<Peer> = {}): Peer {
   return {
     clientId: client.clientID,
     id,
@@ -74,10 +65,7 @@ describe("Presence", () => {
 
     const presence = new Presence(local);
 
-    expect(presence.value).toEqual([
-      peer(ann, "u3", "Ann"),
-      peer(bob, "u2", "Bob"),
-    ]);
+    expect(presence.value).toEqual([peer(ann, "u3", "Ann"), peer(bob, "u2", "Bob")]);
   });
 
   test("normalizes a missing imageId to null", () => {
@@ -190,9 +178,7 @@ describe("Presence", () => {
       const presence = new Presence(local);
       sync(local, bob);
 
-      expect(presence.peersForTile("t1").value).toEqual([
-        peer(bob, "u2", "Bob"),
-      ]);
+      expect(presence.peersForTile("t1").value).toEqual([peer(bob, "u2", "Bob")]);
     });
 
     test("moves a peer between tiles, notifying both", () => {
