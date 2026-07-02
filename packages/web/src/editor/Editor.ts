@@ -3,7 +3,9 @@ import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { reactive, flag, combine } from "@/utils/reactivity";
-import { scrollIntoViewIfNeeded } from "@/utils/scroll";
+import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
+import { pulse } from "@/utils/animation/effects";
+import { prefersReducedMotion } from "@/utils/preferences";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
 import { startPresentation } from "@/presentation";
@@ -153,6 +155,7 @@ export default class Editor {
     }
     this.collaboration = new PageCollaboration(this.page.id, this.page.doc);
     this.isCollaborating.on();
+    this.publishSelection();
   }
 
   private stopCollaboration() {
@@ -349,6 +352,30 @@ export default class Editor {
     }
   }
 
+  async revealTile(tileId: string) {
+    const element = document.getElementById(tileId);
+    if (!element) {
+      return;
+    }
+    scrollIntoViewIfNeeded(element, { behavior: "smooth", block: "center" });
+    if (prefersReducedMotion()) {
+      return;
+    }
+    try {
+      await whenVisible(element, { rootMargin: "-80px", threshold: 0.5 });
+      pulse(element);
+    } catch {
+      // Do nothing
+    }
+  }
+
+  revealClient(clientId: number) {
+    const tileId = this.collaboration?.presence.getActiveTile(clientId);
+    if (tileId) {
+      this.revealTile(tileId);
+    }
+  }
+
   select(ids: string[], extendSelection = false) {
     const tiles = new Set(ids.map((id) => this.page.getTile(id)));
     if (extendSelection) {
@@ -374,8 +401,14 @@ export default class Editor {
 
   private setSelection(tiles: Set<Tile>) {
     this.selection.value = tiles;
-    // Start a new undo step
+    this.publishSelection();
     this.undoManager?.stopCapturing();
+  }
+
+  private publishSelection() {
+    this.collaboration?.publishSelection(
+      Array.from(this.selection.value, (tile) => tile.id),
+    );
   }
 
   deleteSelection() {
