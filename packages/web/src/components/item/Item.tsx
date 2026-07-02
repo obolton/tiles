@@ -1,4 +1,5 @@
 import Section from "@/components/layouts/section/Section";
+import PeerIndicator from "@/components/collaboration/PeerIndicator";
 import ImageTile from "@/components/tiles/ImageTile";
 import VideoTile from "@/components/tiles/VideoTile";
 import TextTile from "@/components/tiles/TextTile";
@@ -253,6 +254,13 @@ export default function Item({ classList, style, tile, tabindex, resize, draggab
         on:dnd-dragstart={onDragStart}
       >
         {getTileComponent(tile, showToolbar)}
+        {editor.isCollaborating.derive(() =>
+          editor.collaboration ? (
+            <PeerIndicator
+              peers={editor.collaboration.presence.peersForTile(id)}
+            />
+          ) : null,
+        )}
       </page-item>
     </If>
   );
