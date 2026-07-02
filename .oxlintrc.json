@@ -11,6 +11,7 @@
   "rules": {
     "curly": "error",
     "import/no-unassigned-import": "off",
+    "no-array-reverse": "off",
     "no-array-sort": "off",
     "no-shadow": "off"
   },
