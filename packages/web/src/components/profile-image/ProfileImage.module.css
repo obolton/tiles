@@ -20,6 +20,10 @@
   line-height: 1;
 }
 
+.border {
+  box-shadow: 0 0 0 2px var(--border-color);
+}
+
 .small {
   width: 24px;
   height: 24px;
