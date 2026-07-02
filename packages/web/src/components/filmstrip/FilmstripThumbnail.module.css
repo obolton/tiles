@@ -35,8 +35,37 @@
   &.hide {
     opacity: 0.5;
   }
+
+  &::after {
+    content: counter(slide) / "Slide " counter(slide);
+    counter-increment: slide;
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-start: 4px;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    background: rgb(0 0 0 / 5%);
+    color: var(--ui-color);
+    font-family: var(--ui-font);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  &[aria-selected="true"]::after {
+    opacity: 1;
+  }
+
+  &:global(.drag-preview)::after {
+    visibility: hidden;
+  }
 }
 
 .content {
-  display: contents;
+  position: absolute;
+  inset: 0;
+  container-type: size;
 }
