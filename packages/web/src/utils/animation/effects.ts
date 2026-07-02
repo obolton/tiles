@@ -67,3 +67,17 @@ export function fadeOut(
   const animation = element.animate([{ opacity: 1 }, { opacity: 0 }], timing);
   return createAnimationPromise(animation);
 }
+
+export function pulse(
+  element: Element,
+  {
+    scale = 1.03,
+    timing = DEFAULT_TIMING,
+  }: { scale?: number; timing?: EffectTiming } = {},
+) {
+  const animation = element.animate(
+    [{ scale: "1" }, { scale: `${scale}` }, { scale: "1" }],
+    timing,
+  );
+  return createAnimationPromise(animation);
+}
