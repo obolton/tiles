@@ -277,18 +277,18 @@ describe("scrollIntoViewIfNeeded", () => {
   });
 });
 
+function getLastObserver() {
+  const observer = IntersectionObserver.instances.at(-1);
+  if (!observer) {
+    throw new Error("no IntersectionObserver was created");
+  }
+  return observer;
+}
+
 describe("whenVisible", () => {
   beforeEach(() => {
     IntersectionObserver.instances = [];
   });
-
-  function lastObserver() {
-    const observer = IntersectionObserver.instances.at(-1);
-    if (!observer) {
-      throw new Error("no IntersectionObserver was created");
-    }
-    return observer;
-  }
 
   test("resolves and disconnects once the element intersects", async () => {
     const element = document.createElement("div");
@@ -296,7 +296,7 @@ describe("whenVisible", () => {
       signal: new AbortController().signal,
     });
 
-    const observer = lastObserver();
+    const observer = getLastObserver();
     expect(observer.observe).toHaveBeenCalledWith(element);
 
     observer.trigger(true);
@@ -313,11 +313,11 @@ describe("whenVisible", () => {
       resolved = true;
     });
 
-    lastObserver().trigger(false);
+    getLastObserver().trigger(false);
     await Promise.resolve();
     expect(resolved).toBe(false);
 
-    lastObserver().trigger(true);
+    getLastObserver().trigger(true);
     await promise;
     expect(resolved).toBe(true);
   });
@@ -332,7 +332,7 @@ describe("whenVisible", () => {
     controller.abort(reason);
 
     await expect(promise).rejects.toBe(reason);
-    expect(lastObserver().disconnect).toHaveBeenCalled();
+    expect(getLastObserver().disconnect).toHaveBeenCalled();
   });
 
   test("rejects immediately when the signal is already aborted", async () => {
@@ -353,7 +353,7 @@ describe("whenVisible", () => {
       threshold: 0.5,
     });
 
-    expect(lastObserver().options).toEqual({
+    expect(getLastObserver().options).toEqual({
       rootMargin: "-80px",
       threshold: 0.5,
     });
