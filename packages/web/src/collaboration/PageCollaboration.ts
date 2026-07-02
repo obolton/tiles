@@ -1,10 +1,16 @@
 import * as Y from "yjs";
 import { HocuspocusProvider, WebSocketStatus } from "@hocuspocus/provider";
 import { IndexeddbPersistence } from "y-indexeddb";
-import { reactive, flag, type Reactive, type ReactiveFlag } from "@/utils/reactivity";
+import {
+  reactive,
+  flag,
+  type Reactive,
+  type ReactiveFlag,
+} from "@/utils/reactivity";
+import { Awareness } from "y-protocols/awareness";
 import { user } from "@/utils/sessions";
 import { getUserColor } from "./userColor";
-import type { Awareness } from "./types";
+import Presence from "./Presence";
 
 const COLLABORATION_URL = import.meta.env.PUBLIC_COLLABORATION_URL;
 
@@ -13,6 +19,8 @@ export class PageCollaboration {
   readonly doc: Y.Doc;
   readonly status: Reactive<WebSocketStatus>;
   readonly synced: ReactiveFlag;
+  readonly awareness: Awareness;
+  readonly presence: Presence;
 
   #provider: HocuspocusProvider;
   #indexeddb: IndexeddbPersistence;
@@ -31,10 +39,14 @@ export class PageCollaboration {
 
     this.#indexeddb = new IndexeddbPersistence(`tiles-yjs-${pageId}`, this.doc);
 
+    this.awareness = new Awareness(this.doc);
+    this.presence = new Presence(this.awareness);
+
     this.#provider = new HocuspocusProvider({
       url: COLLABORATION_URL,
       name: `page:${pageId}`,
       document: this.doc,
+      awareness: this.awareness,
       onStatus: ({ status }) => {
         this.status.value = status;
       },
@@ -51,35 +63,32 @@ export class PageCollaboration {
     this.publishUser();
   }
 
-  get awareness(): Awareness | null {
-    return this.#provider.awareness ?? null;
-  }
-
   /**
    * Ends the collaboration session.
    */
   dispose() {
     this.#abort.abort();
+    this.presence.dispose();
     this.#provider.destroy();
     this.#indexeddb.destroy();
   }
 
   publishUser() {
-    const awareness = this.#provider.awareness;
     const u = user.value;
 
-    if (!u || !this.synced.value || !awareness) {
+    if (!u || !this.synced.value) {
       return;
     }
 
     if (this.#userColor === null) {
-      this.#userColor = getUserColor(awareness.getStates().size - 1);
+      this.#userColor = getUserColor(this.awareness.getStates().size - 1);
     }
 
-    awareness.setLocalStateField("user", {
+    this.awareness.setLocalStateField("user", {
       id: u.id,
       name: u.name,
       color: this.#userColor,
+      imageId: u.imageKey ?? null,
     });
   }
 }
