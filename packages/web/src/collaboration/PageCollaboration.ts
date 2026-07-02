@@ -91,4 +91,8 @@ export class PageCollaboration {
       imageId: u.imageKey ?? null,
     });
   }
+
+  publishSelection(ids: string[]) {
+    this.awareness.setLocalStateField("selection", ids);
+  }
 }
