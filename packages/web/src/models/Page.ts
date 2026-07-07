@@ -170,6 +170,10 @@ export default class Page {
     return this.getTile(sectionId, Section);
   }
 
+  getTiles(ids: Iterable<string>): Tile[] {
+    return Array.from(ids).flatMap((id) => this.index.get(id) ?? []);
+  }
+
   add(map: Y.Map<unknown>): Tile {
     const id = map.get("id") as string;
     let tile = this.index.get(id);
