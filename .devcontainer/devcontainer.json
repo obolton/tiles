@@ -9,7 +9,8 @@
   "features": {
     "ghcr.io/devcontainers/features/git:1": {
       "version": "latest"
-    }
+    },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
 
   "portsAttributes": {
@@ -36,7 +37,9 @@
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",
     "WRANGLER_LOG": "info",
-    "CLOUDFLARE_INCLUDE_PROCESS_ENV": "true"
+    "CLOUDFLARE_INCLUDE_PROCESS_ENV": "true",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
 
   "remoteEnv": {

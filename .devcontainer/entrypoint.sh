@@ -6,9 +6,11 @@ for dir in /projects/*/; do
     git config --system --add safe.directory "$dir"
 done
 
-# Set ownership for pnpm store
+# Fix directory ownership
 mkdir -p /pnpm/store
 chown -R node:node /pnpm/store
+mkdir -p /home/node/.claude
+chown node:node /home/node/.claude
 
 # Create node_modules directories with correct ownership for volume mounts
 if [ -n "$WORKSPACE" ]; then

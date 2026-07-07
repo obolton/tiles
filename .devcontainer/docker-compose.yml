@@ -14,6 +14,7 @@ services:
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
       - pnpm_store:/pnpm/store
+      - claude_config:/home/node/.claude
     command: sleep infinity
     init: true
     environment:
@@ -43,6 +44,8 @@ volumes:
   worker_node_modules:
   pnpm_store:
     name: pnpm_store
+  claude_config:
+    name: claude_config
 
 networks:
   tiles-dev:
