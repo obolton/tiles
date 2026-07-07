@@ -8,6 +8,8 @@ import type Tile from "./Tile";
 /** Tile Y.Map keys that affect placement. Other field writes are ignored. */
 const PLACEMENT_KEYS = ["parentId", "order"];
 
+export type TileRemovalCallback = (ids: ReadonlySet<string>) => void;
+
 /**
  * Owns the per-parent {@link TileCollection}s and keeps them in sync with the
  * Y.Doc `tiles` map. The Y.Doc is the source of truth for placement
@@ -16,6 +18,7 @@ const PLACEMENT_KEYS = ["parentId", "order"];
  */
 export default class TilePlacement {
   private readonly page: Page;
+  private readonly onTilesRemoved?: TileRemovalCallback;
 
   /** Lazily-materialised collections, keyed by parentId (`null` = page root). */
   private readonly collections = new Map<string | null, TileCollection>();
@@ -23,8 +26,9 @@ export default class TilePlacement {
   private tilesMap: Y.Map<Y.Map<unknown>> | null = null;
   private readonly onChange = this.reconcile.bind(this);
 
-  constructor(page: Page) {
+  constructor(page: Page, onTilesRemoved?: TileRemovalCallback) {
     this.page = page;
+    this.onTilesRemoved = onTilesRemoved;
     const tiles = page.doc.getMap<Y.Map<unknown>>("tiles");
     // Index every tile before placing any, so a child's section is in the
     // index regardless of the order of the map map.
@@ -159,6 +163,10 @@ export default class TilePlacement {
       if (tile) {
         this.place(tile);
       }
+    }
+
+    if (removed.size > 0 && this.onTilesRemoved) {
+      this.page.doc.once("afterTransaction", () => this.onTilesRemoved?.(removed));
     }
   }
 
