@@ -17,6 +17,18 @@
     padding-left: calc(var(--indent) * 2em);
   }
 
+  & h1 {
+    font-size: clamp(1.5rem, 8cqi, 2.8rem);
+  }
+
+  & h2 {
+    font-size: clamp(1.5rem, 4cqi, 2rem);
+  }
+
+  & h3 {
+    font-size: clamp(1rem, 2cqi, 1.25rem);
+  }
+
   & h1,
   & h2,
   & h3,
