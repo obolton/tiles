@@ -2,15 +2,11 @@
 set -e
 
 # Trust all Git repositories under /projects
-for dir in /projects/*/; do
-    git config --system --add safe.directory "$dir"
-done
+git config --system safe.directory '/projects/*'
 
 # Fix directory ownership
-mkdir -p /pnpm/store
-chown -R node:node /pnpm/store
-mkdir -p /home/node/.claude
-chown node:node /home/node/.claude
+mkdir -p /pnpm/store /home/node/.claude
+chown node:node /pnpm/store /home/node/.claude
 
 # Create node_modules directories with correct ownership for volume mounts
 if [ -n "$WORKSPACE" ]; then
@@ -19,7 +15,7 @@ if [ -n "$WORKSPACE" ]; then
         "/projects/${WORKSPACE}/packages/api/node_modules" \
         "/projects/${WORKSPACE}/packages/web/node_modules" \
         "/projects/${WORKSPACE}/packages/image-upload-worker/node_modules"
-    chown -R node:node "/projects/${WORKSPACE}/node_modules" \
+    chown node:node "/projects/${WORKSPACE}/node_modules" \
         "/projects/${WORKSPACE}/packages/api/node_modules" \
         "/projects/${WORKSPACE}/packages/web/node_modules" \
         "/projects/${WORKSPACE}/packages/image-upload-worker/node_modules"
