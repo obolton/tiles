@@ -173,11 +173,11 @@ export default class LayoutEditor {
   }
 
   private pixelToPercentX(px: number): number {
-    return (px / this.gridRect.width) * 100;
+    return this.gridRect.width ? (px / this.gridRect.width) * 100 : 0;
   }
 
   private pixelToPercentY(py: number): number {
-    return (py / this.gridRect.height) * 100;
+    return this.gridRect.height ? (py / this.gridRect.height) * 100 : 0;
   }
 
   private getPercentX(x: number, width: number, id: string, altKey: boolean) {
