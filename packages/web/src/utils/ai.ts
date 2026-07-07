@@ -16,7 +16,7 @@ export async function submitPrompt(prompt: string) {
   const { chat } = editor;
   const pageId = editor.pageId;
   const sectionId = editor.activeSection?.id ?? null;
-  const tileIds = editor.references.value.map((tile) => tile.id);
+  const tileIds = editor.referenceIds;
   const history = chat.hasMessages ? chat.getHistory() : undefined;
 
   chat.addUserMessage(prompt);
