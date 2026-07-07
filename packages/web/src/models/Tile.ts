@@ -146,7 +146,7 @@ export default abstract class Tile {
   }
 
   delete() {
-    return this.editor.deleteTiles([this]);
+    return this.editor.deleteTiles([this.id]);
   }
 
   /**
