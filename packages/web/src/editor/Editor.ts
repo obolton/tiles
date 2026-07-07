@@ -2,7 +2,8 @@ import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { reactive, flag, combine } from "@/utils/reactivity";
+import { set, flag, combine } from "@/utils/reactivity";
+import { last } from "@/utils/iterables";
 import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
 import { pulse } from "@/utils/animation/effects";
 import { prefersReducedMotion } from "@/utils/preferences";
@@ -19,7 +20,7 @@ import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive, ReactiveSet } from "@/utils/reactivity";
 
 export type { PageData } from "@/models/Page";
 
@@ -34,8 +35,8 @@ export default class Editor {
   collaboration: PageCollaboration | null = null;
   readonly isCollaborating = flag(false);
   readonly isEditable: Reactive<boolean>;
-  readonly selection: Reactive<Set<Tile>>;
-  readonly references: Reactive<Tile[]>;
+  readonly selection: ReactiveSet<string>;
+  readonly references: ReactiveSet<string>;
   readonly isPromptOpen: Reactive<boolean>;
   readonly isPromptToolbarOpen: Reactive<boolean>;
   readonly isTileEditable: Reactive<boolean>;
@@ -54,7 +55,7 @@ export default class Editor {
   }
 
   get insertBeforeId(): string | null {
-    const lastSelected = Array.from(this.selection.value).at(-1);
+    const lastSelected = this.lastSelectedTile;
     if (!lastSelected || lastSelected instanceof Section) {
       return null;
     }
@@ -62,8 +63,7 @@ export default class Editor {
   }
 
   get activeSection(): Section | null {
-    const selection = Array.from(this.selection.value);
-    const lastTile = selection.at(-1);
+    const lastTile = this.lastSelectedTile;
     if (lastTile instanceof Section) {
       return lastTile;
     }
@@ -75,6 +75,11 @@ export default class Editor {
       }
     }
     return null;
+  }
+
+  private get lastSelectedTile(): Tile | null {
+    const id = last(this.selection);
+    return id === null ? null : (this.page.index.get(id) ?? null);
   }
 
   static init(page: PageData, doc: Y.Doc) {
@@ -104,11 +109,11 @@ export default class Editor {
   }
 
   private constructor(page: PageData, doc: Y.Doc) {
-    this.page = new Page(page, doc);
+    this.selection = set();
+    this.references = set();
+    this.page = new Page(page, doc, (ids) => this.pruneDeletedTiles(ids));
     this.page.editor = this;
     this.isEditable = flag(isEditMode());
-    this.selection = reactive(new Set());
-    this.references = reactive([]);
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
@@ -125,6 +130,8 @@ export default class Editor {
       this.canUndo = this.undoManager.canUndo;
       this.canRedo = this.undoManager.canRedo;
       this.enablePointerEvents();
+
+      this.selection.subscribe(() => this.publishSelection());
 
       this.isEditable.subscribe(() => {
         setEditMode(this.isEditable.value);
@@ -198,8 +205,7 @@ export default class Editor {
       return;
     }
 
-    const tile = this.page.index.get(pageItem.id);
-    if (tile && !this.selection.value.has(tile)) {
+    if (!this.selection.has(pageItem.id)) {
       this.select([pageItem.id], false);
     }
   }
@@ -249,7 +255,7 @@ export default class Editor {
       event.target.tagName !== "TEXTAREA" &&
       !event.target.closest(":popover-open") &&
       !event.target.isContentEditable &&
-      this.selection.value.size > 0
+      this.selection.size > 0
     ) {
       event.preventDefault();
       this.deleteSelection();
@@ -377,66 +383,62 @@ export default class Editor {
   }
 
   select(ids: string[], extendSelection = false) {
-    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
-    if (extendSelection) {
-      if (tiles.size === 0) {
-        return;
-      }
-      this.setSelection(this.selection.value.union(tiles));
-    } else {
-      this.setSelection(tiles);
+    const present = ids.filter((id) => this.page.index.has(id));
+    if (present.length === 0) {
+      return;
     }
+    if (extendSelection) {
+      this.selection.add(...present);
+    } else {
+      this.selection.replace(present);
+    }
+    this.undoManager?.stopCapturing();
   }
 
   deselect(ids: string[]) {
-    const tiles = new Set(ids.map((id) => this.page.getTile(id)));
-    this.setSelection(this.selection.value.difference(tiles));
+    this.selection.delete(...ids);
+    this.undoManager?.stopCapturing();
   }
 
   clearSelection() {
-    if (this.selection.value.size > 0) {
-      this.setSelection(new Set());
-    }
-  }
-
-  private setSelection(tiles: Set<Tile>) {
-    this.selection.value = tiles;
-    this.publishSelection();
+    this.selection.clear();
     this.undoManager?.stopCapturing();
   }
 
   private publishSelection() {
-    this.collaboration?.publishSelection(Array.from(this.selection.value, (tile) => tile.id));
+    this.collaboration?.publishSelection(Array.from(this.selection));
   }
 
   deleteSelection() {
-    if (this.selection.value.size === 0) {
+    if (this.selection.size === 0) {
       return;
     }
 
-    this.deleteTiles(Array.from(this.selection.value));
-    this.clearSelection();
+    this.deleteTiles(Array.from(this.selection));
+    this.undoManager?.stopCapturing();
   }
 
   // References
 
-  addReference(tile: Tile) {
-    this.references.value = [...this.references.value, tile];
+  get referenceIds(): string[] {
+    return Array.from(this.references);
   }
 
   toggleReference(id: string) {
-    const index = this.references.value.findIndex((tile) => tile.id === id);
-    if (index >= 0) {
-      this.references.value = this.references.value.toSpliced(index, 1);
-    } else {
-      this.references.value = [...this.references.value, this.page.getTile(id)];
+    if (this.references.has(id)) {
+      this.references.delete(id);
+    } else if (this.page.index.has(id)) {
+      this.references.add(id);
     }
   }
 
   clearReferences() {
-    if (this.references.value.length > 0) {
-      this.references.value = [];
-    }
+    this.references.clear();
+  }
+
+  private pruneDeletedTiles(ids: ReadonlySet<string>) {
+    this.selection.delete(...ids);
+    this.references.delete(...ids);
   }
 
   // Prompt toolbar
@@ -446,9 +448,8 @@ export default class Editor {
       return;
     }
 
-    const selected = Array.from(this.selection.value);
-    if (selected.length > 0 && this.references.value.length === 0) {
-      this.references.value = selected;
+    if (this.selection.size > 0 && this.references.size === 0) {
+      this.references.replace(this.selection.value);
     }
 
     this.isPromptToolbarOpen.value = true;
@@ -490,9 +491,7 @@ export default class Editor {
 
   // Tiles
 
-  async deleteTiles(tiles: Tile[]) {
-    const ids = tiles.map((tile) => tile.id);
-
+  async deleteTiles(ids: string[]) {
     // Tag elements before removal so the view transition can capture them.
     const items = document.getElementsByTagName("page-item");
     for (const item of items) {
@@ -517,16 +516,12 @@ export default class Editor {
     const doc = this.page.doc;
 
     viewTransition(() => {
-      if (doc) {
-        const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
-        doc.transact(() => {
-          for (const id of ids) {
-            tilesMap.delete(id);
-          }
-        });
-      } else {
-        this.removeTiles(tiles);
-      }
+      const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
+      doc.transact(() => {
+        for (const id of ids) {
+          tilesMap.delete(id);
+        }
+      });
 
       if (focus instanceof HTMLElement) {
         focusInside(focus, { preventScroll: true });
@@ -552,12 +547,6 @@ export default class Editor {
     }
   }
 
-  removeTiles(tiles: Tile[]) {
-    tiles.forEach((tile) => {
-      this.page.placement.remove(tile.id);
-    });
-  }
-
   // Undo / redo
 
   undo(): void {
@@ -574,8 +563,7 @@ export default class Editor {
   }
 
   private rememberSelection(meta: Map<unknown, unknown>) {
-    const ids = [...this.selection.value].map((tile) => tile.id);
-    meta.set(UNDO_SELECTION, ids);
+    meta.set(UNDO_SELECTION, Array.from(this.selection));
   }
 
   private restoreSelection(meta: Map<unknown, unknown>) {
@@ -583,16 +571,11 @@ export default class Editor {
     if (!Array.isArray(ids)) {
       return;
     }
-    const present = ids.filter((id) => this.page.index.has(id));
-    if (present.length === 0) {
+    this.select(ids);
+    const first = ids.find((id) => this.selection.has(id));
+    if (first === undefined) {
       return;
     }
-    this.select(present);
-    requestAnimationFrame(() => {
-      const element = document.getElementById(present[0]);
-      if (element) {
-        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
-      }
-    });
+    requestAnimationFrame(() => this.revealTile(first));
   }
 }
