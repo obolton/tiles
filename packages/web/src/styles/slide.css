@@ -1,0 +1,35 @@
+.slide,
+.slide-frame > [data-layout="FREEFORM"] {
+  --slide-width: calc(var(--width) * 24px);
+
+  position: relative;
+  flex: none;
+  inline-size: var(--slide-width);
+  transform-origin: center;
+  overflow: hidden;
+}
+
+.slide:not([data-layout="FREEFORM"]) {
+  --slide-height: calc(var(--height) * 24px);
+
+  block-size: var(--slide-height);
+  scale: min(calc(100cqw / var(--slide-width)), calc(100cqh / var(--slide-height)));
+}
+
+.slide[data-layout="FREEFORM"],
+.slide-frame > [data-layout="FREEFORM"] {
+  aspect-ratio: var(--aspect-ratio);
+  scale: calc(min(100cqw, 100cqh * var(--aspect-ratio)) / var(--slide-width));
+}
+
+.slide-frame {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+}
+
+.slide {
+  container-type: inline-size;
+}
