@@ -301,14 +301,14 @@ describe("Presence", () => {
   });
 
   describe("getActiveTile", () => {
-    test("returns a tile the client has selected", () => {
+    test("returns the client's most recently selected tile", () => {
       const local = client();
       const bob = client({ id: "u2", name: "Bob" });
       setSelection(bob, ["a", "b"]);
       const presence = new Presence(local);
       sync(local, bob);
 
-      expect(presence.getActiveTile(bob.clientID)).toBe("a");
+      expect(presence.getActiveTile(bob.clientID)).toBe("b");
     });
 
     test("follows a selection change", () => {
@@ -322,6 +322,37 @@ describe("Presence", () => {
       setSelection(bob, ["c"]);
       sync(local, bob);
       expect(presence.getActiveTile(bob.clientID)).toBe("c");
+    });
+
+    test("follows an extended selection", () => {
+      const local = client();
+      const bob = client({ id: "u2", name: "Bob" });
+      setSelection(bob, ["a"]);
+      const presence = new Presence(local);
+      sync(local, bob);
+
+      setSelection(bob, ["a", "c"]);
+      sync(local, bob);
+
+      expect(presence.getActiveTile(bob.clientID)).toBe("c");
+    });
+
+    test("follows a reorder without notifying tile views", () => {
+      const local = client();
+      const bob = client({ id: "u2", name: "Bob" });
+      setSelection(bob, ["a", "b"]);
+      const presence = new Presence(local);
+      sync(local, bob);
+
+      const tile = presence.peersForTile("a");
+      const subscriber = vi.fn();
+      tile.subscribe(subscriber);
+
+      setSelection(bob, ["b", "a"]);
+      sync(local, bob);
+
+      expect(presence.getActiveTile(bob.clientID)).toBe("a");
+      expect(subscriber).not.toHaveBeenCalled();
     });
 
     test("returns null when the client has no selection", () => {
