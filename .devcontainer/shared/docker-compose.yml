@@ -15,7 +15,7 @@ services:
       - tiles-dev
 
   playwright:
-    image: mcr.microsoft.com/playwright:v1.58.2-noble
+    image: mcr.microsoft.com/playwright:v1.61.1-noble
     container_name: tiles-playwright
     restart: unless-stopped
     init: true
@@ -23,7 +23,7 @@ services:
     ports:
       - "3100:3100"
     command: >
-      npx -y playwright@1.58.2 run-server
+      npx -y playwright@1.61.1 run-server
       --port 3100
       --host 0.0.0.0
     networks:
