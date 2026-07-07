@@ -1,21 +1,3 @@
-@property --width {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 32;
-}
-
-@property --height {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --aspect-ratio {
-  syntax: "<number> | auto";
-  inherits: false;
-  initial-value: auto;
-}
-
 .item {
   display: flex;
   width: calc(var(--width) * 24px);

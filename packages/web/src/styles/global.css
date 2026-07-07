@@ -84,6 +84,24 @@
   initial-value: 200px;
 }
 
+@property --width {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 32;
+}
+
+@property --height {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --aspect-ratio {
+  syntax: "<number> | auto";
+  inherits: true;
+  initial-value: auto;
+}
+
 :root {
   --focus-ring-color: #0070f3;
   --focus-outline: 3px solid var(--focus-ring-color);
