@@ -43,7 +43,7 @@
     "@codemirror/legacy-modes": "^6.5.2",
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.41.0",
-    "@hocuspocus/provider": "^4.0.0",
+    "@hocuspocus/provider": "^4.3.0",
     "@lezer/highlight": "^1.2.1",
     "@observablehq/plot": "^0.6.17",
     "@trpc/client": "^11.18.0",
