@@ -4,7 +4,7 @@ import { createId } from "doc/id";
 import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
-import TilePlacement from "@/models/TilePlacement";
+import TilePlacement, { type TileRemovalCallback } from "@/models/TilePlacement";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
@@ -82,7 +82,7 @@ export default class Page {
     };
   }
 
-  constructor(data: PageData, doc: Y.Doc) {
+  constructor(data: PageData, doc: Y.Doc, onTilesRemoved?: TileRemovalCallback) {
     this.doc = doc;
     this.id = data.id;
     this.workspaceId = data.workspaceId;
@@ -117,7 +117,7 @@ export default class Page {
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();
-    this.placement = new TilePlacement(this);
+    this.placement = new TilePlacement(this, onTilesRemoved);
   }
 
   get awareness(): Awareness | null {
@@ -168,6 +168,10 @@ export default class Page {
 
   getSection(sectionId: string) {
     return this.getTile(sectionId, Section);
+  }
+
+  getTiles(ids: Iterable<string>): Tile[] {
+    return Array.from(ids).flatMap((id) => this.index.get(id) ?? []);
   }
 
   add(map: Y.Map<unknown>): Tile {

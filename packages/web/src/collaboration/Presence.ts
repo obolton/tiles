@@ -1,5 +1,6 @@
-import { BaseReactive, array } from "@/utils/reactivity";
-import type { Reactive, ReactiveArray } from "@/utils/reactivity";
+import { BaseReactive, array, set } from "@/utils/reactivity";
+import { last } from "@/utils/iterables";
+import type { Reactive, ReactiveArray, ReactiveSet, SetChange } from "@/utils/reactivity";
 import type { Awareness } from "./types";
 
 export interface Peer {
@@ -23,11 +24,9 @@ const collator = new Intl.Collator(undefined, {
   numeric: true,
 });
 
-const EMPTY: ReadonlySet<string> = new Set();
-
 export default class Presence extends BaseReactive<readonly Peer[]> {
   private readonly peers = new Map<number, Peer>();
-  private readonly selections = new Map<number, Set<string>>();
+  private readonly selections = new Map<number, ReactiveSet<string>>();
   private readonly occupants = new Map<string, Set<number>>();
   private readonly views = new Map<string, ReactiveArray<Peer>>();
 
@@ -61,11 +60,15 @@ export default class Presence extends BaseReactive<readonly Peer[]> {
   }
 
   getActiveTile(clientId: number): string | null {
-    return this.selections.get(clientId)?.values().next().value ?? null;
+    const selection = this.selections.get(clientId);
+    return selection ? last(selection) : null;
   }
 
   dispose() {
     this.awareness.off("change", this.onChange);
+    for (const selection of this.selections.values()) {
+      selection.disconnect();
+    }
     this.peers.clear();
     this.selections.clear();
     this.occupants.clear();
@@ -106,7 +109,7 @@ export default class Presence extends BaseReactive<readonly Peer[]> {
     }
 
     const added = this.addPeer(clientId, user);
-    this.updateSelection(clientId, readSelection(state));
+    this.selectionFor(clientId).replace(readSelection(state));
     return added;
   }
 
@@ -122,32 +125,32 @@ export default class Presence extends BaseReactive<readonly Peer[]> {
     return true;
   }
 
-  private updateSelection(clientId: number, next: Set<string>) {
-    const previous = this.selections.get(clientId) ?? EMPTY;
-
-    for (const tileId of previous) {
-      if (!next.has(tileId)) {
-        this.leave(clientId, tileId);
-      }
+  private selectionFor(clientId: number): ReactiveSet<string> {
+    let selection = this.selections.get(clientId);
+    if (!selection) {
+      selection = set();
+      selection.subscribe((_, change) => this.applySelectionChange(clientId, change));
+      this.selections.set(clientId, selection);
     }
-    for (const tileId of next) {
-      if (!previous.has(tileId)) {
-        this.enter(clientId, tileId);
-      }
-    }
+    return selection;
+  }
 
-    if (next.size > 0) {
-      this.selections.set(clientId, next);
-    } else {
-      this.selections.delete(clientId);
+  private applySelectionChange(clientId: number, { added, removed }: SetChange<string>) {
+    for (const tileId of removed) {
+      this.leave(clientId, tileId);
+    }
+    for (const tileId of added) {
+      this.enter(clientId, tileId);
     }
   }
 
   private forget(clientId: number): boolean {
-    for (const tileId of this.selections.get(clientId) ?? EMPTY) {
-      this.leave(clientId, tileId);
+    const selection = this.selections.get(clientId);
+    if (selection) {
+      selection.clear();
+      selection.disconnect();
+      this.selections.delete(clientId);
     }
-    this.selections.delete(clientId);
     return this.peers.delete(clientId);
   }
 
@@ -194,12 +197,12 @@ export default class Presence extends BaseReactive<readonly Peer[]> {
   }
 }
 
-function readSelection(state: Record<string, unknown> | undefined): Set<string> {
+function readSelection(state: Record<string, unknown> | undefined): string[] {
   const raw = state?.selection;
   if (!Array.isArray(raw)) {
-    return new Set();
+    return [];
   }
-  return new Set(raw.filter((id): id is string => typeof id === "string"));
+  return raw.filter((id): id is string => typeof id === "string");
 }
 
 function comparePeers(a: Peer, b: Peer): number {

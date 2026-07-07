@@ -56,6 +56,16 @@ describe("Page", () => {
     expect(page.invites.value).toEqual([]);
   });
 
+  describe("getTiles", () => {
+    test("resolves ids in order, skipping missing tiles", () => {
+      const page = new Page(PAGE, new Y.Doc());
+      const a = page.createTile(Text.createMap({ align: "TOP" }), {});
+      const b = page.createTile(Text.createMap({ align: "TOP" }), {});
+
+      expect(page.getTiles([b.id, "missing", a.id])).toEqual([b, a]);
+    });
+  });
+
   describe("getDropdown", () => {
     test("returns the dropdown with the given ID", () => {
       const page = new Page(PAGE, new Y.Doc());

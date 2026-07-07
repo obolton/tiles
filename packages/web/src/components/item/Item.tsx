@@ -108,13 +108,13 @@ export default function Item({ classList, style, tile, tabindex, resize, draggab
     item = element;
   };
 
-  const isSelected = editor.selection.derive((selection) => selection.has(tile));
+  const isSelected = editor.selection.derive((selection) => selection.has(id));
 
-  const isReferenced = editor.references.derive((refs) => refs.includes(tile));
+  const isReferenced = editor.references.derive((refs) => refs.has(id));
 
   // Show toolbar when this tile is the only selected item
   const showToolbar = editor.selection.derive(
-    (selection) => selection.has(tile) && selection.size === 1,
+    (selection) => selection.has(id) && selection.size === 1,
   );
 
   const themeStyles = combine(

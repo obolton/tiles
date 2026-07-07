@@ -1,6 +1,7 @@
 import * as Y from "yjs";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import Page from "@/models/Page";
+import type { TileRemovalCallback } from "@/models/TilePlacement";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
 import { PAGE } from "@/test/fixtures/Page";
@@ -156,6 +157,53 @@ describe("TilePlacement", () => {
 
       const newSection = page.index.get("new-sec") as Section;
       expect(newSection.tiles.value.map((t) => t.id)).toEqual(["child"]);
+    });
+  });
+
+  describe("onTilesRemoved", () => {
+    let page: Page;
+    let onTilesRemoved: Mock<TileRemovalCallback>;
+
+    beforeEach(() => {
+      const doc = new Y.Doc();
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t1", null, "a1");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "t2", null, "a2");
+      onTilesRemoved = vi.fn<TileRemovalCallback>();
+      page = new Page(PAGE, doc, onTilesRemoved);
+    });
+
+    function tilesMap() {
+      return page.doc.getMap<Y.Map<unknown>>("tiles");
+    }
+
+    test("is called once per transaction with the removed ids", () => {
+      page.doc.transact(() => {
+        tilesMap().delete("t1");
+        tilesMap().delete("t2");
+      });
+
+      expect(onTilesRemoved).toHaveBeenCalledTimes(1);
+      expect(onTilesRemoved).toHaveBeenCalledWith(new Set(["t1", "t2"]));
+    });
+
+    test("is not called for additions or moves", () => {
+      page.doc.transact(() => {
+        placeTile(page.doc, Text.createMap({ align: "TOP" }), "t3", null, "a3");
+      });
+      page.doc.transact(() => tilesMap().get("t1")?.set("order", "a9"));
+
+      expect(onTilesRemoved).not.toHaveBeenCalled();
+    });
+
+    test("is called after the index is updated", () => {
+      let present: boolean | null = null;
+      onTilesRemoved.mockImplementation(() => {
+        present = page.index.has("t1");
+      });
+
+      page.doc.transact(() => tilesMap().delete("t1"));
+
+      expect(present).toBe(false);
     });
   });
 

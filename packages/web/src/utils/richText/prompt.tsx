@@ -40,7 +40,7 @@ function getElement(view: EditorView) {
     } = view;
     const { from, to } = selection;
     const context = doc.textBetween(from, to, "\n");
-    const tileIds = editor.references.value.map((tile) => tile.id);
+    const tileIds = editor.referenceIds;
     const sectionId = editor.activeSection?.id ?? null;
     const range = serializeSelection(view.state);
     const tileId = view.dom.closest("page-item")?.id;
