@@ -14,6 +14,7 @@ import "@/styles/animation.css";
 import "@/styles/tabs.css";
 import "@/styles/tooltips.css";
 import "@/styles/richText.css";
+import "@/styles/slide.css";
 import "@/utils/richText/code/highlight.css";
 import "@/styles/tables.css";
 import "@/styles/themes.css";

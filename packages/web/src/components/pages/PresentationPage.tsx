@@ -60,7 +60,14 @@ export default function PresentationPage({
         data-page-type="PRESENTATION"
       >
         <Each items={tiles}>
-          {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
+          {(tile) => (
+            <Item
+              tile={tile}
+              classList={{ "slide-frame": true }}
+              tabindex={tabindex}
+              draggable={false}
+            />
+          )}
         </Each>
       </main>
     </div>

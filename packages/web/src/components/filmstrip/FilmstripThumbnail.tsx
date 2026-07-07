@@ -36,7 +36,7 @@ export default function FilmstripThumbnail({ tile }: FilmstripThumbnailProps) {
       }}
       style={style}
     >
-      <div className={styles.content} inert>
+      <div classList={{ [styles.content]: true, "slide-frame": true }} inert>
         {getTileThumbnail(tile)}
       </div>
     </div>

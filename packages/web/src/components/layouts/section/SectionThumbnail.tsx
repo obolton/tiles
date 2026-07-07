@@ -36,7 +36,7 @@ export default function SectionThumbnail({ section }: SectionThumbnailProps) {
 
     return (
       <div
-        className={styles.contents}
+        classList={{ [styles.contents]: true, slide: true }}
         data-layout={layout}
         data-section-id={section.id}
         style={style}

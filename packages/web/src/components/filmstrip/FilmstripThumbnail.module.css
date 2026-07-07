@@ -9,7 +9,6 @@
   font-family: var(--font);
   outline: 1px solid rgb(0 0 0 / 20%);
   outline-offset: 4px;
-  font-size: 4px;
   cursor: pointer;
   view-transition-name: match-element;
   transition: opacity var(--animation-duration) var(--easing);
@@ -67,5 +66,4 @@
 .content {
   position: absolute;
   inset: 0;
-  container-type: size;
 }
