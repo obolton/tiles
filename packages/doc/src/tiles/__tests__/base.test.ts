@@ -12,7 +12,7 @@ describe("buildBaseTileMap", () => {
     expect(map.get("sizing")).toBe("AUTO");
     expect(map.get("x")).toBe(0);
     expect(map.get("y")).toBe(0);
-    expect(map.get("width")).toBe(0);
+    expect(map.get("width")).toBeNull();
     expect(map.get("height")).toBe(0);
     expect(map.get("rowSpan")).toBe(0);
     expect(map.get("hide")).toBe(false);
