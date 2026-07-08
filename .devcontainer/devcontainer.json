@@ -29,6 +29,10 @@
     "6001": {
       "label": "Storybook",
       "onAutoForward": "ignore"
+    },
+    "9222": {
+      "label": "Chrome DevTools",
+      "onAutoForward": "ignore"
     }
   },
 
