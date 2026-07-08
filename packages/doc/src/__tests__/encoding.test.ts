@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { base64ToBytes, bytesToBase64 } from "@/encoding";
+import { base64ToBytes, bytesToBase64, equalBytes } from "@/encoding";
 
 describe("base64ToBytes", () => {
   test("decodes an empty string", () => {
@@ -15,6 +15,29 @@ describe("base64ToBytes", () => {
     const source = "The quick brown fox jumps over the lazy dog";
     const decoded = String.fromCharCode(...base64ToBytes(btoa(source)));
     expect(decoded).toBe(source);
+  });
+});
+
+describe("equalBytes", () => {
+  test("compares equal arrays as equal", () => {
+    expect(equalBytes(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))).toBe(true);
+  });
+
+  test("compares empty arrays as equal", () => {
+    expect(equalBytes(new Uint8Array(), new Uint8Array())).toBe(true);
+  });
+
+  test("compares arrays of different lengths as unequal", () => {
+    expect(equalBytes(new Uint8Array([1, 2]), new Uint8Array([1, 2, 3]))).toBe(false);
+  });
+
+  test("compares same-length arrays with different content as unequal", () => {
+    expect(equalBytes(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]))).toBe(false);
+  });
+
+  test("compares by content, not buffer identity", () => {
+    const view = new Uint8Array([9, 1, 2, 3]).subarray(1);
+    expect(equalBytes(view, new Uint8Array([1, 2, 3]))).toBe(true);
   });
 });
 
