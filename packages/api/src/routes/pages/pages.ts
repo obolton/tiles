@@ -9,6 +9,7 @@ import { createEmptyDoc, currentSchemaVersion } from "@/collaboration";
 import { DocWriter } from "@/collaboration/DocWriter";
 import { buildTextMap } from "doc/tiles/text";
 import { buildSectionMap } from "doc/tiles/section";
+import { bytesToBase64 } from "doc/encoding";
 import type {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -45,7 +46,7 @@ export async function getPageById({ id }: GetPageByIdSchema, { userId }: Request
 
   return {
     ...page,
-    document: Buffer.from(page.document.snapshot).toString("base64"),
+    document: bytesToBase64(page.document.snapshot),
   };
 }
 
