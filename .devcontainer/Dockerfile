@@ -11,6 +11,7 @@ RUN corepack enable
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     postgresql-client \
+    socat \
     zsh \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 

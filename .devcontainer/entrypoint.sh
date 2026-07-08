@@ -21,5 +21,8 @@ if [ -n "$WORKSPACE" ]; then
         "/projects/${WORKSPACE}/packages/image-upload-worker/node_modules"
 fi
 
+# Bridge the Chrome DevTools port to the host
+socat TCP-LISTEN:9222,bind=127.0.0.1,fork,reuseaddr TCP:host.docker.internal:9222 &
+
 # Drop to node user and execute the command
 exec su node -s /bin/zsh -c "$*"
