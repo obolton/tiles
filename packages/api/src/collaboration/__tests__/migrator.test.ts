@@ -1,6 +1,11 @@
 import { describe, test, expect } from "vitest";
 import * as Y from "yjs";
-import { applyMigrations, createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator.ts";
+import {
+  applyMigrations,
+  createEmptyDoc,
+  migrateSnapshot,
+  CURRENT_SCHEMA_VERSION,
+} from "../migrator.ts";
 
 describe("createEmptyDoc", () => {
   test("returns a doc stamped at the current schema version", () => {
@@ -26,5 +31,35 @@ describe("applyMigrations", () => {
     const original = doc.getMap("metadata").get("createdAt");
     applyMigrations(doc, 0);
     expect(doc.getMap("metadata").get("createdAt")).toBe(original);
+  });
+});
+
+describe("migrateSnapshot", () => {
+  test("returns the snapshot untouched when already at the current version", () => {
+    const snapshot = Y.encodeStateAsUpdate(createEmptyDoc());
+    expect(migrateSnapshot(snapshot, CURRENT_SCHEMA_VERSION)).toBe(snapshot);
+  });
+
+  test("migrates a stale snapshot to the current schema", () => {
+    const snapshot = Y.encodeStateAsUpdate(new Y.Doc());
+
+    const migrated = migrateSnapshot(snapshot, 0);
+
+    const doc = new Y.Doc();
+    Y.applyUpdate(doc, migrated);
+    expect(doc.getMap("metadata").get("schemaVersion")).toBe(CURRENT_SCHEMA_VERSION);
+    expect(typeof doc.getMap("metadata").get("createdAt")).toBe("string");
+  });
+
+  test("preserves existing content while migrating", () => {
+    const source = new Y.Doc();
+    source.getMap("tiles").set("tile-1", "content");
+
+    const migrated = migrateSnapshot(Y.encodeStateAsUpdate(source), 0);
+
+    const doc = new Y.Doc();
+    Y.applyUpdate(doc, migrated);
+    expect(doc.getMap("tiles").get("tile-1")).toBe("content");
+    expect(doc.getMap("metadata").get("schemaVersion")).toBe(CURRENT_SCHEMA_VERSION);
   });
 });

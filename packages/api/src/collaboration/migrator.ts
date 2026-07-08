@@ -34,3 +34,14 @@ export function createEmptyDoc(): Y.Doc {
   applyMigrations(doc, 0);
   return doc;
 }
+
+export function migrateSnapshot(snapshot: Uint8Array, fromVersion: number): Uint8Array {
+  if (fromVersion >= CURRENT_SCHEMA_VERSION) {
+    return snapshot;
+  }
+
+  const doc = new Y.Doc();
+  Y.applyUpdate(doc, snapshot);
+  applyMigrations(doc, fromVersion);
+  return Y.encodeStateAsUpdate(doc);
+}
