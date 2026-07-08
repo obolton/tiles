@@ -15,6 +15,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     zsh \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+# TypeScript language server (for agents)
+RUN npm install -g typescript-language-server@5.3.0
+
 # Set Zsh as the default shell
 RUN chsh -s /bin/zsh node \
     && touch /home/node/.zshrc \
