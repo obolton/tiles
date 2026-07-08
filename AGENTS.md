@@ -65,6 +65,11 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Typecheck, lint and format scripts are fast and can be run across the whole workspace. Avoid scoping scripts to packages unless specifically needed.
 - Scripts can be scoped to a package using `pnpm --filter <package>`, e.g. `pnpm --filter api typecheck` to typecheck the `api` package only.
 
+## Browser Debugging
+
+- The `chrome-devtools` MCP server can be used to connect to a running Chrome instance.
+- The app is served at `https://<workspace>.tiles.test`, where `<workspace>` is the workspace name.
+
 ## Coding Style
 
 ### General
