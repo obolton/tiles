@@ -20,12 +20,19 @@
       "command": "pnpm dev",
       "skipFiles": ["<node_internals>/**"],
       "serverReadyAction": {
-        "action": "debugWithChrome",
+        "action": "startDebugging",
         "pattern": "Development server: (https://.+)",
-        "uriFormat": "%s",
-        "webRoot": "${workspaceFolder}/packages/web/src",
+        "name": "Chrome (Debug)",
         "killOnServerStop": true
       }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Chrome (Debug)",
+      "url": "https://${workspaceFolderBasename}.tiles.test",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/packages/web/src"
     }
   ]
 }
