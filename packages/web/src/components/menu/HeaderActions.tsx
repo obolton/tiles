@@ -35,7 +35,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
   const { isEditable } = editor;
   function toggleEdit() {
     viewTransition(() => {
-      isEditable.value = !isEditable.value;
+      editor.setEditable(!isEditable.value);
     });
   }
 
@@ -71,7 +71,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
         <ToolbarButton
           label="Present"
           on:click={() => {
-            isEditable.value = false;
+            editor.setEditable(false);
             startPresentation();
           }}
         >

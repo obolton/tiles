@@ -123,17 +123,6 @@ export default class Editor {
       this.canRedo = this.undoManager.canRedo;
       this.enablePointerEvents();
 
-      this.isEditable.subscribe(() => {
-        setEditMode(this.isEditable.value);
-        if (this.isEditable.value) {
-          this.startCollaboration();
-          requestAnimationFrame(() => this.focusFirstTile());
-        } else {
-          this.stopCollaboration();
-          this.clearSelection();
-        }
-      });
-
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
         this.startCollaboration();
@@ -156,6 +145,24 @@ export default class Editor {
   private stopCollaboration() {
     this.collaboration?.dispose();
     this.collaboration = null;
+  }
+
+  setEditable(editable: boolean) {
+    if (editable === this.isEditable.value) {
+      return;
+    }
+
+    if (editable) {
+      this.isEditable.value = true;
+      setEditMode(true);
+      this.startCollaboration();
+      requestAnimationFrame(() => this.focusFirstTile());
+    } else {
+      this.clearSelection();
+      this.isEditable.value = false;
+      setEditMode(false);
+      this.stopCollaboration();
+    }
   }
 
   enablePointerEvents() {
@@ -216,20 +223,25 @@ export default class Editor {
     // Present: Cmd/Ctrl+Enter (not in text inputs)
     if (isMod && event.key === "Enter" && !isInput) {
       event.preventDefault();
-      this.isEditable.value = false;
+      this.setEditable(false);
       startPresentation();
       return;
     }
 
     // Undo: Cmd/Ctrl+Z (not in text inputs - they have their own undo)
-    if (isMod && event.key === "z" && !event.shiftKey && !isInput) {
+    if (isMod && event.key === "z" && !event.shiftKey && !isInput && this.isEditable.value) {
       event.preventDefault();
       this.undo();
       return;
     }
 
     // Redo: Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y (not in text inputs)
-    if (isMod && !isInput && ((event.key === "z" && event.shiftKey) || event.key === "y")) {
+    if (
+      isMod &&
+      !isInput &&
+      this.isEditable.value &&
+      ((event.key === "z" && event.shiftKey) || event.key === "y")
+    ) {
       event.preventDefault();
       this.redo();
       return;
@@ -370,6 +382,9 @@ export default class Editor {
   }
 
   private setSelection(tiles: Set<Tile>) {
+    if (!this.isEditable.value) {
+      throw new Error("Not in edit mode");
+    }
     this.selection.value = tiles;
     // Start a new undo step
     this.undoManager?.stopCapturing();

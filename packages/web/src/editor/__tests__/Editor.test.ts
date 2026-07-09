@@ -4,6 +4,12 @@ import Editor from "@/editor/Editor";
 import Section, { type CreateSectionInput } from "@/models/Section";
 import { PAGE } from "@/test/fixtures/Page";
 
+vi.mock("@/collaboration/PageCollaboration", () => ({
+  PageCollaboration: class {
+    dispose() {}
+  },
+}));
+
 const PROPS: CreateSectionInput = {
   layout: "VERTICAL",
   sizing: "CUSTOM",
@@ -18,6 +24,7 @@ const PROPS: CreateSectionInput = {
 
 describe("Editor", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
+  editor.setEditable(true);
 
   describe("selection", () => {
     test("starts a new undo step on selection change", () => {
