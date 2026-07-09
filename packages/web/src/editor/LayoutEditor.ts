@@ -18,6 +18,7 @@ export interface LayoutEditorOptions {
   dropTarget?: HTMLElement;
   page: Page;
   sectionId: string | null;
+  accepts?: (tile: Tile) => boolean;
   signal?: AbortSignal;
 }
 
@@ -37,6 +38,7 @@ export default class LayoutEditor {
 
   layoutType: LayoutType;
 
+  private readonly accepts?: (tile: Tile) => boolean;
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly gridRef: WeakRef<HTMLElement>;
 
@@ -63,11 +65,13 @@ export default class LayoutEditor {
     dropTarget = element,
     page,
     sectionId,
+    accepts,
     signal,
   }: LayoutEditorOptions) {
     this.page = page;
     this.sectionId = sectionId;
     this.layoutType = layoutType;
+    this.accepts = accepts;
     this.elementRef = new WeakRef(element);
     this.gridRef = new WeakRef(grid);
 
@@ -75,10 +79,7 @@ export default class LayoutEditor {
 
     dropTarget.dataset.drop = "true";
     dropTarget.addEventListener("dnd-dragover", this, { signal });
-    dropTarget.addEventListener("dnd-dragenter", this, {
-      passive: true,
-      signal,
-    });
+    dropTarget.addEventListener("dnd-dragenter", this, { signal });
     dropTarget.addEventListener("dnd-dragleave", this, { signal });
     dropTarget.addEventListener("dnd-drop", this, { signal });
     dropTarget.addEventListener("dnd-dragend", this, { passive: true, signal });
@@ -339,6 +340,11 @@ export default class LayoutEditor {
   private handleDragEnter(event: DragDropEvent<DragData>) {
     const tile = event.state?.data?.tile;
     if (!tile) {
+      return;
+    }
+
+    if (this.accepts?.(tile) === false) {
+      event.preventDefault();
       return;
     }
 
