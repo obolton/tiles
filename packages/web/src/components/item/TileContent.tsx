@@ -22,7 +22,7 @@ export interface TileContentProps {
 
 export default function TileContent({ tile }: TileContentProps) {
   const showToolbar = tile.editor.selection.derive(
-    (selection) => selection.has(tile) && selection.size === 1,
+    (selection) => selection.has(tile.id) && selection.size === 1,
   );
 
   if (tile instanceof SectionModel) {

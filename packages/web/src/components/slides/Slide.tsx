@@ -20,7 +20,7 @@ export default function Slide({ section, tabindex, resize, signal }: SlideProps)
   const { tiles, editor } = section;
 
   const showToolbar = editor.selection.derive(
-    (selection) => selection.has(section) && selection.size === 1,
+    (selection) => selection.has(section.id) && selection.size === 1,
   );
 
   function ref(element: HTMLElement) {
