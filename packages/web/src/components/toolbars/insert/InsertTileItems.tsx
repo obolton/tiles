@@ -39,13 +39,7 @@ export interface InsertTileItemsProps {
 
 /** Menu items for inserting content tiles, shared by the insert menu variants. */
 export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
-  async function onClick(event: PointerEvent) {
-    const button = event.currentTarget as HTMLButtonElement;
-    const tileType = button.dataset.tileType as TileType;
-    if (!tileType) {
-      return;
-    }
-
+  async function insertTile(tileType: TileType) {
     try {
       const sectionId = getParentId();
 
@@ -127,7 +121,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
   return (
     <MenuItemGroup>
       {BUTTONS.map(({ label, type, Icon }) => (
-        <MenuItem icon={<Icon aria-hidden="true" />} data-tile-type={type} on:click={onClick}>
+        <MenuItem icon={<Icon aria-hidden="true" />} on:click={() => insertTile(type)}>
           {label}
         </MenuItem>
       ))}
