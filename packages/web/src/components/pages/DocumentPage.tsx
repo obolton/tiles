@@ -37,7 +37,7 @@ export default function DocumentPage({ page, isEditable, tiles, signal }: Docume
     <main
       ref={ref}
       className={styles.main}
-      style={{ "--width": page.width }}
+      style={{ "--page-width": page.width }}
       data-alignment={page.alignment}
       data-layout="VERTICAL"
       data-page-type="DOCUMENT"

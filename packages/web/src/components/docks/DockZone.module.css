@@ -95,7 +95,7 @@
 
 .top .item,
 .bottom .item {
-  flex: var(--width) 1 0%;
+  flex: var(--width, var(--page-width)) 1 0%;
   width: auto;
   height: 100% !important;
   aspect-ratio: unset !important;

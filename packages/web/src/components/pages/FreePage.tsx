@@ -7,7 +7,6 @@ import InsertButton from "@/components/buttons/InsertButton";
 import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
 import DockZone from "@/components/docks/DockZone";
 import LayoutEditor from "@/editor/LayoutEditor";
-import { combine } from "@/utils/reactivity";
 import styles from "./FreePage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -32,13 +31,14 @@ export default function FreePage({ page, isEditable, tiles, signal }: FreePagePr
         return "w e sw se s";
     }
   });
-  const { dockedTiles } = page;
-  const style = combine(page.dockSizes, (sizes) => ({
-    "--dock-top-size": `${sizes.TOP}px`,
-    "--dock-bottom-size": `${sizes.BOTTOM}px`,
-    "--dock-left-size": `${sizes.LEFT}px`,
-    "--dock-right-size": `${sizes.RIGHT}px`,
-  }));
+  const { dockedTiles, dockSizes } = page;
+  const style = {
+    "--dock-top-size": dockSizes.TOP.derive((size) => `${size}px`),
+    "--dock-bottom-size": dockSizes.BOTTOM.derive((size) => `${size}px`),
+    "--dock-left-size": dockSizes.LEFT.derive((size) => `${size}px`),
+    "--dock-right-size": dockSizes.RIGHT.derive((size) => `${size}px`),
+    "--page-width": page.width,
+  };
 
   function ref(element: HTMLElement) {
     LayoutEditor.attach({
@@ -71,7 +71,6 @@ export default function FreePage({ page, isEditable, tiles, signal }: FreePagePr
       <main
         ref={ref}
         className={styles.main}
-        style={{ "--width": page.width }}
         data-alignment={page.alignment}
         data-layout="VERTICAL"
         data-page-type="FREE"

@@ -38,7 +38,7 @@ export default function CollectionPage({ page, isEditable, tiles, signal }: Coll
     <main
       ref={ref}
       className={styles.main}
-      style={{ "--width": page.width }}
+      style={{ "--page-width": page.width }}
       data-alignment={page.alignment}
       data-layout="GRID"
       data-page-type="COLLECTION"

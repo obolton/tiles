@@ -1,12 +1,6 @@
-@property --background-fallback {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
 .item {
   display: flex;
-  width: calc(var(--width) * 24px);
+  width: calc(var(--width, var(--page-width)) * 24px);
   max-width: 100%;
   height: calc(var(--height) * 24px);
   aspect-ratio: var(--aspect-ratio);

@@ -7,7 +7,7 @@
 }
 
 .slide {
-  --slide-width: calc(var(--width) * 24px);
+  --slide-width: calc(var(--width, var(--page-width)) * 24px);
 
   container-type: inline-size;
   position: relative;

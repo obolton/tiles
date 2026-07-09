@@ -28,10 +28,14 @@ export default function PresentationPage({
   signal,
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
+  const resize = isEditable.derive((editable) => (editable ? "all" : null));
 
   const storedWidth = persistent<number>("filmstrip:width", DEFAULT_SIDEBAR_WIDTH);
   const width = reactive(storedWidth.value);
-  const style = width.derive((value) => ({ "--sidebar-width": `${value}px` }));
+  const style = {
+    "--sidebar-width": width.derive((value) => `${value}px`),
+    "--page-width": page.width,
+  };
 
   function getInsertionParent(): string {
     const section = page.editor?.activeSection;
@@ -63,7 +67,6 @@ export default function PresentationPage({
       />
       <main
         className={styles.main}
-        style={{ "--width": page.width }}
         data-alignment={page.alignment}
         data-page-type="PRESENTATION"
         on:click={onClick}
@@ -76,7 +79,7 @@ export default function PresentationPage({
               }
               return null;
             }
-            return <Slide section={tile} tabindex={tabindex} signal={signal} />;
+            return <Slide section={tile} tabindex={tabindex} resize={resize} signal={signal} />;
           }}
         </Each>
       </main>
