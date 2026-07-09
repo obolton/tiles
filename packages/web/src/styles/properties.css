@@ -1,0 +1,172 @@
+@property --background-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 255 255);
+}
+
+@property --text-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --secondary-text-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(96 96 96);
+}
+
+@property --placeholder-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 30%);
+}
+
+@property --highlight-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 112 243 / 70%);
+}
+
+@property --icon-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --ui-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --ui-background-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(255 255 255 / 60%);
+}
+
+@property --ui-selection-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 80%);
+}
+
+@property --background-fallback {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --min-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 800px;
+}
+
+@property --border-radius {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 12px;
+}
+
+@property --header-height {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 56px;
+}
+
+@property --sidebar-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 200px;
+}
+
+/* The width of the page, in grid units */
+@property --page-width {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 32;
+}
+
+@property --width {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --height {
+  syntax: "*";
+  inherits: false;
+}
+
+@property --aspect-ratio {
+  syntax: "<number> | auto";
+  inherits: true;
+  initial-value: auto;
+}
+
+@property --x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --y {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --columns {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 4;
+}
+
+@property --gap {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 16px;
+}
+
+@property --grid-column-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 24px;
+}
+
+@property --grid-row-height {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 24px;
+}
+
+@property --placeholder-x {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --placeholder-y {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --placeholder-width {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --placeholder-height {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
