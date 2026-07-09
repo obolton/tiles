@@ -5,7 +5,6 @@ export interface DragPlaceholderOptions {
   y?: number;
   width?: number | null;
   height?: number;
-  rowSpan?: number;
   freeform?: boolean;
 }
 
@@ -13,7 +12,7 @@ export interface DragPlaceholderOptions {
  * Creates a drag placeholder element with CSS custom properties.
  */
 export function createDragPlaceholder(options: DragPlaceholderOptions = {}): HTMLElement {
-  const { x = 0, y = 0, width, height, rowSpan, freeform = false } = options;
+  const { x = 0, y = 0, width, height, freeform = false } = options;
 
   const placeholder = document.createElement("div");
   placeholder.classList.add("drag-placeholder");
@@ -28,9 +27,6 @@ export function createDragPlaceholder(options: DragPlaceholderOptions = {}): HTM
   }
   if (height !== undefined) {
     placeholder.style.setProperty("--placeholder-height", height.toString());
-  }
-  if (rowSpan !== undefined) {
-    placeholder.style.setProperty("--placeholder-rows", rowSpan.toString());
   }
 
   return placeholder;

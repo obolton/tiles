@@ -28,15 +28,12 @@ describe("createDragPlaceholder", () => {
     const empty = createDragPlaceholder();
     expect(empty.style.getPropertyValue("--placeholder-width")).toBe("");
     expect(empty.style.getPropertyValue("--placeholder-height")).toBe("");
-    expect(empty.style.getPropertyValue("--placeholder-rows")).toBe("");
 
     const withDimensions = createDragPlaceholder({
       width: 200,
       height: 150,
-      rowSpan: 2,
     });
     expect(withDimensions.style.getPropertyValue("--placeholder-width")).toBe("200");
     expect(withDimensions.style.getPropertyValue("--placeholder-height")).toBe("150");
-    expect(withDimensions.style.getPropertyValue("--placeholder-rows")).toBe("2");
   });
 });

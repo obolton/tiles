@@ -307,13 +307,11 @@ export default class LayoutEditor {
     y = 0,
     width,
     height,
-    rowSpan,
   }: {
     x?: number;
     y?: number;
     width: number | null;
     height: number;
-    rowSpan: number;
   }) {
     if (this.dragPlaceholder) {
       return;
@@ -324,7 +322,6 @@ export default class LayoutEditor {
       y,
       width,
       height,
-      rowSpan,
       freeform: this.layoutType === "FREEFORM",
     });
 
@@ -359,13 +356,7 @@ export default class LayoutEditor {
       const width = this.pixelToPercentX(event.state.width);
       const height = this.pixelToPercentY(event.state.height);
 
-      this.showDragPlaceholder({
-        x,
-        y,
-        width,
-        height,
-        rowSpan: tile.rowSpan.value,
-      });
+      this.showDragPlaceholder({ x, y, width, height });
     } else if (this.layoutType === "GRID") {
       const sizing = tile.sizing.value;
       const ratio =
@@ -373,11 +364,7 @@ export default class LayoutEditor {
           ? ASPECT_RATIOS[sizing]
           : event.state.width / event.state.height;
       const span = Math.min(tile.width.value ?? 1, this.gridColumns);
-      this.showDragPlaceholder({
-        width: null,
-        height: 0,
-        rowSpan: 1,
-      });
+      this.showDragPlaceholder({ width: null, height: 0 });
       if (this.dragPlaceholder) {
         this.dragPlaceholder.style.gridColumn = `span ${span}`;
         this.dragPlaceholder.style.aspectRatio = `${ratio}`;
@@ -386,7 +373,6 @@ export default class LayoutEditor {
       this.showDragPlaceholder({
         width: tile.width.value,
         height: tile.height.value,
-        rowSpan: tile.rowSpan.value,
       });
     }
   }
