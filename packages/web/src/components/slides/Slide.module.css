@@ -19,7 +19,7 @@
   overflow: clip;
 
   /* Same percentage positioning as freeform sections (ScrollSection.module.css) */
-  & > * {
+  & > page-item {
     position: absolute;
     left: calc(var(--x) * 1%);
     top: calc(var(--y) * 1%);
@@ -28,6 +28,7 @@
   }
 
   & > :global(.drag-placeholder) {
+    position: absolute;
     left: calc(var(--placeholder-x) * 1%);
     top: calc(var(--placeholder-y) * 1%);
     width: calc(var(--placeholder-width) * 1%);

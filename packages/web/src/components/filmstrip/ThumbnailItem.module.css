@@ -1,8 +1,10 @@
 .item {
   display: flex;
-  width: calc(var(--width) * 24px);
-  max-width: 100%;
-  height: calc(var(--height) * 24px);
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  width: calc(var(--width) * 1%);
+  height: calc(var(--height) * 1%);
   aspect-ratio: var(--aspect-ratio);
   border-radius: var(--border-radius);
   color: var(--text-color);
