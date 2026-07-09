@@ -1,6 +1,10 @@
 import Each from "@/jsx/each";
+import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
+import InsertButton from "@/components/buttons/InsertButton";
+import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
 import DockZone from "@/components/docks/DockZone";
 import LayoutEditor from "@/editor/LayoutEditor";
 import { combine } from "@/utils/reactivity";
@@ -94,6 +98,13 @@ export default function FreePage({ page, isEditable, tiles, signal }: FreePagePr
         tiles={dockedTiles.BOTTOM}
         signal={signal}
       />
+
+      <If condition={isEditable}>
+        <Portal element="insert-slot">
+          <InsertButton id="insert-button" popovertarget="insert-menu" />
+          <DocumentInsertMenu id="insert-menu" align="auto" />
+        </Portal>
+      </If>
     </div>
   );
 }

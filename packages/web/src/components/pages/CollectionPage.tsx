@@ -1,6 +1,10 @@
 import Each from "@/jsx/each";
+import If from "@/jsx/if";
+import Portal from "@/jsx/portal";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
+import InsertButton from "@/components/buttons/InsertButton";
+import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
@@ -46,6 +50,13 @@ export default function CollectionPage({ page, isEditable, tiles, signal }: Coll
           </Item>
         )}
       </Each>
+
+      <If condition={isEditable}>
+        <Portal element="insert-slot">
+          <InsertButton id="insert-button" popovertarget="insert-menu" />
+          <DocumentInsertMenu id="insert-menu" align="auto" />
+        </Portal>
+      </If>
     </main>
   );
 }
