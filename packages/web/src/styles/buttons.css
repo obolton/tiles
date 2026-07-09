@@ -147,13 +147,13 @@
     }
 
     &:is(
-        :hover:not(:disabled),
-        :active:not(:disabled),
-        :checked,
-        [aria-pressed="true"],
-        [aria-checked="true"],
-        [aria-expanded="true"]
-      ):not(.pending, [aria-disabled="true"]) {
+      :hover:not(:disabled),
+      :active:not(:disabled),
+      :checked,
+      [aria-pressed="true"],
+      [aria-checked="true"],
+      [aria-expanded="true"]
+    ):not(.pending, [aria-disabled="true"]) {
       &:not(list-select)::before,
       &:is(list-select)::part(button)::before {
         content: "";
@@ -182,12 +182,12 @@
     }
 
     &:is(
-        :active:not(:disabled),
-        :checked,
-        [aria-pressed="true"],
-        [aria-checked="true"],
-        [aria-expanded="true"]
-      ):not([aria-disabled="true"]) {
+      :active:not(:disabled),
+      :checked,
+      [aria-pressed="true"],
+      [aria-checked="true"],
+      [aria-expanded="true"]
+    ):not([aria-disabled="true"]) {
       &:not(list-select)::before,
       &:is(list-select)::part(button)::before {
         background-color: rgb(0 0 0 / 20%);
