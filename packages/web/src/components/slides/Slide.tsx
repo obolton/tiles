@@ -12,17 +12,16 @@ import type { Reactive } from "@/utils/reactivity";
 export interface SlideProps {
   section: SectionModel;
   tabindex: Reactive<number | undefined>;
+  resize: Reactive<string | null>;
   signal?: AbortSignal;
 }
 
-export default function Slide({ section, tabindex, signal }: SlideProps) {
+export default function Slide({ section, tabindex, resize, signal }: SlideProps) {
   const { tiles, editor } = section;
 
   const showToolbar = editor.selection.derive(
     (selection) => selection.has(section) && selection.size === 1,
   );
-
-  const resize = editor.isEditable.derive((editable) => (editable ? "all" : null));
 
   function ref(element: HTMLElement) {
     LayoutEditor.attach({
@@ -47,8 +46,8 @@ export default function Slide({ section, tabindex, signal }: SlideProps) {
       <section
         ref={ref}
         className={styles.slide}
+        style={{ "--width": section.width }}
         data-section-id={section.id}
-        data-layout="FREEFORM"
         tabindex={tabindex}
         aria-label="Slide"
       >
