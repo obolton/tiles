@@ -45,16 +45,12 @@ export default function SlideThumbnail({ section }: SlideThumbnailProps) {
       }}
       style={style}
     >
-      <div
-        className={slideStyles.slide}
-        style={sizeStyle}
-        data-section-id={section.id}
-        data-layout="FREEFORM"
-        inert
-      >
-        <Each items={section.tiles}>
-          {(tile) => <ThumbnailItem tile={tile}>{getTileThumbnail(tile)}</ThumbnailItem>}
-        </Each>
+      <div className={styles.content} inert>
+        <div className={slideStyles.slide} style={sizeStyle}>
+          <Each items={section.tiles}>
+            {(tile) => <ThumbnailItem tile={tile}>{getTileThumbnail(tile)}</ThumbnailItem>}
+          </Each>
+        </div>
       </div>
     </div>
   );
