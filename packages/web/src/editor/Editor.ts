@@ -457,18 +457,6 @@ export default class Editor {
     }
   }
 
-  transitionSections(update: () => void) {
-    const sections = document.querySelectorAll<HTMLElement>("section[data-section-id]");
-    for (const section of sections) {
-      section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
-    }
-    viewTransition(update).updateCallbackDone.finally(() => {
-      for (const section of sections) {
-        section.style.viewTransitionName = "";
-      }
-    });
-  }
-
   // Tiles
 
   async deleteTiles(tiles: Tile[]) {
@@ -572,7 +560,7 @@ export default class Editor {
     requestAnimationFrame(() => {
       const element = document.getElementById(present[0]);
       if (element) {
-        scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+        scrollIntoViewIfNeeded(element, { behavior: "instant" });
       }
     });
   }

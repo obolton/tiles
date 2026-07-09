@@ -190,7 +190,7 @@ export default class FilmstripView extends HTMLElement {
       next.ariaSelected = "true";
       this.ariaActiveDescendantElement = next;
       next.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      this.dispatchEvent(new FilmstripEvent("slideselect", { slideId, bubbles: true }));
+      this.dispatchEvent(new FilmstripEvent("slideselect", { slideId }));
     } else {
       this.ariaActiveDescendantElement = null;
     }
