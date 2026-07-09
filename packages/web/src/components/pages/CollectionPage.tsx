@@ -1,5 +1,6 @@
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
@@ -39,7 +40,11 @@ export default function CollectionPage({ page, isEditable, tiles, signal }: Coll
       data-page-type="COLLECTION"
     >
       <Each items={tiles}>
-        {(tile) => <Item tile={tile} tabindex={tabindex} resize={resize} />}
+        {(tile) => (
+          <Item tile={tile} tabindex={tabindex} resize={resize}>
+            <TileContent tile={tile} />
+          </Item>
+        )}
       </Each>
     </main>
   );

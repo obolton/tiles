@@ -1,19 +1,3 @@
-import Section from "@/components/layouts/section/Section";
-import ImageTile from "@/components/tiles/ImageTile";
-import VideoTile from "@/components/tiles/VideoTile";
-import TextTile from "@/components/tiles/TextTile";
-import LinkTile from "@/components/tiles/LinkTile";
-import PageLinkTile from "@/components/tiles/PageLinkTile";
-import TableTile from "@/components/tiles/TableTile";
-import ChartTile from "@/components/tiles/ChartTile";
-import SectionModel from "@/models/Section";
-import TextModel from "@/models/Text";
-import ImageModel from "@/models/Image";
-import VideoModel from "@/models/Video";
-import LinkModel from "@/models/Link";
-import PageLinkModel from "@/models/PageLink";
-import TableModel from "@/models/Table";
-import ChartModel from "@/models/Chart";
 import { reactive, combine } from "@/utils/reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
@@ -27,6 +11,7 @@ import { getResizeHandleDirections } from "@/elements/item/resize";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "@/utils/reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
+import type { JSX } from "@/jsx/jsx";
 
 const ANIMATION_NAMES: Record<Animation, string> = {
   FADE: "fade-in",
@@ -42,34 +27,7 @@ export interface ItemProps {
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<string | null>;
   draggable?: boolean;
-}
-
-function getTileComponent(tile: Tile, showToolbar: Reactive<boolean>) {
-  if (tile instanceof SectionModel) {
-    return <Section section={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof ImageModel) {
-    return <ImageTile image={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof VideoModel) {
-    return <VideoTile video={tile} />;
-  }
-  if (tile instanceof TextModel) {
-    return <TextTile text={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof LinkModel) {
-    return <LinkTile link={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof PageLinkModel) {
-    return <PageLinkTile pageLink={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof TableModel) {
-    return <TableTile table={tile} showToolbar={showToolbar} />;
-  }
-  if (tile instanceof ChartModel) {
-    return <ChartTile chart={tile} showToolbar={showToolbar} />;
-  }
-  throw new Error(`Unknown tile type: ${tile.type}`);
+  children: JSX.Node;
 }
 
 export function getSizeStyle(sizing: Sizing, width: number | null, height: number) {
@@ -98,7 +56,15 @@ export function getSizeStyle(sizing: Sizing, width: number | null, height: numbe
   };
 }
 
-export default function Item({ classList, style, tile, tabindex, resize, draggable }: ItemProps) {
+export default function Item({
+  classList,
+  style,
+  tile,
+  tabindex,
+  resize,
+  draggable,
+  children,
+}: ItemProps) {
   const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
   const allowDrag = draggable === false ? false : editor.isTileEditable;
 
@@ -110,11 +76,6 @@ export default function Item({ classList, style, tile, tabindex, resize, draggab
   const isSelected = editor.selection.derive((selection) => selection.has(tile));
 
   const isReferenced = editor.references.derive((refs) => refs.includes(tile));
-
-  // Show toolbar when this tile is the only selected item
-  const showToolbar = editor.selection.derive(
-    (selection) => selection.has(tile) && selection.size === 1,
-  );
 
   const themeStyles = combine(
     {
@@ -252,7 +213,7 @@ export default function Item({ classList, style, tile, tabindex, resize, draggab
         on:pointerdown={onPointerDown}
         on:dnd-dragstart={onDragStart}
       >
-        {getTileComponent(tile, showToolbar)}
+        {children}
       </page-item>
     </If>
   );

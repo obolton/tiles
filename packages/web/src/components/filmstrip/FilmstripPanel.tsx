@@ -1,7 +1,7 @@
 import Each from "@/jsx/each";
 import If from "@/jsx/if";
 import Section from "@/models/Section";
-import FilmstripThumbnail from "./FilmstripThumbnail";
+import SlideThumbnail from "@/components/slides/SlideThumbnail";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
 import styles from "./FilmstripPanel.module.css";
@@ -85,7 +85,9 @@ export default function FilmstripPanel({
         on:slidereorder={onSlideReorder}
         on:dnd-dragstart={onDragStart}
       >
-        <Each items={tiles}>{(tile) => <FilmstripThumbnail tile={tile} />}</Each>
+        <Each items={tiles}>
+          {(tile) => (tile instanceof Section ? <SlideThumbnail section={tile} /> : null)}
+        </Each>
       </filmstrip-view>
 
       <If condition={isEditable}>

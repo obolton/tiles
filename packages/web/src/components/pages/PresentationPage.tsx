@@ -60,14 +60,15 @@ export default function PresentationPage({
         data-page-type="PRESENTATION"
       >
         <Each items={tiles}>
-          {(tile) => (
-            <Item
-              tile={tile}
-              classList={{ "slide-frame": true }}
-              tabindex={tabindex}
-              draggable={false}
-            />
-          )}
+          {(tile) => {
+            if (!(tile instanceof Section)) {
+              if (import.meta.env.DEV) {
+                console.warn(`Presentation pages only render sections; skipping ${tile.type} tile`);
+              }
+              return null;
+            }
+            return <Slide section={tile} tabindex={tabindex} signal={signal} />;
+          }}
         </Each>
       </main>
     </div>

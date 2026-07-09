@@ -1,4 +1,5 @@
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import Each from "@/jsx/each";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./ScrollSection.module.css";
@@ -60,12 +61,9 @@ export default function ScrollSection({
     >
       <Each items={tiles}>
         {(tile) => (
-          <Item
-            classList={{ [styles.item]: true }}
-            tile={tile}
-            tabindex={tabindex}
-            resize={resize}
-          />
+          <Item classList={{ [styles.item]: true }} tile={tile} tabindex={tabindex} resize={resize}>
+            <TileContent tile={tile} />
+          </Item>
         )}
       </Each>
     </scroll-view>

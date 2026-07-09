@@ -1,5 +1,6 @@
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import DockZone from "@/components/docks/DockZone";
 import LayoutEditor from "@/editor/LayoutEditor";
 import { combine } from "@/utils/reactivity";
@@ -72,7 +73,11 @@ export default function FreePage({ page, isEditable, tiles, signal }: FreePagePr
         data-page-type="FREE"
       >
         <Each items={tiles}>
-          {(tile) => <Item tile={tile} tabindex={tabindex} resize={resize} />}
+          {(tile) => (
+            <Item tile={tile} tabindex={tabindex} resize={resize}>
+              <TileContent tile={tile} />
+            </Item>
+          )}
         </Each>
       </main>
       <DockZone

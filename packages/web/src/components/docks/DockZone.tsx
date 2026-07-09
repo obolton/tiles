@@ -2,6 +2,7 @@ import { combine } from "@/utils/reactivity";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import DockLayoutEditor from "./DockLayoutEditor";
 import styles from "./DockZone.module.css";
 import type Page from "@/models/Page";
@@ -61,7 +62,11 @@ export default function DockZone({ page, isEditable, edge, tiles, signal }: Dock
         on:panelresizeend={(event) => (page.dockSizes[edge].value = event.size)}
       >
         <Each items={tiles}>
-          {(tile) => <Item classList={{ [styles.item]: true }} tile={tile} />}
+          {(tile) => (
+            <Item classList={{ [styles.item]: true }} tile={tile}>
+              <TileContent tile={tile} />
+            </Item>
+          )}
         </Each>
       </resizable-panel>
     </If>

@@ -1,4 +1,5 @@
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import ImageModel from "@/models/Image";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
@@ -18,7 +19,7 @@ export interface MapPinProps {
 export default function MapPin({ tile, editor, tabindex, resize, signal }: MapPinProps) {
   const imageUrl = tile instanceof ImageModel ? tile.imageUrl : null;
   function onPointerDown(event: PointerEvent) {
-    if (event.button !== PRIMARY_MOUSE_BUTTON) {
+    if (event.button !== PRIMARY_MOUSE_BUTTON || !editor.isEditable.value) {
       return;
     }
     event.stopPropagation();
@@ -47,7 +48,9 @@ export default function MapPin({ tile, editor, tabindex, resize, signal }: MapPi
           <span className={styles.dot} />
         )}
       </div>
-      <Item tile={tile} tabindex={tabindex} resize={resize} />
+      <Item tile={tile} tabindex={tabindex} resize={resize}>
+        <TileContent tile={tile} />
+      </Item>
     </map-point>
   );
 }

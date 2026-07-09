@@ -1,5 +1,6 @@
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./DocumentPage.module.css";
 import type Page from "@/models/Page";
@@ -38,7 +39,11 @@ export default function DocumentPage({ page, isEditable, tiles, signal }: Docume
       data-page-type="DOCUMENT"
     >
       <Each items={tiles}>
-        {(tile) => <Item tile={tile} tabindex={tabindex} draggable={false} />}
+        {(tile) => (
+          <Item tile={tile} tabindex={tabindex} draggable={false}>
+            <TileContent tile={tile} />
+          </Item>
+        )}
       </Each>
     </main>
   );
