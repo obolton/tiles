@@ -1,3 +1,4 @@
+import "@/styles/properties.css";
 import "@/styles/global.css";
 import "@/styles/toolbars.css";
 import "@/styles/buttons.css";
