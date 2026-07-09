@@ -29,6 +29,13 @@ export default function FilmstripPanel({
   ...props
 }: FilmstripPanelProps) {
   function onSlideSelect(event: FilmstripEvent) {
+    if (!isEditable.value) {
+      return;
+    }
+    // Maintain the selection when it is within the selected slide
+    if (page.editor?.activeSection?.id === event.slideId) {
+      return;
+    }
     page.editor?.select([event.slideId]);
   }
 
