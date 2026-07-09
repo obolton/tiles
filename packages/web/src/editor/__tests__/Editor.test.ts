@@ -7,6 +7,7 @@ import type { PageCollaboration } from "@/collaboration/PageCollaboration";
 
 vi.mock("@/collaboration/PageCollaboration", () => ({
   PageCollaboration: class {
+    publishSelection() {}
     dispose() {}
   },
 }));

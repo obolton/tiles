@@ -7,6 +7,7 @@ import type { Layout } from "doc/types/tiles/section";
 
 vi.mock("@/collaboration/PageCollaboration", () => ({
   PageCollaboration: class {
+    publishSelection() {}
     dispose() {}
   },
 }));
