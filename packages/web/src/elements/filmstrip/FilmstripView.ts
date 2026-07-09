@@ -121,7 +121,6 @@ export default class FilmstripView extends HTMLElement {
     this.jumpingTo = slide;
     this.setActive(slideId);
     slide.scrollIntoView({ behavior: "smooth", block: "start" });
-    this.dispatchEvent(new FilmstripEvent("slideselect", { slideId }));
   }
 
   private handleIntersect(entries: IntersectionObserverEntry[]) {
@@ -191,6 +190,7 @@ export default class FilmstripView extends HTMLElement {
       next.ariaSelected = "true";
       this.ariaActiveDescendantElement = next;
       next.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      this.dispatchEvent(new FilmstripEvent("slideselect", { slideId }));
     } else {
       this.ariaActiveDescendantElement = null;
     }

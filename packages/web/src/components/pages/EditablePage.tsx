@@ -1,6 +1,5 @@
 import PageContents from "@/components/pages/PageContents";
 import PageToolbar from "@/components/toolbars/pages/PageToolbar";
-import InsertButton from "@/components/buttons/InsertButton";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
@@ -42,7 +41,7 @@ export default function EditablePage({ editor }: EditablePageProps) {
               <ChatPanel />
             </If>
           </div>
-          <InsertButton id="insert-button" />
+          <div id="insert-slot" />
         </div>
       </If>
 

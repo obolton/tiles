@@ -76,7 +76,7 @@ export default abstract class Tile {
     this.sizing = this.binding.field("sizing", "AUTO");
     this.x = this.binding.field("x", 0);
     this.y = this.binding.field("y", 0);
-    this.width = this.binding.field("width", 0);
+    this.width = this.binding.field("width", null);
     this.height = this.binding.field("height", 0);
     this.rowSpan = this.binding.field("rowSpan", 0);
     this.startDate = this.binding.field("startDate", null);

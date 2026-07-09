@@ -1,4 +1,5 @@
 import Item from "@/components/item/Item";
+import TileContent from "@/components/item/TileContent";
 import CalendarEditor from "@/editor/CalendarEditor";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
@@ -126,7 +127,9 @@ export default function CalendarSection({
             }}
             label={getSegmentLabel(tile)}
           >
-            <Item tile={tile} tabindex={tabindex} resize={resize} />
+            <Item tile={tile} tabindex={tabindex} resize={resize}>
+              <TileContent tile={tile} />
+            </Item>
           </calendar-date>
         )}
       </Each>

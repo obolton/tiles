@@ -1,0 +1,37 @@
+.frame {
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+}
+
+.slide {
+  --slide-width: calc(var(--width, var(--page-width)) * 24px);
+
+  container-type: inline-size;
+  position: relative;
+  flex: none;
+  inline-size: var(--slide-width);
+  aspect-ratio: var(--aspect-ratio);
+  transform-origin: center;
+  scale: calc(min(100cqw, 100cqh * var(--aspect-ratio)) / var(--slide-width));
+  overflow: clip;
+
+  /* Same percentage positioning as freeform sections (ScrollSection.module.css) */
+  & > page-item {
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: calc(var(--width) * 1%);
+    height: calc(var(--height) * 1%);
+  }
+
+  & > :global(.drag-placeholder) {
+    position: absolute;
+    left: calc(var(--placeholder-x) * 1%);
+    top: calc(var(--placeholder-y) * 1%);
+    width: calc(var(--placeholder-width) * 1%);
+    height: calc(var(--placeholder-height) * 1%);
+  }
+}

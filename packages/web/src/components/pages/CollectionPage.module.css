@@ -1,7 +1,7 @@
 .main {
   --columns: 3;
   --gap: 16px;
-  --inline-size: min(calc(var(--width) * 24px), 100cqi);
+  --inline-size: min(calc(var(--page-width) * 24px), 100cqi);
   --cell-size: calc(
     (var(--inline-size) - 48px - (var(--columns) - 1) * var(--gap)) / var(--columns)
   );

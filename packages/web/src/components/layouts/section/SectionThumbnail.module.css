@@ -1,12 +1,5 @@
 .contents {
-  position: relative;
-  width: calc(var(--width) * 24px);
-  height: calc(var(--height) * 24px);
-  aspect-ratio: var(--aspect-ratio);
   border-radius: var(--border-radius);
-  scale: min(calc(100cqw / (var(--width) * 24px)), calc(100cqh / (var(--height) * 24px)));
-  transform-origin: top left;
-  overflow: hidden;
 
   &[data-layout="GRID"] {
     display: grid;

@@ -37,7 +37,7 @@ export function buildBaseTileMap(properties: BaseTileInput): Y.Map<unknown> {
   map.set("sizing", properties.sizing ?? "AUTO");
   map.set("x", properties.x ?? 0);
   map.set("y", properties.y ?? 0);
-  map.set("width", properties.width === undefined ? 0 : properties.width);
+  map.set("width", properties.width ?? null);
   map.set("height", properties.height ?? 0);
   map.set("rowSpan", properties.rowSpan ?? 0);
   map.set("hide", properties.hide ?? false);

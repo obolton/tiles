@@ -1,0 +1,74 @@
+.thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--aspect-ratio, 16 / 9);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--background, var(--background-fallback, #fff));
+  color: var(--text-color);
+  font-family: var(--font);
+  outline: 1px solid rgb(0 0 0 / 20%);
+  outline-offset: 4px;
+  cursor: pointer;
+  view-transition-name: match-element;
+  transition: opacity var(--animation-duration) var(--easing);
+
+  &:hover {
+    outline-color: rgb(0 0 0 / 20%);
+    outline-width: 2px;
+  }
+
+  &[aria-selected="true"] {
+    outline-color: var(--ui-selection-color);
+    outline-width: 2px;
+  }
+
+  &[data-draggable="true"] {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &.hide {
+    opacity: 0.5;
+  }
+
+  &::after {
+    content: counter(slide) / "Slide " counter(slide);
+    counter-increment: slide;
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-start: 4px;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    background: rgb(0 0 0 / 5%);
+    color: var(--ui-color);
+    font-family: var(--ui-font);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  &[aria-selected="true"]::after {
+    opacity: 1;
+  }
+
+  &:global(.drag-preview)::after {
+    visibility: hidden;
+  }
+}
+
+.content {
+  container-type: size;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: clip;
+}

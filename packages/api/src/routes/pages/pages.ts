@@ -128,7 +128,7 @@ export async function listDeletedPages(
 
 function createDocumentDoc(): Y.Doc {
   const doc = createEmptyDoc();
-  new DocWriter(doc).createTile(buildTextMap({ sizing: "AUTO", height: 1, width: null }), {
+  new DocWriter(doc).createTile(buildTextMap({ sizing: "AUTO", height: 1 }), {
     parentId: null,
   });
   return doc;
@@ -141,7 +141,6 @@ function createPresentationDoc(): Y.Doc {
       layout: "FREEFORM",
       sizing: "LANDSCAPE",
       height: 1,
-      width: null,
     }),
     { parentId: null },
   );

@@ -5,6 +5,12 @@ import Section, { type CreateSectionInput } from "@/models/Section";
 import { PAGE } from "@/test/fixtures/Page";
 import type { PageCollaboration } from "@/collaboration/PageCollaboration";
 
+vi.mock("@/collaboration/PageCollaboration", () => ({
+  PageCollaboration: class {
+    dispose() {}
+  },
+}));
+
 const PROPS: CreateSectionInput = {
   layout: "VERTICAL",
   sizing: "CUSTOM",
@@ -19,6 +25,7 @@ const PROPS: CreateSectionInput = {
 
 describe("Editor", () => {
   const editor = Editor.init(PAGE, new Y.Doc());
+  editor.setEditable(true);
 
   function createTile() {
     return editor.page.createTile(Section.createMap(PROPS), {});

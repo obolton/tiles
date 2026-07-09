@@ -18,6 +18,7 @@ export interface LayoutEditorOptions {
   dropTarget?: HTMLElement;
   page: Page;
   sectionId: string | null;
+  accepts?: (tile: Tile) => boolean;
   signal?: AbortSignal;
 }
 
@@ -37,6 +38,7 @@ export default class LayoutEditor {
 
   layoutType: LayoutType;
 
+  private readonly accepts?: (tile: Tile) => boolean;
   private readonly elementRef: WeakRef<HTMLElement>;
   private readonly gridRef: WeakRef<HTMLElement>;
 
@@ -63,11 +65,13 @@ export default class LayoutEditor {
     dropTarget = element,
     page,
     sectionId,
+    accepts,
     signal,
   }: LayoutEditorOptions) {
     this.page = page;
     this.sectionId = sectionId;
     this.layoutType = layoutType;
+    this.accepts = accepts;
     this.elementRef = new WeakRef(element);
     this.gridRef = new WeakRef(grid);
 
@@ -75,10 +79,7 @@ export default class LayoutEditor {
 
     dropTarget.dataset.drop = "true";
     dropTarget.addEventListener("dnd-dragover", this, { signal });
-    dropTarget.addEventListener("dnd-dragenter", this, {
-      passive: true,
-      signal,
-    });
+    dropTarget.addEventListener("dnd-dragenter", this, { signal });
     dropTarget.addEventListener("dnd-dragleave", this, { signal });
     dropTarget.addEventListener("dnd-drop", this, { signal });
     dropTarget.addEventListener("dnd-dragend", this, { passive: true, signal });
@@ -173,11 +174,11 @@ export default class LayoutEditor {
   }
 
   private pixelToPercentX(px: number): number {
-    return (px / this.gridRect.width) * 100;
+    return this.gridRect.width ? (px / this.gridRect.width) * 100 : 0;
   }
 
   private pixelToPercentY(py: number): number {
-    return (py / this.gridRect.height) * 100;
+    return this.gridRect.height ? (py / this.gridRect.height) * 100 : 0;
   }
 
   private getPercentX(x: number, width: number, id: string, altKey: boolean) {
@@ -306,13 +307,11 @@ export default class LayoutEditor {
     y = 0,
     width,
     height,
-    rowSpan,
   }: {
     x?: number;
     y?: number;
     width: number | null;
     height: number;
-    rowSpan: number;
   }) {
     if (this.dragPlaceholder) {
       return;
@@ -323,7 +322,6 @@ export default class LayoutEditor {
       y,
       width,
       height,
-      rowSpan,
       freeform: this.layoutType === "FREEFORM",
     });
 
@@ -342,6 +340,11 @@ export default class LayoutEditor {
       return;
     }
 
+    if (this.accepts?.(tile) === false) {
+      event.preventDefault();
+      return;
+    }
+
     this.updateLayoutInfo();
 
     if (this.layoutType === "FREEFORM") {
@@ -353,13 +356,7 @@ export default class LayoutEditor {
       const width = this.pixelToPercentX(event.state.width);
       const height = this.pixelToPercentY(event.state.height);
 
-      this.showDragPlaceholder({
-        x,
-        y,
-        width,
-        height,
-        rowSpan: tile.rowSpan.value,
-      });
+      this.showDragPlaceholder({ x, y, width, height });
     } else if (this.layoutType === "GRID") {
       const sizing = tile.sizing.value;
       const ratio =
@@ -367,11 +364,7 @@ export default class LayoutEditor {
           ? ASPECT_RATIOS[sizing]
           : event.state.width / event.state.height;
       const span = Math.min(tile.width.value ?? 1, this.gridColumns);
-      this.showDragPlaceholder({
-        width: null,
-        height: 0,
-        rowSpan: 1,
-      });
+      this.showDragPlaceholder({ width: null, height: 0 });
       if (this.dragPlaceholder) {
         this.dragPlaceholder.style.gridColumn = `span ${span}`;
         this.dragPlaceholder.style.aspectRatio = `${ratio}`;
@@ -380,7 +373,6 @@ export default class LayoutEditor {
       this.showDragPlaceholder({
         width: tile.width.value,
         height: tile.height.value,
-        rowSpan: tile.rowSpan.value,
       });
     }
   }

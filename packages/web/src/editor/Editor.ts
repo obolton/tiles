@@ -133,17 +133,6 @@ export default class Editor {
 
       this.selection.subscribe(() => this.publishSelection());
 
-      this.isEditable.subscribe(() => {
-        setEditMode(this.isEditable.value);
-        if (this.isEditable.value) {
-          this.startCollaboration();
-          requestAnimationFrame(() => this.focusFirstTile());
-        } else {
-          this.stopCollaboration();
-          this.clearSelection();
-        }
-      });
-
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
         this.startCollaboration();
@@ -169,6 +158,24 @@ export default class Editor {
     this.isCollaborating.off();
     this.collaboration?.dispose();
     this.collaboration = null;
+  }
+
+  setEditable(editable: boolean) {
+    if (editable === this.isEditable.value) {
+      return;
+    }
+
+    if (editable) {
+      this.isEditable.value = true;
+      setEditMode(true);
+      this.startCollaboration();
+      requestAnimationFrame(() => this.focusFirstTile());
+    } else {
+      this.clearSelection();
+      this.isEditable.value = false;
+      setEditMode(false);
+      this.stopCollaboration();
+    }
   }
 
   enablePointerEvents() {
@@ -228,20 +235,25 @@ export default class Editor {
     // Present: Cmd/Ctrl+Enter (not in text inputs)
     if (isMod && event.key === "Enter" && !isInput) {
       event.preventDefault();
-      this.isEditable.value = false;
+      this.setEditable(false);
       startPresentation();
       return;
     }
 
     // Undo: Cmd/Ctrl+Z (not in text inputs - they have their own undo)
-    if (isMod && event.key === "z" && !event.shiftKey && !isInput) {
+    if (isMod && event.key === "z" && !event.shiftKey && !isInput && this.isEditable.value) {
       event.preventDefault();
       this.undo();
       return;
     }
 
     // Redo: Cmd/Ctrl+Shift+Z or Cmd/Ctrl+Y (not in text inputs)
-    if (isMod && !isInput && ((event.key === "z" && event.shiftKey) || event.key === "y")) {
+    if (
+      isMod &&
+      !isInput &&
+      this.isEditable.value &&
+      ((event.key === "z" && event.shiftKey) || event.key === "y")
+    ) {
       event.preventDefault();
       this.redo();
       return;
@@ -475,18 +487,6 @@ export default class Editor {
     } else {
       this.openPromptToolbar();
     }
-  }
-
-  transitionSections(update: () => void) {
-    const sections = document.querySelectorAll<HTMLElement>("section[data-section-id]");
-    for (const section of sections) {
-      section.style.viewTransitionName = `section-${section.dataset.sectionId}`;
-    }
-    viewTransition(update).updateCallbackDone.finally(() => {
-      for (const section of sections) {
-        section.style.viewTransitionName = "";
-      }
-    });
   }
 
   // Tiles

@@ -26,24 +26,14 @@ body[data-presenting] {
     padding: 0;
     margin-left: 0;
 
-    /* Each top-level page-item becomes a slide */
     & > page-item {
       width: 100%;
       height: auto;
       min-height: 100%;
       max-height: 100%;
       flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
       border-radius: 0;
       scroll-snap-align: start;
-      padding: 48px;
-
-      /* Sections: fill the slide frame */
-      &:has(scroll-view) {
-        padding: 0;
-      }
 
       /* Reset tile entrance animations; restored when a slide becomes active */
       & .animate {
@@ -52,18 +42,6 @@ body[data-presenting] {
 
       &.slide-active .animate {
         animation-name: var(--animation-name);
-      }
-
-      /* Scale freeform sections to preserve text proportions */
-      &:has([data-layout="FREEFORM"]) {
-        container-type: size;
-      }
-
-      & [data-layout="FREEFORM"] {
-        position: static;
-        width: calc(var(--width) * 24px);
-        height: calc(var(--height) * 24px);
-        scale: min(calc(100cqw / (var(--width) * 24px)), calc(100cqh / (var(--height) * 24px)));
       }
     }
   }
