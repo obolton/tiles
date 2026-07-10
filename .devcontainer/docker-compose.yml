@@ -21,6 +21,7 @@ services:
       - NODE_ENV=development
       - WORKSPACE=${WORKSPACE}
       - DATABASE_NAME=${DATABASE_NAME:-tiles}
+      - CHROME_PORT=${CHROME_PORT:-9222}
     networks:
       - tiles-dev
     labels:

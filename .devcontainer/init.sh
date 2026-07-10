@@ -29,10 +29,21 @@ if [ "$(uname)" = "Darwin" ]; then
   fi
 fi
 
+# Find the next available Chrome DevTools port
+find_chrome_port() {
+  local taken port=9222
+  taken=$(grep -hs '^CHROME_PORT=' ../*/.devcontainer/.env | cut -d= -f2)
+  while echo "$taken" | grep -qx "$port"; do
+    port=$((port + 1))
+  done
+  echo "$port"
+}
+
 # Write environment variables
 if [ ! -f .devcontainer/.env ]; then
   cat > .devcontainer/.env << EOF
 WORKSPACE=${WORKSPACE}
 DATABASE_NAME=tiles
+CHROME_PORT=$(find_chrome_port)
 EOF
 fi
