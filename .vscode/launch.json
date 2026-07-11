@@ -31,7 +31,7 @@
       "request": "launch",
       "name": "Chrome (Debug)",
       "url": "https://${workspaceFolderBasename}.tiles.test",
-      "runtimeArgs": ["--remote-debugging-port=${env:CHROME_PORT}"],
+      "port": "${env:CHROME_PORT}",
       "webRoot": "${workspaceFolder}/packages/web/src"
     }
   ]
