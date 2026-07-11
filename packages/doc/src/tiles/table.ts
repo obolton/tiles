@@ -29,7 +29,12 @@ export function buildTableMap(
   properties: Omit<TableMapInput, "parentId" | "beforeId">,
 ): Y.Map<unknown> {
   const { columns = [], rows = [], ...baseProperties } = properties;
-  const map = buildBaseTileMap({ ...baseProperties, type: "TABLE" });
+  const map = buildBaseTileMap({
+    ...baseProperties,
+    type: "TABLE",
+    // Override default AUTO sizing
+    sizing: baseProperties.sizing ?? "CUSTOM",
+  });
 
   const columnInputs: readonly TableColumnInput[] =
     typeof columns === "number" ? Array.from({ length: columns }, () => ({})) : columns;

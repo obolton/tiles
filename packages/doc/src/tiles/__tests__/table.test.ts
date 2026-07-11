@@ -10,6 +10,7 @@ describe("buildTableMap", () => {
     doc.getMap().set("tile", map);
 
     expect(map.get("type")).toBe("TABLE");
+    expect(map.get("sizing")).toBe("CUSTOM");
 
     const columns = map.get("columns");
     expect(columns).toBeInstanceOf(Y.Map);
@@ -18,6 +19,14 @@ describe("buildTableMap", () => {
     const rows = map.get("rows");
     expect(rows).toBeInstanceOf(Y.Map);
     expect((rows as Y.Map<unknown>).size).toBe(0);
+  });
+
+  test("respects sizing", () => {
+    const doc = new Y.Doc();
+    const map = buildTableMap({ sizing: "LANDSCAPE" });
+    doc.getMap().set("tile", map);
+
+    expect(map.get("sizing")).toBe("LANDSCAPE");
   });
 
   test("seeds a count of empty columns and rows", () => {

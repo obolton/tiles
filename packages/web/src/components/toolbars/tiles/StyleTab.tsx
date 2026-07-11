@@ -39,7 +39,8 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
         <AspectRatioSelect
           value={tile.sizing}
           onChange={(sizing) => tile.setSizing(sizing)}
-          showAuto={tile.type === "TEXT" || tile.type === "TABLE" || tile.type === "IMAGE"}
+          // Only tiles with intrinsic content height can be auto-sized
+          showAuto={tile.type === "TEXT" || tile.type === "IMAGE"}
         />
 
         {tile.page.type === "FREE" && <DockSelect tile={tile} />}
