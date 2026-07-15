@@ -15,7 +15,7 @@ describe("moveBefore", () => {
 
   test("calls Element.insertBefore if Element.moveBefore is not defined", () => {
     const parent = document.createElement("div");
-    delete parent.moveBefore;
+    Object.assign(parent, { moveBefore: undefined });
     parent.insertBefore = vi.fn();
     const node = document.createElement("div");
     const referenceNode = document.createElement("div");
