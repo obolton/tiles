@@ -22,7 +22,7 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
         title: "New page",
         type,
       });
-      window.open(`/pages/${id}?edit=true`);
+      window.location.href = `/pages/${id}?edit=true`;
     } catch (error) {
       handleError(error);
     }
