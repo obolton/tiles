@@ -67,8 +67,10 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ## Browser Debugging
 
-- The `chrome-devtools` MCP server can be used to connect to a running Chrome instance.
+- The `chrome-devtools` MCP server can be used to connect to a headless Chromium instance within the dev container (preferred).
+- The `chrome-devtools-host` MCP server can be used to connect to a Chrome instance on the host (started by the user) if the user needs visibility.
 - The app is served at `https://<workspace>.tiles.test`, where `<workspace>` is the workspace name.
+- To sign in, navigate to `https://<workspace>.tiles.test/sign-in/test-user`, which authenticates as a test user. Do this once at the start of a browsing session.
 
 ## Coding Style
 
