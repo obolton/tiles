@@ -15,13 +15,22 @@ services:
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
       - pnpm_store:/pnpm/store
       - claude_config:/home/node/.claude
+      - type: bind
+        source: ./.generated/caddy
+        target: /run/caddy-ca
+        read_only: true
     command: sleep infinity
     init: true
+    shm_size: 2gb
     environment:
       - NODE_ENV=development
       - WORKSPACE=${WORKSPACE}
-      - DATABASE_NAME=${DATABASE_NAME:-tiles}
-      - CHROME_PORT=${CHROME_PORT:-9222}
+      - DATABASE_NAME=${DATABASE_NAME:-${WORKSPACE}}
+    extra_hosts:
+      - "${WORKSPACE}.tiles.test:host-gateway"
+      - "api.${WORKSPACE}.tiles.test:host-gateway"
+      - "uploads.${WORKSPACE}.tiles.test:host-gateway"
+      - "storybook.${WORKSPACE}.tiles.test:host-gateway"
     networks:
       - tiles-dev
     labels:
