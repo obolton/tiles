@@ -21,8 +21,21 @@ if [ -n "$WORKSPACE" ]; then
         "/projects/${WORKSPACE}/packages/image-upload-worker/node_modules"
 fi
 
-# Bridge the Chrome DevTools port to this workspace's Chrome instance on the host
-socat TCP-LISTEN:9222,bind=127.0.0.1,fork,reuseaddr TCP:host.docker.internal:"${CHROME_PORT:-9222}" &
+# Trust the Caddy root CA
+CA_SOURCE=/run/caddy-ca/root.crt
+if [ -f "$CA_SOURCE" ]; then
+    cp "$CA_SOURCE" /usr/local/share/ca-certificates/caddy-root.crt
+    update-ca-certificates
+    su node -s /bin/sh -c '
+        mkdir -p /home/node/.pki/nssdb
+        [ -f /home/node/.pki/nssdb/cert9.db ] || certutil -d sql:/home/node/.pki/nssdb -N --empty-password
+        certutil -d sql:/home/node/.pki/nssdb -D -n "Caddy Local CA" 2>/dev/null || true
+        certutil -d sql:/home/node/.pki/nssdb -A -t "C,," -n "Caddy Local CA" -i /run/caddy-ca/root.crt
+    '
+fi
+
+# Bridge the Chrome DevTools port to the shared Chrome instance on the host
+socat TCP-LISTEN:9222,bind=127.0.0.1,fork,reuseaddr TCP:host.docker.internal:9222 &
 
 # Drop to node user and execute the command
 exec su node -s /bin/zsh -c "$*"
