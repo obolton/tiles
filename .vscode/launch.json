@@ -31,7 +31,16 @@
       "request": "launch",
       "name": "Chrome (Debug)",
       "url": "https://${workspaceFolderBasename}.tiles.test",
-      "port": "${env:CHROME_PORT}",
+      "port": 9222,
+      "cleanUp": "onlyTab",
+      "webRoot": "${workspaceFolder}/packages/web/src"
+    },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Chrome (Attach)",
+      "port": 9222,
+      "urlFilter": "https://${workspaceFolderBasename}.tiles.test/*",
       "webRoot": "${workspaceFolder}/packages/web/src"
     }
   ]
