@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import * as cookie from "cookie";
+import { parseCookie, stringifySetCookie } from "cookie";
 import type { SerializeOptions } from "cookie";
 
 const OAUTH2_COOKIE_OPTIONS: SerializeOptions = {
@@ -75,7 +75,7 @@ export type OAuth2Cookies = {
 };
 
 export function getOAuth2Cookies(cookies: string): OAuth2Cookies {
-  const parsed = cookie.parse(cookies);
+  const parsed = parseCookie(cookies);
   return {
     state: parsed[OAUTH2_STATE_COOKIE_NAME] ?? null,
     verifier: parsed[OAUTH2_VERIFIER_COOKIE_NAME] ?? null,
@@ -110,28 +110,36 @@ export function setOAuth2Cookies({
   return [
     [
       "Set-Cookie",
-      cookie.serialize(OAUTH2_STATE_COOKIE_NAME, state, {
+      stringifySetCookie({
+        name: OAUTH2_STATE_COOKIE_NAME,
+        value: state,
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
     ],
     [
       "Set-Cookie",
-      cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, verifier, {
+      stringifySetCookie({
+        name: OAUTH2_VERIFIER_COOKIE_NAME,
+        value: verifier,
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
     ],
     [
       "Set-Cookie",
-      cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, nonce, {
+      stringifySetCookie({
+        name: OAUTH2_NONCE_COOKIE_NAME,
+        value: nonce,
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
     ],
     [
       "Set-Cookie",
-      cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, destination, {
+      stringifySetCookie({
+        name: OAUTH2_DESTINATION_COOKIE_NAME,
+        value: destination,
         ...OAUTH2_COOKIE_OPTIONS,
         maxAge: OAUTH2_COOKIE_MAX_AGE,
       }),
@@ -142,10 +150,22 @@ export function setOAuth2Cookies({
 export function clearOAuth2Cookies(): [string, string][] {
   const expireOptions = { ...OAUTH2_COOKIE_OPTIONS, maxAge: 0 };
   return [
-    ["Set-Cookie", cookie.serialize(OAUTH2_STATE_COOKIE_NAME, "", expireOptions)],
-    ["Set-Cookie", cookie.serialize(OAUTH2_VERIFIER_COOKIE_NAME, "", expireOptions)],
-    ["Set-Cookie", cookie.serialize(OAUTH2_NONCE_COOKIE_NAME, "", expireOptions)],
-    ["Set-Cookie", cookie.serialize(OAUTH2_DESTINATION_COOKIE_NAME, "", expireOptions)],
+    [
+      "Set-Cookie",
+      stringifySetCookie({ name: OAUTH2_STATE_COOKIE_NAME, value: "", ...expireOptions }),
+    ],
+    [
+      "Set-Cookie",
+      stringifySetCookie({ name: OAUTH2_VERIFIER_COOKIE_NAME, value: "", ...expireOptions }),
+    ],
+    [
+      "Set-Cookie",
+      stringifySetCookie({ name: OAUTH2_NONCE_COOKIE_NAME, value: "", ...expireOptions }),
+    ],
+    [
+      "Set-Cookie",
+      stringifySetCookie({ name: OAUTH2_DESTINATION_COOKIE_NAME, value: "", ...expireOptions }),
+    ],
   ];
 }
 

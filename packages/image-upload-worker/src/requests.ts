@@ -1,4 +1,4 @@
-import { parse } from "cookie";
+import { parseCookie } from "cookie";
 import {
   BadRequestError,
   UnauthorizedError,
@@ -41,7 +41,7 @@ export function parseUploadRequest(request: Request): UploadParams {
 
   validateContentLength(request.headers.get("Content-Length"));
 
-  const cookies = parse(request.headers.get("Cookie") || "");
+  const cookies = parseCookie(request.headers.get("Cookie") || "");
   const sessionId = cookies[SESSION_COOKIE_NAME];
   if (!sessionId) {
     throw new UnauthorizedError();

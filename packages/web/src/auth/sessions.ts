@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import * as cookie from "cookie";
+import { stringifySetCookie } from "cookie";
 import client, { type AppRouterInputs } from "../api/client";
 import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
@@ -48,14 +48,18 @@ export function setAuthenticationCookies(sessionId: string, expiresAt: Date) {
   return new Headers([
     [
       "Set-Cookie",
-      cookie.serialize(SESSION_COOKIE_NAME, sessionId, {
+      stringifySetCookie({
+        name: SESSION_COOKIE_NAME,
+        value: sessionId,
         ...SESSION_COOKIE_OPTIONS,
         expires: expiresAt,
       }),
     ],
     [
       "Set-Cookie",
-      cookie.serialize(SIGNED_IN_FLAG_COOKIE_NAME, "1", {
+      stringifySetCookie({
+        name: SIGNED_IN_FLAG_COOKIE_NAME,
+        value: "1",
         ...SIGNED_IN_FLAG_COOKIE_OPTIONS,
         expires: expiresAt,
       }),

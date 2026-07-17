@@ -1,15 +1,17 @@
-import cookie from "cookie";
+import { stringifySetCookie, parseCookie } from "cookie";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
 import type { ServerResponse, IncomingMessage } from "node:http";
 
 export function getCookie(cookieString: string, name: string) {
-  return cookie.parse(cookieString)[name] ?? null;
+  return parseCookie(cookieString)[name] ?? null;
 }
 
 export function clearSessionCookie(res: ServerResponse<IncomingMessage>) {
   res.setHeader(
     "Set-Cookie",
-    cookie.serialize(SESSION_COOKIE_NAME, "", {
+    stringifySetCookie({
+      name: SESSION_COOKIE_NAME,
+      value: "",
       domain: process.env.PUBLIC_SESSION_COOKIE_DOMAIN,
       path: "/",
       httpOnly: true,
