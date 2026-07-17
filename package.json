@@ -4,6 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm -r --parallel dev",
+    "dev:start": "node scripts/dev/start.ts",
+    "dev:stop": "node scripts/dev/stop.ts",
+    "dev:logs": "tail -n 100 /tmp/tiles-dev.log",
     "db:create": ".devcontainer/bin/db-create",
     "db:use": ".devcontainer/bin/db-use",
     "db:current": ".devcontainer/bin/db-current",

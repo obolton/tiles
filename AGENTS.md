@@ -45,6 +45,9 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 **Note**: Always use `pnpm` for running scripts. Do not use `npm` or `npx`.
 
 - `pnpm check`: Run all status checks (typecheck, lint, format, tests).
+- `pnpm dev:start`: Start the dev server in the background and wait until it is ready. Idempotent — safe to run when a server is already running.
+- `pnpm dev:stop`: Stop the background dev server.
+- `pnpm dev:logs`: Print recent dev server output (only servers started with `dev:start` log there).
 - `pnpm generate`: Generate TypeScript types (e.g. for CSS Modules, Prisma client, Cloudflare workers).
 - `pnpm typecheck`: Check types.
 - `pnpm lint:compact`: Lint TypeScript and CSS files (with concise, LLM-friendly output).
@@ -70,6 +73,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - The `chrome-devtools` MCP server can be used to connect to a headless Chromium instance within the dev container (preferred).
 - The `chrome-devtools-host` MCP server can be used to connect to a Chrome instance on the host (started by the user) if the user needs visibility.
 - The app is served at `https://<workspace>.tiles.test`, where `<workspace>` is the workspace name.
+- Run `pnpm dev:start` to start the dev server (it waits until the app is ready).
 - To sign in, navigate to `https://<workspace>.tiles.test/sign-in/test-user`, which authenticates as a test user. Do this once at the start of a browsing session.
 
 ## Coding Style
