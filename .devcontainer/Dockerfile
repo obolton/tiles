@@ -10,6 +10,9 @@ RUN corepack enable
 # Install additional tools
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
+    chromium \
+    fonts-liberation \
+    libnss3-tools \
     postgresql-client \
     socat \
     zsh \
