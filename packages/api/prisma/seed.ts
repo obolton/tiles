@@ -34,6 +34,12 @@ async function seed() {
       name: "Test User",
       email: "test@test.com",
       emailVerified: false,
+      keys: {
+        create: {
+          provider: "GOOGLE",
+          providerId: "test-user",
+        },
+      },
       workspaceMemberships: {
         create: {
           workspace: {
