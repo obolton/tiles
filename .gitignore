@@ -15,6 +15,9 @@ coverage/
 # Certificates
 *.pem
 
+# Generated dev container files
+.devcontainer/.generated/
+
 # macOS files
 .DS_Store
 
