@@ -1,8 +1,12 @@
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
-import { redirect } from "@/router/responses";
+import { notFound, redirect } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 const GET: APIRequestHandler = async () => {
+  if (!import.meta.env.DEV) {
+    return notFound();
+  }
+
   const session = await signIn({
     provider: "GOOGLE",
     providerId: "test-user",
