@@ -30,6 +30,9 @@ RUN chsh -s /bin/zsh node \
     && touch /home/node/.zshrc \
     && chown node:node /home/node/.zshrc
 
+# Trust all Git repositories under /projects
+RUN git config --system safe.directory '/projects/*'
+
 WORKDIR /projects
 
 COPY entrypoint.sh /entrypoint.sh
