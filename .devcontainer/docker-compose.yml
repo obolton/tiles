@@ -11,6 +11,7 @@ services:
       - ../..:/projects:cached
       - node_modules:/projects/${WORKSPACE}/node_modules
       - api_node_modules:/projects/${WORKSPACE}/packages/api/node_modules
+      - doc_node_modules:/projects/${WORKSPACE}/packages/doc/node_modules
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
       - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
       - pnpm_store:/pnpm/store
@@ -50,6 +51,7 @@ services:
 volumes:
   node_modules:
   api_node_modules:
+  doc_node_modules:
   web_node_modules:
   worker_node_modules:
   pnpm_store:
