@@ -2,14 +2,6 @@ FROM node:24-trixie
 
 ENV LANG=C.UTF-8
 
-# Install pnpm
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-ENV PNPM_HOME=/pnpm
-ENV PATH=$PNPM_HOME/bin:$PATH
-ENV pnpm_config_store_dir=/pnpm/store
-ENV pnpm_config_enable_global_virtual_store=false
-RUN corepack enable && corepack install -g pnpm@11.14.0
-
 # Install additional tools
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
@@ -20,6 +12,13 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     socat \
     zsh \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Install pnpm
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME/bin:$PATH
+ENV pnpm_config_store_dir=/pnpm/store
+ENV pnpm_config_enable_global_virtual_store=false
+RUN npm install -g pnpm@11.14.0
 
 # Tools for agents
 RUN pnpm add -g \
@@ -36,6 +35,5 @@ RUN git config --system safe.directory '/projects/*'
 
 WORKDIR /projects
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chmod=755 entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
