@@ -8,7 +8,7 @@ ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME/bin:$PATH
 ENV pnpm_config_store_dir=/pnpm/store
 ENV pnpm_config_enable_global_virtual_store=false
-RUN corepack enable && corepack install -g pnpm@11.10.0
+RUN corepack enable && corepack install -g pnpm@11.14.0
 
 # Install additional tools
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
