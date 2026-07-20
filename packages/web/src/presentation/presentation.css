@@ -8,7 +8,7 @@ body[data-presenting] {
   & #header,
   & floating-toolbar:not(#presentation-toolbar),
   & #insert-button,
-  & .filmstrip-panel {
+  & .thumbnail-list-panel {
     display: none;
   }
 

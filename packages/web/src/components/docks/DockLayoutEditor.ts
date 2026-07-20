@@ -1,5 +1,6 @@
 import { handleError } from "@/utils/errors";
 import { moveBefore } from "@/utils/dom";
+import { focusInside } from "@/utils/focus";
 import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";
 import { dockParentId } from "@/models/parentId";
@@ -143,11 +144,10 @@ export default class DockLayoutEditor {
         beforeId: this.beforeId,
       });
 
-      // Apply view transition for smooth animation
-      const element = state.element;
+      const element = document.getElementById(tile.id);
       if (element) {
         element.style.viewTransitionName = "drop";
-        element.focus({ preventScroll: true });
+        focusInside(element, { preventScroll: true });
         requestAnimationFrame(() => {
           element.style.viewTransitionName = "";
         });
