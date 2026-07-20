@@ -1,0 +1,22 @@
+.layout {
+  /* Offset the content for any fixed sidebars, narrowing main's box so its
+     container queries and centering stay correct. Body remains the scroller. */
+  padding-inline: var(--sidebar-width-start, 0px) var(--sidebar-width-end, 0px);
+}
+
+.start,
+.end {
+  position: fixed;
+  inset-block: var(--header-height, 0) 0;
+  z-index: 1;
+}
+
+.start {
+  inset-inline-start: 0;
+  inline-size: var(--sidebar-width-start);
+}
+
+.end {
+  inset-inline-end: 0;
+  inline-size: var(--sidebar-width-end);
+}
