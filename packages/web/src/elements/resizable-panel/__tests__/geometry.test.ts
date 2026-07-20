@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { clampSize, isPanelEdge, panelAxis, panelSign, resolveSize } from "../geometry";
+import {
+  clampSize,
+  isPanelEdge,
+  panelAxis,
+  panelSign,
+  resolvePhysicalEdge,
+  resolveSize,
+} from "../geometry";
 
 describe("panelAxis", () => {
   it("resizes left/right panels horizontally", () => {
@@ -71,12 +78,35 @@ describe("resolveSize", () => {
   });
 });
 
+describe("resolvePhysicalEdge", () => {
+  it("maps inline edges to physical edges in LTR", () => {
+    expect(resolvePhysicalEdge("inline-start", "ltr")).toBe("left");
+    expect(resolvePhysicalEdge("inline-end", "ltr")).toBe("right");
+  });
+
+  it("flips inline edges in RTL", () => {
+    expect(resolvePhysicalEdge("inline-start", "rtl")).toBe("right");
+    expect(resolvePhysicalEdge("inline-end", "rtl")).toBe("left");
+  });
+
+  it("leaves physical edges unchanged in either direction", () => {
+    expect(resolvePhysicalEdge("left", "rtl")).toBe("left");
+    expect(resolvePhysicalEdge("top", "rtl")).toBe("top");
+    expect(resolvePhysicalEdge("bottom", "ltr")).toBe("bottom");
+  });
+});
+
 describe("isPanelEdge", () => {
-  it("accepts the four edges", () => {
+  it("accepts the physical edges", () => {
     expect(isPanelEdge("top")).toBe(true);
     expect(isPanelEdge("bottom")).toBe(true);
     expect(isPanelEdge("left")).toBe(true);
     expect(isPanelEdge("right")).toBe(true);
+  });
+
+  it("accepts the logical inline edges", () => {
+    expect(isPanelEdge("inline-start")).toBe(true);
+    expect(isPanelEdge("inline-end")).toBe(true);
   });
 
   it("rejects anything else", () => {

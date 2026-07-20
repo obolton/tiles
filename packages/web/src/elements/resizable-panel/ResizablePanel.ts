@@ -6,8 +6,10 @@ import {
   isPanelEdge,
   panelAxis,
   panelSign,
+  resolvePhysicalEdge,
   resolveSize,
   type PanelEdge,
+  type PhysicalEdge,
 } from "./geometry";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
@@ -48,7 +50,9 @@ export default class ResizablePanel extends HTMLElement {
 
   private readonly internals = this.attachInternals();
   private readonly handle = document.createElement("resize-handle");
+  private readonly observer = new ResizeObserver(() => this.updateMeasuredValue());
   private startSize = 0;
+  private startEdge: PhysicalEdge = "left";
 
   constructor() {
     super();
@@ -110,6 +114,13 @@ export default class ResizablePanel extends HTMLElement {
     this.toggleAttribute("disabled", value);
   }
 
+  // Placement/cursor are handled in CSS via logical properties; the resolved
+  // physical edge is only needed to map physical pointer/keyboard deltas.
+  private get physicalEdge(): PhysicalEdge {
+    const direction = getComputedStyle(this).direction === "rtl" ? "rtl" : "ltr";
+    return resolvePhysicalEdge(this.edge, direction);
+  }
+
   connectedCallback() {
     this.handle.addEventListener("resizestart", this);
     this.handle.addEventListener("resizedrag", this);
@@ -121,7 +132,8 @@ export default class ResizablePanel extends HTMLElement {
     this.updateHandleDirection();
     this.handle.ariaValueMin = String(Math.round(this.min));
     this.handle.ariaValueMax = Number.isFinite(this.max) ? String(Math.round(this.max)) : null;
-    this.setHandleValue(this.size);
+    this.observer.observe(this);
+    this.updateMeasuredValue();
   }
 
   disconnectedCallback() {
@@ -129,6 +141,7 @@ export default class ResizablePanel extends HTMLElement {
     this.handle.removeEventListener("resizedrag", this);
     this.handle.removeEventListener("resizeend", this);
     this.handle.removeEventListener("keydown", this);
+    this.observer.disconnect();
   }
 
   attributeChangedCallback(name: keyof ResizablePanelAttributes) {
@@ -165,8 +178,9 @@ export default class ResizablePanel extends HTMLElement {
     if (this.disabled) {
       return;
     }
+    this.startEdge = this.physicalEdge;
     const rect = this.getBoundingClientRect();
-    this.startSize = panelAxis(this.edge) === "y" ? rect.height : rect.width;
+    this.startSize = panelAxis(this.startEdge) === "y" ? rect.height : rect.width;
     this.internals.states.add("resizing");
     this.dispatchEvent(
       new PanelResizeEvent("panelresizestart", {
@@ -191,7 +205,8 @@ export default class ResizablePanel extends HTMLElement {
       return;
     }
 
-    const horizontal = panelAxis(this.edge) === "x";
+    const edge = this.physicalEdge;
+    const horizontal = panelAxis(edge) === "x";
     const rect = this.getBoundingClientRect();
     const base = horizontal ? rect.width : rect.height;
     const step = event.shiftKey ? KEYBOARD_STEP_LARGE : KEYBOARD_STEP;
@@ -200,9 +215,9 @@ export default class ResizablePanel extends HTMLElement {
 
     let target: number | null = null;
     if (event.key === forwardKey) {
-      target = base + step * panelSign(this.edge);
+      target = base + step * panelSign(edge);
     } else if (event.key === backwardKey) {
-      target = base - step * panelSign(this.edge);
+      target = base - step * panelSign(edge);
     } else if (event.key === "Home") {
       target = this.min;
     } else if (event.key === "End" && Number.isFinite(this.max)) {
@@ -220,7 +235,7 @@ export default class ResizablePanel extends HTMLElement {
   }
 
   private sizeFromDrag(event: ResizeEvent) {
-    return resolveSize(this.edge, this.startSize, event.x, event.y, this.min, this.max);
+    return resolveSize(this.startEdge, this.startSize, event.x, event.y, this.min, this.max);
   }
 
   private commit(type: "panelresize" | "panelresizeend", size: number) {
@@ -234,8 +249,16 @@ export default class ResizablePanel extends HTMLElement {
     this.handle.ariaValueText = `${value} pixels`;
   }
 
+  private updateMeasuredValue() {
+    const rect = this.getBoundingClientRect();
+    const size = panelAxis(this.physicalEdge) === "y" ? rect.height : rect.width;
+    if (size > 0) {
+      this.setHandleValue(size);
+    }
+  }
+
   private updateHandleDirection() {
-    const horizontal = panelAxis(this.edge) === "x";
+    const horizontal = panelAxis(this.physicalEdge) === "x";
     this.handle.direction = horizontal ? "horizontal" : "vertical";
     this.handle.ariaOrientation = horizontal ? "vertical" : "horizontal";
   }
