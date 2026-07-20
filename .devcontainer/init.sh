@@ -57,3 +57,25 @@ WORKSPACE=${WORKSPACE}
 DATABASE_NAME=${WORKSPACE}
 EOF
 fi
+
+NODE_MODULES_COMPOSE=.devcontainer/node-modules.yml
+
+export LC_ALL=C
+
+package_mounts=""
+volume_names=""
+for package_dir in packages/*/; do
+  package=$(basename "$package_dir")
+  package_mounts+=$'\n'"      - ${package}_node_modules:/projects/\${WORKSPACE}/packages/${package}/node_modules"
+  volume_names+=$'\n'"  ${package}_node_modules:"
+done
+
+cat > "$NODE_MODULES_COMPOSE" << EOF
+# Generated file
+services:
+  app:
+    volumes:
+      - node_modules:/projects/\${WORKSPACE}/node_modules${package_mounts}
+volumes:
+  node_modules:${volume_names}
+EOF

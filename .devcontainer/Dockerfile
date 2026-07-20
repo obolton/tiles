@@ -17,11 +17,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME/bin:$PATH
 ENV pnpm_config_store_dir=/pnpm/store
-ENV pnpm_config_enable_global_virtual_store=false
+ENV pnpm_config_enable_global_virtual_store=true
 RUN npm install -g pnpm@11.14.0
 
 # Tools for agents
-RUN pnpm add -g \
+RUN npm install -g \
     typescript-language-server@5.3.0 \
     chrome-devtools-mcp@1.6.0
 

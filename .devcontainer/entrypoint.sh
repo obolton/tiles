@@ -7,16 +7,11 @@ set -eu
 mkdir -p /pnpm/store /home/node/.claude
 chown node:node /pnpm/store /home/node/.claude
 
-# Create node_modules directories with correct ownership for volume mounts
-for dir in \
-    "/projects/${WORKSPACE}/node_modules" \
-    "/projects/${WORKSPACE}/packages/api/node_modules" \
-    "/projects/${WORKSPACE}/packages/doc/node_modules" \
-    "/projects/${WORKSPACE}/packages/web/node_modules" \
-    "/projects/${WORKSPACE}/packages/image-upload-worker/node_modules"
-do
-    mkdir -p "$dir"
-    chown node:node "$dir"
+# Fix ownership of node_modules volume mounts
+for dir in "/projects/${WORKSPACE}/node_modules" "/projects/${WORKSPACE}/packages/"*/node_modules; do
+    if [ -d "$dir" ]; then
+        chown node:node "$dir"
+    fi
 done
 
 # Trust the Caddy root CA

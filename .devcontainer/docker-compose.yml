@@ -9,11 +9,6 @@ services:
     hostname: ${WORKSPACE}
     volumes:
       - ../..:/projects:cached
-      - node_modules:/projects/${WORKSPACE}/node_modules
-      - api_node_modules:/projects/${WORKSPACE}/packages/api/node_modules
-      - doc_node_modules:/projects/${WORKSPACE}/packages/doc/node_modules
-      - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
-      - worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
       - pnpm_store:/pnpm/store
       - claude_config:/home/node/.claude
       - type: bind
@@ -49,11 +44,6 @@ services:
       caddy_3.reverse_proxy: "{{upstreams 6001}}"
 
 volumes:
-  node_modules:
-  api_node_modules:
-  doc_node_modules:
-  web_node_modules:
-  worker_node_modules:
   pnpm_store:
     name: pnpm_store
   claude_config:

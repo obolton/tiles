@@ -1,6 +1,6 @@
 {
   "name": "Tiles (${localWorkspaceFolderBasename})",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": ["docker-compose.yml", "node-modules.yml"],
   "service": "app",
   "workspaceFolder": "/projects/${localWorkspaceFolderBasename}",
 
