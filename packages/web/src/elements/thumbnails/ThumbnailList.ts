@@ -1,5 +1,5 @@
-import "./FilmstripView.css";
-import { FilmstripEvent } from "./events";
+import "./ThumbnailList.css";
+import { ThumbnailListEvent } from "./events";
 import { getDragPosition } from "@/utils/drag-placeholder";
 import { moveBefore } from "@/utils/dom";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
@@ -7,24 +7,24 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const ACTIVE_THRESHOLD = 0.5;
 
-export interface FilmstripViewAttributes extends GlobalHTMLAttributes {
+export interface ThumbnailListAttributes extends GlobalHTMLAttributes {
   allowdrag?: boolean;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "filmstrip-view": FilmstripView;
+    "thumbnail-list": ThumbnailList;
   }
 }
 
 declare module "@/jsx/html-attributes" {
   interface HTMLAttributesByTagName {
-    "filmstrip-view": FilmstripViewAttributes;
+    "thumbnail-list": ThumbnailListAttributes;
   }
 }
 
-export default class FilmstripView extends HTMLElement {
-  static readonly observedAttributes: (keyof FilmstripViewAttributes)[] = ["allowdrag"] as const;
+export default class ThumbnailList extends HTMLElement {
+  static readonly observedAttributes: (keyof ThumbnailListAttributes)[] = ["allowdrag"] as const;
 
   private internals: ElementInternals;
   private abortController?: AbortController;
@@ -190,7 +190,7 @@ export default class FilmstripView extends HTMLElement {
       next.ariaSelected = "true";
       this.ariaActiveDescendantElement = next;
       next.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      this.dispatchEvent(new FilmstripEvent("slideselect", { slideId }));
+      this.dispatchEvent(new ThumbnailListEvent("slideselect", { slideId }));
     } else {
       this.ariaActiveDescendantElement = null;
     }
@@ -288,7 +288,7 @@ export default class FilmstripView extends HTMLElement {
     }
 
     this.dispatchEvent(
-      new FilmstripEvent("slidereorder", {
+      new ThumbnailListEvent("slidereorder", {
         slideId,
         beforeId: this.beforeId,
       }),
@@ -317,4 +317,4 @@ export default class FilmstripView extends HTMLElement {
   }
 }
 
-customElements.define("filmstrip-view", FilmstripView);
+customElements.define("thumbnail-list", ThumbnailList);
