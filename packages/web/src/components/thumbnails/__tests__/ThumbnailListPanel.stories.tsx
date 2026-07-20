@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Section from "@/models/Section";
-import FilmstripPanel from "../FilmstripPanel";
+import ThumbnailListPanel from "../ThumbnailListPanel";
 import { flag, reactive, type Reactive } from "@/utils/reactivity";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
@@ -22,7 +22,7 @@ for (let i = 1; i <= 5; i++) {
 }
 
 const meta = {
-  title: "FilmstripPanel",
+  title: "ThumbnailListPanel",
 } satisfies Meta;
 export default meta;
 
@@ -30,7 +30,7 @@ function Panel({ isEditable }: { isEditable: Reactive<boolean> }) {
   const width = reactive(240);
   const style = width.derive((value) => ({ "--sidebar-width": `${value}px` }));
   return (
-    <FilmstripPanel
+    <ThumbnailListPanel
       page={editor.page}
       isEditable={isEditable}
       tiles={editor.page.tiles}
