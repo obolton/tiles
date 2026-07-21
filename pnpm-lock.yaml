@@ -28,7 +28,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(jiti@2.6.1)(jsdom@29.1.1)(tsx@4.22.4)
+        version: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
 
   packages/api:
     dependencies:
@@ -251,8 +251,8 @@ importers:
         specifier: ^1.2.3
         version: 1.2.3
       prosemirror-model:
-        specifier: ^1.25.3
-        version: 1.25.4
+        specifier: ^1.25.11
+        version: 1.25.11
       prosemirror-schema-list:
         specifier: ^1.5.1
         version: 1.5.1
@@ -260,14 +260,14 @@ importers:
         specifier: ^1.4.3
         version: 1.4.4
       prosemirror-view:
-        specifier: ^1.41.6
-        version: 1.41.6
+        specifier: ^1.42.1
+        version: 1.42.1
       y-indexeddb:
         specifier: ^9.0.12
         version: 9.0.12(yjs@13.6.30)
       y-prosemirror:
         specifier: ^1.3.7
-        version: 1.3.7(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
+        version: 1.3.7(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.1)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
       y-protocols:
         specifier: ^1.0.7
         version: 1.0.7(yjs@13.6.30)
@@ -3430,8 +3430,8 @@ packages:
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
 
-  prosemirror-model@1.25.4:
-    resolution: {integrity: sha512-PIM7E43PBxKce8OQeezAs9j4TP+5yDpZVbuurd1h5phUxEKIu+G2a+EUZzIC5nS1mJktDJWzbqS23n1tsAf5QA==}
+  prosemirror-model@1.25.11:
+    resolution: {integrity: sha512-QWg9RhnpLlogAmp3p96uEFrE5txQpFynd4vhBAELkwgOCWQs/X0yCzB3/hrHqiPwf91RG5KyWq6553zs9JqIOQ==}
 
   prosemirror-schema-list@1.5.1:
     resolution: {integrity: sha512-927lFx/uwyQaGwJxLWCZRkjXG0p48KpMj6ueoYiu4JX05GGuGcgzAy62dfiV8eFZftgyBUvLx76RsMe20fJl+Q==}
@@ -3442,8 +3442,11 @@ packages:
   prosemirror-transform@1.11.0:
     resolution: {integrity: sha512-4I7Ce4KpygXb9bkiPS3hTEk4dSHorfRw8uI0pE8IhxlK2GXsqv5tIA7JUSxtSu7u8APVOTtbUBxTmnHIxVkIJw==}
 
-  prosemirror-view@1.41.6:
-    resolution: {integrity: sha512-mxpcDG4hNQa/CPtzxjdlir5bJFDlm0/x5nGBbStB2BWX+XOQ9M8ekEG+ojqB5BcVu2Rc80/jssCMZzSstJuSYg==}
+  prosemirror-transform@1.12.0:
+    resolution: {integrity: sha512-GxboyN4AMIsoHNtz5uf2r2Ru551i5hWeCMD6E2Ib4Eogqoub0NflniaBPVQ4MrGE5yZ8JV9tUHg9qcZTTrcN4w==}
+
+  prosemirror-view@1.42.1:
+    resolution: {integrity: sha512-rRqzZnRgkyh69XoOMrfFJHwauHscLBmHbq772kwbic1ymQAM8gXjzEbJse5j1ep2UO2HRIAQL0bY3kZ/RoqjVw==}
 
   protocol-buffers-schema@3.6.1:
     resolution: {integrity: sha512-VG2K63Igkiv9p76tk1lilczEK1cT+kCjKtkdhw1dQZV3k3IXJbd3o6Ho8b9zJZaHSnT2hKe4I+ObmX9w6m5SmQ==}
@@ -5617,7 +5620,7 @@ snapshots:
       '@vitest/mocker': 4.1.10(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
       playwright: 1.61.1
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(jiti@2.6.1)(jsdom@29.1.1)(tsx@4.22.4)
+      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -5633,7 +5636,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(jiti@2.6.1)(jsdom@29.1.1)(tsx@4.22.4)
+      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
       ws: 8.21.1
     transitivePeerDependencies:
       - bufferutil
@@ -5653,7 +5656,7 @@ snapshots:
       obug: 2.1.3
       std-env: 4.2.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(jiti@2.6.1)(jsdom@29.1.1)(tsx@4.22.4)
+      vitest: 4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
     optionalDependencies:
       '@vitest/browser': 4.1.10(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))(vitest@4.1.10)
 
@@ -6999,16 +7002,16 @@ snapshots:
 
   prosemirror-commands@1.7.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
   prosemirror-gapcursor@1.4.1:
     dependencies:
       prosemirror-keymap: 1.2.3
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
       prosemirror-state: 1.4.4
-      prosemirror-view: 1.41.6
+      prosemirror-view: 1.42.1
 
   prosemirror-inputrules@1.5.1:
     dependencies:
@@ -7020,31 +7023,35 @@ snapshots:
       prosemirror-state: 1.4.4
       w3c-keyname: 2.2.8
 
-  prosemirror-model@1.25.4:
+  prosemirror-model@1.25.11:
     dependencies:
       orderedmap: 2.1.1
 
   prosemirror-schema-list@1.5.1:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
       prosemirror-state: 1.4.4
       prosemirror-transform: 1.11.0
 
   prosemirror-state@1.4.4:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
       prosemirror-transform: 1.11.0
-      prosemirror-view: 1.41.6
+      prosemirror-view: 1.42.1
 
   prosemirror-transform@1.11.0:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
 
-  prosemirror-view@1.41.6:
+  prosemirror-transform@1.12.0:
     dependencies:
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
+
+  prosemirror-view@1.42.1:
+    dependencies:
+      prosemirror-model: 1.25.11
       prosemirror-state: 1.4.4
-      prosemirror-transform: 1.11.0
+      prosemirror-transform: 1.12.0
 
   protocol-buffers-schema@3.6.1: {}
 
@@ -7468,7 +7475,7 @@ snapshots:
       jiti: 2.6.1
       tsx: 4.22.4
 
-  vitest@4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(jiti@2.6.1)(jsdom@29.1.1)(tsx@4.22.4):
+  vitest@4.1.10(@types/node@24.10.1)(@vitest/browser-playwright@4.1.10)(@vitest/coverage-v8@4.1.10)(jsdom@29.1.1)(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4))
@@ -7488,7 +7495,6 @@ snapshots:
       tinyexec: 1.2.4
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
-      vite: 8.1.4(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.6.1)(tsx@4.22.4)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.10.1
@@ -7496,18 +7502,8 @@ snapshots:
       '@vitest/coverage-v8': 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
       jsdom: 29.1.1
     transitivePeerDependencies:
-      - '@vitejs/devtools'
-      - esbuild
-      - jiti
-      - less
       - msw
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - terser
-      - tsx
-      - yaml
+      - vite
 
   w3c-keyname@2.2.8: {}
 
@@ -7597,12 +7593,12 @@ snapshots:
       lib0: 0.2.117
       yjs: 13.6.30
 
-  y-prosemirror@1.3.7(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30):
+  y-prosemirror@1.3.7(prosemirror-model@1.25.11)(prosemirror-state@1.4.4)(prosemirror-view@1.42.1)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30):
     dependencies:
       lib0: 0.2.117
-      prosemirror-model: 1.25.4
+      prosemirror-model: 1.25.11
       prosemirror-state: 1.4.4
-      prosemirror-view: 1.41.6
+      prosemirror-view: 1.42.1
       y-protocols: 1.0.7(yjs@13.6.30)
       yjs: 13.6.30
 
