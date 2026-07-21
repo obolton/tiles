@@ -11,15 +11,23 @@ function quoteInputRule() {
 }
 
 function headingInputRule() {
-  return textblockTypeInputRule(/^(#{1,3})\s$/, schema.nodes.heading, (match) => ({
-    level: match[1]?.length ?? 1,
-  }));
+  return textblockTypeInputRule(
+    /^(#{1,3})\s$/,
+    schema.nodes.heading,
+    (match: RegExpMatchArray) => ({
+      level: match[1]?.length ?? 1,
+    }),
+  );
 }
 
 function orderedListInputRule() {
-  return wrappingInputRule(/^\s*(\d+)[.)]\s$/, schema.nodes.ordered_list, (match) => ({
-    order: match[1],
-  }));
+  return wrappingInputRule(
+    /^\s*(\d+)[.)]\s$/,
+    schema.nodes.ordered_list,
+    (match: RegExpMatchArray) => ({
+      order: match[1],
+    }),
+  );
 }
 
 function unorderedListInputRule() {
