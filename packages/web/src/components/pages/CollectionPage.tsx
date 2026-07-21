@@ -11,15 +11,25 @@ import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface CollectionPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
-export default function CollectionPage({ page, isEditable, tiles, signal }: CollectionPageProps) {
+export default function CollectionPage({
+  page,
+  isEditable,
+  tiles,
+  signal,
+  end,
+  endVisible,
+}: CollectionPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = reactive("e se s");
 
@@ -36,7 +46,7 @@ export default function CollectionPage({ page, isEditable, tiles, signal }: Coll
   }
 
   return (
-    <EditorLayout>
+    <EditorLayout end={end} endVisible={endVisible}>
       <main
         ref={ref}
         className={styles.main}

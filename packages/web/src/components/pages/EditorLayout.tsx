@@ -1,5 +1,7 @@
-import { persistent, reactive } from "@/utils/reactivity";
+import If from "@/jsx/if";
+import { combine, persistent, reactive } from "@/utils/reactivity";
 import styles from "./EditorLayout.module.css";
+import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export const SIDEBAR_CONSTRAINTS = { min: 120, max: 480, default: 200 };
@@ -14,16 +16,22 @@ function clamp(value: number): number {
 export interface EditorLayoutProps {
   start?: JSX.Node;
   end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
   children: JSX.Node;
 }
 
-export default function EditorLayout({ start, end, children }: EditorLayoutProps) {
+export default function EditorLayout({ start, end, endVisible, children }: EditorLayoutProps) {
   const startSize = reactive(clamp(startWidth.value));
   const endSize = reactive(clamp(endWidth.value));
+  const isEndVisible = endVisible ?? reactive(true);
 
   const style = {
     "--sidebar-width-start": start ? startSize.derive((value) => `${value}px`) : "0px",
-    "--sidebar-width-end": end ? endSize.derive((value) => `${value}px`) : "0px",
+    "--sidebar-width-end": end
+      ? combine({ visible: isEndVisible, size: endSize }, ({ visible, size }) =>
+          visible ? `${size}px` : "0px",
+        )
+      : "0px",
   };
 
   return (
@@ -41,13 +49,15 @@ export default function EditorLayout({ start, end, children }: EditorLayoutProps
       {children}
 
       {end ? (
-        <div
-          className={styles.end}
-          on:panelresize={(event) => (endSize.value = event.size)}
-          on:panelresizeend={(event) => (endWidth.value = event.size)}
-        >
-          {end}
-        </div>
+        <If condition={isEndVisible}>
+          <div
+            className={styles.end}
+            on:panelresize={(event) => (endSize.value = event.size)}
+            on:panelresizeend={(event) => (endWidth.value = event.size)}
+          >
+            {end}
+          </div>
+        </If>
       ) : null}
     </div>
   );

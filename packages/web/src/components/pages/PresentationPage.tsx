@@ -11,12 +11,15 @@ import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface PresentationPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
 export default function PresentationPage({
@@ -24,6 +27,8 @@ export default function PresentationPage({
   isEditable,
   tiles,
   signal,
+  end,
+  endVisible,
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = isEditable.derive((editable) => (editable ? "all" : null));
@@ -47,7 +52,11 @@ export default function PresentationPage({
   }
 
   return (
-    <EditorLayout start={<ThumbnailListPanel page={page} isEditable={isEditable} tiles={tiles} />}>
+    <EditorLayout
+      start={<ThumbnailListPanel page={page} isEditable={isEditable} tiles={tiles} />}
+      end={end}
+      endVisible={endVisible}
+    >
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}

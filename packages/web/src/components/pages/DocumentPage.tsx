@@ -11,15 +11,25 @@ import styles from "./DocumentPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface DocumentPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
-export default function DocumentPage({ page, isEditable, tiles, signal }: DocumentPageProps) {
+export default function DocumentPage({
+  page,
+  isEditable,
+  tiles,
+  signal,
+  end,
+  endVisible,
+}: DocumentPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
 
   function ref(element: HTMLElement) {
@@ -35,7 +45,7 @@ export default function DocumentPage({ page, isEditable, tiles, signal }: Docume
   }
 
   return (
-    <EditorLayout>
+    <EditorLayout end={end} endVisible={endVisible}>
       <main
         ref={ref}
         className={styles.main}

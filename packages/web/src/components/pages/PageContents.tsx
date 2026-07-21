@@ -5,12 +5,15 @@ import FreePage from "./FreePage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface PageContentsProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
 export default function PageContents(props: PageContentsProps) {

@@ -12,15 +12,25 @@ import styles from "./FreePage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface FreePageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
-export default function FreePage({ page, isEditable, tiles, signal }: FreePageProps) {
+export default function FreePage({
+  page,
+  isEditable,
+  tiles,
+  signal,
+  end,
+  endVisible,
+}: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
     switch (alignment) {
@@ -54,7 +64,7 @@ export default function FreePage({ page, isEditable, tiles, signal }: FreePagePr
   }
 
   return (
-    <EditorLayout>
+    <EditorLayout end={end} endVisible={endVisible}>
       <div className={styles.layout} style={style}>
         <DockZone
           page={page}
