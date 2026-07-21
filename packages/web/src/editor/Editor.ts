@@ -18,6 +18,7 @@ import { parseParentId } from "@/models/parentId";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
+import VersionHistory from "@/components/versions/VersionHistory";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type { Reactive, ReactiveSet } from "@/utils/reactivity";
@@ -41,6 +42,7 @@ export default class Editor {
   readonly isPromptToolbarOpen: Reactive<boolean>;
   readonly isTileEditable: Reactive<boolean>;
   readonly chat: ChatState;
+  readonly versionHistory: VersionHistory;
 
   readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
@@ -117,6 +119,7 @@ export default class Editor {
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
+    this.versionHistory = new VersionHistory(this.page.id);
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -172,6 +175,7 @@ export default class Editor {
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
+      this.versionHistory.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();
