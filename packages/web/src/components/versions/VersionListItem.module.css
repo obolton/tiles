@@ -1,0 +1,50 @@
+/* Extends the shared .option styles from styles/buttons.css */
+.version {
+  &:hover:not([aria-disabled="true"]) {
+    background-color: rgb(0 0 0 / 10%);
+  }
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 6%);
+  color: var(--secondary-text-color);
+
+  & svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 4px;
+  min-width: 0;
+  text-align: start;
+}
+
+.title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Inline so truncation renders an ellipsis rather than clipping the box */
+  & time {
+    display: inline;
+  }
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--secondary-text-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
