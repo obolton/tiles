@@ -1,6 +1,4 @@
 import VersionListItem from "./VersionListItem";
-import Placeholder from "@/components/placeholder/Placeholder";
-import { combine } from "@/utils/reactivity";
 import styles from "./VersionList.module.css";
 import type VersionHistory from "./VersionHistory";
 
@@ -11,28 +9,33 @@ export interface VersionListProps {
 export default function VersionList({ state }: VersionListProps) {
   const { versions, isLoading, selectedId } = state;
 
+  function onSelectCurrent() {
+    if (state.previewVersion) {
+      state.exit();
+    }
+  }
+
   return (
     <infinite-scroll
       className={styles.scroll}
       aria-busy={isLoading.derive((loading) => (loading ? "true" : undefined))}
       on:loadmore={() => state.loadMore()}
     >
-      {combine({ versions, isLoading }, ({ versions, isLoading }) => {
-        if (versions.length === 0) {
-          return isLoading ? null : <Placeholder>No versions yet</Placeholder>;
-        }
-        return (
-          <ul className={styles.list}>
-            {versions.map((version) => (
-              <VersionListItem
-                version={version}
-                selected={selectedId.derive((id) => id === version.id)}
-                onSelect={() => state.select(selectedId.value === version.id ? null : version.id)}
-              />
-            ))}
-          </ul>
-        );
-      })}
+      <ul className={styles.list}>
+        <VersionListItem
+          selected={selectedId.derive((id) => id === null)}
+          onSelect={onSelectCurrent}
+        />
+        {versions.derive((versions) =>
+          versions.map((version) => (
+            <VersionListItem
+              version={version}
+              selected={selectedId.derive((id) => id === version.id)}
+              onSelect={() => state.select(version.id)}
+            />
+          )),
+        )}
+      </ul>
     </infinite-scroll>
   );
 }
