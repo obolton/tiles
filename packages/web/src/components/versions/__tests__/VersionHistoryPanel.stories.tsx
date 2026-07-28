@@ -10,8 +10,13 @@ const meta = {
 } satisfies Meta;
 export default meta;
 
-function createState(versions: VersionEntry[]) {
-  const state = new VersionHistory("page-id");
+// The preview constructor fetches the version list; stub it out in Storybook
+class StaticVersionHistory extends VersionHistory {
+  override async refresh() {}
+}
+
+function createState(versions: VersionEntry[], previewVersion: VersionEntry | null = null) {
+  const state = new StaticVersionHistory("page-id", previewVersion);
   state.versions.value = versions;
   return state;
 }
@@ -34,12 +39,8 @@ export const Populated: Story = {
   render: () => <Panel state={createState(VERSIONS)} />,
 };
 
-export const Selected: Story = {
-  render: () => {
-    const state = createState(VERSIONS);
-    state.selectedId.value = AUTO_VERSION.id;
-    return <Panel state={state} />;
-  },
+export const Preview: Story = {
+  render: () => <Panel state={createState(VERSIONS, AUTO_VERSION)} />,
 };
 
 export const Empty: Story = {

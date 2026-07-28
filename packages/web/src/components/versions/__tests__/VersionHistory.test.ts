@@ -15,14 +15,14 @@ vi.mock("@/api/client", () => ({
 
 const listQuery = vi.mocked(client.versions.list.query);
 
-function getVersionParam() {
-  return new URL(window.location.href).searchParams.get("version");
+function spyOnNavigate(state: VersionHistory) {
+  return vi.spyOn(state, "navigate").mockImplementation(() => {});
 }
 
 describe("VersionHistory", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    history.replaceState(null, "", "/");
+    history.replaceState(null, "", "/pages/page-id");
   });
 
   describe("open", () => {
@@ -100,38 +100,81 @@ describe("VersionHistory", () => {
   });
 
   describe("select", () => {
-    test("sets the version query parameter", () => {
+    test("navigates to the version URL", () => {
       const state = new VersionHistory("page-id");
+      const navigate = spyOnNavigate(state);
 
       state.select(NAMED_VERSION.id);
 
-      expect(state.selectedId.value).toBe(NAMED_VERSION.id);
-      expect(getVersionParam()).toBe(NAMED_VERSION.id);
+      expect(navigate).toHaveBeenCalledOnce();
+      const url = navigate.mock.lastCall?.[0];
+      expect(url?.pathname).toBe("/pages/page-id");
+      expect(url?.searchParams.get("version")).toBe(NAMED_VERSION.id);
     });
 
-    test("removes the version query parameter when deselecting", () => {
+    test("preserves other query parameters", () => {
+      history.replaceState(null, "", "/pages/page-id?foo=bar");
       const state = new VersionHistory("page-id");
+      const navigate = spyOnNavigate(state);
+
       state.select(NAMED_VERSION.id);
 
-      state.select(null);
+      const url = navigate.mock.lastCall?.[0];
+      expect(url?.searchParams.get("foo")).toBe("bar");
+      expect(url?.searchParams.get("version")).toBe(NAMED_VERSION.id);
+    });
 
-      expect(state.selectedId.value).toBeNull();
-      expect(getVersionParam()).toBeNull();
+    test("exits when selecting the previewed version", () => {
+      listQuery.mockResolvedValue({ versions: VERSIONS, nextCursor: null });
+      history.replaceState(null, "", `/pages/page-id?version=${NAMED_VERSION.id}`);
+      const state = new VersionHistory("page-id", NAMED_VERSION);
+      const navigate = spyOnNavigate(state);
+
+      state.select(NAMED_VERSION.id);
+
+      const url = navigate.mock.lastCall?.[0];
+      expect(url?.pathname).toBe("/pages/page-id");
+      expect(url?.searchParams.has("version")).toBe(false);
+    });
+  });
+
+  describe("preview", () => {
+    test("starts open with the version selected and fetches the list", async () => {
+      listQuery.mockResolvedValue({ versions: VERSIONS, nextCursor: null });
+
+      const state = new VersionHistory("page-id", NAMED_VERSION);
+
+      expect(state.previewVersion).toBe(NAMED_VERSION);
+      expect(state.isOpen.value).toBe(true);
+      expect(state.selectedId.value).toBe(NAMED_VERSION.id);
+      await vi.waitFor(() => expect(state.versions.value).toEqual(VERSIONS));
+    });
+
+    test("close exits the preview", () => {
+      listQuery.mockResolvedValue({ versions: [], nextCursor: null });
+      history.replaceState(null, "", `/pages/page-id?version=${NAMED_VERSION.id}`);
+      const state = new VersionHistory("page-id", NAMED_VERSION);
+      const navigate = spyOnNavigate(state);
+
+      state.close();
+
+      const url = navigate.mock.lastCall?.[0];
+      expect(url?.pathname).toBe("/pages/page-id");
+      expect(url?.searchParams.has("version")).toBe(false);
     });
   });
 
   describe("close", () => {
-    test("clears the selection", async () => {
-      listQuery.mockResolvedValue({ versions: VERSIONS, nextCursor: null });
+    test("closes the panel outside a preview", () => {
+      listQuery.mockResolvedValue({ versions: [], nextCursor: null });
       const state = new VersionHistory("page-id");
+      const navigate = spyOnNavigate(state);
       state.open();
-      state.select(NAMED_VERSION.id);
 
       state.close();
 
       expect(state.isOpen.value).toBe(false);
-      expect(state.selectedId.value).toBeNull();
-      expect(getVersionParam()).toBeNull();
+      expect(navigate).not.toHaveBeenCalled();
     });
   });
 
