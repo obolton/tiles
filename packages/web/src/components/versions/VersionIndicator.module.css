@@ -1,0 +1,8 @@
+.indicator {
+  padding-inline-start: 8px;
+  font-size: 0.875rem;
+  color: var(--secondary-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

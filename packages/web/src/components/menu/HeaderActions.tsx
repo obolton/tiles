@@ -48,53 +48,61 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
         ) : null,
       )}
 
-      <ToolbarGroup label="Editing" className={styles.editing}>
-        <button
-          type="button"
-          id="edit-button"
-          className="primary"
-          aria-pressed={isEditable}
-          on:click={toggleEdit}
-        >
-          {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
-        </button>
+      {editor.isPreviewing ? null : (
+        <>
+          <ToolbarGroup label="Editing" className={styles.editing}>
+            <button
+              type="button"
+              id="edit-button"
+              className="primary"
+              aria-pressed={isEditable}
+              on:click={toggleEdit}
+            >
+              {isEditable.derive((editable) => (editable ? "Done" : "Edit"))}
+            </button>
 
-        <If condition={isEditable}>
-          <EditingTools editor={editor} />
-        </If>
-      </ToolbarGroup>
+            <If condition={isEditable}>
+              <EditingTools editor={editor} />
+            </If>
+          </ToolbarGroup>
 
-      <ToolbarGroup label="Page actions">
-        <ToolbarButton
-          label={isBookmarked.derive((value) => (value ? "Bookmarked" : "Not bookmarked"))}
-          aria-pressed={isBookmarked}
-          on:click={onClickBookmark}
-        >
-          {isBookmarked.derive((value) =>
-            value ? <BookmarkFilledIcon aria-hidden="true" /> : <BookmarkIcon aria-hidden="true" />,
-          )}
-        </ToolbarButton>
+          <ToolbarGroup label="Page actions">
+            <ToolbarButton
+              label={isBookmarked.derive((value) => (value ? "Bookmarked" : "Not bookmarked"))}
+              aria-pressed={isBookmarked}
+              on:click={onClickBookmark}
+            >
+              {isBookmarked.derive((value) =>
+                value ? (
+                  <BookmarkFilledIcon aria-hidden="true" />
+                ) : (
+                  <BookmarkIcon aria-hidden="true" />
+                ),
+              )}
+            </ToolbarButton>
 
-        <ToolbarButton
-          label="Present"
-          on:click={() => {
-            editor.setEditable(false);
-            startPresentation();
-          }}
-        >
-          <PresentIcon aria-hidden="true" />
-        </ToolbarButton>
+            <ToolbarButton
+              label="Present"
+              on:click={() => {
+                editor.setEditable(false);
+                startPresentation();
+              }}
+            >
+              <PresentIcon aria-hidden="true" />
+            </ToolbarButton>
 
-        <ToolbarButton
-          id="toc-button"
-          label="Table of contents"
-          popovertarget="toc"
-          aria-haspopup="menu"
-        >
-          <MenuIcon aria-hidden="true" />
-        </ToolbarButton>
-        <table-of-contents id="toc" role="navigation" />
-      </ToolbarGroup>
+            <ToolbarButton
+              id="toc-button"
+              label="Table of contents"
+              popovertarget="toc"
+              aria-haspopup="menu"
+            >
+              <MenuIcon aria-hidden="true" />
+            </ToolbarButton>
+            <table-of-contents id="toc" role="navigation" />
+          </ToolbarGroup>
+        </>
+      )}
     </>
   );
 }

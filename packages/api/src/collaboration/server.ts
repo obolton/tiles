@@ -2,6 +2,7 @@ import * as Y from "yjs";
 import { Hocuspocus } from "@hocuspocus/server";
 import { authenticateConnection } from "./auth.ts";
 import { loadDoc, saveDoc } from "./storage.ts";
+import { maybeCreateVersion } from "./versions.ts";
 
 const DOC_NAME_PREFIX = "page:";
 
@@ -41,6 +42,19 @@ export function createHocuspocus() {
       const state = Y.encodeStateAsUpdate(document);
       await saveDoc(pageId, state);
       console.log(`collaboration: stored page=${pageId} bytes=${state.byteLength}`);
+    },
+
+    async afterStoreDocument({ documentName, document }) {
+      await maybeCreateVersion(parseDocName(documentName), document, "store");
+    },
+
+    async beforeUnloadDocument({ documentName, document }) {
+      const pageId = parseDocName(documentName);
+      try {
+        await maybeCreateVersion(pageId, document, "unload");
+      } catch (error) {
+        console.error(`collaboration: session-end version capture failed page=${pageId}`, error);
+      }
     },
 
     async onConnect({ documentName }) {

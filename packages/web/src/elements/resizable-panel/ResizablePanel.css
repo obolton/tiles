@@ -46,6 +46,23 @@ resize-handle:focus-visible {
   translate: -50%;
 }
 
+/* Logical inline edges: placement flips automatically in RTL. */
+:host([edge="inline-start"]) resize-handle,
+:host([edge="inline-end"]) resize-handle {
+  top: 0;
+  bottom: 0;
+  inline-size: 8px;
+  cursor: ew-resize;
+}
+
+:host([edge="inline-start"]) resize-handle {
+  inset-inline-end: -4px;
+}
+
+:host([edge="inline-end"]) resize-handle {
+  inset-inline-start: -4px;
+}
+
 :host([edge="top"]) resize-handle,
 :host([edge="bottom"]) resize-handle {
   left: 0;

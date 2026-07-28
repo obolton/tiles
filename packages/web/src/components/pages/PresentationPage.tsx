@@ -2,23 +2,24 @@ import Each from "@/jsx/each";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import Slide from "@/components/slides/Slide";
-import FilmstripPanel from "@/components/filmstrip/FilmstripPanel";
+import EditorLayout from "@/components/pages/EditorLayout";
+import ThumbnailListPanel from "@/components/thumbnails/ThumbnailListPanel";
 import InsertButton from "@/components/buttons/InsertButton";
 import PresentationInsertMenu from "@/components/toolbars/insert/PresentationInsertMenu";
 import Section from "@/models/Section";
-import { persistent, reactive } from "@/utils/reactivity";
 import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
-
-const DEFAULT_SIDEBAR_WIDTH = 200;
+import type { JSX } from "@/jsx/jsx";
 
 export interface PresentationPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
 export default function PresentationPage({
@@ -26,16 +27,11 @@ export default function PresentationPage({
   isEditable,
   tiles,
   signal,
+  end,
+  endVisible,
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = isEditable.derive((editable) => (editable ? "all" : null));
-
-  const storedWidth = persistent<number>("filmstrip:width", DEFAULT_SIDEBAR_WIDTH);
-  const width = reactive(storedWidth.value);
-  const style = {
-    "--sidebar-width": width.derive((value) => `${value}px`),
-    "--page-width": page.width,
-  };
 
   function getInsertionParent(): string {
     const section = page.editor?.activeSection;
@@ -46,7 +42,7 @@ export default function PresentationPage({
   }
 
   // Center a partially visible slide when clicked, so the viewport (and
-  // through it the filmstrip and selection) follows the slide being edited
+  // through it the thumbnail list and selection) follows the slide being edited
   function onClick(event: MouseEvent) {
     if (!isEditable.value || !(event.target instanceof Element)) {
       return;
@@ -56,17 +52,14 @@ export default function PresentationPage({
   }
 
   return (
-    <div className={styles.layout} style={style}>
-      <FilmstripPanel
-        page={page}
-        isEditable={isEditable}
-        tiles={tiles}
-        size={width}
-        on:panelresize={(event) => (width.value = event.size)}
-        on:panelresizeend={(event) => (storedWidth.value = event.size)}
-      />
+    <EditorLayout
+      start={<ThumbnailListPanel page={page} isEditable={isEditable} tiles={tiles} />}
+      end={end}
+      endVisible={endVisible}
+    >
       <main
         className={styles.main}
+        style={{ "--page-width": page.width }}
         data-alignment={page.alignment}
         data-page-type="PRESENTATION"
         on:click={onClick}
@@ -82,14 +75,18 @@ export default function PresentationPage({
             return <Slide section={tile} tabindex={tabindex} resize={resize} signal={signal} />;
           }}
         </Each>
-      </main>
 
-      <If condition={isEditable}>
-        <Portal element="insert-slot">
-          <InsertButton id="insert-button" popovertarget="insert-menu" />
-          <PresentationInsertMenu id="insert-menu" align="auto" getParentId={getInsertionParent} />
-        </Portal>
-      </If>
-    </div>
+        <If condition={isEditable}>
+          <Portal element="insert-slot">
+            <InsertButton id="insert-button" popovertarget="insert-menu" />
+            <PresentationInsertMenu
+              id="insert-menu"
+              align="auto"
+              getParentId={getInsertionParent}
+            />
+          </Portal>
+        </If>
+      </main>
+    </EditorLayout>
   );
 }

@@ -38,6 +38,7 @@ export const MOCK_PRISMA = {
   pageAccess: mockModel(),
   pageDocument: mockModel(),
   pageInvite: mockModel(),
+  pageVersion: mockModel(),
   session: mockModel(),
   theme: mockModel(),
   user: mockModel(),

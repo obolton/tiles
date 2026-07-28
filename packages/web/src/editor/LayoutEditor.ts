@@ -1,6 +1,7 @@
 import { handleError } from "@/utils/errors";
 import { getSnapPoints, findSnapPoint, type SnapPoint, type SnapPoints } from "@/utils/snap";
 import { moveBefore } from "@/utils/dom";
+import { focusInside } from "@/utils/focus";
 import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ASPECT_RATIOS } from "@/constants/size";
 import type Page from "@/models/Page";
@@ -414,7 +415,7 @@ export default class LayoutEditor {
       const destination = document.getElementById(tile.id);
       if (destination) {
         destination.style.viewTransitionName = "drop";
-        destination.focus({ preventScroll: true });
+        focusInside(destination, { preventScroll: true });
         requestAnimationFrame(() => {
           destination.style.viewTransitionName = "";
         });

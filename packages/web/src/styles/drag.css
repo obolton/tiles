@@ -47,7 +47,6 @@
   box-shadow: 0 10px 10px -5px rgb(0 0 0 / 30%);
   overflow: visible;
   z-index: 1;
-  pointer-events: none;
   translate: var(--drag-x) var(--drag-y);
   transform-origin: var(--drag-origin-x) var(--drag-origin-y);
   opacity: 0.75;

@@ -26,13 +26,14 @@ model Page {
 
   documentId String @unique @map("document_id") @db.Uuid
 
-  workspace Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  author    User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  folder    Folder?      @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  workspace Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  folder    Folder?       @relation(fields: [folderId], references: [id], onDelete: SetNull)
   bookmarks Bookmark[]
   access    PageAccess[]
   invites   PageInvite[]
-  document  PageDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  versions  PageVersion[]
+  document  PageDocument  @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@index([authorId])
   @@index([authorId, updatedAt])
@@ -51,4 +52,28 @@ model PageDocument {
   page Page?
 
   @@map("page_documents")
+}
+
+enum PageVersionType {
+  AUTO
+  NAMED
+  PRE_RESTORE
+}
+
+model PageVersion {
+  id            String          @id @default(uuid()) @db.Uuid
+  createdAt     DateTime        @default(now()) @map("created_at")
+  pageId        String          @map("page_id") @db.Uuid
+  type          PageVersionType
+  name          String?         @db.VarChar(100)
+  snapshot      Bytes           @db.ByteA
+  stateVector   Bytes           @map("state_vector") @db.ByteA
+  schemaVersion Int             @map("schema_version")
+  userId        String?         @map("user_id") @db.Uuid
+
+  page Page  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([pageId, createdAt])
+  @@map("page_versions")
 }

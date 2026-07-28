@@ -1,13 +1,17 @@
 import * as Y from "yjs";
 import prisma from "@/database/prisma.ts";
 import { applyMigrations, CURRENT_SCHEMA_VERSION } from "./migrator.ts";
+import type { ExtensionArgs } from "@/database/prisma.ts";
+import type { Prisma } from "@/generated/prisma/client";
+
+export const PAGE_DOCUMENT_FIELDS = {
+  document: { select: { snapshot: true, schemaVersion: true } },
+} as const satisfies Prisma.PageSelect<ExtensionArgs>;
 
 export async function loadDoc(pageId: string): Promise<Y.Doc> {
   const page = await prisma.page.findUniqueOrThrow({
     where: { id: pageId },
-    select: {
-      document: { select: { snapshot: true, schemaVersion: true } },
-    },
+    select: PAGE_DOCUMENT_FIELDS,
   });
 
   const doc = new Y.Doc();

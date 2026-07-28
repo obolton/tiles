@@ -3,6 +3,7 @@ import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
+import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
 import If from "@/jsx/if";
 import { combine } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -45,7 +46,13 @@ export default function EditablePage({ editor }: EditablePageProps) {
         </div>
       </If>
 
-      <PageContents page={editor.page} isEditable={isEditable} tiles={editor.page.tiles} />
+      <PageContents
+        page={editor.page}
+        isEditable={isEditable}
+        tiles={editor.page.tiles}
+        end={<VersionHistoryPanel state={editor.versionHistory} />}
+        endVisible={editor.versionHistory.isOpen}
+      />
     </>
   );
 }

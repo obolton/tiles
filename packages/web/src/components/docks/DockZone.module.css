@@ -27,8 +27,8 @@
 .top {
   view-transition-name: dock-top;
   top: var(--header-height);
-  left: 0;
-  right: 0;
+  left: var(--sidebar-width-left, 0px);
+  right: var(--sidebar-width-right, 0px);
   height: var(--dock-top-size);
   flex-direction: row;
 }
@@ -36,8 +36,8 @@
 .bottom {
   view-transition-name: dock-bottom;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: var(--sidebar-width-left, 0px);
+  right: var(--sidebar-width-right, 0px);
   height: var(--dock-bottom-size);
   flex-direction: row;
 }
@@ -58,14 +58,14 @@
 
 .left {
   view-transition-name: dock-left;
-  left: 0;
+  left: var(--sidebar-width-left, 0px);
   width: var(--dock-left-size);
   flex-direction: column;
 }
 
 .right {
   view-transition-name: dock-right;
-  right: 0;
+  right: var(--sidebar-width-right, 0px);
   width: var(--dock-right-size);
   flex-direction: column;
 }

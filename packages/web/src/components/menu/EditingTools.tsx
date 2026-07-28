@@ -3,6 +3,11 @@ import CollaborationPopover from "@/components/collaboration/CollaborationPopove
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
+import HistoryIcon from "@/icons/history.svg?jsx";
+import {
+  VERSION_HISTORY_BUTTON_ID,
+  VERSION_HISTORY_PANEL_ID,
+} from "@/components/versions/VersionHistory";
 import type Editor from "@/editor/Editor";
 
 export interface EditingToolsProps {
@@ -40,6 +45,16 @@ export default function EditingTools({ editor }: EditingToolsProps) {
       </ToolbarButton>
 
       <CollaborationPopover page={editor.page} id="collaboration-popover" />
+
+      <ToolbarButton
+        id={VERSION_HISTORY_BUTTON_ID}
+        label="Version history"
+        aria-pressed={editor.versionHistory.isOpen}
+        aria-controls={VERSION_HISTORY_PANEL_ID}
+        on:click={() => editor.versionHistory.toggle()}
+      >
+        <HistoryIcon aria-hidden="true" />
+      </ToolbarButton>
     </>
   );
 }

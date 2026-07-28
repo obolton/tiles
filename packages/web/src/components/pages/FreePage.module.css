@@ -1,8 +1,19 @@
 .layout {
+  /* Resolve the logical sidebar widths (provided by EditorLayout) to physical
+     ones so the physically-edged dock zones can inset to accommodate the
+     sidebars in both writing directions. */
+  --sidebar-width-left: var(--sidebar-width-start, 0px);
+  --sidebar-width-right: var(--sidebar-width-end, 0px);
+
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - var(--header-height));
   margin-top: var(--header-height);
+
+  &:dir(rtl) {
+    --sidebar-width-left: var(--sidebar-width-end, 0px);
+    --sidebar-width-right: var(--sidebar-width-start, 0px);
+  }
 
   &:has([data-dock-zone="TOP"]:not([data-empty])) {
     padding-top: min(var(--dock-top-size), 50vh);

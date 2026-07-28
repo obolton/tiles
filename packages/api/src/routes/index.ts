@@ -11,6 +11,7 @@ import ai from "./ai/router.ts";
 import collaboration from "./collaboration/router.ts";
 import folders from "./folders/router.ts";
 import workspaces from "./workspaces/router.ts";
+import versions from "./versions/router.ts";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -26,6 +27,7 @@ const appRouter = router({
   collaboration,
   folders,
   workspaces,
+  versions,
 });
 
 export type AppRouter = typeof appRouter;

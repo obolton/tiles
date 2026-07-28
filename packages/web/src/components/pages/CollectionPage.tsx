@@ -5,20 +5,31 @@ import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import InsertButton from "@/components/buttons/InsertButton";
 import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
+import EditorLayout from "@/components/pages/EditorLayout";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import { reactive, type Reactive } from "@/utils/reactivity";
+import type { JSX } from "@/jsx/jsx";
 
 export interface CollectionPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
+  end?: JSX.Node;
+  endVisible?: Reactive<boolean>;
 }
 
-export default function CollectionPage({ page, isEditable, tiles, signal }: CollectionPageProps) {
+export default function CollectionPage({
+  page,
+  isEditable,
+  tiles,
+  signal,
+  end,
+  endVisible,
+}: CollectionPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = reactive("e se s");
 
@@ -35,28 +46,30 @@ export default function CollectionPage({ page, isEditable, tiles, signal }: Coll
   }
 
   return (
-    <main
-      ref={ref}
-      className={styles.main}
-      style={{ "--page-width": page.width }}
-      data-alignment={page.alignment}
-      data-layout="GRID"
-      data-page-type="COLLECTION"
-    >
-      <Each items={tiles}>
-        {(tile) => (
-          <Item tile={tile} tabindex={tabindex} resize={resize}>
-            <TileContent tile={tile} />
-          </Item>
-        )}
-      </Each>
+    <EditorLayout end={end} endVisible={endVisible}>
+      <main
+        ref={ref}
+        className={styles.main}
+        style={{ "--page-width": page.width }}
+        data-alignment={page.alignment}
+        data-layout="GRID"
+        data-page-type="COLLECTION"
+      >
+        <Each items={tiles}>
+          {(tile) => (
+            <Item tile={tile} tabindex={tabindex} resize={resize}>
+              <TileContent tile={tile} />
+            </Item>
+          )}
+        </Each>
 
-      <If condition={isEditable}>
-        <Portal element="insert-slot">
-          <InsertButton id="insert-button" popovertarget="insert-menu" />
-          <DocumentInsertMenu id="insert-menu" align="auto" />
-        </Portal>
-      </If>
-    </main>
+        <If condition={isEditable}>
+          <Portal element="insert-slot">
+            <InsertButton id="insert-button" popovertarget="insert-menu" />
+            <DocumentInsertMenu id="insert-menu" align="auto" />
+          </Portal>
+        </If>
+      </main>
+    </EditorLayout>
   );
 }

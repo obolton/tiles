@@ -1,4 +1,4 @@
-filmstrip-view .drop-indicator {
+thumbnail-list .drop-indicator {
   height: 2px;
   margin: -13px 0;
   background: var(--highlight-color);

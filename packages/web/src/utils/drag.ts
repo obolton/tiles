@@ -377,6 +377,7 @@ export class DragState<T = unknown> {
 
     document.body.dataset.drag = "true";
     this.dragPreview.showPopover();
+    this.dragPreview.inert = true;
 
     this.findDropTarget(this.element, clientX, clientY, altKey);
 
@@ -395,7 +396,10 @@ export class DragState<T = unknown> {
   private drop(event: PointerEvent) {
     const dropTarget = this.dropTarget;
 
-    this.dragPreview?.classList.add("drag-drop");
+    if (this.dragPreview) {
+      this.dragPreview.classList.add("drag-drop");
+      this.dragPreview.inert = false;
+    }
 
     viewTransition(() => {
       dropTarget?.dispatchEvent(
@@ -420,6 +424,7 @@ export class DragState<T = unknown> {
     }
 
     delete document.body.dataset.drag;
+    this.dragPreview.inert = false;
     this.dragPreview.classList.remove("drag-preview", "drag-drop");
     this.dragPreview.hidePopover();
     this.dragPreview.popover = null;

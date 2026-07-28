@@ -7,13 +7,14 @@ import { handleError } from "@/utils/errors";
 
 const url = new URL(window.location.href);
 const editParam = url.searchParams.get("edit");
+const versionParam = url.searchParams.get("version");
 
 if (editParam) {
   url.searchParams.delete("edit");
   history.replaceState(null, "", url);
 }
 
-if (editParam || sessionStorage.getItem("edit") === window.location.pathname) {
+if (!versionParam && (editParam || sessionStorage.getItem("edit") === window.location.pathname)) {
   setEditMode(true);
 }
 

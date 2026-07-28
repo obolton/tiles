@@ -16,6 +16,7 @@ model User {
   bookmarks            Bookmark[]
   pageAccess           PageAccess[]
   pageInvites          PageInvite[]
+  pageVersions         PageVersion[]
   workspaceInvites     WorkspaceInvite[]
   images               Image[]
 

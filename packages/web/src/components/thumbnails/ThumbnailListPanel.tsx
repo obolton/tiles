@@ -2,33 +2,31 @@ import Each from "@/jsx/each";
 import If from "@/jsx/if";
 import Section from "@/models/Section";
 import SlideThumbnail from "@/components/slides/SlideThumbnail";
+import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
 import NewIcon from "@/icons/new.svg?jsx";
 import { handleError } from "@/utils/errors";
-import styles from "./FilmstripPanel.module.css";
+import styles from "./ThumbnailListPanel.module.css";
 import type { DragDropEvent } from "@/utils/drag";
-import type { FilmstripEvent } from "@/elements/filmstrip/events";
+import type { ThumbnailListEvent } from "@/elements/thumbnails/events";
 import type { JSX } from "@/jsx/jsx";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "@/utils/reactivity";
 
-const MIN_WIDTH = 120;
-const MAX_WIDTH = 480;
-
-export interface FilmstripPanelProps extends JSX.Attributes<"resizable-panel"> {
+export interface ThumbnailListPanelProps extends JSX.Attributes<"resizable-panel"> {
   page: Page;
   isEditable: Reactive<boolean>;
   tiles: TileCollection;
 }
 
-export default function FilmstripPanel({
+export default function ThumbnailListPanel({
   page,
   isEditable,
   tiles,
   classList,
   ...props
-}: FilmstripPanelProps) {
-  function onSlideSelect(event: FilmstripEvent) {
+}: ThumbnailListPanelProps) {
+  function onSlideSelect(event: ThumbnailListEvent) {
     if (!isEditable.value) {
       return;
     }
@@ -39,7 +37,7 @@ export default function FilmstripPanel({
     page.editor?.select([event.slideId]);
   }
 
-  function onSlideReorder(event: FilmstripEvent) {
+  function onSlideReorder(event: ThumbnailListEvent) {
     if (!isEditable.value) {
       return;
     }
@@ -74,17 +72,17 @@ export default function FilmstripPanel({
     <resizable-panel
       classList={{
         [styles.panel]: true,
-        "filmstrip-panel": true,
+        "thumbnail-list-panel": true,
         ...classList,
       }}
       role="complementary"
-      aria-label="Filmstrip"
-      edge="left"
-      min={MIN_WIDTH}
-      max={MAX_WIDTH}
+      aria-label="Thumbnails"
+      edge="inline-start"
+      min={SIDEBAR_CONSTRAINTS.min}
+      max={SIDEBAR_CONSTRAINTS.max}
       {...props}
     >
-      <filmstrip-view
+      <thumbnail-list
         className={styles.rail}
         aria-label="Slide navigator"
         allowdrag={isEditable}
@@ -95,7 +93,7 @@ export default function FilmstripPanel({
         <Each items={tiles}>
           {(tile) => (tile instanceof Section ? <SlideThumbnail section={tile} /> : null)}
         </Each>
-      </filmstrip-view>
+      </thumbnail-list>
 
       <If condition={isEditable}>
         <button

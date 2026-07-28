@@ -18,8 +18,10 @@ import { parseParentId } from "@/models/parentId";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
+import VersionHistory from "@/components/versions/VersionHistory";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
+import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type { Reactive, ReactiveSet } from "@/utils/reactivity";
 
 export type { PageData } from "@/models/Page";
@@ -41,6 +43,7 @@ export default class Editor {
   readonly isPromptToolbarOpen: Reactive<boolean>;
   readonly isTileEditable: Reactive<boolean>;
   readonly chat: ChatState;
+  readonly versionHistory: VersionHistory;
 
   readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
@@ -52,6 +55,10 @@ export default class Editor {
 
   get workspaceId() {
     return this.page.workspaceId;
+  }
+
+  get isPreviewing() {
+    return this.versionHistory.previewVersion !== null;
   }
 
   get insertBeforeId(): string | null {
@@ -82,12 +89,12 @@ export default class Editor {
     return id === null ? null : (this.page.index.get(id) ?? null);
   }
 
-  static init(page: PageData, doc: Y.Doc) {
+  static init(page: PageData, doc: Y.Doc, version?: VersionEntry) {
     if (this.#current) {
       throw new Error("The editor has already been initialized");
     }
 
-    const editor = new Editor(page, doc);
+    const editor = new Editor(page, doc, version);
 
     if (!import.meta.env.SSR) {
       this.#current = editor;
@@ -108,15 +115,16 @@ export default class Editor {
     return this.#current;
   }
 
-  private constructor(page: PageData, doc: Y.Doc) {
+  private constructor(page: PageData, doc: Y.Doc, version?: VersionEntry) {
     this.selection = set();
     this.references = set();
     this.page = new Page(page, doc, (ids) => this.pruneDeletedTiles(ids));
     this.page.editor = this;
-    this.isEditable = flag(isEditMode());
+    this.isEditable = flag(isEditMode() && !version);
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
+    this.versionHistory = new VersionHistory(this.page.id, version ?? null);
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -165,6 +173,10 @@ export default class Editor {
       return;
     }
 
+    if (editable && this.isPreviewing) {
+      return;
+    }
+
     if (editable) {
       this.isEditable.value = true;
       setEditMode(true);
@@ -172,6 +184,7 @@ export default class Editor {
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
+      this.versionHistory.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();
