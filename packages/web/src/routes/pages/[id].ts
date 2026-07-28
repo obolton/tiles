@@ -10,11 +10,15 @@ import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { getPageBodyStyle } from "@/utils/themes";
 import { initializeDoc } from "@/collaboration/doc";
-import { notFound } from "@/router/responses";
+import { notFound, redirect } from "@/router/responses";
 import { DEFAULT_FONT } from "api/config/fonts";
 import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
-async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<PageProps> {
+async function loader({
+  url,
+  headers,
+  parameters,
+}: RequestProperties): RouteLoaderResult<PageProps> {
   const pageId = parameters.id;
 
   if (!pageId) {
@@ -22,13 +26,30 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
   }
 
   const options = getLoaderContext(headers);
-  const page = await client.pages.getById.query({ id: pageId }, options);
+  const versionId = url.searchParams.get("version");
+  const [page, versionResult] = await Promise.all([
+    client.pages.getById.query({ id: pageId }, options),
+    versionId ? client.versions.get.query({ pageId, versionId }, options).catch(() => null) : null,
+  ]);
 
   if (!page) {
     return notFound();
   }
 
-  const doc = initializeDoc(page);
+  if (versionId && !versionResult) {
+    return redirect(url.pathname, 302);
+  }
+
+  let version: PageProps["version"];
+  let doc;
+  if (versionResult) {
+    const { document: versionDocument, ...metadata } = versionResult;
+    version = metadata;
+    doc = initializeDoc({ ...page, document: versionDocument });
+  } else {
+    doc = initializeDoc(page);
+  }
+
   const style = getPageBodyStyle(doc);
 
   // The global metadata already emits @font-face for DEFAULT_FONT.
@@ -36,7 +57,8 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
   pageFonts.delete(DEFAULT_FONT);
 
   return {
-    headers: page.published ? { "Cache-Control": CACHE_CONTROL_VALUE } : undefined,
+    // Historical states must never be cached as the page
+    headers: page.published && !version ? { "Cache-Control": CACHE_CONTROL_VALUE } : undefined,
     title: `${page.title} - Tiles`,
     bodyAttributes: {
       "data-page-id": page.id,
@@ -46,7 +68,7 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
       styles: [generateFontFaceCSS(pageFonts)],
       links: getPagePreloads(doc),
     },
-    data: { page, doc },
+    data: { page, doc, version },
   };
 }
 
