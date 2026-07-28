@@ -16,7 +16,18 @@ export default class VersionHistory {
   readonly nextCursor = reactive<string | null>(null);
   readonly isLoading = flag(false);
 
-  constructor(private readonly pageId: string) {}
+  constructor(
+    private readonly pageId: string,
+    readonly previewVersion: VersionEntry | null = null,
+  ) {
+    if (previewVersion) {
+      this.isOpen.on();
+      this.selectedId.value = previewVersion.id;
+      if (!import.meta.env.SSR) {
+        this.refresh().catch(handleError);
+      }
+    }
+  }
 
   open() {
     if (this.isOpen.value) {
@@ -33,6 +44,10 @@ export default class VersionHistory {
   }
 
   close() {
+    if (this.previewVersion) {
+      this.exit();
+      return;
+    }
     if (!this.isOpen.value) {
       return;
     }
@@ -40,7 +55,6 @@ export default class VersionHistory {
     const panel = document.getElementById(VERSION_HISTORY_PANEL_ID);
     const hadFocus = !!panel && !!getFocusedDescendant(panel);
     this.isOpen.off();
-    this.select(null);
     if (hadFocus) {
       document.getElementById(VERSION_HISTORY_BUTTON_ID)?.focus();
     }
@@ -54,15 +68,24 @@ export default class VersionHistory {
     }
   }
 
-  select(id: string | null) {
-    this.selectedId.value = id;
-    const url = new URL(window.location.href);
-    if (id === null) {
-      url.searchParams.delete("version");
-    } else {
-      url.searchParams.set("version", id);
+  select(id: string) {
+    if (id === this.selectedId.value) {
+      this.exit();
+      return;
     }
-    history.replaceState(null, "", url);
+    const url = new URL(window.location.href);
+    url.searchParams.set("version", id);
+    this.navigate(url);
+  }
+
+  exit() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("version");
+    this.navigate(url);
+  }
+
+  navigate(url: URL) {
+    window.location.assign(url);
   }
 
   async refresh() {
