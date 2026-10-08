@@ -106,6 +106,12 @@ importers:
         specifier: ^4.22.4
         version: 4.22.4
 
+  packages/dev-cdn:
+    devDependencies:
+      wrangler:
+        specifier: ^4.110.0
+        version: 4.110.0
+
   packages/doc:
     dependencies:
       jittered-fractional-indexing:
