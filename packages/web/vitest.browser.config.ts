@@ -28,6 +28,7 @@ export default defineConfig({
     },
     browser: {
       enabled: true,
+      headless: true,
       provider: playwright({
         connectOptions: {
           wsEndpoint: `ws://${process.env.PLAYWRIGHT_HOST}:3100/`,
