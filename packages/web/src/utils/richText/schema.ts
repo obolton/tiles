@@ -390,7 +390,7 @@ const marksSpec = {
     attrs: {
       size: {
         validate(value) {
-          if (!Number.isNaN(value) || value < MIN_TEXT_SIZE || value > MAX_TEXT_SIZE) {
+          if (!Number.isFinite(value) || value < MIN_TEXT_SIZE || value > MAX_TEXT_SIZE) {
             throw new RangeError(`Invalid font size: ${value}`);
           }
         },
