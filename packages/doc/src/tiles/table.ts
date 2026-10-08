@@ -147,9 +147,11 @@ export function parseTableChanges(
     }
 
     if (source === "rows" && nested === "cells") {
-      return [...event.keysChanged].map(
-        (columnId): TableChange => ({ type: "cell", rowId: id, columnId }),
-      );
+      return [...event.keysChanged].map((columnId): TableChange => ({
+        type: "cell",
+        rowId: id,
+        columnId,
+      }));
     }
 
     const moved = event.keysChanged.has("order");

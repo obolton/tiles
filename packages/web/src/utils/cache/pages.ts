@@ -79,7 +79,7 @@ export async function getCachedPageData(pageId: string): Promise<CachedPageData 
     }
 
     const cachedTiles = await tilesStore().getAllByIndex("byPageId", pageId);
-    const tiles = cachedTiles.map(({ pageId: _, ...tile }): TileBase => tile);
+    const tiles = cachedTiles.map(({ pageId: _pageId, ...tile }): TileBase => tile);
 
     return { ...page, tiles };
   } catch {
