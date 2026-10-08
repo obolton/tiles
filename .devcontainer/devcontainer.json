@@ -36,7 +36,7 @@
     }
   },
 
-  "postCreateCommand": "pnpm install && pnpm --filter api db:push && pnpm generate && pnpm --filter api db:seed",
+  "postCreateCommand": "scripts/setup.sh",
 
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",
