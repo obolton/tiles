@@ -9,7 +9,7 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "dev": "tsx watch --env-file=\"../../../.env\" --clear-screen=false src/index.ts",
+    "dev": "tsx watch --env-file-if-exists=\"../../../.env\" --clear-screen=false src/index.ts",
     "build": "pnpm db:generate-client && esbuild src/index.ts --bundle --outdir=dist --platform=node --target=node24 --packages=external --format=esm",
     "test": "vitest run",
     "test:watch": "vitest watch",
