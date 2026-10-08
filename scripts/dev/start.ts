@@ -6,12 +6,7 @@ import { LOG_FILE, findDevServerPids, isHealthy } from "./shared.ts";
 const START_TIMEOUT_SECONDS = 90;
 const STARTUP_GRACE_SECONDS = 3;
 
-const WORKSPACE = process.env.WORKSPACE;
-if (!WORKSPACE) {
-  console.error("WORKSPACE must be set");
-  process.exit(1);
-}
-const APP_URL = `https://${WORKSPACE}.tiles.test`;
+const APP_URL = process.env.PUBLIC_WEB_ORIGIN ?? "http://localhost:3000";
 
 function printLogTail(lines: number) {
   if (existsSync(LOG_FILE)) {
