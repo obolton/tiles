@@ -31,7 +31,7 @@
     "generate": "pnpm -r --parallel generate"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.10.1",
     "@vitest/coverage-v8": "^5.0.3",
     "oxfmt": "^0.72.0",
