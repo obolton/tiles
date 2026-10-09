@@ -4,7 +4,7 @@ import { createConnection } from "node:net";
 const DEV_COMMAND_PATTERN = "pnpm -r --parallel dev";
 
 export const LOG_FILE = "/tmp/tiles-dev.log";
-export const SERVICE_PORTS = [3000, 3001, 3002];
+export const SERVICE_PORTS = [3000, 3001, 3002, 3003];
 
 function isPortListening(port: number) {
   return new Promise<boolean>((resolve) => {
