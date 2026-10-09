@@ -26,6 +26,10 @@
       "label": "Uploads",
       "onAutoForward": "ignore"
     },
+    "3003": {
+      "label": "CDN",
+      "onAutoForward": "ignore"
+    },
     "6001": {
       "label": "Storybook",
       "onAutoForward": "ignore"
@@ -41,7 +45,6 @@
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",
     "WRANGLER_LOG": "info",
-    "CLOUDFLARE_INCLUDE_PROCESS_ENV": "true",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "NODE_USE_SYSTEM_CA": "1"
@@ -59,6 +62,7 @@
     "PUBLIC_COLLABORATION_URL": "wss://api.${localWorkspaceFolderBasename}.tiles.test/collaboration",
     "PUBLIC_WEB_ORIGIN": "https://${localWorkspaceFolderBasename}.tiles.test",
     "PUBLIC_UPLOAD_ORIGIN": "https://uploads.${localWorkspaceFolderBasename}.tiles.test",
+    "PUBLIC_IMAGES_BASE_URL": "https://cdn.${localWorkspaceFolderBasename}.tiles.test/images",
     "PUBLIC_SESSION_COOKIE_DOMAIN": ".${localWorkspaceFolderBasename}.tiles.test",
     "PLAYWRIGHT_HOST": "tiles-playwright",
     "APP_HOST": "${localWorkspaceFolderBasename}-app"
