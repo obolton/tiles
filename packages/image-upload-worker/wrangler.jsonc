@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-09-15",
   "compatibility_flags": ["nodejs_compat"],
+  "send_metrics": false,
   "observability": {
     "enabled": true,
   },
@@ -11,7 +12,6 @@
     {
       "binding": "IMAGES",
       "bucket_name": "tiles-dev-images",
-      "remote": true,
     },
   ],
   "dev": {
