@@ -91,6 +91,7 @@ describe("uploadImage", () => {
     await uploadImage(UPLOAD_PARAMS, createBody(), client, bucket);
 
     expect(bucket.put).toHaveBeenCalledWith("img-123", expect.any(ReadableStream), {
+      httpMetadata: { contentType: "image/png" },
       customMetadata: {
         workspace: "ws-123",
         user: "user-456",

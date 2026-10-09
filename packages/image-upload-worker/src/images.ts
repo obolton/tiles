@@ -7,6 +7,13 @@ export const IMAGE_TYPES: Record<string, ImageType> = {
   webp: "WEBP",
 };
 
+export const CONTENT_TYPES: Record<ImageType, string> = {
+  PNG: "image/png",
+  JPEG: "image/jpeg",
+  GIF: "image/gif",
+  WEBP: "image/webp",
+};
+
 /**
  * Parses a Content-Type header value into an ImageType.
  * Expects a MIME type like "image/png" or "image/jpeg".

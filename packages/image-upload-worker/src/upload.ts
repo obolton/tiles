@@ -1,7 +1,7 @@
 import { imageDimensionsFromStream } from "image-dimensions";
 import type { Client } from "./client";
 import { BadRequestError, UnsupportedMediaTypeError } from "./errors";
-import { IMAGE_TYPES } from "./images";
+import { CONTENT_TYPES, IMAGE_TYPES } from "./images";
 import type { UploadParams } from "./requests";
 
 export interface UploadResult {
@@ -42,6 +42,7 @@ export async function uploadImage(
     let dimensions: { width: number; height: number; type: string } | undefined;
     [object, dimensions] = await Promise.all([
       bucket.put(image.id, uploadStream, {
+        httpMetadata: { contentType: CONTENT_TYPES[type] },
         customMetadata: {
           workspace: image.workspaceId,
           user: image.userId,
