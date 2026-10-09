@@ -26,6 +26,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
     - `src/jsx`: JSX runtime
     - `src/utils`: Utilities
   - `image-upload-worker`: Cloudflare Worker for media uploads.
+  - `dev-cdn`: Dev-only Cloudflare Worker that serves uploaded media from the local R2 bucket.
 - Shared config files live in the repo root.
 
 ## Dependencies
@@ -73,6 +74,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - The `chrome-devtools` MCP server can be used to connect to a headless Chromium instance within the dev container (preferred).
 - The `chrome-devtools-host` MCP server can be used to connect to a Chrome instance on the host (started by the user) if the user needs visibility.
 - The app is served at `https://<workspace>.tiles.test`, where `<workspace>` is the workspace name.
+- Uploaded images are served from the local R2 bucket by the `dev-cdn` worker at `https://cdn.<workspace>.tiles.test`.
 - Run `pnpm dev:start` to start the dev server (it waits until the app is ready).
 - To sign in, navigate to `https://<workspace>.tiles.test/sign-in/test-user`, which authenticates as a test user. Do this once at the start of a browsing session.
 

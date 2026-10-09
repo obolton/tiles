@@ -5,6 +5,7 @@
 - `api`
 - `web`
 - `image-upload-worker`
+- `dev-cdn`
 
 ## Development
 
