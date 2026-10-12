@@ -19,6 +19,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Monorepo with packages in `packages/*`.
   - `api`: API server using Node with tRPC and Prisma.
   - `doc`: Document schema and utilities.
+  - `fonts`: Font registry, manifest and the script that syncs fonts to R2.
   - `web`: Web frontend using Vite, Web Components and a custom JSX runtime.
     - `src/elements`: Web Components
     - `src/components`: JSX components
@@ -26,7 +27,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
     - `src/jsx`: JSX runtime
     - `src/utils`: Utilities
   - `image-upload-worker`: Cloudflare Worker for media uploads.
-  - `dev-cdn`: Dev-only Cloudflare Worker that serves uploaded media from the local R2 bucket.
+  - `dev-cdn`: Dev-only Cloudflare Worker that serves uploaded media and fonts from the local R2 buckets.
 - Shared config files live in the repo root.
 
 ## Dependencies
@@ -50,6 +51,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - `pnpm dev:stop`: Stop the background dev server.
 - `pnpm dev:logs`: Print recent dev server output (only servers started with `dev:start` log there).
 - `pnpm generate`: Generate TypeScript types (e.g. for CSS Modules, Prisma client, Cloudflare workers).
+- `pnpm fonts:sync`: Sync fonts to R2.
 - `pnpm typecheck`: Check types.
 - `pnpm lint:compact`: Lint TypeScript and CSS files (with concise, LLM-friendly output).
 - `pnpm format`: Format files with oxfmt.
@@ -75,6 +77,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - The `chrome-devtools-host` MCP server can be used to connect to a Chrome instance on the host (started by the user) if the user needs visibility.
 - The app is served at `https://<workspace>.tiles.test`, where `<workspace>` is the workspace name.
 - Uploaded images are served from the local R2 bucket by the `dev-cdn` worker at `https://cdn.<workspace>.tiles.test`.
+- Fonts are served from the local R2 bucket by the `dev-cdn` worker at `https://cdn.<workspace>.tiles.test/fonts`.
 - Run `pnpm dev:start` to start the dev server (it waits until the app is ready).
 - To sign in, navigate to `https://<workspace>.tiles.test/sign-in/test-user`, which authenticates as a test user. Do this once at the start of a browsing session.
 

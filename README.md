@@ -4,6 +4,7 @@
 
 - `api`
 - `web`
+- `fonts`
 - `image-upload-worker`
 - `dev-cdn`
 
@@ -67,6 +68,7 @@ You can now run `pnpm` commands directly from the project root and they will be 
 - `pnpm dev`: Start the development servers.
 - `pnpm db:push`: Create the database schema.
 - `pnpm generate`: Generate types for all packages (e.g. Prisma client, Cloudflare workers).
+- `pnpm fonts:sync`: Sync fonts to R2.
 
 ### Dev containers
 
