@@ -1,6 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const PLAYWRIGHT_HOST = process.env.PLAYWRIGHT_HOST ?? "localhost";
+const WS_ENDPOINT = process.env.PLAYWRIGHT_WS_ENDPOINT;
 const APP_HOST = process.env.APP_HOST ?? "localhost";
 
 export default defineConfig({
@@ -12,9 +12,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: `http://${APP_HOST}:3000`,
-    connectOptions: {
-      wsEndpoint: `ws://${PLAYWRIGHT_HOST}:3100/`,
-    },
+    connectOptions: WS_ENDPOINT ? { wsEndpoint: WS_ENDPOINT } : undefined,
     trace: "on-first-retry",
   },
   projects: [
