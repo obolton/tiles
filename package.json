@@ -24,6 +24,7 @@
     "check": "node scripts/check.ts",
     "storybook": "pnpm --filter web storybook",
     "cdn:purge": "pnpm --filter api cdn:purge",
+    "fonts:sync": "pnpm --filter fonts sync",
     "typecheck": "tsc --build",
     "build": "pnpm -r --if-present build",
     "format": "oxfmt",

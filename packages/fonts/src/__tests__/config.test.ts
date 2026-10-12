@@ -10,7 +10,7 @@ import {
   DEFAULT_CODE_FONT,
   getFontConfig,
   type FontId,
-} from "../fonts";
+} from "../config";
 
 describe("FontsSchema", () => {
   test("accepts the registry as parsed", () => {

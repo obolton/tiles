@@ -3,7 +3,7 @@ import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
 import type { Theme as ThemeData } from "api/routes/themes/fields";
 import type { Color } from "@/utils/color";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 
 export type { ThemeData };
 

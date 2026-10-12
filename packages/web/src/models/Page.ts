@@ -17,7 +17,7 @@ import type { Reactive, ReactiveArray } from "@/utils/reactivity";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import type { Color } from "@/utils/color";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 import type { PageAccess } from "@/types/collaboration";
 import type { Awareness } from "@/collaboration/types";
 import type { DockEdge, HorizontalAlignment } from "doc/types/enums";

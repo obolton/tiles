@@ -11,7 +11,7 @@ import {
 } from "./helpers";
 import { schema, type TextAlignment } from "./schema";
 import type { EditorState } from "prosemirror-state";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 
 export type { TextAlignment };
 

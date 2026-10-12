@@ -11,7 +11,7 @@ import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { getPageBodyStyle } from "@/utils/themes";
 import { initializeDoc } from "@/collaboration/doc";
 import { notFound, redirect } from "@/router/responses";
-import { DEFAULT_FONT } from "api/config/fonts";
+import { DEFAULT_FONT } from "fonts/config";
 import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
 async function loader({

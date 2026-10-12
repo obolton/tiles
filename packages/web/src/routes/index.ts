@@ -5,7 +5,7 @@ import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
-import { DEFAULT_FONT } from "api/config/fonts";
+import { DEFAULT_FONT } from "fonts/config";
 import { getPageBodyStyle } from "@/utils/themes";
 import { initializeDoc } from "@/collaboration/doc";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";

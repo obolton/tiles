@@ -19,7 +19,6 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "cdn:purge": "tsx --env-file=\"../../../.env\" scripts/purge-cdn.ts",
-    "fonts:sync": "tsx --env-file=\"../../../.env\" scripts/sync-fonts.ts",
     "typecheck": "tsc --build"
   },
   "dependencies": {
@@ -45,10 +44,8 @@
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/node": "^24.10.1",
-    "@types/subset-font": "^2.3.0",
     "esbuild": "^0.28.1",
     "prisma": "^7.9.0",
-    "subset-font": "^2.5.0",
     "tsx": "^4.22.4"
   },
   "engines": {

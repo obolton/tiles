@@ -1,4 +1,4 @@
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 import { TextFormat, ListType, TextAlignment } from "doc/types/richText";
 
 export { TextFormat, ListType, TextAlignment };

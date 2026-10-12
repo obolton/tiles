@@ -16,7 +16,6 @@ const SAMPLE_FONT = {
 };
 
 const SAMPLE_MANIFEST = {
-  syncedAt: "2026-05-04T12:00:00.000Z",
   fonts: { inter: SAMPLE_FONT },
 };
 

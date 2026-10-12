@@ -1,6 +1,6 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
-import { FONTS, FONT_IDS, type FontId } from "api/config/fonts";
+import { FONTS, FONT_IDS, type FontId } from "fonts/config";
 import FontIcon from "@/icons/font.svg?jsx";
 import { loadFontPreviews } from "@/utils/fonts";
 import { handleError } from "@/utils/errors";

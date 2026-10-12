@@ -90,7 +90,7 @@ import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { TextAlignment } from "@/utils/richText/format";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 
 const DateTimeModalLoader = () => import("@/components/modals/DateTimeModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");

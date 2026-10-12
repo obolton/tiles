@@ -29,7 +29,6 @@ export const ManifestFontSchema = z.strictObject({
 export type ManifestFont = z.infer<typeof ManifestFontSchema>;
 
 export const FontsManifestSchema = z.strictObject({
-  syncedAt: z.string(),
   fonts: z.record(z.string(), ManifestFontSchema),
 });
 export type FontsManifest = z.infer<typeof FontsManifestSchema>;

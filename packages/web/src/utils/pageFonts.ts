@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { DEFAULT_FONT, type FontId } from "api/config/fonts";
+import { DEFAULT_FONT, type FontId } from "fonts/config";
 import { getFontPreload } from "@/utils/fonts";
 import { getPageTheme, getPageFont } from "@/utils/themes";
 import { getRichTextFonts, getFragmentFonts } from "@/utils/richText/fonts";

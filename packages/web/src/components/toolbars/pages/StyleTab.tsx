@@ -13,7 +13,7 @@ import { viewTransition } from "@/utils/transitions";
 import { toCSSColor, type Color } from "@/utils/color";
 import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
 import { loadFonts } from "@/utils/fonts";
-import { getFontConfig, type FontId } from "api/config/fonts";
+import { getFontConfig, type FontId } from "fonts/config";
 import type { HorizontalAlignment } from "doc/types/enums";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";

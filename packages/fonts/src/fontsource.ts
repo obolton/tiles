@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { FontStyle } from "@/fonts/manifest";
+import type { FontStyle } from "./manifest";
 
 const FONTSOURCE_API = "https://api.fontsource.org/v1";
 const FONTSOURCE_CDN = "https://cdn.jsdelivr.net/fontsource/fonts";

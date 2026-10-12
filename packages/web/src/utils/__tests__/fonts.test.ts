@@ -8,7 +8,7 @@ import {
   loadFonts,
 } from "../fonts";
 import type FontFace from "@/test/mocks/FontFace";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 
 function getAddedFaces(): FontFace[] {
   return vi.mocked(document.fonts.add).mock.calls.map(([face]) => face as unknown as FontFace);

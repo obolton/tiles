@@ -1,4 +1,4 @@
-import { DEFAULT_FONT } from "api/config/fonts";
+import { DEFAULT_FONT } from "fonts/config";
 import { generateFontFaceCSS } from "@/utils/fonts";
 import type { RouteMetadata } from "@/router/router";
 

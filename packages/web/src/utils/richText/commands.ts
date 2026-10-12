@@ -8,7 +8,7 @@ import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
 import type { PromptMeta } from "./prompt";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import type { FontId } from "api/config/fonts";
+import type { FontId } from "fonts/config";
 
 export function addMark(mark: Mark): Command {
   return function (state, dispatch) {

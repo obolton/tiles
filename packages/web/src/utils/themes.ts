@@ -3,7 +3,7 @@ import ThemeModel from "@/models/Theme";
 import { parseParentId } from "@/models/parentId";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
-import { getFontConfig, type FontConfig, type FontId } from "api/config/fonts";
+import { getFontConfig, type FontConfig, type FontId } from "fonts/config";
 import { themesCache } from "@/utils/cache";
 import { loadFonts } from "@/utils/fonts";
 import type { Theme } from "api/types/themes";

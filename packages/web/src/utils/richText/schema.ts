@@ -9,7 +9,7 @@ import {
 } from "@/constants/formatting";
 import { toCSSColor, COLOR_HEX_REGEX } from "@/utils/color";
 import { serializeStyles } from "@/jsx/attributes";
-import { FONT_IDS, getFontConfig, type FontId } from "api/config/fonts";
+import { FONT_IDS, getFontConfig, type FontId } from "fonts/config";
 import type { AttributeSpec, NodeSpec, MarkSpec, DOMOutputSpec } from "prosemirror-model";
 
 const DOMOutput = {

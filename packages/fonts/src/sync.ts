@@ -1,8 +1,8 @@
 import subsetFont from "subset-font";
-import { FONTS_BUCKET, objectExists, upload } from "@/utils/storage";
-import type { FontConfig } from "@/config/fonts";
-import { FontStyleSchema } from "@/fonts/manifest";
-import type { FontsManifest, FontStyle, FontVariant, ManifestFont } from "@/fonts/manifest";
+import type { FontConfig } from "./config";
+import { FontStyleSchema } from "./manifest";
+import type { FontsManifest, FontStyle, FontVariant, ManifestFont } from "./manifest";
+import type { FontBucket } from "./storage";
 import {
   getFontUrl,
   fetchFontMetadata,
@@ -13,8 +13,10 @@ import {
 
 const SUBSET = "latin";
 const STYLES = FontStyleSchema.options;
-const WOFF2_CONTENT_TYPE = "font/woff2";
-const WOFF2_CACHE_CONTROL = "public, max-age=31536000, immutable";
+const WOFF2_METADATA = {
+  contentType: "font/woff2",
+  cacheControl: "public, max-age=31536000, immutable",
+};
 
 interface VariantResult {
   file: FontVariant;
@@ -48,32 +50,45 @@ function getPreviewPath(fontId: string): string {
   return `${fontId}/${fontId}-preview.woff2`;
 }
 
-async function syncFile(path: string, url: string): Promise<boolean> {
-  if (await objectExists(FONTS_BUCKET, path)) {
-    return false;
-  }
+async function objectExists(bucket: FontBucket, path: string): Promise<boolean> {
+  return (await bucket.head(path)) !== null;
+}
 
+async function fetchBytes(url: string): Promise<ArrayBuffer> {
   const response = await fetch(url);
 
-  if (!response.ok || !response.body) {
+  if (!response.ok) {
     throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
   }
 
-  await upload(FONTS_BUCKET, path, response.body, WOFF2_CONTENT_TYPE, WOFF2_CACHE_CONTROL);
+  return response.arrayBuffer();
+}
+
+async function syncFile(bucket: FontBucket, path: string, url: string): Promise<boolean> {
+  if (await objectExists(bucket, path)) {
+    return false;
+  }
+
+  await bucket.put(path, await fetchBytes(url), { httpMetadata: WOFF2_METADATA });
 
   return true;
 }
 
-async function syncVariant(fontId: string, variant: FontVariant): Promise<VariantResult> {
+async function syncVariant(
+  bucket: FontBucket,
+  fontId: string,
+  variant: FontVariant,
+): Promise<VariantResult> {
   const slug = typeof variant.weight === "number" ? variant.weight : "wght";
   const url = getFontUrl(fontId, variant.subset, slug, variant.style);
   return {
     file: variant,
-    uploaded: await syncFile(variant.path, url),
+    uploaded: await syncFile(bucket, variant.path, url),
   };
 }
 
 async function collectStaticVariants(
+  bucket: FontBucket,
   font: FontConfig,
   meta: FontsourceFont,
 ): Promise<VariantResult[]> {
@@ -99,7 +114,9 @@ async function collectStaticVariants(
     }
   }
 
-  const variants = await Promise.all(targets.map((variant) => syncVariant(font.id, variant)));
+  const variants = await Promise.all(
+    targets.map((variant) => syncVariant(bucket, font.id, variant)),
+  );
 
   variants.sort((a, b) => {
     const aw = typeof a.file.weight === "number" ? a.file.weight : a.file.weight.min;
@@ -111,6 +128,7 @@ async function collectStaticVariants(
 }
 
 async function collectVariableVariants(
+  bucket: FontBucket,
   font: FontConfig,
   meta: FontsourceFont,
   weight: { min: number; max: number },
@@ -119,7 +137,7 @@ async function collectVariableVariants(
 
   const variants = await Promise.all(
     styles.map((style) =>
-      syncVariant(font.id, {
+      syncVariant(bucket, font.id, {
         weight,
         style,
         subset: SUBSET,
@@ -134,13 +152,14 @@ async function collectVariableVariants(
 }
 
 async function syncPreview(
+  bucket: FontBucket,
   font: FontConfig,
   meta: FontsourceFont,
   variable: FontsourceVariableFont | null,
 ): Promise<{ path: string; uploaded: boolean }> {
   const path = getPreviewPath(font.id);
 
-  if (await objectExists(FONTS_BUCKET, path)) {
+  if (await objectExists(bucket, path)) {
     return { path, uploaded: false };
   }
 
@@ -156,11 +175,7 @@ async function syncPreview(
     sourceUrl = getFontUrl(font.id, SUBSET, weight, "normal");
   }
 
-  const response = await fetch(sourceUrl);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
-  }
-  const fontBuffer = Buffer.from(await response.arrayBuffer());
+  const fontBuffer = Buffer.from(await fetchBytes(sourceUrl));
 
   const wght = variable?.axes.wght;
   const variationAxes = wght ? { wght: Number(wght.default) } : undefined;
@@ -170,12 +185,12 @@ async function syncPreview(
     variationAxes,
   });
 
-  await upload(FONTS_BUCKET, path, subsetBuffer, WOFF2_CONTENT_TYPE, WOFF2_CACHE_CONTROL);
+  await bucket.put(path, subsetBuffer, { httpMetadata: WOFF2_METADATA });
 
   return { path, uploaded: true };
 }
 
-async function syncFont(font: FontConfig): Promise<FontSyncResult> {
+async function syncFont(bucket: FontBucket, font: FontConfig): Promise<FontSyncResult> {
   const [meta, variable] = await Promise.all([
     fetchFontMetadata(font.id),
     fetchVariableFontMetadata(font.id),
@@ -184,12 +199,12 @@ async function syncFont(font: FontConfig): Promise<FontSyncResult> {
   const wght = variable?.axes.wght;
   const [variants, preview] = await Promise.all([
     wght
-      ? collectVariableVariants(font, meta, {
+      ? collectVariableVariants(bucket, font, meta, {
           min: Number(wght.min),
           max: Number(wght.max),
         })
-      : collectStaticVariants(font, meta),
-    syncPreview(font, meta, variable),
+      : collectStaticVariants(bucket, font, meta),
+    syncPreview(bucket, font, meta, variable),
   ]);
 
   const variantUploads = variants.filter((r) => r.uploaded).length;
@@ -216,13 +231,14 @@ export interface FontsSyncSummary {
 }
 
 export async function syncFonts(
+  bucket: FontBucket,
   fonts: readonly FontConfig[],
   onProgress?: (progress: FontProgress) => void,
 ): Promise<FontsSyncSummary> {
   const results: FontSyncResult[] = [];
 
   for (const font of fonts) {
-    const result = await syncFont(font);
+    const result = await syncFont(bucket, font);
     onProgress?.({
       id: result.id,
       files: result.font.files.length + 1,
@@ -233,7 +249,6 @@ export async function syncFonts(
   }
 
   const manifest: FontsManifest = {
-    syncedAt: new Date().toISOString(),
     fonts: Object.fromEntries(results.map((r) => [r.id, r.font])),
   };
 

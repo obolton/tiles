@@ -1,6 +1,6 @@
 import type { GradientDirection } from "@/generated/prisma/client";
 import type { BackgroundSchema } from "@/schema/Background";
-import type { FontId } from "@/config/fonts";
+import type { FontId } from "fonts/config";
 import { fromHex } from "./arrays";
 
 interface ThemeDefinition {

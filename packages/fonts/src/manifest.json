@@ -1,5 +1,4 @@
 {
-  "syncedAt": "2026-05-08T16:57:56.894Z",
   "fonts": {
     "bungee": {
       "family": "Bungee",
@@ -48,7 +47,7 @@
     },
     "eb-garamond": {
       "family": "EB Garamond",
-      "version": "v32",
+      "version": "v33",
       "files": [
         {
           "weight": {

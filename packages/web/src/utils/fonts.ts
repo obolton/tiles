@@ -1,6 +1,6 @@
-import manifestJson from "api/fonts/manifest.json" with { type: "json" };
-import { FontsManifestSchema, type ManifestWeight } from "api/fonts/manifest";
-import { getFontConfig, type FontId } from "api/config/fonts";
+import manifestJson from "fonts/manifest.json" with { type: "json" };
+import { FontsManifestSchema, type ManifestWeight } from "fonts/manifest";
+import { getFontConfig, type FontId } from "fonts/config";
 import type { Link, Style } from "@/router/router";
 
 const MANIFEST = FontsManifestSchema.parse(manifestJson);
