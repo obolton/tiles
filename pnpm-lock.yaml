@@ -261,8 +261,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       jose:
-        specifier: ^6.2.2
-        version: 6.2.2
+        specifier: ^6.2.12
+        version: 6.2.12
       maplibre-gl:
         specifier: ^6.13.0
         version: 6.13.0
@@ -3189,8 +3189,8 @@ packages:
     resolution: {integrity: sha512-OpKFkVr4hU5ivd1ZCjZfHvVpWekraJvcePcMusBmgBmCVQK5JiRCA+4TT1vAUTLqGD9MkhqFwO0l3QspvlZgzw==}
     engines: {node: '>=18.0.0'}
 
-  jose@6.2.2:
-    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
+  jose@6.2.12:
+    resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -6955,7 +6955,7 @@ snapshots:
     dependencies:
       fractional-indexing: 3.2.0
 
-  jose@6.2.2: {}
+  jose@6.2.12: {}
 
   js-tokens@10.0.0: {}
 
