@@ -18,7 +18,6 @@
     "generate": "prisma generate --no-hints",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:fix-workspace-admins": "tsx --env-file-if-exists=\"../../../.env\" scripts/fix-workspace-admins.ts",
     "cdn:purge": "tsx --env-file=\"../../../.env\" scripts/purge-cdn.ts",
     "typecheck": "tsc --build"
   },
