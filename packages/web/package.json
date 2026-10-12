@@ -55,7 +55,7 @@
     "fonts": "workspace:*",
     "jittered-fractional-indexing": "^1.0.1",
     "jose": "^6.2.2",
-    "maplibre-gl": "^5.24.0",
+    "maplibre-gl": "^6.13.0",
     "prosemirror-commands": "^1.7.2",
     "prosemirror-gapcursor": "^1.4.1",
     "prosemirror-inputrules": "^1.5.0",

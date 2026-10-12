@@ -1,4 +1,11 @@
-import maplibregl from "maplibre-gl";
+import {
+  LngLatBounds,
+  Map as MapLibreMap,
+  Marker,
+  NavigationControl,
+  setWorkerUrl,
+} from "maplibre-gl";
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import MapEvent from "./MapEvent";
 import css from "./MapView.css?inline";
 import type MapPoint from "./MapPoint";
@@ -6,6 +13,8 @@ import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
+
+setWorkerUrl(workerUrl);
 
 type MapStyleType = "DEFAULT" | "SATELLITE" | "WATERCOLOR" | "MONOCHROME";
 
@@ -49,8 +58,8 @@ export default class MapView extends HTMLElement {
   private root: HTMLElement;
   private intersectionObserver: IntersectionObserver;
   private mutationObserver: MutationObserver;
-  private map?: maplibregl.Map;
-  private markers = new Map<MapPoint, maplibregl.Marker>();
+  private map?: MapLibreMap;
+  private markers = new Map<MapPoint, Marker>();
   readonly selectedMarkerIds = new Set<string>();
 
   get selectedMarkers(): MapPoint[] {
@@ -151,7 +160,7 @@ export default class MapView extends HTMLElement {
       return undefined;
     }
 
-    const mapBounds = new maplibregl.LngLatBounds();
+    const mapBounds = new LngLatBounds();
     for (const point of points) {
       mapBounds.extend([point.long, point.lat]);
     }
@@ -170,7 +179,7 @@ export default class MapView extends HTMLElement {
     const slot = document.createElement("slot");
     element.appendChild(slot);
 
-    const marker = new maplibregl.Marker({
+    const marker = new Marker({
       element,
       offset: [0, 0],
       subpixelPositioning: true,
@@ -189,7 +198,7 @@ export default class MapView extends HTMLElement {
 
     const points = this.getPoints();
 
-    this.map = new maplibregl.Map({
+    this.map = new MapLibreMap({
       container: this.root,
       style: getStyleUrl(this.mapStyle),
       center: points.length === 1 ? [points[0]!.long, points[0]!.lat] : undefined,
@@ -198,7 +207,7 @@ export default class MapView extends HTMLElement {
       attributionControl: { compact: true },
       fitBoundsOptions: { padding: 32 },
     });
-    this.map.addControl(new maplibregl.NavigationControl(), "bottom-right");
+    this.map.addControl(new NavigationControl(), "bottom-right");
 
     if (this.hasAttribute("legend")) {
       this.showLegend();
