@@ -152,8 +152,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       image-dimensions:
-        specifier: ^2.5.0
-        version: 2.5.0
+        specifier: ^2.6.0
+        version: 2.6.0
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -3065,8 +3065,8 @@ packages:
     resolution: {integrity: sha512-/8UvqAPU9DGTI9k4mxtf49U37Isfwr8Uts96+SBHIkFxPJnHS0Ew4f00sM4Scd8V8EjM0jUNtVDdv1kPdt35lg==}
     engines: {node: '>= 4'}
 
-  image-dimensions@2.5.0:
-    resolution: {integrity: sha512-CKZPHjAEtSg9lBV9eER0bhNn/yrY7cFEQEhkwjLhqLY+Na8lcP1pEyWsaGMGc8t2qbKWA/tuqbhFQpOKGN72Yw==}
+  image-dimensions@2.6.0:
+    resolution: {integrity: sha512-j1cgVnvl0ltv7tYImMYMlrkYeDB43oSUiQv3zodkImsFbJWmJZ6M5e5N9k5/8zdMVjrtYzRbmcqTqpxvyh29vw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6803,7 +6803,7 @@ snapshots:
 
   ignore@7.0.12: {}
 
-  image-dimensions@2.5.0: {}
+  image-dimensions@2.6.0: {}
 
   import-fresh@3.3.1:
     dependencies:
