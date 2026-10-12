@@ -6,7 +6,8 @@ import type { Route, RequestProperties, RouteLoaderResult } from "@/router/route
 export function signedOutRoute(request: Request) {
   const sessionId = getSessionId(request.headers);
   if (sessionId) {
-    return redirect("/library", 302);
+    // The index route forwards signed-in users to their first workspace.
+    return redirect("/", 302);
   }
 }
 

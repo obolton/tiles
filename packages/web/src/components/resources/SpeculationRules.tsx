@@ -4,7 +4,7 @@ const SPECULATION_RULES = {
       where: {
         and: [
           {
-            href_matches: ["/", "/library", "/library/bookmarks", "/settings", "/pages/:id"],
+            href_matches: ["/", "/workspaces/*", "/pages/:id"],
           },
           {
             not: { selector_matches: '[target="_blank"]' },
