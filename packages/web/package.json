@@ -46,7 +46,7 @@
     "@hocuspocus/provider": "^4.3.0",
     "@lezer/highlight": "^1.2.5",
     "@observablehq/plot": "^0.6.17",
-    "@trpc/client": "^11.18.0",
+    "@trpc/client": "^11.19.0",
     "api": "workspace:*",
     "cookie": "^2.0.1",
     "culori": "^4.0.2",
