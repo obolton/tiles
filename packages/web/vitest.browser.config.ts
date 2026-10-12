@@ -4,15 +4,14 @@ import { defineConfig } from "vitest/config";
 
 const packageRoot = path.dirname(import.meta.filename);
 
-if (!process.env.APP_HOST || !process.env.PLAYWRIGHT_HOST) {
-  throw new Error("APP_HOST and PLAYWRIGHT_HOST must be set for browser tests");
-}
+const WS_ENDPOINT = process.env.PLAYWRIGHT_WS_ENDPOINT;
+const APP_HOST = process.env.APP_HOST ?? "localhost";
 
 export default defineConfig({
   root: import.meta.dirname,
   server: {
-    host: process.env.APP_HOST,
-    allowedHosts: [process.env.APP_HOST],
+    host: APP_HOST,
+    allowedHosts: [APP_HOST],
   },
   resolve: {
     alias: {
@@ -29,11 +28,7 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright({
-        connectOptions: {
-          wsEndpoint: `ws://${process.env.PLAYWRIGHT_HOST}:3100/`,
-        },
-      }),
+      provider: playwright(WS_ENDPOINT ? { connectOptions: { wsEndpoint: WS_ENDPOINT } } : {}),
       instances: [{ browser: "chromium" }],
     },
     coverage: {
