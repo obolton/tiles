@@ -54,8 +54,8 @@ importers:
         specifier: ^11.18.0
         version: 11.18.0(typescript@6.0.3)
       cloudflare:
-        specifier: ^7.0.0
-        version: 7.0.0
+        specifier: ^7.3.0
+        version: 7.3.0
       cookie:
         specifier: ^2.0.1
         version: 2.0.1
@@ -2512,8 +2512,8 @@ packages:
   classnames@2.5.1:
     resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
 
-  cloudflare@7.0.0:
-    resolution: {integrity: sha512-ZU8Yp1biaRRf+i1Hlap/VUwSBeKnOa4kkygIU9naE07JILnHdgLr9Wq/iPEeEf2in0N5m1giTp1ohY+cNQZEGQ==}
+  cloudflare@7.3.0:
+    resolution: {integrity: sha512-0P4cMFjzdIe388E57xNCV2wKzv1ZVZqMFu7+p2gsZuggbXs39xTKtXJN8FACkKh+xjLQ7dNruNlT/aT+9ajJtg==}
     hasBin: true
 
   color-convert@2.0.1:
@@ -6295,7 +6295,7 @@ snapshots:
 
   classnames@2.5.1: {}
 
-  cloudflare@7.0.0: {}
+  cloudflare@7.3.0: {}
 
   color-convert@2.0.1:
     dependencies:
