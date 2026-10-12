@@ -44,11 +44,12 @@
 
   "containerEnv": {
     "CHECKPOINT_DISABLE": "1",
-    "WRANGLER_LOG": "info",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "NODE_USE_SYSTEM_CA": "1",
-    "CHROME_PATH": "/usr/bin/chromium"
+    "CHROME_PATH": "/usr/bin/chromium",
+    "WRANGLER_LOG": "info",
+    "WRANGLER_SEND_METRICS": "false"
   },
 
   "remoteEnv": {
