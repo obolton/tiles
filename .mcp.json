@@ -3,7 +3,7 @@
     "chrome-devtools": {
       "command": "chrome-devtools-mcp",
       "args": [
-        "--executable-path=/usr/bin/chromium",
+        "--executable-path=${CHROME_PATH}",
         "--headless",
         "--isolated",
         "--chrome-arg=--no-sandbox",
