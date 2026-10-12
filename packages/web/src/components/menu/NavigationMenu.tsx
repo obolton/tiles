@@ -16,6 +16,17 @@ import type { User } from "@/utils/sessions";
 const CreateWorkspaceModalLoader = () =>
   import("@/components/modals/workspaces/CreateWorkspaceModal");
 
+function createWorkspace() {
+  showModal(CreateWorkspaceModalLoader, {
+    props: {},
+    async onConfirm({ name }) {
+      const { id } = await client.workspaces.create.mutate({ name });
+      await getUserInfo();
+      window.open(`/workspaces/${id}`, "_blank");
+    },
+  });
+}
+
 export interface NavigationMenuProps {
   user: User;
   workspaceId: string;
@@ -23,17 +34,6 @@ export interface NavigationMenuProps {
 
 export default function NavigationMenu({ user, workspaceId }: NavigationMenuProps) {
   const workspace = user.workspaces.find((w) => w.id === workspaceId);
-
-  function createWorkspace() {
-    showModal(CreateWorkspaceModalLoader, {
-      props: {},
-      async onConfirm({ name }) {
-        const { id } = await client.workspaces.create.mutate({ name });
-        await getUserInfo();
-        window.open(`/workspaces/${id}`, "_blank");
-      },
-    });
-  }
 
   return (
     <>
