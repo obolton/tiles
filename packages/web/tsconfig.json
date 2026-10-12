@@ -11,7 +11,7 @@
     "rootDir": "."
   },
   "include": ["./src/**/*", "./scripts/**/*"],
-  "references": [{ "path": "../api" }, { "path": "../doc" }],
+  "references": [{ "path": "../api" }, { "path": "../doc" }, { "path": "../fonts" }],
 
   "cmkOptions": {
     "enabled": true,

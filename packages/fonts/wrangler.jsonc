@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "fonts",
+  "compatibility_date": "2025-09-15",
+  "send_metrics": false,
+  "r2_buckets": [
+    {
+      "binding": "FONTS",
+      "bucket_name": "fonts",
+    },
+  ],
+  "env": {
+    "remote": {
+      "r2_buckets": [
+        {
+          "binding": "FONTS",
+          "bucket_name": "tiles-dev-fonts",
+          "remote": true,
+        },
+      ],
+    },
+  },
+}

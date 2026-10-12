@@ -52,6 +52,7 @@
     "culori": "^4.0.2",
     "doc": "workspace:*",
     "entities": "^8.0.0",
+    "fonts": "workspace:*",
     "jittered-fractional-indexing": "^1.0.1",
     "jose": "^6.2.2",
     "maplibre-gl": "^5.24.0",

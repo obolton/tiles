@@ -68,6 +68,9 @@ importers:
       doc:
         specifier: workspace:*
         version: link:../doc
+      fonts:
+        specifier: workspace:*
+        version: link:../fonts
       htmlparser2:
         specifier: ^12.0.0
         version: 12.0.0
@@ -90,18 +93,12 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.13.3
-      '@types/subset-font':
-        specifier: ^2.3.0
-        version: 2.3.0
       esbuild:
         specifier: ^0.28.1
         version: 0.28.2
       prisma:
         specifier: ^7.9.0
         version: 7.9.0(@types/react@19.2.17)(magicast@0.5.5)(typescript@6.0.3)
-      subset-font:
-        specifier: ^2.5.0
-        version: 2.5.0
       tsx:
         specifier: ^4.22.4
         version: 4.22.4
@@ -120,6 +117,28 @@ importers:
       yjs:
         specifier: ^13.6.30
         version: 13.6.30
+
+  packages/fonts:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.13.3
+      '@types/subset-font':
+        specifier: ^2.3.0
+        version: 2.3.0
+      subset-font:
+        specifier: ^2.5.0
+        version: 2.5.0
+      tsx:
+        specifier: ^4.22.4
+        version: 4.22.4
+      wrangler:
+        specifier: ^4.148.0
+        version: 4.148.0(@types/node@24.13.3)
 
   packages/image-upload-worker:
     dependencies:
@@ -235,6 +254,9 @@ importers:
       entities:
         specifier: ^8.0.0
         version: 8.0.0
+      fonts:
+        specifier: workspace:*
+        version: link:../fonts
       jittered-fractional-indexing:
         specifier: ^1.0.1
         version: 1.0.1
@@ -4007,10 +4029,6 @@ packages:
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
-  undici@7.28.0:
-    resolution: {integrity: sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.29.1:
     resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
     engines: {node: '>=20.18.1'}
@@ -6963,7 +6981,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.1
-      undici: 7.28.0
+      undici: 7.29.1
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -7862,8 +7880,6 @@ snapshots:
   typescript@6.0.3: {}
 
   undici-types@7.18.2: {}
-
-  undici@7.28.0: {}
 
   undici@7.29.1: {}
 
