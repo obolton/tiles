@@ -47,6 +47,7 @@ async function seed() {
               id: SEED_WORKSPACE_ID,
             },
           },
+          role: "ADMIN",
         },
       },
       pages: {
@@ -63,6 +64,12 @@ async function seed() {
         },
       },
     },
+  });
+  // Existing databases may have been seeded before the membership was created as an admin.
+  await prisma.workspaceMembership.upsert({
+    where: { id: { workspaceId: SEED_WORKSPACE_ID, userId: SEED_USER_ID } },
+    update: { role: "ADMIN" },
+    create: { workspaceId: SEED_WORKSPACE_ID, userId: SEED_USER_ID, role: "ADMIN" },
   });
   console.log("Created seed data.");
 }

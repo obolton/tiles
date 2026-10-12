@@ -119,6 +119,23 @@ describe("signIn", () => {
       );
     });
 
+    it("should make the new user an admin of their workspace", async () => {
+      await signIn(validInput);
+
+      expect(prisma.workspace.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            memberships: {
+              create: {
+                userId: "new-user-id",
+                role: "ADMIN",
+              },
+            },
+          }),
+        }),
+      );
+    });
+
     it("should create an authentication key for new user", async () => {
       await signIn(validInput);
 

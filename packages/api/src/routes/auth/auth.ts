@@ -50,6 +50,7 @@ export async function signIn({
           memberships: {
             create: {
               userId: user.id,
+              role: "ADMIN",
             },
           },
           themes: {
