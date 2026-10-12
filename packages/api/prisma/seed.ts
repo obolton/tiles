@@ -47,6 +47,7 @@ async function seed() {
               id: SEED_WORKSPACE_ID,
             },
           },
+          role: "ADMIN",
         },
       },
       pages: {
