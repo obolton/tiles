@@ -51,7 +51,7 @@
     "cookie": "^2.0.1",
     "culori": "^4.0.2",
     "doc": "workspace:*",
-    "entities": "^8.0.0",
+    "entities": "^8.1.0",
     "fonts": "workspace:*",
     "jittered-fractional-indexing": "^1.0.1",
     "jose": "^6.2.2",
