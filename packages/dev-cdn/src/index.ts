@@ -2,6 +2,8 @@ function getBucket(env: Env, name: string): R2Bucket | undefined {
   switch (name) {
     case "images":
       return env.IMAGES;
+    case "fonts":
+      return env.FONTS;
     default:
       return undefined;
   }
@@ -28,6 +30,7 @@ export default {
     const headers = new Headers();
     object.writeHttpMetadata(headers);
     headers.set("ETag", object.httpEtag);
+    headers.set("Access-Control-Allow-Origin", "*");
 
     if (!("body" in object)) {
       return new Response(null, { status: 304, headers });

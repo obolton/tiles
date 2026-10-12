@@ -9,6 +9,10 @@
       "binding": "IMAGES",
       "bucket_name": "tiles-dev-images",
     },
+    {
+      "binding": "FONTS",
+      "bucket_name": "fonts",
+    },
   ],
   "dev": {
     "ip": "0.0.0.0",

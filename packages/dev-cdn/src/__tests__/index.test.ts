@@ -1,29 +1,33 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import handler from "../index";
 
 const get = vi.fn();
+const getFont = vi.fn();
 
-const bucket: R2Bucket = {
-  get,
-  put: vi.fn(),
-  delete: vi.fn(),
-  head: vi.fn(),
-  list: vi.fn(),
-  createMultipartUpload: vi.fn(),
-  resumeMultipartUpload: vi.fn(),
-};
+function createBucket(get: Mock): R2Bucket {
+  return {
+    get,
+    put: vi.fn(),
+    delete: vi.fn(),
+    head: vi.fn(),
+    list: vi.fn(),
+    createMultipartUpload: vi.fn(),
+    resumeMultipartUpload: vi.fn(),
+  };
+}
 
-const env = { IMAGES: bucket } as Env;
+const env = { IMAGES: createBucket(get), FONTS: createBucket(getFont) } as Env;
 
 const ORIGIN = "https://cdn.example.com";
 const IMAGE_URL = `${ORIGIN}/images/abc`;
+const FONT_URL = `${ORIGIN}/fonts/inter/inter-preview.woff2`;
 const ETAG = '"abc123"';
 
-function createObject(body?: string) {
+function createObject(body?: string, contentType = "image/png") {
   return {
     httpEtag: ETAG,
     writeHttpMetadata: vi.fn((headers: Headers) => {
-      headers.set("Content-Type", "image/png");
+      headers.set("Content-Type", contentType);
     }),
     ...(body === undefined ? {} : { body: new Blob([body]).stream() }),
   };
@@ -33,6 +37,7 @@ describe("fetch handler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     get.mockResolvedValue(createObject("image-bytes"));
+    getFont.mockResolvedValue(createObject("font-bytes", "font/woff2"));
   });
 
   test("rejects methods other than GET and HEAD", async () => {
@@ -48,6 +53,7 @@ describe("fetch handler", () => {
 
     expect(response.status).toBe(404);
     expect(get).not.toHaveBeenCalled();
+    expect(getFont).not.toHaveBeenCalled();
   });
 
   test.each(["/", "/images", "/images/"])("returns 404 for a missing key (%s)", async (path) => {
@@ -73,6 +79,22 @@ describe("fetch handler", () => {
     expect(response.headers.get("Content-Type")).toBe("image/png");
     expect(response.headers.get("ETag")).toBe(ETAG);
     await expect(response.text()).resolves.toBe("image-bytes");
+  });
+
+  test("serves fonts from the fonts bucket", async () => {
+    const response = await handler.fetch(new Request(FONT_URL), env);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Content-Type")).toBe("font/woff2");
+    expect(getFont).toHaveBeenCalledWith("inter/inter-preview.woff2", expect.anything());
+    expect(get).not.toHaveBeenCalled();
+    await expect(response.text()).resolves.toBe("font-bytes");
+  });
+
+  test("allows cross-origin requests", async () => {
+    const response = await handler.fetch(new Request(FONT_URL), env);
+
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
   });
 
   test("ignores query parameters", async () => {
@@ -105,6 +127,7 @@ describe("fetch handler", () => {
 
     expect(response.status).toBe(304);
     expect(response.headers.get("ETag")).toBe(ETAG);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
     expect(response.body).toBeNull();
   });
 
