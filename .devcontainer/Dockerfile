@@ -23,7 +23,7 @@ RUN npm install -g pnpm@11.14.0
 # Tools for agents
 RUN npm install -g \
     typescript-language-server@5.3.0 \
-    chrome-devtools-mcp@1.6.0
+    chrome-devtools-mcp@1.10.1
 
 # Set Zsh as the default shell
 RUN chsh -s /bin/zsh node \
