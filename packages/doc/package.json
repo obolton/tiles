@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "jittered-fractional-indexing": "^1.0.1",
-    "yjs": "^13.6.30"
+    "yjs": "^13.6.33"
   }
 }

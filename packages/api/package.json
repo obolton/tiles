@@ -38,7 +38,7 @@
     "htmlparser2": "^12.0.0",
     "openai": "6.32.0",
     "y-protocols": "^1.0.7",
-    "yjs": "^13.6.30",
+    "yjs": "^13.6.33",
     "zod": "^4.4.3"
   },
   "devDependencies": {
