@@ -1,7 +1,6 @@
 import { getRouter } from "./routes";
-import { escapeUTF8 } from "entities";
 import { renderToString } from "@/jsx/server";
-import { tag, escapeTagContents } from "@/utils/html";
+import { renderHead } from "./head";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
 import { internalError, notFound } from "@/router/responses";
@@ -48,66 +47,6 @@ function getLinks(resources: LinkResource[]) {
     const crossoriginAttr = crossorigin ? "; crossorigin" : "";
     return `<${href}>; rel=preload; as=${type}${crossoriginAttr}`;
   });
-}
-
-interface PageStartChunkOptions {
-  stylesheets: string[];
-  metadata: RouteMetadata;
-  title?: string;
-  hydrate?: "immediate" | "deferred" | null;
-}
-
-function getPageStartChunk({ stylesheets, metadata, title, hydrate }: PageStartChunkOptions) {
-  let chunk = "<!doctype html><html><head>";
-  chunk += tag("meta", { charset: "utf-8" });
-
-  for (const stylesheet of stylesheets) {
-    chunk += tag("link", { rel: "stylesheet", href: stylesheet });
-  }
-
-  if (metadata.links) {
-    for (const link of metadata.links) {
-      chunk += tag("link", {
-        rel: link.rel,
-        href: link.href,
-        as: link.as,
-        type: link.type,
-        crossorigin: link.crossorigin,
-      });
-    }
-  }
-
-  if (metadata.styles) {
-    for (const style of metadata.styles) {
-      chunk += tag("style", {}, escapeTagContents(style.content));
-    }
-  }
-
-  if (metadata.scripts) {
-    for (const script of metadata.scripts) {
-      chunk += tag("script", {
-        type: "module",
-        src: resolveImport(script.src),
-      });
-    }
-  }
-
-  if (hydrate === "immediate") {
-    chunk += tag("script", {
-      type: "module",
-      src: resolveImport("/src/server/hydrate.ts"),
-    });
-  }
-
-  if (import.meta.env.DEV) {
-    chunk += tag("script", { type: "module", src: "/@vite/client" });
-  }
-
-  if (title) {
-    chunk += tag("title", {}, escapeUTF8(title));
-  }
-  chunk += "</head>";
-  return chunk;
 }
 
 function mergeRouteMetadata(...metadata: RouteMetadata[]) {
@@ -225,10 +164,14 @@ async function renderRoute(
   const links = getLinks(resources);
 
   const body =
-    getPageStartChunk({
+    '<!doctype html><html lang="en">' +
+    renderHead({
+      url,
       stylesheets,
       metadata: mergedMetadata,
       title: loaderResult?.title,
+      description: loaderResult?.description,
+      image: loaderResult?.image,
       hydrate,
     }) +
     renderToString(

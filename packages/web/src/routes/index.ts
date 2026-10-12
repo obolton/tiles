@@ -7,6 +7,7 @@ import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { DEFAULT_FONT } from "fonts/config";
 import { getPageBodyStyle } from "@/utils/themes";
+import { SITE_DESCRIPTION } from "@/constants/site";
 import { initializeDoc } from "@/collaboration/doc";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
@@ -53,6 +54,7 @@ async function loader(): RouteLoaderResult<PageProps> {
   return {
     headers: { "Cache-Control": CACHE_CONTROL_VALUE },
     title: page.title,
+    description: SITE_DESCRIPTION,
     bodyAttributes: {
       "data-page-id": page.id,
       style,

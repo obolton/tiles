@@ -70,6 +70,13 @@ describe("pages/[id] loader", () => {
     expect(result.headers).toEqual({ "Cache-Control": CACHE_CONTROL_VALUE });
   });
 
+  test("sets the title and description for link previews", async () => {
+    const result = unwrapData(await runLoader());
+
+    expect(result.title).toBe(`${PAGE.title} - Tiles`);
+    expect(result.description).toBe("A page by Test User, created with Tiles.");
+  });
+
   test("returns the version document for ?version=", async () => {
     getVersion.mockResolvedValue({ ...NAMED_VERSION, document: VERSION_DOCUMENT });
 
