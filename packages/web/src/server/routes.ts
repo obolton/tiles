@@ -1,7 +1,7 @@
 import Router from "@/router/router";
 import type { RouteImporter } from "@/router/router";
 
-// Test files live alongside routes in `__tests__`, so exclude them from the route tree and the bundle.
+// Exclude test files
 const routeModules = import.meta.glob(["@/routes/**/*.ts", "!**/__tests__/**", "!**/*.test.ts"], {
   import: "default",
 });
