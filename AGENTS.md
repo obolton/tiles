@@ -37,10 +37,10 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ## Workflow
 
-- After making changes, run the check script (`pnpm check`) to check types, linting, formatting and run unit tests.
-- Fix any failures reported and re-run until it passes.
+- After making changes, run the check script (`pnpm check`) to check types, linting, formatting and run the tests.
+- Fix any failures reported and re-run until the checks pass.
 - Formatting failures can be auto-fixed with `pnpm format`.
-- Run `pnpm generate` to generate updated types after changing the Prisma schema, CSS Modules, or Worker bindings.
+- Run `pnpm generate` to generate types after changing the Prisma schema, CSS Modules, or Worker bindings.
 - To run the app and verify changes in a browser, use the `run-app` skill.
 
 ## Scripts
@@ -51,11 +51,11 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - `pnpm generate`: Generate TypeScript types (e.g. for CSS Modules, Prisma client, Cloudflare workers).
 - `pnpm fonts:sync`: Sync fonts to R2.
 - `pnpm typecheck`: Check types.
-- `pnpm lint:compact`: Lint TypeScript and CSS files (with concise, LLM-friendly output).
+- `pnpm lint:compact`: Lint TypeScript and CSS files (compact output).
 - `pnpm format`: Format files with oxfmt.
 - `pnpm format:check`: Check formatting without writing changes.
-- `pnpm test:compact`: Run unit tests with Vitest (with concise, LLM-friendly output).
-- `pnpm build`: Build all packages in dependency order.
+- `pnpm test:compact`: Run unit tests with Vitest (compact output).
+- `pnpm build`: Build all packages.
 - `pnpm storybook`: Run Storybook for UI component development.
 
 ### Testing tiers
@@ -66,22 +66,22 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 ### Important notes
 
-- Typecheck, lint and format scripts are fast and can be run across the whole workspace. Avoid scoping scripts to packages unless specifically needed.
-- Scripts can be scoped to a package using `pnpm --filter <package>`, e.g. `pnpm --filter api typecheck` to typecheck the `api` package only.
+- Check scripts (typecheck, lint, test and format) are fast, and can be run across the whole monorepo. Avoid scoping scripts to packages unless specifically needed.
+- Scripts can be scoped using `pnpm --filter <package>`, e.g. `pnpm --filter api typecheck` to typecheck the `api` package only.
 
 ## Coding Style
 
 ### General
 
 - Use TypeScript with ES modules and two-space indentation.
-- Comments should be terse and used sparingly to explain subtle behavior or constraints, not simply describing what code is doing.
+- Comments should be terse and used sparingly, only if needed to explain subtle behavior or constraints, not simply to describe what code is doing or how it has been changed.
 - Use the `@/*` path alias that resolves to each package's `src` directory and avoid relative `../../` imports.
 - Avoid type assertions (e.g. the `!` operator and `as type`) in favor of more type-safe options where possible.
 
 ### CSS
 
 - Use CSS Modules for component-specific styles, with a `.module.css` file adjacent to the JSX component file.
-- Use shared class names and nested rules to reduce duplication in CSS files.
+- Use modern CSS features, shared class names and nested rules to reduce repetition in CSS files.
 
 ## Testing Guidelines
 
