@@ -65,8 +65,11 @@ export const authenticatedPageProcedure = authenticatedProcedure
   });
 
 export const pageUpdateProcedure = authenticatedPageProcedure.use(async ({ next, ctx }) => {
+  // next() resolves with `ok: false` rather than throwing when the procedure fails.
   const result = await next();
-  invalidateCachedPages([ctx.pageId]);
+  if (result.ok) {
+    invalidateCachedPages([ctx.pageId]);
+  }
   return result;
 });
 
