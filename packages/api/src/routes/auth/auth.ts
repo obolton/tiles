@@ -1,11 +1,11 @@
-import prisma from "@/database/prisma.ts";
-import { createUser } from "../users/users.ts";
-import { createKey, getUserIdByProviderId } from "./keys.ts";
-import { createSession, deleteSession } from "./sessions.ts";
-import { sendEmail } from "@/utils/email.ts";
-import { signUpEmail } from "@/emails/signUp.ts";
-import { getDefaultThemesData } from "@/utils/themes.ts";
-import type { SignInSchema } from "./schema.ts";
+import prisma from "@/database/prisma";
+import { createUser } from "../users/users";
+import { createKey, getUserIdByProviderId } from "./keys";
+import { createSession, deleteSession } from "./sessions";
+import { sendEmail } from "@/utils/email";
+import { signUpEmail } from "@/emails/signUp";
+import { getDefaultThemesData } from "@/utils/themes";
+import type { SignInSchema } from "./schema";
 
 type SendWelcomeEmailOptions = {
   userId: string;

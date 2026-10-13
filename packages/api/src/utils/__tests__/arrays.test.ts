@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { toHex, fromHex } from "../arrays.ts";
+import { toHex, fromHex } from "../arrays";
 
 describe("toHex", () => {
   test("converts bytes to hex string", () => {

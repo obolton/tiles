@@ -1,11 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { getSessionContext } from "@/routes/users/users.ts";
-import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
-import { createContext } from "@/utils/trpc.ts";
-import { createRequest, createResponse } from "@/test/mocks/http.ts";
+import { getSessionContext } from "@/routes/users/users";
+import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { createContext } from "@/utils/trpc";
+import { createRequest, createResponse } from "@/test/mocks/http";
 import type { IncomingMessage } from "node:http";
 
-vi.mock("@/routes/users/users.ts", () => ({
+vi.mock("@/routes/users/users", () => ({
   getSessionContext: vi.fn(),
 }));
 
@@ -128,7 +128,7 @@ describe("SERVICE_API_TOKEN", () => {
     vi.resetModules();
     vi.stubEnv("SERVICE_API_TOKEN", "");
 
-    await expect(import("@/utils/trpc.ts")).rejects.toThrow("SERVICE_API_TOKEN is not defined");
+    await expect(import("@/utils/trpc")).rejects.toThrow("SERVICE_API_TOKEN is not defined");
 
     vi.unstubAllEnvs();
   });

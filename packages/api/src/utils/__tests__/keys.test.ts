@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import crypto from "node:crypto";
-import { createKey } from "../keys.ts";
+import { createKey } from "../keys";
 
 describe("createKey", () => {
   test("creates a valid base64url string with the expected length", async () => {

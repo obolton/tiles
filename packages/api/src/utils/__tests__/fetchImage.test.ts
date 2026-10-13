@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
-import { fetchImage } from "../fetchImage.ts";
+import { fetchImage } from "../fetchImage";
 
 vi.mock("@/utils/storage", () => ({
   upload: vi.fn(),

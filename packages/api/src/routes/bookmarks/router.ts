@@ -1,12 +1,12 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedProcedure, authenticatedPageProcedure } from "@/utils/middleware.ts";
-import { createBookmark, deleteBookmarks, listBookmarks, isBookmarked } from "./bookmarks.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedProcedure, authenticatedPageProcedure } from "@/utils/middleware";
+import { createBookmark, deleteBookmarks, listBookmarks, isBookmarked } from "./bookmarks";
 import {
   CreateBookmarkSchema,
   DeleteBookmarkSchema,
   ListBookmarksSchema,
   IsBookmarkedSchema,
-} from "./schema.ts";
+} from "./schema";
 
 export default router({
   list: authenticatedProcedure

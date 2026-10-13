@@ -1,17 +1,17 @@
-import { router } from "@/utils/trpc.ts";
-import auth from "./auth/router.ts";
-import pages from "./pages/router.ts";
-import media from "./media/router.ts";
-import users from "./users/router.ts";
-import places from "./places/router.ts";
-import themes from "./themes/router.ts";
-import externalLinks from "./links/router.ts";
-import bookmarks from "./bookmarks/router.ts";
-import ai from "./ai/router.ts";
-import collaboration from "./collaboration/router.ts";
-import folders from "./folders/router.ts";
-import workspaces from "./workspaces/router.ts";
-import versions from "./versions/router.ts";
+import { router } from "@/utils/trpc";
+import auth from "./auth/router";
+import pages from "./pages/router";
+import media from "./media/router";
+import users from "./users/router";
+import places from "./places/router";
+import themes from "./themes/router";
+import externalLinks from "./links/router";
+import bookmarks from "./bookmarks/router";
+import ai from "./ai/router";
+import collaboration from "./collaboration/router";
+import folders from "./folders/router";
+import workspaces from "./workspaces/router";
+import versions from "./versions/router";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({

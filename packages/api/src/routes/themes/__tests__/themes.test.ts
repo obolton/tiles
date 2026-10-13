@@ -1,11 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import { fromHex } from "@/utils/arrays";
-import { listThemes, createTheme, updateTheme, deleteTheme } from "../themes.ts";
+import { listThemes, createTheme, updateTheme, deleteTheme } from "../themes";
 import { THEME_FIELDS, type Theme } from "../fields";
 import type { CreateThemeSchema } from "../schema";
-import type { CreateQuery, FindManyQuery, UpdateQuery, DeleteQuery } from "@/test/prisma.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import type { CreateQuery, FindManyQuery, UpdateQuery, DeleteQuery } from "@/test/prisma";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 
 const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],

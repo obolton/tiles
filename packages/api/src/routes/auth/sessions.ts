@@ -1,5 +1,5 @@
-import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
-import { createKey } from "@/utils/keys.ts";
+import prisma, { type PrismaTransactionClient } from "@/database/prisma";
+import { createKey } from "@/utils/keys";
 
 const SESSION_ID_BYTES = 64;
 const SESSION_VALIDITY_PERIOD = 1000 * 60 * 60 * 24 * 14; // 2 weeks

@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import { AI_ORIGIN } from "doc/origins";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTextMap } from "doc/tiles/text";
-import { DocWriter } from "../DocWriter.ts";
-import { createHocuspocus, docName } from "../server.ts";
-import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator.ts";
+import { DocWriter } from "../DocWriter";
+import { createHocuspocus, docName } from "../server";
+import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator";
 
 const PAGE_ID = "page-1";
 const CONTEXT = { userId: "user-1", sessionId: "session-1", pageId: PAGE_ID };

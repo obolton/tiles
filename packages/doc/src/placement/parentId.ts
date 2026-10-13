@@ -1,4 +1,4 @@
-import type { DockEdge } from "../types/enums.ts";
+import type { DockEdge } from "../types/enums";
 
 /**
  * A tile's placement parent is encoded as a single string:

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getBackgroundProperties } from "../themes.ts";
+import { getBackgroundProperties } from "../themes";
 
 describe("getBackgroundProperties", () => {
   test("returns undefined if the input is undefined", () => {

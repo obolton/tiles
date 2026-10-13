@@ -1,5 +1,5 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedPageProcedure, authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedPageProcedure, authenticatedWorkspaceProcedure } from "@/utils/middleware";
 import {
   ListVersionsSchema,
   GetVersionSchema,
@@ -8,7 +8,7 @@ import {
   RenameVersionSchema,
   DeleteVersionSchema,
   CopyVersionSchema,
-} from "./schema.ts";
+} from "./schema";
 import {
   listVersions,
   getVersion,
@@ -17,7 +17,7 @@ import {
   renameVersion,
   deleteVersion,
   copyVersionToPage,
-} from "./versions.ts";
+} from "./versions";
 
 export default router({
   list: authenticatedPageProcedure

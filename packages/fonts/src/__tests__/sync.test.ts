@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("../fontsource.ts", async () => {
-  const actual = await vi.importActual<typeof import("../fontsource.ts")>("../fontsource.ts");
+vi.mock("../fontsource", async () => {
+  const actual = await vi.importActual<typeof import("../fontsource")>("../fontsource");
   return {
     ...actual,
     fetchFontMetadata: vi.fn(),

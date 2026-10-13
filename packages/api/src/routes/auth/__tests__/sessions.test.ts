@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { createSession, deleteSession } from "../sessions.ts";
+import prisma from "@/database/prisma";
+import { createSession, deleteSession } from "../sessions";
 
 describe("createSession", () => {
   beforeEach(() => {

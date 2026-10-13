@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { FunctionToolOptions, ToolContext } from "./types.ts";
+import type { FunctionToolOptions, ToolContext } from "./types";
 
 const DeleteTilesSchema = z.strictObject({
   ids: z.array(z.number().int()).min(1).max(20).meta({

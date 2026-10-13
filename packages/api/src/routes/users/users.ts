@@ -1,11 +1,11 @@
 import assert from "node:assert";
 import crypto from "node:crypto";
-import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
-import { upload } from "@/utils/storage.ts";
-import { IMAGE_CONTENT_TYPES, IMAGE_FILE_EXTENSIONS } from "@/constants/images.ts";
-import { getStream } from "@/utils/http.ts";
-import type { CreateUserSchema, UpdateUserSchema, IsUsernameAvailableSchema } from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import prisma, { type PrismaTransactionClient } from "@/database/prisma";
+import { upload } from "@/utils/storage";
+import { IMAGE_CONTENT_TYPES, IMAGE_FILE_EXTENSIONS } from "@/constants/images";
+import { getStream } from "@/utils/http";
+import type { CreateUserSchema, UpdateUserSchema, IsUsernameAvailableSchema } from "./schema";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import { USER_FIELDS } from "./fields";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;

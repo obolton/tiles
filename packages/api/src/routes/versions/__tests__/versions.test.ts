@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import * as Y from "yjs";
 import { base64ToBytes, equalBytes } from "doc/encoding";
 import { TRPCError } from "@trpc/server";
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "@/collaboration/migrator";
 import { LATEST_VERSION_FIELDS, VERSION_FIELDS } from "@/collaboration/versions";
 import { VERSION_DOCUMENT_FIELDS, COPY_PAGE_FIELDS } from "../fields";
@@ -16,12 +16,12 @@ import {
   copyVersionToPage,
 } from "../versions";
 import type { Prisma } from "@/generated/prisma/client";
-import type { CreateQuery, FindManyQuery, FindUniqueQuery } from "@/test/prisma.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { CreateQuery, FindManyQuery, FindUniqueQuery } from "@/test/prisma";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import type {
   AuthenticatedPageProcedureContext,
   AuthenticatedWorkspaceProcedureContext,
-} from "@/utils/middleware.ts";
+} from "@/utils/middleware";
 
 const PAGE_ID = "6e9c6c65-7bb1-4f5e-a3d7-64d1e2b3a111";
 const VERSION_ID = "0f7d3e9a-1c2b-4d5e-8f90-a1b2c3d4e5f6";

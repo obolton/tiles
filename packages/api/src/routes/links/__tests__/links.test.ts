@@ -2,8 +2,8 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { fetchImage } from "@/utils/fetchImage";
 import { getVideoInfo } from "@/utils/videos";
-import { resolveLinkMetadata } from "../links.ts";
-import type { AuthenticatedPageProcedureContext } from "@/utils/middleware.ts";
+import { resolveLinkMetadata } from "../links";
+import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
 vi.mock("@/utils/linkMetadata", () => ({
   getLinkMetadata: vi.fn(),

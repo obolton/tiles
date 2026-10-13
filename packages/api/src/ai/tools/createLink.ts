@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { resolveLinkMetadata } from "@/routes/links/links.ts";
+import { resolveLinkMetadata } from "@/routes/links/links";
 import { buildLinkMap } from "doc/tiles/link";
 import { buildVideoMap } from "doc/tiles/video";
 import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";

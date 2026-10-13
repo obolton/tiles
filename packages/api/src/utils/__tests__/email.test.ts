@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 import { SendEmailCommand } from "@aws-sdk/client-sesv2";
 import type { SendEmailCommandInput } from "@aws-sdk/client-sesv2";
-import { sendEmail } from "../email.ts";
+import { sendEmail } from "../email";
 
 const send = vi.fn(() => Promise.resolve());
 

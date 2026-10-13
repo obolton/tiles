@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import {
   createFolder,
   getFolder,
@@ -7,7 +7,7 @@ import {
   deleteFolder,
   listFolders,
   listPages,
-} from "../folders.ts";
+} from "../folders";
 import { FOLDER_FIELDS } from "../fields";
 import { LIBRARY_PAGE_FIELDS, type LibraryPage } from "@/routes/pages/fields";
 import { RESULTS_PER_PAGE } from "@/utils/pagination";
@@ -17,8 +17,8 @@ import type {
   FindManyQuery,
   UpdateQuery,
   DeleteQuery,
-} from "@/test/prisma.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+} from "@/test/prisma";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 
 const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],

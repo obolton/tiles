@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import { buildSectionMap } from "doc/tiles/section";
-import { createToolContext } from "@/test/fixtures/ai.ts";
-import { DELETE_TILES_TOOL } from "../deleteTile.ts";
-import type { ToolContext } from "../types.ts";
+import { createToolContext } from "@/test/fixtures/ai";
+import { DELETE_TILES_TOOL } from "../deleteTile";
+import type { ToolContext } from "../types";
 
 describe("DELETE_TILES_TOOL", () => {
   let doc: Y.Doc;

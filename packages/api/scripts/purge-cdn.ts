@@ -1,4 +1,4 @@
-import cloudflare, { CLOUDFLARE_ZONE_ID } from "@/utils/cloudflare.ts";
+import cloudflare, { CLOUDFLARE_ZONE_ID } from "@/utils/cloudflare";
 
 console.log("Purging CDN cache...");
 await cloudflare.cache.purge({

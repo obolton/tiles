@@ -1,9 +1,9 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getTiles } from "doc/test/tiles";
-import prisma from "@/database/prisma.ts";
-import { createPage, createInitialDoc } from "../pages.ts";
-import type { CreateQuery } from "@/test/prisma.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import prisma from "@/database/prisma";
+import { createPage, createInitialDoc } from "../pages";
+import type { CreateQuery } from "@/test/prisma";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 
 const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],

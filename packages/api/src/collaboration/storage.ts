@@ -1,7 +1,7 @@
 import * as Y from "yjs";
-import prisma from "@/database/prisma.ts";
-import { applyMigrations, CURRENT_SCHEMA_VERSION } from "./migrator.ts";
-import type { ExtensionArgs } from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
+import { applyMigrations, CURRENT_SCHEMA_VERSION } from "./migrator";
+import type { ExtensionArgs } from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 
 export const PAGE_DOCUMENT_FIELDS = {

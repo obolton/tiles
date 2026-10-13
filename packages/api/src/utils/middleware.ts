@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import prisma from "@/database/prisma.ts";
-import { invalidateCachedPages } from "@/utils/cdn.ts";
-import { publicProcedure } from "@/utils/trpc.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import prisma from "@/database/prisma";
+import { invalidateCachedPages } from "@/utils/cdn";
+import { publicProcedure } from "@/utils/trpc";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import type { WorkspaceRole } from "@/generated/prisma/client";
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {

@@ -1,4 +1,4 @@
-import cloudflare, { CLOUDFLARE_ZONE_ID } from "./cloudflare.ts";
+import cloudflare, { CLOUDFLARE_ZONE_ID } from "./cloudflare";
 
 const HOME_PAGE_ID = process.env.PAGE_ID;
 

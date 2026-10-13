@@ -1,7 +1,7 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedProcedure } from "@/utils/middleware.ts";
-import { UpdateUserSchema, IsUsernameAvailableSchema } from "./schema.ts";
-import { getUserInfo, updateUser, isUsernameAvailable } from "./users.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedProcedure } from "@/utils/middleware";
+import { UpdateUserSchema, IsUsernameAvailableSchema } from "./schema";
+import { getUserInfo, updateUser, isUsernameAvailable } from "./users";
 
 export default router({
   getUserInfo: authenticatedProcedure.query(({ ctx }) => getUserInfo(ctx)),

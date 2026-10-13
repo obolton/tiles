@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { getLinkMetadata, matchContentType } from "../linkMetadata.ts";
+import { getLinkMetadata, matchContentType } from "../linkMetadata";
 
 function htmlResponse(html: string, contentType = "text/html") {
   return new Response(html, {
