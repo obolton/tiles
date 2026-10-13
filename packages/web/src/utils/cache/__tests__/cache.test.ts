@@ -75,7 +75,7 @@ describe("cache", () => {
       await destroyCache();
 
       expect(isCacheInitialized()).toBe(false);
-      expect(() => getWorkspaceId()).toThrow();
+      expect(() => getWorkspaceId()).toThrow("Cache not initialized");
     });
 
     test("allows reinitializing after destroy", async () => {

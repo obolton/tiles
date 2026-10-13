@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { ZodError } from "zod";
 import { getFontUrl, fetchFontMetadata, fetchVariableFontMetadata } from "../fontsource";
 
 const VALID_RESPONSE = {
@@ -63,7 +64,7 @@ describe("fetchFontMetadata", () => {
       new Response(JSON.stringify({ wrong: "shape" }), { status: 200 }),
     );
 
-    await expect(fetchFontMetadata("inter")).rejects.toThrow();
+    await expect(fetchFontMetadata("inter")).rejects.toThrow(ZodError);
   });
 });
 

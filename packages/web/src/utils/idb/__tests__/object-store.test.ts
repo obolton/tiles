@@ -103,7 +103,9 @@ describe("ObjectStore", () => {
       await writeToIdb(idb, "items", { id: "1", name: "existing", value: 1 });
 
       const store = db.store<Item>("items");
-      await expect(store.add({ id: "1", name: "new", value: 2 })).rejects.toThrow();
+      await expect(store.add({ id: "1", name: "new", value: 2 })).rejects.toThrow(
+        "constraint was not satisfied",
+      );
     });
   });
 

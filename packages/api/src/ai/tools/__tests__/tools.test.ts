@@ -134,6 +134,6 @@ describe("useFunctionTool", () => {
         },
         MOCK_TOOL_CONTEXT,
       ),
-    ).rejects.toThrow();
+    ).rejects.toThrow(SyntaxError);
   });
 });

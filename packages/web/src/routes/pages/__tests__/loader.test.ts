@@ -55,6 +55,13 @@ function unwrapData(result: Awaited<ReturnType<typeof runLoader>>) {
   return result;
 }
 
+function unwrapResponse(result: Awaited<ReturnType<typeof runLoader>>) {
+  if (!(result instanceof Response)) {
+    throw new Error("Expected a Response");
+  }
+  return result;
+}
+
 describe("pages/[id] loader", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -97,23 +104,17 @@ describe("pages/[id] loader", () => {
   test("redirects to the live page when the version is unavailable", async () => {
     getVersion.mockRejectedValue(new Error("Not found"));
 
-    const result = await runLoader(`?version=${NAMED_VERSION.id}`);
+    const response = unwrapResponse(await runLoader(`?version=${NAMED_VERSION.id}`));
 
-    expect(result).toBeInstanceOf(Response);
-    if (result instanceof Response) {
-      expect(result.status).toBe(302);
-      expect(result.headers.get("Location")).toBe(`/pages/${PAGE.id}`);
-    }
+    expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe(`/pages/${PAGE.id}`);
   });
 
   test("returns not found for a missing page", async () => {
     getPage.mockResolvedValue(null);
 
-    const result = await runLoader();
+    const response = unwrapResponse(await runLoader());
 
-    expect(result).toBeInstanceOf(Response);
-    if (result instanceof Response) {
-      expect(result.status).toBe(404);
-    }
+    expect(response.status).toBe(404);
   });
 });

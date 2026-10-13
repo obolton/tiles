@@ -188,14 +188,10 @@ const FIXTURES: { name: string; events: RichTextContent[] }[] = [
 ];
 
 describe("YXmlStreamWriter matches y-prosemirror's representation", () => {
-  for (const mode of ["append", "replace", "prepend"] as const) {
-    describe(mode, () => {
-      for (const { name, events } of FIXTURES) {
-        test(name, () => {
-          const fragment = write(mode, events);
-          expect(blocks(fragment)).toEqual(blocks(reencode(fragment)));
-        });
-      }
+  describe.each(["append", "replace", "prepend"] as const)("%s", (mode) => {
+    test.each(FIXTURES)("$name", ({ events }) => {
+      const fragment = write(mode, events);
+      expect(blocks(fragment)).toEqual(blocks(reencode(fragment)));
     });
-  }
+  });
 });

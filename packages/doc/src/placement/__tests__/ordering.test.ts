@@ -116,7 +116,7 @@ describe("getChildren", () => {
     broken.set("parentId", null);
     map.set("broken", broken);
 
-    expect(() => getChildren(map, null)).toThrow();
+    expect(() => getChildren(map, null)).toThrow("Invalid order for broken");
   });
 });
 
@@ -166,6 +166,6 @@ describe("orderedEntries", () => {
     const map = new Y.Doc().getMap<Y.Map<unknown>>("cols");
     map.set("broken", new Y.Map<unknown>());
 
-    expect(() => orderedEntries(map)).toThrow();
+    expect(() => orderedEntries(map)).toThrow("Invalid order for broken");
   });
 });

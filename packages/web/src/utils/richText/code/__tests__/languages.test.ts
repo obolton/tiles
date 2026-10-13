@@ -27,21 +27,17 @@ describe("SUPPORTED_LANGUAGES", () => {
 
   test("has no aliases that collide with another language id", () => {
     const ids = new Set(SUPPORTED_LANGUAGES.map((l) => l.id));
-    for (const config of SUPPORTED_LANGUAGES) {
-      for (const alias of config.aliases) {
-        if (ids.has(alias)) {
-          expect.fail(`alias "${alias}" on "${config.id}" collides with another language id`);
-        }
-      }
-    }
+    const collisions = SUPPORTED_LANGUAGES.flatMap((config) =>
+      config.aliases.filter((alias) => ids.has(alias)).map((alias) => `${config.id}:${alias}`),
+    );
+    expect(collisions).toEqual([]);
   });
 
   test("all non-Plain Text entries have a load function", () => {
-    for (const config of SUPPORTED_LANGUAGES) {
-      if (config.id !== "") {
-        expect(config.load, `${config.name} is missing a load function`).toBeDefined();
-      }
-    }
+    const missing = SUPPORTED_LANGUAGES.filter((config) => config.id !== "" && !config.load).map(
+      (config) => config.name,
+    );
+    expect(missing).toEqual([]);
   });
 
   test("is sorted alphabetically by id after Plain Text", () => {

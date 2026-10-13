@@ -71,8 +71,7 @@ describe("KeyboardNavigation", () => {
       const container = document.createElement("div");
       document.body.append(container);
       const nav = new KeyboardNavigation(container, { selector: ".item" });
-      nav.update();
-      // No error thrown
+      expect(() => nav.update()).not.toThrow();
     });
   });
 

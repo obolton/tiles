@@ -241,10 +241,9 @@ describe("getCalendarWeeks", () => {
     test("trailing days are in January 2027", () => {
       const lastWeek = weeks[weeks.length - 1]!;
       const lastDay = lastWeek[6]!;
-      if (lastDay.getMonth() !== 11) {
-        expect(lastDay.getFullYear()).toBe(2027);
-        expect(lastDay.getMonth()).toBe(0);
-      }
+      expect(lastDay.getFullYear()).toBe(2027);
+      expect(lastDay.getMonth()).toBe(0);
+      expect(lastDay.getDate()).toBe(2);
     });
   });
 

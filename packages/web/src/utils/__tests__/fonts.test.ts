@@ -197,7 +197,9 @@ describe("variable fonts", () => {
     });
 
     test("throws when the requested weight is outside the range", () => {
-      expect(() => getFontPreload("inter", 1000)).toThrow();
+      expect(() => getFontPreload("inter", 1000)).toThrow(
+        "No file for inter (weight 1000, style normal)",
+      );
     });
   });
 

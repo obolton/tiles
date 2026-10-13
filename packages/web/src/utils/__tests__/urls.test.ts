@@ -16,7 +16,7 @@ describe("setSearchParams", () => {
     expect(result).toBe("https://example.com/?foo=new&baz=qux");
   });
 
-  test("should maintain existing search params ", () => {
+  test("should maintain existing search params", () => {
     const src = "https://example.com?foo=bar&baz=qux";
     const params = { foo: "new" };
     const result = setSearchParams(src, params);
