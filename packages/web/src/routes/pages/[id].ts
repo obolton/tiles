@@ -57,8 +57,7 @@ async function loader({
   const pageFonts = getPageFonts(doc);
   pageFonts.delete(DEFAULT_FONT);
 
-  // The server render contains nothing user-specific, so the live published page is shared-cacheable.
-  // Unpublished pages are only visible to collaborators and historical states must never be cached as the page.
+  // Cache live, published pages only.
   const cacheable = page.published && !version;
 
   return {
