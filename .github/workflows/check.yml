@@ -15,7 +15,7 @@ env:
 
 jobs:
   check:
-    name: Typecheck, lint, format and test
+    name: Run checks
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
