@@ -1,7 +1,7 @@
 import { escapeUTF8 } from "entities";
 import { tag, escapeTagContents } from "@/utils/html";
 import { resolveImport } from "./assets";
-import { SITE_DESCRIPTION, SITE_NAME, SOCIAL_IMAGE_PATH, THEME_COLOR } from "@/constants/site";
+import { SITE_DESCRIPTION, SITE_NAME, THEME_COLOR } from "@/constants/site";
 import type { RouteMetadata } from "@/router/router";
 
 export interface HeadOptions {
@@ -10,14 +10,12 @@ export interface HeadOptions {
   metadata: RouteMetadata;
   title?: string;
   description?: string;
-  image?: string;
   hydrate?: "immediate" | "deferred" | null;
 }
 
-function renderSocialTags(url: URL, title: string, description: string, image: string) {
+function renderSocialTags(url: URL, title: string, description: string) {
   // Query strings (e.g. ?version=) must not leak into the canonical share URL.
   const canonicalUrl = new URL(url.pathname, url.origin).href;
-  const imageUrl = new URL(image, url.origin).href;
 
   let chunk = "";
   chunk += tag("meta", { property: "og:site_name", content: SITE_NAME });
@@ -25,11 +23,9 @@ function renderSocialTags(url: URL, title: string, description: string, image: s
   chunk += tag("meta", { property: "og:title", content: title });
   chunk += tag("meta", { property: "og:description", content: description });
   chunk += tag("meta", { property: "og:url", content: canonicalUrl });
-  chunk += tag("meta", { property: "og:image", content: imageUrl });
-  chunk += tag("meta", { name: "twitter:card", content: "summary_large_image" });
+  chunk += tag("meta", { name: "twitter:card", content: "summary" });
   chunk += tag("meta", { name: "twitter:title", content: title });
   chunk += tag("meta", { name: "twitter:description", content: description });
-  chunk += tag("meta", { name: "twitter:image", content: imageUrl });
   return chunk;
 }
 
@@ -39,7 +35,6 @@ export function renderHead({
   metadata,
   title = SITE_NAME,
   description = SITE_DESCRIPTION,
-  image = SOCIAL_IMAGE_PATH,
   hydrate,
 }: HeadOptions) {
   let chunk = "<head>";
@@ -49,9 +44,7 @@ export function renderHead({
   chunk += tag("meta", { name: "description", content: description });
   chunk += tag("meta", { name: "theme-color", content: THEME_COLOR });
   chunk += tag("link", { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" });
-  chunk += tag("link", { rel: "icon", href: "/favicon.ico", sizes: "32x32" });
-  chunk += tag("link", { rel: "apple-touch-icon", href: "/apple-touch-icon.png" });
-  chunk += renderSocialTags(url, title, description, image);
+  chunk += renderSocialTags(url, title, description);
 
   for (const stylesheet of stylesheets) {
     chunk += tag("link", { rel: "stylesheet", href: stylesheet });

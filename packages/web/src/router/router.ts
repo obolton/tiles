@@ -33,8 +33,6 @@ export interface RouteData<T = unknown> {
   title?: string;
   /** Used for the meta description and link previews. */
   description?: string;
-  /** Site-relative or absolute URL of the link preview image. */
-  image?: string;
   bodyAttributes?: JSX.Attributes<"body">;
   metadata?: RouteMetadata;
   data: T;

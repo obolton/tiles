@@ -171,7 +171,6 @@ async function renderRoute(
       metadata: mergedMetadata,
       title: loaderResult?.title,
       description: loaderResult?.description,
-      image: loaderResult?.image,
       hydrate,
     }) +
     renderToString(

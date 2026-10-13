@@ -17,41 +17,31 @@ function render(options: Partial<HeadOptions> = {}) {
 }
 
 describe("renderHead", () => {
-  test("emits viewport, icons and theme color", () => {
+  test("emits viewport, icon and theme color", () => {
     const head = render();
     expect(head).toContain(`<meta charset="utf-8">`);
     expect(head).toContain(`<meta name="viewport" content="width=device-width, initial-scale=1">`);
     expect(head).toContain(`<meta name="theme-color" content="#ffffff">`);
     expect(head).toContain(`<link rel="icon" href="/favicon.svg" type="image/svg+xml">`);
-    expect(head).toContain(`<link rel="icon" href="/favicon.ico" sizes="32x32">`);
-    expect(head).toContain(`<link rel="apple-touch-icon" href="/apple-touch-icon.png">`);
   });
 
-  test("falls back to the site title, description and image", () => {
+  test("falls back to the site title and description", () => {
     const head = render();
     expect(head).toContain(`<title>${SITE_NAME}</title>`);
     expect(head).toContain(`<meta name="description" content="${SITE_DESCRIPTION}">`);
     expect(head).toContain(`<meta property="og:title" content="${SITE_NAME}">`);
-    expect(head).toContain(
-      `<meta property="og:image" content="https://tiles.example/og-image.png">`,
-    );
-    expect(head).toContain(
-      `<meta name="twitter:image" content="https://tiles.example/og-image.png">`,
-    );
   });
 
-  test("uses the route title, description and image", () => {
+  test("uses the route title and description", () => {
     const head = render({
       title: "My Page - Tiles",
       description: "A page about things.",
-      image: "https://images.test/preview.png",
     });
     expect(head).toContain(`<title>My Page - Tiles</title>`);
     expect(head).toContain(`<meta name="description" content="A page about things.">`);
     expect(head).toContain(`<meta property="og:title" content="My Page - Tiles">`);
     expect(head).toContain(`<meta property="og:description" content="A page about things.">`);
-    expect(head).toContain(`<meta property="og:image" content="https://images.test/preview.png">`);
-    expect(head).toContain(`<meta name="twitter:card" content="summary_large_image">`);
+    expect(head).toContain(`<meta name="twitter:card" content="summary">`);
     expect(head).toContain(`<meta name="twitter:title" content="My Page - Tiles">`);
   });
 
