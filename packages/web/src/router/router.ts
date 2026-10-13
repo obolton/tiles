@@ -31,6 +31,8 @@ export interface RouteMetadata {
 export interface RouteData<T = unknown> {
   headers?: Record<string, string>;
   title?: string;
+  /** Used for the meta description and link previews. */
+  description?: string;
   bodyAttributes?: JSX.Attributes<"body">;
   metadata?: RouteMetadata;
   data: T;

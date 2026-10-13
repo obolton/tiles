@@ -9,6 +9,7 @@ import Page, { type PageProps } from "@/pages/Page";
 import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { getPageBodyStyle } from "@/utils/themes";
+import { getPageDescription } from "@/utils/pages";
 import { initializeDoc } from "@/collaboration/doc";
 import { notFound, redirect } from "@/router/responses";
 import { DEFAULT_FONT } from "fonts/config";
@@ -60,6 +61,7 @@ async function loader({
     // Historical states must never be cached as the page
     headers: page.published && !version ? { "Cache-Control": CACHE_CONTROL_VALUE } : undefined,
     title: `${page.title} - Tiles`,
+    description: getPageDescription(page),
     bodyAttributes: {
       "data-page-id": page.id,
       style,
