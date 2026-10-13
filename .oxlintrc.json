@@ -24,7 +24,10 @@
     "vitest/prefer-strict-boolean-matchers": "error",
     "vitest/prefer-called-times": "error",
     "vitest/prefer-mock-promise-shorthand": "error",
-    "vitest/require-mock-type-parameters": "off"
+    "vitest/require-mock-type-parameters": "off",
+    "typescript/consistent-return": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "typescript/unbound-method": "off"
   },
   "overrides": [
     {

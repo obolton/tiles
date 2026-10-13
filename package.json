@@ -19,8 +19,8 @@
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "test:compact": "vitest run --reporter=minimal",
-    "lint": "oxlint && pnpm --filter web lint:css",
-    "lint:compact": "oxlint --format=agent && pnpm --filter web lint:css",
+    "lint": "oxlint --type-aware && pnpm --filter web lint:css",
+    "lint:compact": "oxlint --type-aware --format=agent && pnpm --filter web lint:css",
     "check": "node scripts/check.ts",
     "storybook": "pnpm --filter web storybook",
     "cdn:purge": "pnpm --filter api cdn:purge",
@@ -37,6 +37,7 @@
     "@vitest/coverage-v8": "^5.0.3",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
+    "oxlint-tsgolint": "7.0.2004",
     "typescript": "^6.0.3",
     "vitest": "^5.0.3"
   },

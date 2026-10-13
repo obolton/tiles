@@ -14,7 +14,7 @@
     "test:browser": "vitest run --config vitest.browser.config.ts",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "lint:ts": "oxlint",
+    "lint:ts": "oxlint --type-aware",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint": "pnpm run \"/^lint:.*/\"",
     "storybook": "storybook dev -p 6001 --no-open --no-version-updates",
