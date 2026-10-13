@@ -1,6 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
 import { createContext } from "@/utils/trpc";
 import { createRequest, createResponse } from "@/test/mocks/http";
 import type { IncomingMessage } from "node:http";
@@ -120,6 +121,78 @@ describe("createContext", () => {
     const opts = createContextOptions({ authorization: "Bearer expired-header" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
+  });
+});
+
+describe("createContext with service credentials", () => {
+  const SERVICE_TOKEN_KEY = SERVICE_TOKEN_HEADER.toLowerCase();
+  const SERVICE_NAME_KEY = SERVICE_NAME_HEADER.toLowerCase();
+
+  test("should authenticate a service with a valid token and name", async () => {
+    const opts = createContextOptions({
+      [SERVICE_TOKEN_KEY]: "test",
+      [SERVICE_NAME_KEY]: "web",
+    });
+
+    await expect(createContext(opts)).resolves.toEqual({
+      res: opts.res,
+      sessionId: null,
+      userId: null,
+      serviceName: "web",
+    });
+    expect(getSessionContext).not.toHaveBeenCalled();
+  });
+
+  test("should ignore session credentials on a service request", async () => {
+    const opts = createContextOptions({
+      [SERVICE_TOKEN_KEY]: "test",
+      [SERVICE_NAME_KEY]: "web",
+      authorization: "Bearer valid-header",
+      cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
+    });
+
+    await expect(createContext(opts)).resolves.toMatchObject({
+      sessionId: null,
+      userId: null,
+      serviceName: "web",
+    });
+    expect(getSessionContext).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    ["an invalid token", { [SERVICE_TOKEN_KEY]: "wrong", [SERVICE_NAME_KEY]: "web" }],
+    [
+      "a token with a different length",
+      { [SERVICE_TOKEN_KEY]: "test-longer", [SERVICE_NAME_KEY]: "web" },
+    ],
+    ["an empty token", { [SERVICE_TOKEN_KEY]: "", [SERVICE_NAME_KEY]: "web" }],
+    ["a missing service name", { [SERVICE_TOKEN_KEY]: "test" }],
+    ["an empty service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "" }],
+  ])("should reject %s", async (_, headers) => {
+    const opts = createContextOptions({
+      ...headers,
+      cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
+    });
+
+    await expect(createContext(opts)).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+      message: "Invalid service credentials",
+    });
+    expect(getSessionContext).not.toHaveBeenCalled();
+  });
+
+  test("should treat a service name without a token as a regular request", async () => {
+    const opts = createContextOptions({
+      [SERVICE_NAME_KEY]: "image-upload-worker",
+      authorization: "Bearer valid-header",
+    });
+
+    await expect(createContext(opts)).resolves.toEqual({
+      res: opts.res,
+      sessionId: "valid-header",
+      userId: "user-1",
+      serviceName: null,
+    });
   });
 });
 

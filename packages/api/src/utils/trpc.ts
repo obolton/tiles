@@ -1,14 +1,21 @@
 import assert from "node:assert";
+import crypto from "node:crypto";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getCookie } from "@/utils/cookies";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
 import { clearSessionCookie } from "@/utils/cookies";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-const SERVICE_API_TOKEN = process.env.SERVICE_API_TOKEN;
-assert(SERVICE_API_TOKEN, "SERVICE_API_TOKEN is not defined");
+function getServiceApiToken() {
+  const token = process.env.SERVICE_API_TOKEN;
+  assert(token, "SERVICE_API_TOKEN is not defined");
+  return token;
+}
+
+const SERVICE_API_TOKEN = getServiceApiToken();
 
 export interface UnauthenticatedRequestContext {
   res: ServerResponse;
@@ -61,10 +68,51 @@ function getSessionId(req: IncomingMessage) {
   return null;
 }
 
+function getHeader(req: IncomingMessage, name: string) {
+  const value = req.headers[name.toLowerCase()];
+  return typeof value === "string" ? value : null;
+}
+
+function isValidServiceToken(token: string) {
+  const tokenBytes = Buffer.from(token);
+  const expectedBytes = Buffer.from(SERVICE_API_TOKEN);
+  return (
+    tokenBytes.length === expectedBytes.length && crypto.timingSafeEqual(tokenBytes, expectedBytes)
+  );
+}
+
+function getServiceName(req: IncomingMessage) {
+  const token = getHeader(req, SERVICE_TOKEN_HEADER);
+  if (token === null) {
+    return null;
+  }
+
+  const serviceName = getHeader(req, SERVICE_NAME_HEADER);
+  if (!serviceName || !isValidServiceToken(token)) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Invalid service credentials",
+    });
+  }
+
+  return serviceName;
+}
+
 export async function createContext({
   req,
   res,
 }: Pick<CreateHTTPContextOptions, "req" | "res">): Promise<RequestContext> {
+  const serviceName = getServiceName(req);
+
+  if (serviceName) {
+    return {
+      res,
+      sessionId: null,
+      userId: null,
+      serviceName,
+    };
+  }
+
   const sessionId = getSessionId(req);
 
   if (sessionId) {

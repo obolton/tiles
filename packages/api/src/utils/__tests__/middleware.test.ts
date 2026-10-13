@@ -94,7 +94,6 @@ describe("authenticatedServiceProcedure", () => {
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
-  // createContext never sets serviceName today, so this path is unreachable over HTTP.
   test("should pass a service caller through", async () => {
     const caller = createCaller(procedures, createServiceContext("service-1"));
     await expect(caller.probe()).resolves.toBe("service-1");
