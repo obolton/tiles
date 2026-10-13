@@ -1,11 +1,30 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getTiles } from "doc/test/tiles";
 import prisma from "@/database/prisma";
-import { createPage, createInitialDoc, getPageById } from "../pages";
-import { PAGE_FIELDS, type Page } from "../fields";
+import { invalidateCachedPages } from "@/utils/cdn";
+import { RESULTS_PER_PAGE } from "@/utils/pagination";
+import {
+  getPageById,
+  listPages,
+  listSharedPages,
+  listDeletedPages,
+  createPage,
+  createInitialDoc,
+  updatePage,
+  deletePages,
+  restorePages,
+  movePages,
+  emptyTrash,
+} from "../pages";
+import { PAGE_FIELDS, LIBRARY_PAGE_FIELDS, type Page, type LibraryPage } from "../fields";
 import { createAuthenticatedContext, createUnauthenticatedContext } from "@/test/mocks/context";
-import type { CreateQuery, FindUniqueQuery } from "@/test/prisma";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
+import type { CreateQuery, FindUniqueQuery, FindManyQuery, UpdateQuery } from "@/test/prisma";
+import type {
+  AuthenticatedPageProcedureContext,
+  AuthenticatedWorkspaceProcedureContext,
+} from "@/utils/middleware";
+
+vi.mock("@/utils/cdn", () => ({ invalidateCachedPages: vi.fn() }));
 
 const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],
@@ -16,7 +35,17 @@ const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   role: "ADMIN",
 };
 
+const MOCK_PAGE_CONTEXT: AuthenticatedPageProcedureContext = {
+  res: {} as AuthenticatedPageProcedureContext["res"],
+  sessionId: "session-1",
+  userId: "user-1",
+  serviceName: null,
+  pageId: "page-1",
+  workspaceId: "workspace-1",
+};
+
 const PAGE_ID = "6e9c6c65-7bb1-4f5e-a3d7-64d1e2b3a111";
+const PAGE_IDS = ["page-1", "page-2"];
 
 const PAGE: Page = {
   id: PAGE_ID,
@@ -32,11 +61,27 @@ const PAGE: Page = {
   document: { snapshot: Buffer.from([1, 2, 3]) },
 };
 
+function createMockPages(count: number): LibraryPage[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: `page-${i + 1}`,
+    title: `Page ${i + 1}`,
+    type: "DOCUMENT",
+    updatedAt: new Date(),
+    published: false,
+    folderId: null,
+    author: { id: "user-1", name: "Alice", imageUrl: null },
+    folder: null,
+  }));
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 describe("getPageById", () => {
   const findUnique = vi.mocked(prisma.page.findUnique<FindUniqueQuery<typeof PAGE_FIELDS>>);
 
   beforeEach(() => {
-    vi.clearAllMocks();
     findUnique.mockResolvedValue(PAGE);
   });
 
@@ -96,9 +141,33 @@ describe("getPageById", () => {
   });
 });
 
+describe.each([
+  ["listPages", listPages],
+  ["listSharedPages", listSharedPages],
+  ["listDeletedPages", listDeletedPages],
+])("%s", (_name, list) => {
+  const findMany = vi.mocked(prisma.page.findMany<FindManyQuery<typeof LIBRARY_PAGE_FIELDS>>);
+
+  test("returns all pages with no cursor when there are no more results", async () => {
+    const pages = createMockPages(RESULTS_PER_PAGE);
+    findMany.mockResolvedValue(pages);
+
+    await expect(list({}, MOCK_CONTEXT)).resolves.toEqual({ pages, nextCursor: null });
+  });
+
+  test("trims the extra result and returns the next cursor when there are more", async () => {
+    const pages = createMockPages(RESULTS_PER_PAGE + 1);
+    findMany.mockResolvedValue(pages);
+
+    const result = await list({ cursor: "page-0", query: "page" }, MOCK_CONTEXT);
+
+    expect(result.pages).toEqual(pages.slice(0, RESULTS_PER_PAGE));
+    expect(result.nextCursor).toBe(`page-${RESULTS_PER_PAGE}`);
+  });
+});
+
 describe("createPage", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prisma.page.create<CreateQuery<{ id: true }>>).mockResolvedValue({
       id: "page-1",
     });
@@ -148,5 +217,117 @@ describe("createInitialDoc", () => {
 
   test("seeds no tiles for FREE pages", () => {
     expect(getTiles(createInitialDoc("FREE"))).toHaveLength(0);
+  });
+});
+
+describe("updatePage", () => {
+  const findFolder = vi.mocked(
+    prisma.folder.findUniqueOrThrow<FindUniqueQuery<{ workspaceId: true }>>,
+  );
+
+  beforeEach(() => {
+    findFolder.mockResolvedValue({ workspaceId: "workspace-1" });
+    vi.mocked(prisma.page.update<UpdateQuery<typeof PAGE_FIELDS>>).mockResolvedValue(PAGE);
+  });
+
+  test("returns the updated page", async () => {
+    await expect(
+      updatePage({ pageId: PAGE_ID, title: "Renamed", published: true }, MOCK_PAGE_CONTEXT),
+    ).resolves.toEqual(PAGE);
+  });
+
+  test("moves the page into a folder in the same workspace", async () => {
+    await expect(
+      updatePage({ pageId: PAGE_ID, folderId: "folder-1" }, MOCK_PAGE_CONTEXT),
+    ).resolves.toEqual(PAGE);
+  });
+
+  test("clears the folder without validating one when folderId is null", async () => {
+    findFolder.mockRejectedValue(new Error("Not found"));
+
+    await expect(
+      updatePage({ pageId: PAGE_ID, folderId: null }, MOCK_PAGE_CONTEXT),
+    ).resolves.toEqual(PAGE);
+  });
+
+  test("rejects a folder from another workspace", async () => {
+    findFolder.mockResolvedValue({ workspaceId: "workspace-2" });
+
+    await expect(
+      updatePage({ pageId: PAGE_ID, folderId: "folder-1" }, MOCK_PAGE_CONTEXT),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST", message: "Invalid folder" });
+  });
+
+  test("rejects a folder that does not exist", async () => {
+    findFolder.mockRejectedValue(new Error("Not found"));
+
+    await expect(
+      updatePage({ pageId: PAGE_ID, folderId: "folder-1" }, MOCK_PAGE_CONTEXT),
+    ).rejects.toThrow("Not found");
+  });
+});
+
+describe("deletePages", () => {
+  beforeEach(() => {
+    vi.mocked(prisma.page.updateMany).mockResolvedValue({ count: 2 });
+  });
+
+  test("returns the number of deleted pages", async () => {
+    await expect(deletePages({ pageIds: PAGE_IDS }, MOCK_CONTEXT)).resolves.toEqual({ count: 2 });
+  });
+
+  test("invalidates the cached pages", async () => {
+    await deletePages({ pageIds: PAGE_IDS }, MOCK_CONTEXT);
+
+    expect(invalidateCachedPages).toHaveBeenCalledWith(PAGE_IDS);
+  });
+});
+
+describe("restorePages", () => {
+  test("returns the number of restored pages", async () => {
+    vi.mocked(prisma.page.updateMany).mockResolvedValue({ count: 2 });
+
+    await expect(restorePages({ pageIds: PAGE_IDS }, MOCK_CONTEXT)).resolves.toEqual({
+      count: 2,
+    });
+  });
+});
+
+describe("movePages", () => {
+  const findFolder = vi.mocked(prisma.folder.findUnique<FindUniqueQuery<{ id: true }>>);
+
+  beforeEach(() => {
+    findFolder.mockResolvedValue({ id: "folder-1" });
+    vi.mocked(prisma.page.updateMany).mockResolvedValue({ count: 2 });
+  });
+
+  test("returns the number of pages moved into the folder", async () => {
+    await expect(
+      movePages({ pageIds: PAGE_IDS, folderId: "folder-1" }, MOCK_CONTEXT),
+    ).resolves.toEqual({ count: 2 });
+  });
+
+  test("moves pages out of their folder without validating one when folderId is null", async () => {
+    findFolder.mockResolvedValue(null);
+
+    await expect(movePages({ pageIds: PAGE_IDS, folderId: null }, MOCK_CONTEXT)).resolves.toEqual({
+      count: 2,
+    });
+  });
+
+  test("rejects a folder that is not in the workspace", async () => {
+    findFolder.mockResolvedValue(null);
+
+    await expect(
+      movePages({ pageIds: PAGE_IDS, folderId: "folder-1" }, MOCK_CONTEXT),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST", message: "Invalid folder" });
+  });
+});
+
+describe("emptyTrash", () => {
+  test("returns the number of pages permanently deleted", async () => {
+    vi.mocked(prisma.page.deleteMany).mockResolvedValue({ count: 3 });
+
+    await expect(emptyTrash(MOCK_CONTEXT)).resolves.toEqual({ count: 3 });
   });
 });
