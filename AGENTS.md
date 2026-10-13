@@ -97,8 +97,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Use `describe` blocks for each function being tested and to provide structure to test suites.
 - Mock external services (database, external APIs etc).
 - Run tests with `pnpm test:compact` and check coverage with `pnpm test:coverage`.
-- Coverage is configured in the root `vitest.config.ts` only (per-package `coverage` options are ignored in projects mode). It reports every `src` file, including untested ones, and writes `coverage/coverage-summary.json` for tracking.
-- `pnpm test:coverage` fails if a package drops below its `coverage.thresholds` floor. Coverage is not part of `pnpm check`, so run it after adding or changing tests, and raise a package's floor when its coverage improves.
+- Coverage is configured in the root `vitest.config.ts` only (per-package `coverage` options are ignored in projects mode). It reports every `src` file, including untested ones, and writes `coverage/coverage-summary.json` for tracking between runs.
 
 ### Storybook stories
 
