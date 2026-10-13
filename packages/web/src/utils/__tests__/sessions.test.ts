@@ -8,6 +8,7 @@ import {
   signOut,
 } from "../sessions";
 import client from "@/api/client";
+import { navigate } from "@/utils/navigation";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -15,6 +16,8 @@ vi.mock("@/api/client", () => ({
     auth: { signOut: { mutate: vi.fn() } },
   },
 }));
+
+vi.mock("@/utils/navigation", () => ({ navigate: vi.fn() }));
 
 const mockUser = {
   id: "user-1",
@@ -212,12 +215,8 @@ describe("initializeSession", () => {
 });
 
 describe("signOut", () => {
-  let location: { href: string };
-
   beforeEach(() => {
     vi.mocked(client.auth.signOut.mutate).mockResolvedValueOnce(null);
-    location = { href: "" };
-    vi.stubGlobal("location", location);
   });
 
   test("calls the sign-out API", async () => {
@@ -247,6 +246,6 @@ describe("signOut", () => {
   test("redirects to the home page", async () => {
     await signOut();
 
-    expect(location.href).toBe("/");
+    expect(navigate).toHaveBeenCalledWith("/", { replace: true });
   });
 });

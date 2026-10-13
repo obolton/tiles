@@ -1,6 +1,7 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME, SESSION_COOKIE_NAME } from "api/constants/cookies";
 import client from "@/api/client";
 import { getCookie } from "./cookies";
+import { navigate } from "./navigation";
 import { reactive } from "./reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -80,5 +81,5 @@ export async function signOut() {
   document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
   sessionStorage.clear();
   localStorage.clear();
-  window.location.href = "/";
+  navigate("/", { replace: true });
 }

@@ -6,6 +6,7 @@ import client from "@/api/client";
 import { user as currentUser } from "@/utils/sessions";
 import { reactive } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
+import { navigate } from "@/utils/navigation";
 import styles from "./WorkspaceMembers.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { ReactiveValue } from "@/utils/reactivity";
@@ -58,7 +59,7 @@ export default function WorkspaceMembers({
     try {
       if (isSelf) {
         await client.workspaces.leave.mutate({ workspaceId });
-        window.location.href = "/";
+        navigate("/", { replace: true });
       } else {
         await client.workspaces.remove.mutate({
           workspaceId,
@@ -101,7 +102,7 @@ export default function WorkspaceMembers({
     form.dataset.pending = "true";
     try {
       await client.workspaces.leave.mutate({ workspaceId });
-      window.location.href = "/";
+      navigate("/", { replace: true });
     } catch (error) {
       delete form.dataset.pending;
       handleError(error);

@@ -8,6 +8,7 @@ import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
+import { navigate } from "@/utils/navigation";
 import type { PageType } from "api/types/pages";
 
 export interface NewPageMenuProps {
@@ -22,7 +23,7 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
         title: "New page",
         type,
       });
-      window.location.href = `/pages/${id}?edit=true`;
+      navigate(`/pages/${id}?edit=true`);
     } catch (error) {
       handleError(error);
     }

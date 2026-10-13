@@ -1,3 +1,4 @@
+import { navigate } from "@/utils/navigation";
 import type { RouteParameters } from "@/router/router";
 
 interface RouteContext {
@@ -40,7 +41,7 @@ export async function hydrateRoute(): Promise<HydrateResult> {
     if (result instanceof Response) {
       const location = result.headers.get("Location");
       if (location) {
-        window.location.href = location;
+        navigate(location, { replace: true });
         return { data: undefined, parameters };
       }
       throw new Error(`Loader returned ${result.status}`);
