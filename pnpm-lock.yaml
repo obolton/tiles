@@ -251,6 +251,9 @@ importers:
       doc:
         specifier: workspace:*
         version: link:../doc
+      entities:
+        specifier: ^8.1.0
+        version: 8.1.0
       fonts:
         specifier: workspace:*
         version: link:../fonts

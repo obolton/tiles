@@ -1,6 +1,6 @@
 import assert from "node:assert";
+import { escapeUTF8 } from "entities";
 import type { Email } from "@/utils/email.ts";
-import { escapeHtml } from "@/utils/html.ts";
 
 export interface InviteToWorkspaceEmailOptions {
   inviter: { id: string; name: string };
@@ -19,7 +19,7 @@ export function inviteToWorkspaceEmail({
   return {
     subject: `${inviter.name} has invited you to ${workspaceName} on Tiles`,
     body: `<p>Hi,</p>
-<p><strong>${escapeHtml(inviter.name)}</strong> has invited you to join the ${escapeHtml(workspaceName)} workspace on Tiles.</p>
+<p><strong>${escapeUTF8(inviter.name)}</strong> has invited you to join the ${escapeUTF8(workspaceName)} workspace on Tiles.</p>
 <p><a href="${BASE_URL}/invites/join-workspace/${key}" target="_blank">Accept the invite</a>.</p>
 <p>-- Tiles</p>`,
   };

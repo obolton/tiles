@@ -34,6 +34,7 @@
     "cors": "^2.8.6",
     "crossws": "^0.4.15",
     "doc": "workspace:*",
+    "entities": "^8.1.0",
     "fonts": "workspace:*",
     "htmlparser2": "^12.0.0",
     "openai": "6.32.0",

@@ -3,8 +3,8 @@ import { signUpEmail } from "../signUp.ts";
 import { inviteToPageEmail } from "../inviteToPage.ts";
 import { inviteToWorkspaceEmail } from "../inviteToWorkspace.ts";
 
-const UNSAFE_NAME = `<script>alert("x")</script> & Co`;
-const ESCAPED_NAME = "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; Co";
+const UNSAFE_NAME = `<script>alert("x")</script> & O'Co`;
+const ESCAPED_NAME = "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; O&apos;Co";
 const INVITER = { id: "user-1", name: UNSAFE_NAME };
 const KEY = "abc123_-XYZ";
 
