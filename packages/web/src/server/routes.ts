@@ -1,7 +1,8 @@
 import Router from "@/router/router";
 import type { RouteImporter } from "@/router/router";
 
-const routeModules = import.meta.glob("@/routes/**/*.ts", {
+// Exclude test files
+const routeModules = import.meta.glob(["@/routes/**/*.ts", "!**/__tests__/**", "!**/*.test.ts"], {
   import: "default",
 });
 
