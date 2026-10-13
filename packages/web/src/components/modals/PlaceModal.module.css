@@ -1,3 +1,9 @@
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .input {
   width: 100%;
 }
@@ -19,21 +25,28 @@
   height: 0;
 }
 
-.place-select > li {
+.place-select > li > button {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   padding: 8px;
   font-size: 1rem;
   line-height: 1rlh;
+  text-align: left;
   background: none;
   border: 1px solid transparent;
-  outline-offset: -4px;
-  outline: transparent solid 0;
   border-radius: 8px;
   cursor: pointer;
-}
 
-.place-select > li:hover {
-  background: rgb(0 0 0 / 5%);
-  border-color: rgb(0 0 0 / 50%);
+  &:hover {
+    background: rgb(0 0 0 / 5%);
+    border-color: rgb(0 0 0 / 50%);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: -2px;
+  }
 }
 
 .description {

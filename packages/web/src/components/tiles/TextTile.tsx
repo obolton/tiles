@@ -90,6 +90,7 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
         undoManager={text.editor.undoManager?.manager}
         editorView={editorView}
         classList={editorClassList}
+        aria-label="Text"
         tabindex={-1}
         onChange={(newState) => (state.value = newState)}
         on:keydown={onKeyDown}
