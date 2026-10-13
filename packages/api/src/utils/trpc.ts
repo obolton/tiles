@@ -64,7 +64,7 @@ function getSessionId(req: IncomingMessage) {
 export async function createContext({
   req,
   res,
-}: CreateHTTPContextOptions): Promise<RequestContext> {
+}: Pick<CreateHTTPContextOptions, "req" | "res">): Promise<RequestContext> {
   const sessionId = getSessionId(req);
 
   if (sessionId) {

@@ -2,11 +2,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getSessionContext } from "@/routes/users/users.ts";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
 import { createContext } from "@/utils/trpc.ts";
-import { createHTTPContextOptions } from "@/test/trpc.ts";
+import { createRequest, createResponse } from "@/test/mocks/http.ts";
+import type { IncomingMessage } from "node:http";
 
 vi.mock("@/routes/users/users.ts", () => ({
   getSessionContext: vi.fn(),
 }));
+
+function createContextOptions(headers: IncomingMessage["headers"] = {}) {
+  return { req: createRequest(headers), res: createResponse() };
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -17,7 +22,7 @@ beforeEach(() => {
 
 describe("createContext", () => {
   it("should return an unauthenticated context without credentials", async () => {
-    const opts = createHTTPContextOptions();
+    const opts = createContextOptions();
 
     await expect(createContext(opts)).resolves.toEqual({
       res: opts.res,
@@ -30,7 +35,7 @@ describe("createContext", () => {
   });
 
   it("should authenticate with a bearer token", async () => {
-    const opts = createHTTPContextOptions({ authorization: "Bearer valid-header" });
+    const opts = createContextOptions({ authorization: "Bearer valid-header" });
 
     await expect(createContext(opts)).resolves.toEqual({
       res: opts.res,
@@ -42,7 +47,7 @@ describe("createContext", () => {
   });
 
   it("should prefer the Authorization header over the session cookie", async () => {
-    const opts = createHTTPContextOptions({
+    const opts = createContextOptions({
       authorization: "Bearer valid-header",
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
     });
@@ -56,7 +61,7 @@ describe("createContext", () => {
     ["a missing token", "Bearer"],
     ["an empty token", "Bearer "],
   ])("should reject an Authorization header with %s", async (_, authorization) => {
-    const opts = createHTTPContextOptions({
+    const opts = createContextOptions({
       authorization,
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
     });
@@ -69,7 +74,7 @@ describe("createContext", () => {
   });
 
   it("should authenticate with the session cookie", async () => {
-    const opts = createHTTPContextOptions({
+    const opts = createContextOptions({
       cookie: `other=value; ${SESSION_COOKIE_NAME}=valid-cookie`,
     });
 
@@ -83,21 +88,21 @@ describe("createContext", () => {
   });
 
   it("should ignore cookies other than the session cookie", async () => {
-    const opts = createHTTPContextOptions({ cookie: "session=valid-cookie" });
+    const opts = createContextOptions({ cookie: "session=valid-cookie" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
   it("should ignore an empty session cookie", async () => {
-    const opts = createHTTPContextOptions({ cookie: `${SESSION_COOKIE_NAME}=` });
+    const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=` });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
   it("should clear the session cookie for an unknown or expired session", async () => {
-    const opts = createHTTPContextOptions({ cookie: `${SESSION_COOKIE_NAME}=expired-cookie` });
+    const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=expired-cookie` });
 
     await expect(createContext(opts)).resolves.toEqual({
       res: opts.res,
@@ -112,7 +117,7 @@ describe("createContext", () => {
   });
 
   it("should not authenticate with an unknown bearer token", async () => {
-    const opts = createHTTPContextOptions({ authorization: "Bearer expired-header" });
+    const opts = createContextOptions({ authorization: "Bearer expired-header" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
   });

@@ -15,7 +15,7 @@ import {
   createAuthenticatedContext,
   createServiceContext,
   createUnauthenticatedContext,
-} from "@/test/trpc.ts";
+} from "@/test/mocks/context.ts";
 import type { FindUniqueQuery } from "@/test/prisma.ts";
 import type { TRPCRouterRecord } from "@trpc/server";
 import type { RequestContext } from "@/utils/trpc.ts";
