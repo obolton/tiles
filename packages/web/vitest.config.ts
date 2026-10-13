@@ -23,8 +23,5 @@ export default defineConfig({
       PUBLIC_IMAGES_BASE_URL: "https://images.test",
       PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
     },
-    coverage: {
-      include: ["src/**/*.{ts,tsx}"],
-    },
   },
 });

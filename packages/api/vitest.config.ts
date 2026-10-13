@@ -24,9 +24,6 @@ export default defineConfig({
       CLIENT_ORIGIN: "https://test.example.com",
       SERVICE_API_TOKEN: "test",
     },
-    coverage: {
-      include: ["src/**/*.ts"],
-    },
   },
   resolve: {
     alias: {

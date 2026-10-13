@@ -10,5 +10,16 @@ export default defineConfig({
       "packages/image-upload-worker",
       "packages/web",
     ],
+    coverage: {
+      include: ["packages/*/src/**/*.{ts,tsx}"],
+      exclude: [
+        "**/__tests__/**",
+        "**/src/test/**",
+        "**/generated/**",
+        "**/*.d.ts",
+        "**/*.stories.tsx",
+      ],
+      reporter: ["text", "json-summary"],
+    },
   },
 });
