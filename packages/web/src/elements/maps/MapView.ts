@@ -26,7 +26,7 @@ const MAP_STYLE_NAMES: Record<MapStyleType, string> = {
 };
 
 function getStyleUrl(style: MapStyleType = "DEFAULT") {
-  const slug = MAP_STYLE_NAMES[style] ?? MAP_STYLE_NAMES.DEFAULT;
+  const slug = MAP_STYLE_NAMES[style];
   return `https://api.maptiler.com/maps/${slug}/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 }
 
@@ -144,7 +144,7 @@ export default class MapView extends HTMLElement {
   }
 
   private getPoints() {
-    return this.getElementsByTagName("map-point") as HTMLCollectionOf<MapPoint>;
+    return this.getElementsByTagName("map-point");
   }
 
   private get legendItems() {
@@ -268,7 +268,7 @@ export default class MapView extends HTMLElement {
   mutationObserverCallback(mutations: MutationRecord[]) {
     for (const mutation of mutations) {
       if (mutation.type === "attributes" && mutation.target instanceof HTMLElement) {
-        const point = mutation.target.closest("map-point") as MapPoint | null;
+        const point = mutation.target.closest("map-point");
         if (point) {
           this.markers.get(point)?.setLngLat([point.long, point.lat]);
         }

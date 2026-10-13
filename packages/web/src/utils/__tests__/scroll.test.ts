@@ -347,7 +347,7 @@ describe("whenVisible", () => {
   });
 
   test("forwards observer options and omits the signal", () => {
-    whenVisible(document.createElement("div"), {
+    void whenVisible(document.createElement("div"), {
       signal: new AbortController().signal,
       rootMargin: "-80px",
       threshold: 0.5,

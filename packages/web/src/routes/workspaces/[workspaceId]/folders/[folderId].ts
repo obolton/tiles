@@ -27,10 +27,6 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
     client.users.getUserInfo.query(undefined, options),
   ]);
 
-  if (!folder) {
-    return notFound();
-  }
-
   return {
     title: `${folder.name} - Tiles`,
     data: { workspace, id: folder.id, name: folder.name, folders, pages, user },

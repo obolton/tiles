@@ -163,7 +163,7 @@ function getString(tile: Y.Map<unknown>, key: string): string {
 
 function getTitle(value: unknown): string {
   if (value && typeof value === "object" && "title" in value) {
-    const { title } = value as { title: unknown };
+    const { title } = value;
     return typeof title === "string" ? title : "";
   }
   return "";

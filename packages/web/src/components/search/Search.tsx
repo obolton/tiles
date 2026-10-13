@@ -29,7 +29,7 @@ export default function Search<T, S extends string = string>({
     if (nextCursor.value === null) {
       return;
     }
-    search(query.value, nextCursor.value ?? null);
+    void search(query.value, nextCursor.value ?? null);
   }
 
   if (!import.meta.env.SSR) {

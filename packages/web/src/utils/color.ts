@@ -23,18 +23,18 @@ const oklch = useMode(modeOklch);
 export function oklchToP3(color: OklchColor): P3Color {
   const result = p3({ mode: "oklch", ...color });
   return {
-    r: result?.r ?? 0,
-    g: result?.g ?? 0,
-    b: result?.b ?? 0,
+    r: result.r,
+    g: result.g,
+    b: result.b,
   };
 }
 
 export function p3ToOklch(color: P3Color): OklchColor {
   const result = oklch({ mode: "p3", ...color });
   return {
-    l: result?.l ?? 0,
-    c: result?.c ?? 0,
-    h: result?.h ?? 0,
+    l: result.l,
+    c: result.c,
+    h: result.h ?? 0,
   };
 }
 

@@ -336,7 +336,7 @@ export default class LayoutEditor {
   }
 
   private handleDragEnter(event: DragDropEvent<DragData>) {
-    const tile = event.state?.data?.tile;
+    const tile = event.state.data?.tile;
     if (!tile) {
       return;
     }

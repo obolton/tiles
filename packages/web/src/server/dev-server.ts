@@ -64,7 +64,9 @@ export default async function createDevServer(options: DevServerOptions) {
       try {
         const method = request.method ?? "GET";
         const hasBody = method !== "GET" && method !== "HEAD";
-        const proto = request.headers["x-forwarded-proto"] ?? "http";
+        const forwardedProto = request.headers["x-forwarded-proto"];
+        const proto =
+          (Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto) ?? "http";
         const host = request.headers.host;
         const baseUrl = host ? `${proto}://${host}` : process.env.PUBLIC_WEB_ORIGIN;
         const webRequest = new Request(new URL(request.url ?? "", baseUrl), {

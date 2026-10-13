@@ -239,13 +239,13 @@ describe("Switch", () => {
 
   describe("misuse", () => {
     test("Case throws when rendered outside Switch", () => {
-      expect(() => render(<Case value="a">x</Case>)).toThrowError(
+      expect(() => render(<Case value="a">x</Case>)).toThrow(
         "<Case> must be a direct child of <Switch>",
       );
     });
 
     test("Default throws when rendered outside Switch", () => {
-      expect(() => render(<Default>x</Default>)).toThrowError(
+      expect(() => render(<Default>x</Default>)).toThrow(
         "<Default> must be a direct child of <Switch>",
       );
     });

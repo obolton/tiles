@@ -90,7 +90,7 @@ export default class DockLayoutEditor {
       return false;
     }
 
-    const tile = event.state?.data?.tile;
+    const tile = event.state.data?.tile;
     if (!tile) {
       return;
     }
@@ -240,9 +240,6 @@ export default class DockLayoutEditor {
 
     const beforeTile = this.page.getTile(beforeId);
     const afterTile = this.page.getTile(afterId);
-    if (!beforeTile || !afterTile) {
-      return;
-    }
 
     event.stopPropagation();
 

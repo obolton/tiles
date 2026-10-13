@@ -200,7 +200,7 @@ export default class ThemeSelector extends HTMLElement {
 
     this.open = true;
 
-    const swipe = document.createElement("swipe-view") as SwipeView;
+    const swipe = document.createElement("swipe-view");
     this.swipe = swipe;
     swipe.value = this.value;
     swipe.min = this.min;

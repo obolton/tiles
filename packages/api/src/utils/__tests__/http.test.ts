@@ -26,7 +26,7 @@ describe("getStream", () => {
           headers: {},
         }),
     );
-    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrow(
       "getStream: No Content-Type header.",
     );
   });
@@ -41,7 +41,7 @@ describe("getStream", () => {
           },
         }),
     );
-    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrow(
       "getStream: Invalid Content-Type header: text/plain.",
     );
   });
@@ -51,7 +51,7 @@ describe("getStream", () => {
       "fetch",
       async () => new Response(undefined, { headers: { "Content-Type": "image/jpeg" } }),
     );
-    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrowError(
+    await expect(getStream("https://example.com/stream", ["image/jpeg"])).rejects.toThrow(
       "getStream: No response body.",
     );
   });

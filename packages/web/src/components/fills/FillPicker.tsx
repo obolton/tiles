@@ -12,6 +12,7 @@ import type { Fill } from "./types";
 import type { ToolbarButtonProps } from "@/components/buttons/ToolbarButton";
 
 export interface FillPickerProps extends Omit<ToolbarButtonProps, "children" | "value"> {
+  id: string;
   themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
   onChange: (value: Fill | null) => void;
@@ -37,31 +38,24 @@ export default function FillPicker({
         aria-haspopup="menu"
         aria-expanded="false"
       >
-        {value ? (
-          value.derive((fill) => {
-            if (!fill) {
-              return <BackgroundIcon aria-hidden="true" />;
-            }
-            if (fill.type === "color") {
-              return <SolidColorIcon style={{ fill: toCSSColor(fill.color) }} aria-hidden="true" />;
-            }
-            if (fill.type === "gradient") {
-              return (
-                <span
-                  classList={{ [styles.gradient]: true, icon: true }}
-                  style={getBackgroundStyle(fill)}
-                  aria-hidden="true"
-                />
-              );
-            }
-            if (fill.type === "image") {
-              return <ImageIcon aria-hidden="true" />;
-            }
+        {value.derive((fill) => {
+          if (!fill) {
             return <BackgroundIcon aria-hidden="true" />;
-          })
-        ) : (
-          <BackgroundIcon aria-hidden="true" />
-        )}
+          }
+          if (fill.type === "color") {
+            return <SolidColorIcon style={{ fill: toCSSColor(fill.color) }} aria-hidden="true" />;
+          }
+          if (fill.type === "gradient") {
+            return (
+              <span
+                classList={{ [styles.gradient]: true, icon: true }}
+                style={getBackgroundStyle(fill)}
+                aria-hidden="true"
+              />
+            );
+          }
+          return <ImageIcon aria-hidden="true" />;
+        })}
         {label}
       </ToolbarButton>
 

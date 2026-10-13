@@ -41,7 +41,7 @@ export async function inviteToPage(
   );
 
   // Don't block on sending email
-  sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key })).catch((error) =>
+  sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key })).catch((error: unknown) =>
     console.error(error),
   );
 

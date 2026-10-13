@@ -24,16 +24,12 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
     client.workspaces.get.query({ workspaceId }, options),
   ]);
 
-  if (!user) {
-    return forbidden();
-  }
-
   return {
     title: "Profile settings - Tiles",
     data: {
       workspaceId,
       user,
-      isAdmin: workspace?.role === "ADMIN",
+      isAdmin: workspace.role === "ADMIN",
     },
   };
 }

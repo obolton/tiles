@@ -112,7 +112,7 @@ export default function FormattingTools({ editorView, state }: FormattingToolsPr
   }
 
   function insertNewDate() {
-    showModal(DateTimeModalLoader, {
+    void showModal(DateTimeModalLoader, {
       props: {},
       onConfirm({ value, time }) {
         performCommand(insertDateTime(value, time));
@@ -173,7 +173,7 @@ export default function FormattingTools({ editorView, state }: FormattingToolsPr
 
     const link = getLink(stateValue);
 
-    showModal(LinkModalLoader, {
+    void showModal(LinkModalLoader, {
       props: {
         workspaceId: Editor.current.workspaceId,
         url: link?.node.attrs.href,
@@ -181,7 +181,7 @@ export default function FormattingTools({ editorView, state }: FormattingToolsPr
         showRemove: !!link,
       },
       onConfirm(result) {
-        if (result && "url" in result) {
+        if ("url" in result) {
           performCommand(result.url ? addLink(result.url) : removeLink);
         }
       },

@@ -80,14 +80,14 @@ function getPickerElement(view: EditorView, getPos: () => number | undefined) {
     tr.replaceRangeWith(pos - 1, pos, schema.nodes.mention.create({ userId, displayName }));
 
     // Close the picker
-    tr.setMeta(MENTION_PLUGIN_KEY, { pos: null } as MentionMeta);
+    tr.setMeta(MENTION_PLUGIN_KEY, { pos: null });
 
     view.dispatch(tr);
     view.focus();
   }
 
   function onClose() {
-    view.dispatch(view.state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: null } as MentionMeta));
+    view.dispatch(view.state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: null }));
     view.focus();
   }
 
@@ -137,7 +137,7 @@ export function mentions() {
         if (text === "@") {
           const tr = view.state.tr.insertText("@", from, to);
           // Position after the @
-          tr.setMeta(MENTION_PLUGIN_KEY, { pos: from + 1 } as MentionMeta);
+          tr.setMeta(MENTION_PLUGIN_KEY, { pos: from + 1 });
           view.dispatch(tr);
           return true;
         }

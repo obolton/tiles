@@ -32,6 +32,6 @@ export default function createTile(page: Page, map: Y.Map<unknown>): Tile {
     case "CHART":
       return new Chart(page, map);
     default:
-      throw new Error(`Invalid tile type: ${type}`);
+      throw new Error(`Invalid tile type: ${String(type)}`);
   }
 }

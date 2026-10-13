@@ -14,7 +14,7 @@ describe("AnchoredPopover", () => {
   let button: HTMLElement;
 
   beforeEach(() => {
-    popover = document.createElement("anchored-popover") as AnchoredPopover;
+    popover = document.createElement("anchored-popover");
     popover.id = "popover";
     document.body.appendChild(popover);
 

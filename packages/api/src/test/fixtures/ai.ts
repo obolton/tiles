@@ -1,11 +1,11 @@
 import { vi } from "vitest";
 import * as Y from "yjs";
-import type { ServerResponse, IncomingMessage } from "node:http";
+import type { ServerResponse } from "node:http";
 import { DocWriter } from "@/collaboration/DocWriter";
 import type { ToolContext, ToolResult } from "@/ai/tools/types";
 
 export const MOCK_TOOL_CONTEXT: ToolContext = {
-  res: {} as ServerResponse<IncomingMessage>,
+  res: {} as ServerResponse,
   sessionId: "test-session",
   userId: "test-user",
   serviceName: null,

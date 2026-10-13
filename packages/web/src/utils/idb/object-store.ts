@@ -202,7 +202,9 @@ export class ObjectStore<T> {
         cursor.continue();
       });
 
-      request.addEventListener("error", () => reject(request.error));
+      request.addEventListener("error", () =>
+        reject(request.error ?? new Error("IndexedDB request failed")),
+      );
     });
   }
 
@@ -259,7 +261,9 @@ export class ObjectStore<T> {
         cursor.continue();
       });
 
-      request.addEventListener("error", () => reject(request.error));
+      request.addEventListener("error", () =>
+        reject(request.error ?? new Error("IndexedDB request failed")),
+      );
     });
   }
 }

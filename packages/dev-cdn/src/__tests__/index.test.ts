@@ -16,7 +16,7 @@ function createBucket(get: Mock): R2Bucket {
   };
 }
 
-const env = { IMAGES: createBucket(get), FONTS: createBucket(getFont) } as Env;
+const env = { IMAGES: createBucket(get), FONTS: createBucket(getFont) };
 
 const ORIGIN = "https://cdn.example.com";
 const IMAGE_URL = `${ORIGIN}/images/abc`;

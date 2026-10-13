@@ -18,6 +18,6 @@ export const HEADING_THEMES: ThemeRegistry<HeadingThemeProps> = {
   inverted: InvertedHeading,
 } as const;
 
-export const HEADING_THEME_OPTIONS = Object.keys(HEADING_THEMES) as (keyof typeof HEADING_THEMES)[];
+export const HEADING_THEME_OPTIONS = Object.keys(HEADING_THEMES);
 
 export const DEFAULT_HEADING_THEME = "default";

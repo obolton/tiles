@@ -157,7 +157,7 @@ describe("ObjectStore", () => {
 
       const store = db.store<Item>("items");
       const keys = await store.getKeys();
-      expect(keys.sort()).toEqual(["1", "2"]);
+      expect(new Set(keys)).toEqual(new Set(["1", "2"]));
     });
   });
 

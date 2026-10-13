@@ -48,7 +48,7 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
       state.value.doc.textContent === ""
     ) {
       event.preventDefault();
-      text.delete();
+      void text.delete();
     }
 
     // Prevent ancestors from acting on keyboard navigation

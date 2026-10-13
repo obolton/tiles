@@ -5,14 +5,12 @@ import styles from "./VideoTile.module.css";
 import type Video from "@/models/Video";
 import type { VideoType } from "@/models/Video";
 
-function getEmbedUrl(videoType: VideoType, videoId: string) {
-  switch (videoType) {
-    case "YOUTUBE":
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
+const EMBED_URLS: Record<VideoType, (videoId: string) => string> = {
+  YOUTUBE: (videoId) => `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`,
+};
 
-    default:
-      throw new Error(`Unsupported video type: ${videoType}`);
-  }
+function getEmbedUrl(videoType: VideoType, videoId: string) {
+  return EMBED_URLS[videoType](videoId);
 }
 
 export interface VideoTileProps {

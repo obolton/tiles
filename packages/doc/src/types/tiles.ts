@@ -7,13 +7,13 @@ import type { TableTile } from "./tiles/table";
 import type { ChartTile } from "./tiles/chart";
 import type { SectionTile } from "./tiles/section";
 
-export * from "./tiles/base";
+export type * from "./tiles/base";
 export * from "./tiles/text";
-export * from "./tiles/image";
+export type * from "./tiles/image";
 export * from "./tiles/video";
-export * from "./tiles/link";
-export * from "./tiles/pageLink";
-export * from "./tiles/table";
+export type * from "./tiles/link";
+export type * from "./tiles/pageLink";
+export type * from "./tiles/table";
 export * from "./tiles/chart";
 export * from "./tiles/section";
 

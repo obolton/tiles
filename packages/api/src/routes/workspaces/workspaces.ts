@@ -113,7 +113,7 @@ export async function inviteToWorkspace(
 
   // Don't block on sending email
   sendEmail(email, inviteToWorkspaceEmail({ inviter, workspaceName: workspace.name, key })).catch(
-    (error) => console.error(error),
+    (error: unknown) => console.error(error),
   );
 
   return invite;

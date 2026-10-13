@@ -82,7 +82,7 @@ export default class Table extends Tile {
 
   getColumnData(columnId: string): Reactive<CellValue[]> {
     return this.rowsContent.derive((rows) =>
-      orderedEntries(rows).map(({ map }) => getCell<CellValue>(map, columnId)),
+      orderedEntries(rows).map(({ map }) => getCell(map, columnId) as CellValue),
     );
   }
 

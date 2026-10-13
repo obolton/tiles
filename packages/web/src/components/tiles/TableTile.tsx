@@ -110,13 +110,7 @@ export default function TableTile({ table, showToolbar, signal }: TableTileProps
   const onEditCellEnd = async (event: TableEvent) => {
     const { target, row, column } = event;
 
-    if (
-      !(target instanceof HTMLTableCellElement) ||
-      !row ||
-      !column ||
-      !editorView ||
-      !state.value
-    ) {
+    if (!(target instanceof HTMLTableCellElement) || !row || !column || !state.value) {
       return;
     }
 
@@ -156,7 +150,7 @@ export default function TableTile({ table, showToolbar, signal }: TableTileProps
 
   const onResizeRow = (event: TableEvent) => {
     const { row, height } = event;
-    if (!row || !row.id || !height) {
+    if (!row?.id || !height) {
       return;
     }
     try {

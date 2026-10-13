@@ -363,7 +363,7 @@ export default class SwipeView extends HTMLElement {
       if (event.altKey) {
         this.previous();
       } else {
-        document.getSelection()?.modify(event.shiftKey ? "extend" : "move", "backward", "line");
+        document.getSelection()?.modify("move", "backward", "line");
       }
       return;
     }
@@ -374,7 +374,7 @@ export default class SwipeView extends HTMLElement {
       if (event.altKey) {
         this.next();
       } else {
-        document.getSelection()?.modify(event.shiftKey ? "extend" : "move", "forward", "line");
+        document.getSelection()?.modify("move", "forward", "line");
       }
       return;
     }

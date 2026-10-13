@@ -1,4 +1,4 @@
-import { TextFormat } from "@/utils/richText/types";
+import { TextFormat, TextAlignment } from "@/utils/richText/types";
 import { ListType } from "@/utils/richText/types";
 import { toCSSColor } from "@/utils/color";
 import ThemeVariant from "@/components/themes/ThemeVariant";
@@ -17,7 +17,6 @@ import type {
   ListNode,
   ListItemNode,
   Node,
-  TextAlignment,
   LinkNode,
   MentionNode,
 } from "@/utils/richText/types";
@@ -102,13 +101,13 @@ export default RichTextRoot;
 
 function getTextAlignment(align?: TextAlignment) {
   switch (align) {
-    case 0:
+    case TextAlignment.LEFT:
       return "left";
-    case 1:
+    case TextAlignment.CENTER:
       return "center";
-    case 2:
+    case TextAlignment.RIGHT:
       return "right";
-    case 3:
+    case TextAlignment.JUSTIFY:
       return "justify";
     default:
       return undefined;

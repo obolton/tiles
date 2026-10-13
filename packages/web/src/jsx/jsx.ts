@@ -105,5 +105,5 @@ export function Fragment({ children }: FragmentProperties) {
 }
 
 export function isClassComponent<T>(node: JSX.ElementType): node is JSX.ClassComponent<T> {
-  return typeof node === "function" && node.prototype && node.prototype.render;
+  return typeof node === "function" && node.prototype?.render;
 }

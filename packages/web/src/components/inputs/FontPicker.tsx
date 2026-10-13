@@ -19,7 +19,7 @@ export default function FontPicker({ value, onChange, ...props }: FontPickerProp
     loadFontPreviews(...FONT_IDS).catch(handleError);
   }
 
-  const setFont = (event: Event) => void onChange((event.target as ListSelect).value as FontId);
+  const setFont = (event: Event) => onChange((event.target as ListSelect).value as FontId);
 
   return (
     <list-select

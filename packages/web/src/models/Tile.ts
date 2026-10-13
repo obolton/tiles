@@ -95,7 +95,7 @@ export default abstract class Tile {
   }
 
   dispose() {
-    this.binding?.dispose();
+    this.binding.dispose();
   }
 
   get index(): number | null {

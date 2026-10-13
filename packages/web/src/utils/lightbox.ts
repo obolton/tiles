@@ -66,9 +66,7 @@ function openLightbox(element: HTMLElement) {
   });
 
   // Add eligible items
-  const eligibleItems = Array.from(
-    document.querySelectorAll('[data-show-in-lightbox="true"]') || [],
-  );
+  const eligibleItems = Array.from(document.querySelectorAll('[data-show-in-lightbox="true"]'));
   const fragment = document.createDocumentFragment();
   eligibleItems.forEach((content) => {
     const item = createItem(content);
@@ -103,10 +101,10 @@ function openLightbox(element: HTMLElement) {
       const next = list.children[currentIndex + 1]?.firstElementChild as HTMLElement | undefined;
 
       if (previous) {
-        moveTo(previous, { y: "-6vh" });
+        void moveTo(previous, { y: "-6vh" });
       }
       if (next) {
-        moveTo(next, { y: "6vh" });
+        void moveTo(next, { y: "6vh" });
       }
 
       const relatedId = element.getAttribute("data-related");
@@ -154,7 +152,7 @@ function openLightbox(element: HTMLElement) {
 
           lightbox?.close();
         });
-        transition.finished.finally(() => {
+        void transition.finished.finally(() => {
           relatedImage?.style.removeProperty("view-transition-name");
           relatedCaption?.style.removeProperty("view-transition-name");
           rootStyle.removeProperty("--view-transition-object-position");
@@ -195,10 +193,10 @@ function openLightbox(element: HTMLElement) {
   const next = visibleItem?.nextElementSibling;
 
   if (previous instanceof HTMLElement) {
-    moveFrom(previous, { y: "-6vh" });
+    void moveFrom(previous, { y: "-6vh" });
   }
   if (next instanceof HTMLElement) {
-    moveFrom(next, { y: "6vh" });
+    void moveFrom(next, { y: "6vh" });
   }
 
   // Add the lightbox to the document
@@ -221,7 +219,7 @@ function openLightbox(element: HTMLElement) {
       block: "center",
     });
   });
-  transition.finished.finally(() => {
+  void transition.finished.finally(() => {
     image?.style.removeProperty("view-transition-name");
     caption?.style.removeProperty("view-transition-name");
     rootStyle.removeProperty("--view-transition-object-position");

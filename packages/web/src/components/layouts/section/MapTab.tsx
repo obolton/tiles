@@ -27,7 +27,7 @@ export default function MapTab({ section }: MapTabProps) {
     const mapView = document.querySelector<MapView>(`map-view[data-section-id="${section.id}"]`);
     const boundingBox = mapView?.getBoundingBox();
 
-    showModal(PlaceModalLoader, {
+    void showModal(PlaceModalLoader, {
       props: { boundingBox },
       async onConfirm({ place }) {
         await Text.create(section.page, {

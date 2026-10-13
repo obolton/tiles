@@ -19,6 +19,6 @@ export const DATE_THEMES: ThemeRegistry<DateTimeThemeProps> = {
   "colorful-stacked": ColorfulStackedDateTime,
 } as const;
 
-export const DATE_THEME_OPTIONS = Object.keys(DATE_THEMES) as (keyof typeof DATE_THEMES)[];
+export const DATE_THEME_OPTIONS = Object.keys(DATE_THEMES);
 
 export const DEFAULT_DATE_THEME = "default";

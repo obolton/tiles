@@ -101,7 +101,7 @@ export default function ColorPalette({
   function setColor(event: Event) {
     const element = event.target as HTMLInputElement;
     if (element.type === "radio") {
-      onChange(element.value as Color);
+      onChange(element.value);
     }
   }
 

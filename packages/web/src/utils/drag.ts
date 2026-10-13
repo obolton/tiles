@@ -52,7 +52,7 @@ export class DragDropEvent<T = unknown> extends Event {
       clientY = 0,
       altKey = false,
       ...init
-    } = options || {};
+    } = options;
     super(type, init);
 
     this.state = state;
@@ -401,7 +401,7 @@ export class DragState<T = unknown> {
       this.dragPreview.inert = false;
     }
 
-    viewTransition(() => {
+    void viewTransition(() => {
       dropTarget?.dispatchEvent(
         this.createDragDropEvent("dnd-drop", {
           bubbles: true,

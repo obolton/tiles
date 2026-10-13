@@ -2,6 +2,8 @@ import type { RichText } from "doc/types/richText";
 
 type Node = RichText[number] | { type: string; [key: string]: unknown };
 
+const text = (value: unknown) => (typeof value === "string" ? value : "");
+
 /**
  * Convert rich text to markdown.
  */
@@ -18,22 +20,22 @@ export function toMarkdown(input: RichText): string {
 
     switch (node.type) {
       case "text":
-        output += node.text;
+        output += text(node.text);
         break;
 
       case "link": {
         const linkText = toMarkdown(node.children as RichText);
-        output += `[${linkText}](${node.href})`;
+        output += `[${linkText}](${text(node.href)})`;
         break;
       }
 
       case "dropdown":
       case "date":
-        output += node.value;
+        output += text(node.value);
         break;
 
       case "mention":
-        output += `@${node.displayName}`;
+        output += `@${text(node.displayName)}`;
         break;
 
       case "paragraph":
@@ -79,7 +81,7 @@ export function toMarkdown(input: RichText): string {
 
       case "code": {
         const code = toMarkdown(node.children as RichText);
-        queue.push(`\`\`\`${node.language}\n${code}\n\`\`\`\n\n`);
+        queue.push(`\`\`\`${text(node.language)}\n${code}\n\`\`\`\n\n`);
         break;
       }
 

@@ -1,12 +1,12 @@
 import { stringifySetCookie, parseCookie } from "cookie";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
-import type { ServerResponse, IncomingMessage } from "node:http";
+import type { ServerResponse } from "node:http";
 
 export function getCookie(cookieString: string, name: string) {
   return parseCookie(cookieString)[name] ?? null;
 }
 
-export function clearSessionCookie(res: ServerResponse<IncomingMessage>) {
+export function clearSessionCookie(res: ServerResponse) {
   res.setHeader(
     "Set-Cookie",
     stringifySetCookie({

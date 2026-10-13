@@ -20,9 +20,6 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   function getSelectedColumn() {
     const selection = getTable().selection;
-    if (!selection) {
-      return null;
-    }
     const first = Array.from(selection)[0];
     return first?.type === "column" ? first.column : null;
   }
@@ -50,14 +47,11 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   async function addColumn() {
     const selection = getTable().selection;
-    if (!selection) {
-      return;
-    }
     const first = Array.from(selection)[0];
     const column = first?.type === "column" ? first.column : null;
     const afterColumnId = column?.id ?? null;
     try {
-      await table.insertColumn(afterColumnId);
+      table.insertColumn(afterColumnId);
     } catch (error) {
       handleError(error);
     }
@@ -65,9 +59,6 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   async function createChart() {
     const selection = getTable().selection;
-    if (!selection) {
-      return;
-    }
     const first = Array.from(selection)[0];
     const column = first?.type === "column" ? first.column : null;
     const columnId = column?.id;
@@ -85,10 +76,6 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   async function deleteSelection() {
     const tableView = getTable();
-    if (!tableView.selection) {
-      return;
-    }
-
     const selectedColumns = tableView.selection
       .values()
       .filter((s) => s.type === "column")

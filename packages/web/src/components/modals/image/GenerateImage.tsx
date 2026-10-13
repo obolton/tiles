@@ -51,7 +51,7 @@ export default function GenerateImage({ confirm, cancel }: GenerateImageProps) {
     }
     isPending.value = true;
     try {
-      await confirm({ image: file.value });
+      confirm({ image: file.value });
     } catch (error) {
       handleError(error);
     } finally {

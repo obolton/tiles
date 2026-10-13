@@ -69,7 +69,7 @@ export function initializeSession(userData?: User | null) {
   }
 
   // Background refresh — updates user.value reactively when resolved
-  getUserInfo().catch((error) => {
+  getUserInfo().catch((error: unknown) => {
     if (import.meta.env.DEV) {
       console.error("Failed to refresh user info", error);
     }

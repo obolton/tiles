@@ -129,7 +129,7 @@ function getListType(listType: ListType) {
     case ListType.CHECK:
       return schema.nodes.check_list;
     default:
-      throw new Error(`Unsupported list type: ${listType}`);
+      throw new Error(`Unsupported list type: ${String(listType)}`);
   }
 }
 
@@ -223,7 +223,7 @@ function createNode(node: SerializedNode) {
     case "divider":
       return createDividerNode(node);
     default:
-      throw new Error(`Unsupported node type: ${type}`);
+      throw new Error(`Unsupported node type: ${String(type)}`);
   }
 }
 

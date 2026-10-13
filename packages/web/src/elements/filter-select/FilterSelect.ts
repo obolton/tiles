@@ -221,7 +221,7 @@ export default class FilterSelect extends HTMLElement {
     const filter = this.inputValue.toLocaleLowerCase();
 
     for (const item of this.querySelectorAll<HTMLElement>("[data-value]")) {
-      const label = item.dataset.label ?? item.textContent ?? "";
+      const label = item.dataset.label ?? item.textContent;
       const matches = !filter || label.toLocaleLowerCase().includes(filter);
       item.hidden = !matches;
     }

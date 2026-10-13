@@ -25,10 +25,6 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
     client.users.getUserInfo.query(undefined, options),
   ]);
 
-  if (!workspace) {
-    return forbidden();
-  }
-
   if (workspace.role !== "ADMIN") {
     return forbidden();
   }

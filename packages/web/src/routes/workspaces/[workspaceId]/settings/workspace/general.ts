@@ -24,10 +24,6 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
     client.users.getUserInfo.query(undefined, options),
   ]);
 
-  if (!workspace) {
-    return forbidden();
-  }
-
   return {
     title: "General settings - Tiles",
     data: { workspace, user },

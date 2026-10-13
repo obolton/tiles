@@ -23,7 +23,7 @@ export default function General({ workspace, user }: GeneralProps) {
   const isAdmin = reactive(workspace.role === "ADMIN");
 
   function deleteWorkspace() {
-    showModal(DeleteWorkspaceModalLoader, {
+    void showModal(DeleteWorkspaceModalLoader, {
       props: {},
       async onConfirm() {
         await client.workspaces.delete.mutate({ workspaceId: workspace.id });

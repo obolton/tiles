@@ -10,7 +10,7 @@ describe("getVideoInfo", () => {
   });
 
   test.each(["", "invalid"])("throws an error for invalid URL: %s", (url) => {
-    expect(() => getVideoInfo(url)).toThrowError("Invalid URL");
+    expect(() => getVideoInfo(url)).toThrow("Invalid URL");
   });
 
   test.each([

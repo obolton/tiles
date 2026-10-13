@@ -65,7 +65,7 @@ export class PageCollaboration {
     this.#abort.abort();
     this.presence.dispose();
     this.#provider.destroy();
-    this.#indexeddb.destroy();
+    void this.#indexeddb.destroy();
   }
 
   publishUser() {

@@ -341,7 +341,7 @@ export async function streamTurn(
           const tileId = toolContext.resolveArtifactId(textEvent.destination);
           const mode = textEvent.mode ?? "insert";
           const range =
-            mode === "selection" && anchor && tileId === anchor.tileId ? anchor.range : undefined;
+            mode === "selection" && tileId === anchor?.tileId ? anchor.range : undefined;
           writer = toolContext.session.streamText(tileId, mode, range);
         }
       } else if (writer) {

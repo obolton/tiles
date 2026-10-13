@@ -61,7 +61,7 @@ describe("generateFontFaceCSS", () => {
   });
 
   test("silently skips unknown ids", () => {
-    const { content } = generateFontFaceCSS(["unknown-font" as FontId]);
+    const { content } = generateFontFaceCSS(["unknown-font"]);
     expect(content).toBe("");
   });
 
@@ -89,7 +89,7 @@ describe("getFontPreload", () => {
   });
 
   test("throws on unknown font id", () => {
-    expect(() => getFontPreload("not-a-font" as FontId)).toThrow("Unknown font: not-a-font");
+    expect(() => getFontPreload("not-a-font")).toThrow("Unknown font: not-a-font");
   });
 
   test("throws when no file matches the requested variant", () => {
@@ -129,7 +129,7 @@ describe("loadFonts", () => {
   });
 
   test("throws on unknown font id", async () => {
-    await expect(loadFonts("not-a-font" as FontId)).rejects.toThrow("Unknown font: not-a-font");
+    await expect(loadFonts("not-a-font")).rejects.toThrow("Unknown font: not-a-font");
   });
 });
 
@@ -165,9 +165,7 @@ describe("loadFontPreviews", () => {
   });
 
   test("throws on unknown font id", async () => {
-    await expect(loadFontPreviews("not-a-font" as FontId)).rejects.toThrow(
-      "Unknown font: not-a-font",
-    );
+    await expect(loadFontPreviews("not-a-font")).rejects.toThrow("Unknown font: not-a-font");
   });
 });
 

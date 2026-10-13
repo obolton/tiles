@@ -61,7 +61,7 @@ export class CodeNodeView implements NodeView {
       parent: container,
     });
 
-    this.loadLanguageExtension(this.language);
+    void this.loadLanguageExtension(this.language);
   }
 
   private createKeymap() {
@@ -119,7 +119,7 @@ export class CodeNodeView implements NodeView {
     const newLanguage = node.attrs.language as string;
     if (newLanguage !== this.language) {
       this.language = newLanguage;
-      this.loadLanguageExtension(newLanguage);
+      void this.loadLanguageExtension(newLanguage);
     }
 
     const newLineNumbers = node.attrs.lineNumbers as boolean;

@@ -62,7 +62,7 @@ class DropdownNodeView implements NodeView, EventListenerObject {
         this.onChange(event);
         break;
       case "delete":
-        this.onDelete(event as DeleteEvent);
+        this.onDelete(event);
         break;
       case "reorder":
         this.onReorder(event as ReorderEvent);

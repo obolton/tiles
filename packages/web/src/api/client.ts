@@ -25,7 +25,7 @@ const client = createTRPCClient<AppRouter>({
         },
         headers({ opList }) {
           const sessionId = opList[0].context.sessionId;
-          return sessionId
+          return typeof sessionId === "string"
             ? {
                 Authorization: `Bearer ${sessionId}`,
               }
@@ -42,8 +42,7 @@ const client = createTRPCClient<AppRouter>({
         },
         headers({ opList }) {
           const sessionId = opList[0].context.sessionId;
-          // TODO: Validate session ID before sending
-          return sessionId
+          return typeof sessionId === "string"
             ? {
                 Authorization: `Bearer ${sessionId}`,
               }

@@ -27,6 +27,6 @@ export default function HeadingTag({
     case 3:
       return <h3 className={classNames(align, className)} style={style} {...props} />;
     default:
-      throw new Error("Invalid heading level: " + level);
+      throw new Error(`Invalid heading level: ${String(level)}`);
   }
 }

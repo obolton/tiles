@@ -99,7 +99,7 @@ export default function PagesGrid({
 
   function onRefresh() {
     selection.clear();
-    onSearch("", null);
+    void onSearch("", null);
   }
 
   if (!import.meta.env.SSR) {

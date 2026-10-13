@@ -18,9 +18,6 @@ export default function RowTab({ table, getTable }: RowTabProps) {
 
   function getSelectedRow() {
     const selection = getTable().selection;
-    if (!selection) {
-      return null;
-    }
     const first = Array.from(selection)[0];
     return first?.type === "row" ? first.row : null;
   }
@@ -48,14 +45,11 @@ export default function RowTab({ table, getTable }: RowTabProps) {
 
   async function addRow() {
     const selection = getTable().selection;
-    if (!selection) {
-      return;
-    }
     const first = Array.from(selection)[0];
     const row = first?.type === "row" ? first.row : null;
     const afterRowId = row?.id ?? null;
     try {
-      await table.insertRow(afterRowId);
+      table.insertRow(afterRowId);
     } catch (error) {
       handleError(error);
     }
@@ -63,10 +57,6 @@ export default function RowTab({ table, getTable }: RowTabProps) {
 
   async function deleteSelection() {
     const tableView = getTable();
-    if (!tableView.selection) {
-      return;
-    }
-
     const selectedRows = tableView.selection
       .values()
       .filter((s) => s.type === "row")

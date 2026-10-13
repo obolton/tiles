@@ -46,7 +46,7 @@ export default function LinkModal({
       if (!cursor) {
         pages.value = resultPages;
       } else {
-        pages.value = [...(pages.value ?? []), ...resultPages];
+        pages.value = [...pages.value, ...resultPages];
       }
       nextCursor.value = resultNextCursor;
     } catch (error) {
@@ -124,7 +124,7 @@ export default function LinkModal({
       return;
     }
     event.preventDefault();
-    selectPage(page);
+    void selectPage(page);
   }
 
   return (

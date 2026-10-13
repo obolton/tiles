@@ -87,7 +87,7 @@ export class Computed<Input extends Reactive<unknown, unknown>, Value> extends B
 
   get value() {
     if (!this.unsubscribeCallback || this.stale) {
-      this.cachedValue = this.transform(this.input.value as ReactiveType<Input>);
+      this.cachedValue = this.transform(this.input.value);
       this.stale = false;
     }
     return this.cachedValue as Value;

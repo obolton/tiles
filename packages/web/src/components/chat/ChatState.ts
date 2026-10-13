@@ -81,7 +81,7 @@ export default class ChatState {
       if (m.role === "user") {
         history.push({ role: m.role, content: m.content });
       } else if (m.content) {
-        history.push({ role: m.role, content: m.content.textContent ?? "" });
+        history.push({ role: m.role, content: m.content.textContent });
       }
     }
     return history;

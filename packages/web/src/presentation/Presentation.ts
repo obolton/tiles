@@ -92,7 +92,7 @@ export default class Presentation {
     this.observeSlides();
     this.addEventListeners();
     this.goTo(this.currentIndex);
-    this.enterFullscreen();
+    void this.enterFullscreen();
 
     // Show toolbar initially, then auto-hide
     this.showControls();
@@ -110,7 +110,7 @@ export default class Presentation {
     clearTimeout(this.idleTimer);
 
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      void document.exitFullscreen();
     }
 
     const url = new URL(window.location.href);
@@ -179,12 +179,12 @@ export default class Presentation {
   }
 
   private async enterFullscreen() {
-    if (!navigator.userActivation?.isActive) {
+    if (!document.fullscreenEnabled || !navigator.userActivation?.isActive) {
       return;
     }
 
     try {
-      await document.documentElement.requestFullscreen?.();
+      await document.documentElement.requestFullscreen();
       this.goTo(this.currentIndex);
     } catch {
       // Fullscreen denied
@@ -269,9 +269,9 @@ export default class Presentation {
   private toggleFullscreen() {
     this.togglingFullscreen = true;
     if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen?.();
+      void document.exitFullscreen();
+    } else if (document.fullscreenEnabled) {
+      void document.documentElement.requestFullscreen();
     }
   }
 

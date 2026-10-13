@@ -17,7 +17,9 @@ export type StyleValue = string | number | null | undefined;
 export type CustomCSSProperty = `--${string}`;
 
 export type StyleDeclaration = {
-  [K in keyof CSSStyleDeclaration | CustomCSSProperty]?: StyleValue | Reactive<StyleValue>;
+  [K in Exclude<keyof CSSStyleDeclaration, symbol | number> | CustomCSSProperty]?:
+    | StyleValue
+    | Reactive<StyleValue>;
 };
 
 // Global attributes shared by all HTML elements
@@ -65,7 +67,7 @@ export interface GlobalHTMLAttributes {
 // Anchor element attributes
 export interface AnchorHTMLAttributes extends GlobalHTMLAttributes {
   href?: string;
-  target?: "_self" | "_blank" | "_parent" | "_top" | string;
+  target?: "_self" | "_blank" | "_parent" | "_top" | (string & {});
   rel?: string;
   download?: string;
   hreflang?: string;

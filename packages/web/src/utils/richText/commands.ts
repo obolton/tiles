@@ -4,8 +4,7 @@ import { schema, type TextAlignment } from "./schema";
 import { closest, getSelectionHeadingLevel, getSelectionBlockNodeTypes } from "./helpers";
 import { MAX_INDENT } from "@/constants/formatting";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
-import { MENTION_PLUGIN_KEY, type MentionMeta } from "./mentions";
-import type { PromptMeta } from "./prompt";
+import { MENTION_PLUGIN_KEY } from "./mentions";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import type { FontId } from "fonts/config";
@@ -411,7 +410,7 @@ export const togglePrompt: Command = (state, dispatch, view) => {
     const isOpen = !!PROMPT_PLUGIN_KEY.getState(state);
     const tr = state.tr.setMeta(PROMPT_PLUGIN_KEY, {
       pos: isOpen ? null : pos,
-    } as PromptMeta);
+    });
     dispatch(tr);
 
     // Restore focus to the editor
@@ -425,7 +424,7 @@ export const togglePrompt: Command = (state, dispatch, view) => {
 export const openMentionPicker: Command = (state, dispatch) => {
   if (dispatch) {
     const { from } = state.selection;
-    dispatch(state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: from } as MentionMeta));
+    dispatch(state.tr.setMeta(MENTION_PLUGIN_KEY, { pos: from }));
   }
   return true;
 };

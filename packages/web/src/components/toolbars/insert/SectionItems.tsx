@@ -55,7 +55,7 @@ function createCalendar() {
 }
 
 function createMap() {
-  showModal(PlaceModalLoader, {
+  void showModal(PlaceModalLoader, {
     props: {},
     async onConfirm({ place }) {
       const section = await Section.create(Editor.current.page, {

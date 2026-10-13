@@ -251,7 +251,7 @@ export async function movePages(
   { userId, workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   if (folderId) {
-    const folder = await prisma.folder.findUniqueOrThrow({
+    const folder = await prisma.folder.findUnique({
       where: { id: folderId, workspaceId },
       select: { id: true },
     });

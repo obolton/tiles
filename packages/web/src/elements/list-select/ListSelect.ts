@@ -399,7 +399,7 @@ export default class ListSelect extends HTMLElement {
       return;
     }
 
-    const labelText = item.getAttribute("data-label") ?? item.textContent?.trim();
+    const labelText = item.getAttribute("data-label") ?? item.textContent.trim();
 
     if (!labelText) {
       return;

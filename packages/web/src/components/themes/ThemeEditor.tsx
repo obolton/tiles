@@ -63,7 +63,7 @@ export default function ThemeEditor({
             if (!fill || fill.type === "image") {
               return;
             }
-            theme.setBackground(fill);
+            void theme.setBackground(fill);
           }}
         />
       </div>

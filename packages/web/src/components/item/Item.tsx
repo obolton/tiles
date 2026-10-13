@@ -1,4 +1,4 @@
-import { reactive, combine } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import PeerIndicator from "@/components/collaboration/PeerIndicator";
@@ -112,13 +112,13 @@ export default function Item({
 
         if (
           document.activeElement instanceof HTMLElement &&
-          item?.contains(document.activeElement)
+          item.contains(document.activeElement)
         ) {
           document.activeElement.blur();
         }
       } else {
         editor.select([id], true);
-        item?.focus({ preventScroll: true });
+        item.focus({ preventScroll: true });
       }
     } else {
       editor.select([id], false);
@@ -131,13 +131,10 @@ export default function Item({
     }
   }
 
-  const position =
-    x && y
-      ? combine({ x, y }, ({ x, y }) => ({
-          "--x": x.toString(),
-          "--y": y.toString(),
-        }))
-      : reactive({});
+  const position = combine({ x, y }, ({ x, y }) => ({
+    "--x": x.toString(),
+    "--y": y.toString(),
+  }));
 
   const combinedStyles = combine(
     {

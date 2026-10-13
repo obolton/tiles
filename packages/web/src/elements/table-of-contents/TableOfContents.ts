@@ -46,8 +46,8 @@ export default class TableOfContents extends AnchoredPopover {
     super.handleToggle(event);
 
     if (event.newState === "closed") {
-      Promise.allSettled(this.getAnimations().map((animation) => animation.finished)).then(() =>
-        this.clear(),
+      void Promise.allSettled(this.getAnimations().map((animation) => animation.finished)).then(
+        () => this.clear(),
       );
     }
   }

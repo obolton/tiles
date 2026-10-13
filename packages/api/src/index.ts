@@ -63,7 +63,7 @@ server.on("error", (error) => {
 server.on("upgrade", (req, socket, head) => {
   const url = new URL(req.url ?? "/", SERVER_URL);
   if (url.pathname.startsWith(COLLABORATION_PATH)) {
-    ws.handleUpgrade(req, socket, head);
+    void ws.handleUpgrade(req, socket, head);
   } else {
     socket.destroy();
   }

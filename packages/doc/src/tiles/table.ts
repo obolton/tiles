@@ -106,9 +106,9 @@ export function clearRowCells(row: Y.Map<unknown>, columnIds?: readonly string[]
   }
 }
 
-export function getCell<T = unknown>(row: Y.Map<unknown>, columnId: string): T | null {
+export function getCell(row: Y.Map<unknown>, columnId: string): unknown {
   const cells = row.get("cells");
-  return cells instanceof Y.Map ? ((cells.get(columnId) as T) ?? null) : null;
+  return cells instanceof Y.Map ? (cells.get(columnId) ?? null) : null;
 }
 
 /**

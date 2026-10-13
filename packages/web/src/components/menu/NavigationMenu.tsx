@@ -17,7 +17,7 @@ const CreateWorkspaceModalLoader = () =>
   import("@/components/modals/workspaces/CreateWorkspaceModal");
 
 function createWorkspace() {
-  showModal(CreateWorkspaceModalLoader, {
+  void showModal(CreateWorkspaceModalLoader, {
     props: {},
     async onConfirm({ name }) {
       const { id } = await client.workspaces.create.mutate({ name });

@@ -7,7 +7,7 @@ import {
   applyStyleObject,
   mapAttributeName,
 } from "./attributes";
-import type { ClassList, StyleDeclaration } from "./html-attributes";
+import type { ClassList } from "./html-attributes";
 import type { Reactive } from "@/utils/reactivity";
 import type { JSX } from "./jsx";
 
@@ -62,6 +62,7 @@ function combineSignal(context: RenderContext, signal: AbortSignal): RenderConte
   };
 }
 
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters
 function setAttributes<T extends Element>(
   element: T,
   properties: Record<string, unknown>,
@@ -116,9 +117,9 @@ function setAttribute(element: Element, name: string, value: unknown, signal?: A
     (element instanceof HTMLElement || element instanceof SVGElement) &&
     typeof value === "object"
   ) {
-    applyStyleObject(element, value as StyleDeclaration, signal);
+    applyStyleObject(element, value, signal);
   } else if (BOOLEAN_STRING_ATTRIBUTES.has(mappedName)) {
-    element.setAttribute(mappedName, typeof value === "string" ? value : value ? "true" : "false");
+    element.setAttribute(mappedName, typeof value === "string" ? value : String(Boolean(value)));
   } else if (typeof value === "boolean") {
     if (value) {
       element.setAttribute(mappedName, "");
@@ -128,7 +129,7 @@ function setAttribute(element: Element, name: string, value: unknown, signal?: A
   } else if (typeof value === "string" || typeof value === "number" || typeof value === "bigint") {
     element.setAttribute(mappedName, value.toString());
   } else {
-    throw new Error(`Invalid attribute value for "${name}": ${value}`);
+    throw new Error(`Invalid attribute value for "${name}": ${typeof value}`);
   }
 }
 

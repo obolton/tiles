@@ -1,4 +1,4 @@
-import { combine, reactive } from "@/utils/reactivity";
+import { combine } from "@/utils/reactivity";
 import { getSizeStyle } from "@/components/item/Item";
 import { getThemeStyles } from "@/utils/themes";
 import styles from "./ThumbnailItem.module.css";
@@ -15,13 +15,10 @@ export interface ThumbnailItemProps {
 export default function ThumbnailItem({ tile, classList, children }: ThumbnailItemProps) {
   const { sizing, x, y, width, height, rowSpan, hide } = tile;
 
-  const position =
-    x && y
-      ? combine({ x, y }, ({ x, y }) => ({
-          "--x": x.toString(),
-          "--y": y.toString(),
-        }))
-      : reactive({});
+  const position = combine({ x, y }, ({ x, y }) => ({
+    "--x": x.toString(),
+    "--y": y.toString(),
+  }));
 
   const themeStyles = combine(
     {

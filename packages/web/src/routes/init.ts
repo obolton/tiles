@@ -5,6 +5,6 @@ export function initRoute(workspaceId?: string, userData?: User | null) {
   initializeSession(userData);
 
   if (user.value && workspaceId) {
-    initializeCache(user.value.id, workspaceId);
+    void initializeCache(user.value.id, workspaceId);
   }
 }

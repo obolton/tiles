@@ -8,7 +8,7 @@ const routeModules = import.meta.glob(["@/routes/**/*.ts", "!**/__tests__/**", "
 
 function getPathFromModuleUrl(url: string) {
   const matches = url.match(/^\/src\/routes\/(.*)\.ts$/);
-  if (!matches || !matches[1]) {
+  if (!matches?.[1]) {
     return null;
   }
   const path = matches[1].replace(/\[(\w+)\]/g, ":$1");

@@ -2,10 +2,10 @@ import { reactive } from "./value";
 
 type Value = string | number | boolean | object;
 
-function read<T extends Value>(key: string): T | null {
+function read(key: string): unknown {
   try {
     const raw = localStorage.getItem(key);
-    return raw !== null ? (JSON.parse(raw) as T) : null;
+    return raw !== null ? JSON.parse(raw) : null;
   } catch (error) {
     if (import.meta.env.DEV) {
       console.error(`Failed to read "${key}" from localStorage`, error);
@@ -29,7 +29,7 @@ export function persistent<T extends Value>(key: string, defaultValue: T) {
     return reactive<T>(defaultValue);
   }
 
-  const value = reactive<T>(read<T>(key) ?? defaultValue);
+  const value = reactive<T>((read(key) as T | null) ?? defaultValue);
   value.subscribe(() => write(key, value.value));
 
   return value;

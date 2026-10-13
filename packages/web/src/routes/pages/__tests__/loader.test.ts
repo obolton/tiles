@@ -38,9 +38,6 @@ const LIVE_DOCUMENT = encodeDoc("live-tile");
 const VERSION_DOCUMENT = encodeDoc("version-tile");
 
 async function runLoader(search = "") {
-  if (!route.loader) {
-    throw new Error("The page route has no loader");
-  }
   return route.loader({
     url: new URL(`http://localhost/pages/${PAGE.id}${search}`),
     headers: new Headers(),
@@ -49,7 +46,7 @@ async function runLoader(search = "") {
 }
 
 function unwrapData(result: Awaited<ReturnType<typeof runLoader>>) {
-  if (!result || result instanceof Response) {
+  if (result instanceof Response) {
     throw new Error("Expected loader data");
   }
   return result;

@@ -397,7 +397,7 @@ describe("Tile", () => {
 
       expect(tile.themeId.value).toBe(theme.id);
       expect(tile.theme.value).toEqual(theme.serialize());
-      expect(editor.page.doc?.getMap("themes").get(theme.id)).toEqual(theme.serialize());
+      expect(editor.page.doc.getMap("themes").get(theme.id)).toEqual(theme.serialize());
     });
 
     test("overwrites the snapshot on re-apply", () => {
@@ -408,7 +408,7 @@ describe("Tile", () => {
 
       tile.setTheme(theme);
 
-      const snapshot = editor.page.doc?.getMap("themes").get(theme.id) as
+      const snapshot = editor.page.doc.getMap("themes").get(theme.id) as
         | { name: string }
         | undefined;
       expect(snapshot?.name).toBe("Renamed");

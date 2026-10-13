@@ -15,7 +15,7 @@ describe("PopoverMenu", () => {
   let items: HTMLButtonElement[];
 
   beforeEach(() => {
-    menu = document.createElement("popover-menu") as PopoverMenu;
+    menu = document.createElement("popover-menu");
     menu.id = "menu";
 
     items = Array.from({ length: 3 }, (_, i) => {

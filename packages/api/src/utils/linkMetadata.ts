@@ -140,7 +140,8 @@ export async function getLinkMetadata(url: string, language: string = "en-US,en"
       imageUrl: ogImageUrl ? resolveImageUrl(ogImageUrl, url) : null,
     };
   } catch (error) {
-    console.error(`Link metadata: Failed to fetch metadata for ${url}: ${error}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Link metadata: Failed to fetch metadata for ${url}: ${message}`);
     return null;
   }
 }

@@ -11,21 +11,21 @@ const SERVICE_API_TOKEN = process.env.SERVICE_API_TOKEN;
 assert(SERVICE_API_TOKEN, "SERVICE_API_TOKEN is not defined");
 
 export interface UnauthenticatedRequestContext {
-  res: ServerResponse<IncomingMessage>;
+  res: ServerResponse;
   sessionId: null;
   userId: null;
   serviceName: null;
 }
 
 export interface AuthenticatedRequestContext {
-  res: ServerResponse<IncomingMessage>;
+  res: ServerResponse;
   sessionId: string;
   userId: string;
   serviceName: null;
 }
 
 export interface AuthenticatedServiceRequestContext {
-  res: ServerResponse<IncomingMessage>;
+  res: ServerResponse;
   sessionId: null;
   userId: null;
   serviceName: string;

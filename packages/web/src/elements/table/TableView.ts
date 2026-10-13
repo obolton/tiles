@@ -667,7 +667,7 @@ export default class TableView extends HTMLElement {
   private handleResizeEnd(event: ResizeEvent) {
     const target = event.currentTarget as HTMLElement;
     const th = target.closest("th");
-    if (!th || !th.parentElement) {
+    if (!th?.parentElement) {
       return;
     }
 
@@ -1072,7 +1072,7 @@ export default class TableView extends HTMLElement {
 
       for (let j = startColIndex; j <= endColIndex; j++) {
         const cell = row.element.cells[j + 1];
-        if (cell && cell.tagName === "TD") {
+        if (cell?.tagName === "TD") {
           cell.classList.add("selected");
         }
       }
@@ -1927,7 +1927,7 @@ export default class TableView extends HTMLElement {
 
       for (const row of this.tableBody.rows) {
         const th = row.cells[0];
-        if (th && th.tagName === "TH") {
+        if (th?.tagName === "TH") {
           makeDraggable(th, {
             constrain: "vertical",
             clone: true,

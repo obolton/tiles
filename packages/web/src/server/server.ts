@@ -88,7 +88,7 @@ async function renderRoute(
   routeMatch: RouteMatch,
   viteDevServer?: ViteDevServer,
 ) {
-  const method = request.method ?? "GET";
+  const method = request.method;
   const { route, parameters } = routeMatch;
   const routeConfig = await route.import();
 

@@ -31,7 +31,7 @@ describe("parseColor", () => {
   });
 
   test("throws on invalid length", () => {
-    expect(() => parseColor("fff")).toThrowError("Invalid color");
+    expect(() => parseColor("fff")).toThrow("Invalid color");
   });
 });
 

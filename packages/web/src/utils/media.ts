@@ -67,9 +67,6 @@ export function getAcceptableDragItem(
   dataTransfer: DataTransfer,
   contentTypes = ACCEPT_CONTENT_TYPES,
 ) {
-  if (!dataTransfer.items) {
-    return undefined;
-  }
   return Array.from(dataTransfer.items).find((item) => contentTypes.has(item.type));
 }
 

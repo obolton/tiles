@@ -56,9 +56,6 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
           await showModal(ImageModalLoader, {
             props: {},
             async onConfirm(result) {
-              if (!result) {
-                return;
-              }
               const { id, width, height } = await uploadMedia({
                 file: result.image,
                 purpose: "content",

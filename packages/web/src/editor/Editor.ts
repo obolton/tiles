@@ -249,7 +249,7 @@ export default class Editor {
     if (isMod && event.key === "Enter" && !isInput) {
       event.preventDefault();
       this.setEditable(false);
-      startPresentation();
+      void startPresentation();
       return;
     }
 
@@ -394,7 +394,7 @@ export default class Editor {
     }
     try {
       await whenVisible(element, { rootMargin: "-80px", threshold: 0.5 });
-      pulse(element);
+      void pulse(element);
     } catch {
       // Do nothing
     }
@@ -403,7 +403,7 @@ export default class Editor {
   revealClient(clientId: number) {
     const tileId = this.collaboration?.presence.getActiveTile(clientId);
     if (tileId) {
-      this.revealTile(tileId);
+      void this.revealTile(tileId);
     }
   }
 
@@ -439,7 +439,7 @@ export default class Editor {
       return;
     }
 
-    this.deleteTiles(Array.from(this.selection));
+    void this.deleteTiles(Array.from(this.selection));
     this.undoManager?.stopCapturing();
   }
 
@@ -528,7 +528,7 @@ export default class Editor {
 
     const doc = this.page.doc;
 
-    viewTransition(() => {
+    void viewTransition(() => {
       const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
       doc.transact(() => {
         for (const id of ids) {

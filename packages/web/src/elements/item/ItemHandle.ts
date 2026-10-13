@@ -238,7 +238,7 @@ export default class ItemHandle extends HTMLElement {
     event.stopPropagation();
 
     const target = event.target as HTMLElement;
-    this.resizeDirection = (target.dataset.direction as ResizeHandleDirection) || null;
+    this.resizeDirection = (target.dataset.direction as ResizeHandleDirection | undefined) ?? null;
 
     this.resizeAbortController = new AbortController();
     const signal = this.resizeAbortController.signal;

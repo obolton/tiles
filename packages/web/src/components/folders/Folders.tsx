@@ -39,7 +39,7 @@ export default function Folders({
   const folders = reactive(initialFolders);
 
   function createFolder() {
-    showModal(FolderModalLoader, {
+    void showModal(FolderModalLoader, {
       props: {
         showDelete: false,
       },
@@ -51,7 +51,7 @@ export default function Folders({
           workspaceId,
           name: result.name,
         });
-        invalidateWorkspaceFolders();
+        void invalidateWorkspaceFolders();
         folders.value = {
           folders: folders.value.folders
             .concat(folder)
@@ -63,7 +63,7 @@ export default function Folders({
   }
 
   function editFolder(folder: Folder) {
-    showModal(FolderModalLoader, {
+    void showModal(FolderModalLoader, {
       props: {
         name: folder.name,
         showDelete: true,
@@ -88,7 +88,7 @@ export default function Folders({
           id: folder.id,
           name: result.name,
         });
-        invalidateWorkspaceFolders();
+        void invalidateWorkspaceFolders();
       },
     });
   }

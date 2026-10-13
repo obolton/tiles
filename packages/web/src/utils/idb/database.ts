@@ -68,7 +68,9 @@ export class Database<Schema extends SchemaDefinition> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.name, this.version);
 
-      request.addEventListener("error", () => reject(request.error));
+      request.addEventListener("error", () =>
+        reject(request.error ?? new Error("IndexedDB request failed")),
+      );
       request.addEventListener("success", () => resolve(request.result));
       request.addEventListener("upgradeneeded", (event) => {
         this.handleUpgrade(request, event.oldVersion);
@@ -157,7 +159,9 @@ export class Database<Schema extends SchemaDefinition> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.deleteDatabase(this.name);
       request.addEventListener("success", () => resolve());
-      request.addEventListener("error", () => reject(request.error));
+      request.addEventListener("error", () =>
+        reject(request.error ?? new Error("IndexedDB request failed")),
+      );
     });
   }
 }

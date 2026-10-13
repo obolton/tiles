@@ -9,7 +9,6 @@ import {
   DEFAULT_HEADING_FONT,
   DEFAULT_CODE_FONT,
   getFontConfig,
-  type FontId,
 } from "../config";
 
 describe("FontsSchema", () => {
@@ -70,6 +69,6 @@ describe("getFontConfig", () => {
   });
 
   test("throws for an unknown id", () => {
-    expect(() => getFontConfig("not-a-font" as FontId)).toThrow("Invalid font: not-a-font");
+    expect(() => getFontConfig("not-a-font")).toThrow("Invalid font: not-a-font");
   });
 });

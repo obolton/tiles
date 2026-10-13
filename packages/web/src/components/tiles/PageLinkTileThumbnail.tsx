@@ -8,7 +8,7 @@ export interface PageLinkTileThumbnailProps {
 }
 
 export default function PageLinkTileThumbnail({ pageLink }: PageLinkTileThumbnailProps) {
-  const { linkedPage } = pageLink;
+  const linkedPage = pageLink.linkedPage.value;
 
   if (!linkedPage) {
     return (
@@ -21,7 +21,7 @@ export default function PageLinkTileThumbnail({ pageLink }: PageLinkTileThumbnai
   return (
     <Tile classList={{ [styles.tile]: true }}>
       <div className={styles.link}>
-        <p className={styles.text}>{linkedPage.value?.title}</p>
+        <p className={styles.text}>{linkedPage.title}</p>
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </div>
     </Tile>

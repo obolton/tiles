@@ -18,14 +18,14 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
     if (!(link instanceof Link)) {
       return;
     }
-    showModal(LinkModalLoader, {
+    void showModal(LinkModalLoader, {
       props: {
         workspaceId: link.editor.workspaceId,
         url: link.url.value,
         showPages: false,
       },
       async onConfirm(result) {
-        if (result && "url" in result && result.url) {
+        if ("url" in result && result.url) {
           await link.setUrl(result.url);
         }
       },

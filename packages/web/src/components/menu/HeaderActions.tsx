@@ -85,7 +85,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               label="Present"
               on:click={() => {
                 editor.setEditable(false);
-                startPresentation();
+                void startPresentation();
               }}
             >
               <PresentIcon aria-hidden="true" />

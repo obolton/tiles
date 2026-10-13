@@ -67,7 +67,7 @@ export default function WorkspaceInvites({
   };
 
   function onClickInvite() {
-    showModal(InviteModalLoader, {
+    void showModal(InviteModalLoader, {
       props: {
         title: `Invite to ${workspaceName}`,
       },

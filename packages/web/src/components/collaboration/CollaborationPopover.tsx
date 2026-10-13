@@ -33,7 +33,7 @@ export default function CollaborationPopover({ page, ...props }: CollaborationPo
   }
 
   function showInviteModal() {
-    showModal(InviteModalLoader, {
+    void showModal(InviteModalLoader, {
       props: {
         title: "Invite to page",
       },

@@ -14,7 +14,7 @@ export default function Code({ node }: CodeProps) {
     { text: code, className: null },
   ]);
 
-  highlight(code, node.language).then((highlighted) => {
+  void highlight(code, node.language).then((highlighted) => {
     spans.value = highlighted;
   });
 

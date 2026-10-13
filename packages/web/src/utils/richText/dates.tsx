@@ -79,7 +79,7 @@ class DateNodeView implements NodeView {
   }
 
   private edit() {
-    showModal(DateTimeModalLoader, {
+    void showModal(DateTimeModalLoader, {
       props: {
         value: this.value.value,
         time: this.time.value,

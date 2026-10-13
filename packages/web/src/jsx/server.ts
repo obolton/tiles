@@ -72,7 +72,7 @@ function renderItem(item: Item, stack: Item[]): string {
     return "";
   }
 
-  throw new Error(`Invalid node: ${node}`);
+  throw new Error(`Invalid node: ${typeof node}`);
 }
 
 function getAttributes(properties: Record<string, unknown>): Attributes {
@@ -104,7 +104,7 @@ function getAttributes(properties: Record<string, unknown>): Attributes {
         attributes["style"] = styles;
       }
     } else if (BOOLEAN_STRING_ATTRIBUTES.has(name)) {
-      attributes[name] = typeof value === "string" ? value : value ? "true" : "false";
+      attributes[name] = typeof value === "string" ? value : String(Boolean(value));
     } else if (
       typeof value === "string" ||
       typeof value === "number" ||
@@ -113,7 +113,7 @@ function getAttributes(properties: Record<string, unknown>): Attributes {
     ) {
       attributes[name] = value;
     } else {
-      attributes[name] = value.toString();
+      throw new Error(`Invalid attribute value for "${name}": ${typeof value}`);
     }
   }
 
