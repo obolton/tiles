@@ -5,7 +5,6 @@ import route from "../[id]";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { NAMED_VERSION } from "@/test/fixtures/PageVersion";
-import { SESSION_COOKIE_NAME } from "api/constants/cookies";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
 vi.mock("@/api/client", () => ({
@@ -38,18 +37,16 @@ function encodeDoc(tileId: string) {
 const LIVE_DOCUMENT = encodeDoc("live-tile");
 const VERSION_DOCUMENT = encodeDoc("version-tile");
 
-async function runLoader(search = "", headers = new Headers()) {
+async function runLoader(search = "") {
   if (!route.loader) {
     throw new Error("The page route has no loader");
   }
   return route.loader({
     url: new URL(`http://localhost/pages/${PAGE.id}${search}`),
-    headers,
+    headers: new Headers(),
     parameters: { id: PAGE.id },
   });
 }
-
-const SIGNED_IN_HEADERS = new Headers({ cookie: `${SESSION_COOKIE_NAME}=session-id` });
 
 function unwrapData(result: Awaited<ReturnType<typeof runLoader>>) {
   if (!result || result instanceof Response) {
@@ -77,27 +74,15 @@ describe("pages/[id] loader", () => {
     expect(getVersion).not.toHaveBeenCalled();
     expect(result.data.version).toBeUndefined();
     expect(result.data.doc.getMap("tiles").has("live-tile")).toBe(true);
-    expect(result.headers).toEqual({ "Cache-Control": CACHE_CONTROL_VALUE, Vary: "Cookie" });
-  });
-
-  test("never sends a public cache header to signed-in users", async () => {
-    const result = unwrapData(await runLoader("", SIGNED_IN_HEADERS));
-
-    expect(result.headers).toEqual({
-      "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE,
-      Vary: "Cookie",
-    });
+    expect(result.headers).toEqual({ "Cache-Control": CACHE_CONTROL_VALUE });
   });
 
   test("never sends a public cache header for unpublished pages", async () => {
     getPage.mockResolvedValue({ ...PAGE, published: false, document: LIVE_DOCUMENT });
 
-    const result = unwrapData(await runLoader("", SIGNED_IN_HEADERS));
+    const result = unwrapData(await runLoader());
 
-    expect(result.headers).toEqual({
-      "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE,
-      Vary: "Cookie",
-    });
+    expect(result.headers).toEqual({ "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE });
   });
 
   test("sets the title and description for link previews", async () => {
@@ -121,10 +106,7 @@ describe("pages/[id] loader", () => {
     expect(result.data.doc.getMap("tiles").has("version-tile")).toBe(true);
     expect(result.data.doc.getMap("tiles").has("live-tile")).toBe(false);
     // Historical states are never cached, even on published pages
-    expect(result.headers).toEqual({
-      "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE,
-      Vary: "Cookie",
-    });
+    expect(result.headers).toEqual({ "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE });
   });
 
   test("redirects to the live page when the version is unavailable", async () => {

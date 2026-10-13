@@ -1,6 +1,5 @@
 import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
-import { getSessionId } from "@/utils/sessions";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { initRoute } from "@/routes/init";
 import { initBookmarkStatus } from "@/utils/bookmarks";
@@ -58,14 +57,13 @@ async function loader({
   const pageFonts = getPageFonts(doc);
   pageFonts.delete(DEFAULT_FONT);
 
-  // Only anonymous responses for the live published page are shared-cacheable: signed-in
-  // responses contain user-specific content and historical states must never be cached as the page.
-  const cacheable = page.published && !version && !getSessionId(headers);
+  // The server render contains nothing user-specific, so the live published page is shared-cacheable.
+  // Unpublished pages are only visible to collaborators and historical states must never be cached as the page.
+  const cacheable = page.published && !version;
 
   return {
     headers: {
       "Cache-Control": cacheable ? CACHE_CONTROL_VALUE : PRIVATE_CACHE_CONTROL_VALUE,
-      Vary: "Cookie",
     },
     title: `${page.title} - Tiles`,
     description: getPageDescription(page),
