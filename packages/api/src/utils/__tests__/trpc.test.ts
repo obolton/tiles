@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getSessionContext } from "@/routes/users/users.ts";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
 import { createContext } from "@/utils/trpc.ts";
@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 describe("createContext", () => {
-  it("should return an unauthenticated context without credentials", async () => {
+  test("should return an unauthenticated context without credentials", async () => {
     const opts = createContextOptions();
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -34,7 +34,7 @@ describe("createContext", () => {
     expect(opts.res.getHeader("Set-Cookie")).toBeUndefined();
   });
 
-  it("should authenticate with a bearer token", async () => {
+  test("should authenticate with a bearer token", async () => {
     const opts = createContextOptions({ authorization: "Bearer valid-header" });
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -46,7 +46,7 @@ describe("createContext", () => {
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-header");
   });
 
-  it("should prefer the Authorization header over the session cookie", async () => {
+  test("should prefer the Authorization header over the session cookie", async () => {
     const opts = createContextOptions({
       authorization: "Bearer valid-header",
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
@@ -56,7 +56,7 @@ describe("createContext", () => {
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-header");
   });
 
-  it.each([
+  test.each([
     ["a non-Bearer scheme", "Basic valid-header"],
     ["a missing token", "Bearer"],
     ["an empty token", "Bearer "],
@@ -73,7 +73,7 @@ describe("createContext", () => {
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  it("should authenticate with the session cookie", async () => {
+  test("should authenticate with the session cookie", async () => {
     const opts = createContextOptions({
       cookie: `other=value; ${SESSION_COOKIE_NAME}=valid-cookie`,
     });
@@ -87,21 +87,21 @@ describe("createContext", () => {
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-cookie");
   });
 
-  it("should ignore cookies other than the session cookie", async () => {
+  test("should ignore cookies other than the session cookie", async () => {
     const opts = createContextOptions({ cookie: "session=valid-cookie" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  it("should ignore an empty session cookie", async () => {
+  test("should ignore an empty session cookie", async () => {
     const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=` });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  it("should clear the session cookie for an unknown or expired session", async () => {
+  test("should clear the session cookie for an unknown or expired session", async () => {
     const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=expired-cookie` });
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -116,7 +116,7 @@ describe("createContext", () => {
     );
   });
 
-  it("should not authenticate with an unknown bearer token", async () => {
+  test("should not authenticate with an unknown bearer token", async () => {
     const opts = createContextOptions({ authorization: "Bearer expired-header" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
@@ -124,7 +124,7 @@ describe("createContext", () => {
 });
 
 describe("SERVICE_API_TOKEN", () => {
-  it("should be required when the module loads", async () => {
+  test("should be required when the module loads", async () => {
     vi.resetModules();
     vi.stubEnv("SERVICE_API_TOKEN", "");
 

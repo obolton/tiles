@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma.ts";
 import { invalidateCachedPages } from "@/utils/cdn.ts";
 import { router } from "@/utils/trpc.ts";
@@ -56,24 +56,24 @@ describe("authenticatedProcedure", () => {
     })),
   };
 
-  it("should reject an unauthenticated caller", async () => {
+  test("should reject an unauthenticated caller", async () => {
     const caller = createCaller(procedures, createUnauthenticatedContext());
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
-  it("should reject a service caller", async () => {
+  test("should reject a service caller", async () => {
     const caller = createCaller(procedures, createServiceContext());
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
-  it("should reject a session without a user", async () => {
+  test("should reject a session without a user", async () => {
     const ctx = { ...createUnauthenticatedContext(), sessionId: "session-1" };
     // @ts-expect-error: not a valid RequestContext, pins the defensive check
     const caller = createCaller(procedures, ctx);
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
-  it("should pass an authenticated user through", async () => {
+  test("should pass an authenticated user through", async () => {
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe()).resolves.toEqual({ sessionId: "session-1", userId: "user-1" });
   });
@@ -84,25 +84,25 @@ describe("authenticatedServiceProcedure", () => {
     probe: authenticatedServiceProcedure.query(({ ctx }) => ctx.serviceName),
   };
 
-  it("should reject an unauthenticated caller", async () => {
+  test("should reject an unauthenticated caller", async () => {
     const caller = createCaller(procedures, createUnauthenticatedContext());
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
-  it("should reject an authenticated user", async () => {
+  test("should reject an authenticated user", async () => {
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
   // createContext never sets serviceName today, so this path is unreachable over HTTP.
-  it("should pass a service caller through", async () => {
+  test("should pass a service caller through", async () => {
     const caller = createCaller(procedures, createServiceContext("service-1"));
     await expect(caller.probe()).resolves.toBe("service-1");
   });
 });
 
 describe("getPage", () => {
-  it("should only find non-deleted pages the user authored or has access to", async () => {
+  test("should only find non-deleted pages the user authored or has access to", async () => {
     mockPage({ id: PAGE_ID, workspaceId: WORKSPACE_ID });
 
     await expect(getPage("user-1", PAGE_ID)).resolves.toEqual({
@@ -130,7 +130,7 @@ describe("authenticatedPageProcedure", () => {
     })),
   };
 
-  it("should reject an unauthenticated caller before looking up the page", async () => {
+  test("should reject an unauthenticated caller before looking up the page", async () => {
     const caller = createCaller(procedures, createUnauthenticatedContext());
     await expect(caller.probe({ pageId: PAGE_ID })).rejects.toMatchObject({
       code: "UNAUTHORIZED",
@@ -138,7 +138,7 @@ describe("authenticatedPageProcedure", () => {
     expect(prisma.page.findUnique).not.toHaveBeenCalled();
   });
 
-  it("should reject a non-UUID page id before looking up the page", async () => {
+  test("should reject a non-UUID page id before looking up the page", async () => {
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ pageId: "not-a-uuid" })).rejects.toMatchObject({
       code: "BAD_REQUEST",
@@ -146,7 +146,7 @@ describe("authenticatedPageProcedure", () => {
     expect(prisma.page.findUnique).not.toHaveBeenCalled();
   });
 
-  it("should reject a user without access to the page", async () => {
+  test("should reject a user without access to the page", async () => {
     mockPage(null);
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ pageId: PAGE_ID })).rejects.toMatchObject({
@@ -154,7 +154,7 @@ describe("authenticatedPageProcedure", () => {
     });
   });
 
-  it("should look up the page for the calling user", async () => {
+  test("should look up the page for the calling user", async () => {
     mockPage({ id: PAGE_ID, workspaceId: WORKSPACE_ID });
     const caller = createCaller(procedures, createAuthenticatedContext({ userId: "user-2" }));
     await caller.probe({ pageId: PAGE_ID });
@@ -170,7 +170,7 @@ describe("authenticatedPageProcedure", () => {
     );
   });
 
-  it("should add the page and workspace ids to the context", async () => {
+  test("should add the page and workspace ids to the context", async () => {
     mockPage({ id: PAGE_ID, workspaceId: WORKSPACE_ID });
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ pageId: PAGE_ID })).resolves.toEqual({
@@ -182,7 +182,7 @@ describe("authenticatedPageProcedure", () => {
 });
 
 describe("pageUpdateProcedure", () => {
-  it("should invalidate the cached page after the procedure resolves", async () => {
+  test("should invalidate the cached page after the procedure resolves", async () => {
     mockPage({ id: PAGE_ID, workspaceId: WORKSPACE_ID });
     const resolver = vi.fn(() => {
       expect(invalidateCachedPages).not.toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe("pageUpdateProcedure", () => {
     expect(invalidateCachedPages).toHaveBeenCalledExactlyOnceWith([PAGE_ID]);
   });
 
-  it("should not invalidate the cached page when the procedure fails", async () => {
+  test("should not invalidate the cached page when the procedure fails", async () => {
     mockPage({ id: PAGE_ID, workspaceId: WORKSPACE_ID });
     const caller = createCaller(
       {
@@ -214,7 +214,7 @@ describe("pageUpdateProcedure", () => {
     expect(invalidateCachedPages).not.toHaveBeenCalled();
   });
 
-  it("should not invalidate the cached page when access is denied", async () => {
+  test("should not invalidate the cached page when access is denied", async () => {
     mockPage(null);
     const caller = createCaller(
       { probe: pageUpdateProcedure.mutation(() => "ok") },
@@ -237,7 +237,7 @@ describe("authenticatedWorkspaceProcedure", () => {
     })),
   };
 
-  it("should reject an unauthenticated caller before looking up the membership", async () => {
+  test("should reject an unauthenticated caller before looking up the membership", async () => {
     const caller = createCaller(procedures, createUnauthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).rejects.toMatchObject({
       code: "UNAUTHORIZED",
@@ -245,7 +245,7 @@ describe("authenticatedWorkspaceProcedure", () => {
     expect(prisma.workspaceMembership.findUnique).not.toHaveBeenCalled();
   });
 
-  it("should reject a non-UUID workspace id before looking up the membership", async () => {
+  test("should reject a non-UUID workspace id before looking up the membership", async () => {
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: "not-a-uuid" })).rejects.toMatchObject({
       code: "BAD_REQUEST",
@@ -253,7 +253,7 @@ describe("authenticatedWorkspaceProcedure", () => {
     expect(prisma.workspaceMembership.findUnique).not.toHaveBeenCalled();
   });
 
-  it("should reject a user who is not a member of the workspace", async () => {
+  test("should reject a user who is not a member of the workspace", async () => {
     mockMembership(null);
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).rejects.toMatchObject({
@@ -261,7 +261,7 @@ describe("authenticatedWorkspaceProcedure", () => {
     });
   });
 
-  it("should look up the membership by user and workspace", async () => {
+  test("should look up the membership by user and workspace", async () => {
     mockMembership("MEMBER");
     const caller = createCaller(procedures, createAuthenticatedContext({ userId: "user-2" }));
     await caller.probe({ workspaceId: WORKSPACE_ID });
@@ -272,7 +272,7 @@ describe("authenticatedWorkspaceProcedure", () => {
     });
   });
 
-  it("should add the workspace id and role to the context", async () => {
+  test("should add the workspace id and role to the context", async () => {
     mockMembership("MEMBER");
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).resolves.toEqual({
@@ -288,7 +288,7 @@ describe("adminWorkspaceProcedure", () => {
     probe: adminWorkspaceProcedure.query(({ ctx }) => ctx.role),
   };
 
-  it("should forbid a workspace member who is not an admin", async () => {
+  test("should forbid a workspace member who is not an admin", async () => {
     mockMembership("MEMBER");
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).rejects.toMatchObject({
@@ -296,7 +296,7 @@ describe("adminWorkspaceProcedure", () => {
     });
   });
 
-  it("should reject a user who is not a member of the workspace", async () => {
+  test("should reject a user who is not a member of the workspace", async () => {
     mockMembership(null);
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).rejects.toMatchObject({
@@ -304,7 +304,7 @@ describe("adminWorkspaceProcedure", () => {
     });
   });
 
-  it("should allow a workspace admin", async () => {
+  test("should allow a workspace admin", async () => {
     mockMembership("ADMIN");
     const caller = createCaller(procedures, createAuthenticatedContext());
     await expect(caller.probe({ workspaceId: WORKSPACE_ID })).resolves.toBe("ADMIN");
