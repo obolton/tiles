@@ -66,7 +66,9 @@ export const authenticatedPageProcedure = authenticatedProcedure
 
 export const pageUpdateProcedure = authenticatedPageProcedure.use(async ({ next, ctx }) => {
   const result = await next();
-  invalidateCachedPages([ctx.pageId]);
+  if (result.ok) {
+    invalidateCachedPages([ctx.pageId]);
+  }
   return result;
 });
 
