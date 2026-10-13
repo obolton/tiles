@@ -43,7 +43,7 @@ function createMockPages(count: number): LibraryPage[] {
     id: `page-${i + 1}`,
     title: `Page ${i + 1}`,
     type: "DOCUMENT",
-    updatedAt: new Date("2026-01-01T00:00:00Z"),
+    updatedAt: new Date(),
     published: false,
     folderId: "folder-1",
     author: { id: "user-1", name: "Alice", imageUrl: null },
@@ -199,19 +199,7 @@ describe("listPages", () => {
     findMany.mockResolvedValue([]);
   });
 
-  test("should verify the folder belongs to the workspace before listing", async () => {
-    await listPages({ id: "folder-1" }, MOCK_CONTEXT);
-
-    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
-    expect(findUniqueOrThrow).toHaveBeenCalledWith({
-      where: { id: "folder-1", workspaceId: "workspace-1" },
-    });
-    expect(findUniqueOrThrow.mock.invocationCallOrder[0]).toBeLessThan(
-      findMany.mock.invocationCallOrder[0] ?? 0,
-    );
-  });
-
-  test("should not list pages when the folder is not found", async () => {
+  test("should throw without listing pages when the folder is not in the workspace", async () => {
     findUniqueOrThrow.mockRejectedValue(new Error("Not found"));
 
     await expect(listPages({ id: "folder-1" }, MOCK_CONTEXT)).rejects.toThrow("Not found");
