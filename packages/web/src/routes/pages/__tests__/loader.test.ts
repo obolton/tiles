@@ -5,7 +5,7 @@ import route from "../[id]";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
 import { NAMED_VERSION } from "@/test/fixtures/PageVersion";
-import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
+import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -77,6 +77,14 @@ describe("pages/[id] loader", () => {
     expect(result.headers).toEqual({ "Cache-Control": CACHE_CONTROL_VALUE });
   });
 
+  test("never sends a public cache header for unpublished pages", async () => {
+    getPage.mockResolvedValue({ ...PAGE, published: false, document: LIVE_DOCUMENT });
+
+    const result = unwrapData(await runLoader());
+
+    expect(result.headers).toEqual({ "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE });
+  });
+
   test("sets the title and description for link previews", async () => {
     const result = unwrapData(await runLoader());
 
@@ -98,7 +106,7 @@ describe("pages/[id] loader", () => {
     expect(result.data.doc.getMap("tiles").has("version-tile")).toBe(true);
     expect(result.data.doc.getMap("tiles").has("live-tile")).toBe(false);
     // Historical states are never cached, even on published pages
-    expect(result.headers).toBeUndefined();
+    expect(result.headers).toEqual({ "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE });
   });
 
   test("redirects to the live page when the version is unavailable", async () => {

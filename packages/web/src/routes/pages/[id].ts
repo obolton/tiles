@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { getLoaderContext } from "@/utils/loaderContext";
-import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
+import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { initRoute } from "@/routes/init";
 import { initBookmarkStatus } from "@/utils/bookmarks";
 import { cachePage } from "@/utils/cache/pages";
@@ -57,9 +57,13 @@ async function loader({
   const pageFonts = getPageFonts(doc);
   pageFonts.delete(DEFAULT_FONT);
 
+  // Cache live, published pages only.
+  const cacheable = page.published && !version;
+
   return {
-    // Historical states must never be cached as the page
-    headers: page.published && !version ? { "Cache-Control": CACHE_CONTROL_VALUE } : undefined,
+    headers: {
+      "Cache-Control": cacheable ? CACHE_CONTROL_VALUE : PRIVATE_CACHE_CONTROL_VALUE,
+    },
     title: `${page.title} - Tiles`,
     description: getPageDescription(page),
     bodyAttributes: {
