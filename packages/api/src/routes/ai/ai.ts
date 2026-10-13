@@ -16,7 +16,6 @@ import type { TileType } from "doc/types/enums";
 import type {
   ResponseInput,
   ResponseInputItem,
-  ResponseOutputItem,
   ResponseStreamEvent,
 } from "openai/resources/responses/responses";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
@@ -276,7 +275,7 @@ export async function streamTurn(
     { signal },
   );
 
-  const output: ResponseOutputItem[] = [];
+  const output: ResponseInputItem[] = [];
   const toolCalls: ResponseInputItem.FunctionCallOutput[] = [];
   const references: Reference[] = [];
 
@@ -291,7 +290,13 @@ export async function streamTurn(
 
           if (event.type === "response.output_item.done") {
             const { item } = event;
-            output.push(item);
+            if (
+              item.type === "message" ||
+              item.type === "function_call" ||
+              item.type === "reasoning"
+            ) {
+              output.push(item);
+            }
 
             if (item.type === "function_call" && item.status === "completed") {
               const result = await useFunctionTool(item, toolContext);
