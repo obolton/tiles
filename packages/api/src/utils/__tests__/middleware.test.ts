@@ -195,7 +195,7 @@ describe("pageUpdateProcedure", () => {
 
     await expect(caller.probe({ pageId: PAGE_ID })).resolves.toBe("ok");
 
-    expect(resolver).toHaveBeenCalledOnce();
+    expect(resolver).toHaveBeenCalledTimes(1);
     expect(invalidateCachedPages).toHaveBeenCalledExactlyOnceWith([PAGE_ID]);
   });
 
