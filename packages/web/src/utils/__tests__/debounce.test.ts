@@ -22,7 +22,7 @@ describe("debounce", () => {
     expect(fn).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(1);
-    expect(fn).toHaveBeenCalledOnce();
+    expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("first");
   });
 
@@ -38,7 +38,7 @@ describe("debounce", () => {
     expect(fn).not.toHaveBeenCalled();
 
     vi.advanceTimersByTime(1);
-    expect(fn).toHaveBeenCalledOnce();
+    expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenCalledWith("latest");
   });
 });

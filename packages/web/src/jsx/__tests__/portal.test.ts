@@ -23,7 +23,7 @@ describe("Portal", () => {
 
     expect(result).toBeNull();
     expect(render).not.toHaveBeenCalled();
-    expect(document.body.childNodes.length).toBe(0);
+    expect(document.body.childNodes).toHaveLength(0);
   });
 
   test("appends children to document.body by default", () => {
@@ -68,10 +68,10 @@ describe("Portal", () => {
       ],
     });
 
-    expect(host.childNodes.length).toBe(2);
+    expect(host.childNodes).toHaveLength(2);
 
     controller.abort();
 
-    expect(host.childNodes.length).toBe(0);
+    expect(host.childNodes).toHaveLength(0);
   });
 });

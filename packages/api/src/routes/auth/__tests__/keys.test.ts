@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma.ts";
 import { createKey, getUserIdByProviderId } from "../keys.ts";
 
@@ -13,7 +13,7 @@ describe("createKey", () => {
     });
   });
 
-  it("should create an authentication key", async () => {
+  test("should create an authentication key", async () => {
     await createKey(prisma, {
       provider: "GOOGLE",
       providerId: "google-123",
@@ -35,7 +35,7 @@ describe("getUserIdByProviderId", () => {
     vi.clearAllMocks();
   });
 
-  it("should return userId when key exists", async () => {
+  test("should return userId when key exists", async () => {
     vi.mocked(prisma.key.findUnique).mockResolvedValue({
       createdAt: new Date(),
       provider: "GOOGLE",
@@ -62,7 +62,7 @@ describe("getUserIdByProviderId", () => {
     expect(result).toBe("user-456");
   });
 
-  it("should return null when key does not exist", async () => {
+  test("should return null when key does not exist", async () => {
     vi.mocked(prisma.key.findUnique).mockResolvedValue(null);
 
     const result = await getUserIdByProviderId(prisma, {

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getGoogleAuthorizationUrl, exchangeCode, verifyIdToken } from "../google";
 import { jwtVerify } from "jose";
 import * as oauth2 from "../oauth2";
@@ -7,7 +7,7 @@ vi.mock("jose");
 
 describe("google", () => {
   describe("getGoogleAuthorizationUrl", () => {
-    it("should return a valid Google authorization URL", () => {
+    test("should return a valid Google authorization URL", () => {
       const { url } = getGoogleAuthorizationUrl();
       const parsedUrl = new URL(url);
 
@@ -21,31 +21,31 @@ describe("google", () => {
       expect(parsedUrl.searchParams.get("code_challenge_method")).toBe("S256");
     });
 
-    it("should include state in URL and return value", () => {
+    test("should include state in URL and return value", () => {
       const { url, state } = getGoogleAuthorizationUrl();
       const parsedUrl = new URL(url);
 
-      expect(state).toBeTruthy();
+      expect(state).toMatch(/^[\w-]+$/);
       expect(parsedUrl.searchParams.get("state")).toBe(state);
     });
 
-    it("should include PKCE code challenge derived from verifier", () => {
+    test("should include PKCE code challenge derived from verifier", () => {
       const { url, verifier } = getGoogleAuthorizationUrl();
       const parsedUrl = new URL(url);
 
-      expect(verifier).toBeTruthy();
-      expect(parsedUrl.searchParams.get("code_challenge")).toBeTruthy();
+      expect(verifier).toMatch(/^[\w-]+$/);
+      expect(parsedUrl.searchParams.get("code_challenge")).toMatch(/^[\w-]{43}$/);
     });
 
-    it("should include nonce in URL and return value", () => {
+    test("should include nonce in URL and return value", () => {
       const { url, nonce } = getGoogleAuthorizationUrl();
       const parsedUrl = new URL(url);
 
-      expect(nonce).toBeTruthy();
+      expect(nonce).toMatch(/^[\w-]+$/);
       expect(parsedUrl.searchParams.get("nonce")).toBe(nonce);
     });
 
-    it("should generate unique values for each call", () => {
+    test("should generate unique values for each call", () => {
       const first = getGoogleAuthorizationUrl();
       const second = getGoogleAuthorizationUrl();
 
@@ -63,7 +63,7 @@ describe("google", () => {
       });
     });
 
-    it("should exchange code for tokens", async () => {
+    test("should exchange code for tokens", async () => {
       const result = await exchangeCode({
         code: "auth-code",
         codeVerifier: "code-verifier",
@@ -89,7 +89,7 @@ describe("google", () => {
       vi.clearAllMocks();
     });
 
-    it("should verify the ID token and return user info", async () => {
+    test("should verify the ID token and return user info", async () => {
       vi.mocked(jwtVerify).mockResolvedValue({
         payload: {
           sub: "user-123",
@@ -118,7 +118,7 @@ describe("google", () => {
       });
     });
 
-    it("should throw an error if nonce does not match", async () => {
+    test("should throw an error if nonce does not match", async () => {
       vi.mocked(jwtVerify).mockResolvedValue({
         payload: {
           sub: "user-123",
@@ -140,7 +140,7 @@ describe("google", () => {
       ).rejects.toThrow("Invalid nonce in ID token");
     });
 
-    it("should throw an error if required claims are missing", async () => {
+    test("should throw an error if required claims are missing", async () => {
       vi.mocked(jwtVerify).mockResolvedValue({
         payload: {
           sub: "user-123",
@@ -159,7 +159,7 @@ describe("google", () => {
       ).rejects.toThrow("Invalid claims in ID token");
     });
 
-    it("should throw an error if claims have wrong types", async () => {
+    test("should throw an error if claims have wrong types", async () => {
       vi.mocked(jwtVerify).mockResolvedValue({
         payload: {
           sub: "user-123",
@@ -181,7 +181,7 @@ describe("google", () => {
       ).rejects.toThrow("Invalid claims in ID token");
     });
 
-    it("should propagate jose verification errors", async () => {
+    test("should propagate jose verification errors", async () => {
       vi.mocked(jwtVerify).mockRejectedValue(new Error("JWT verification failed"));
 
       await expect(

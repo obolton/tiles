@@ -23,7 +23,7 @@ describe("persistent", () => {
       localStorage.setItem("key", "not valid json");
       const value = persistent("key", "default");
       expect(value.value).toBe("default");
-      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     test("supports object values", () => {

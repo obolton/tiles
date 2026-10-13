@@ -46,12 +46,12 @@ describe("getSessionId", () => {
 
   test("returns null when no session cookie exists", () => {
     const headers = new Headers({ cookie: "other=xyz" });
-    expect(getSessionId(headers)).toBe(null);
+    expect(getSessionId(headers)).toBeNull();
   });
 
   test("returns null when no cookies at all", () => {
     const headers = new Headers();
-    expect(getSessionId(headers)).toBe(null);
+    expect(getSessionId(headers)).toBeNull();
   });
 });
 

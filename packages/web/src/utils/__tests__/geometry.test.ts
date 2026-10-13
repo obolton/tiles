@@ -24,6 +24,6 @@ describe("getDistance", () => {
   test("returns the distance between two points", () => {
     const a = new DOMPoint(10, 20);
     const b = new DOMPoint(13, 24);
-    expect(getDistance(a, b)).toEqual(5);
+    expect(getDistance(a, b)).toBe(5);
   });
 });

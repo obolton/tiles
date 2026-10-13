@@ -10,7 +10,7 @@ describe("focusInside", () => {
       container.append(element);
       const spy = vi.spyOn(element, "focus");
       focusInside(container);
-      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledTimes(1);
     },
   );
 
@@ -21,7 +21,7 @@ describe("focusInside", () => {
     container.append(element);
     const spy = vi.spyOn(element, "focus");
     focusInside(container);
-    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test("does not focus an anchor element without href attribute", () => {
@@ -40,7 +40,7 @@ describe("focusInside", () => {
     container.append(element);
     const spy = vi.spyOn(element, "focus");
     focusInside(container);
-    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test("does not focus an area element without href attribute", () => {
@@ -59,7 +59,7 @@ describe("focusInside", () => {
     container.append(element);
     const spy = vi.spyOn(element, "focus");
     focusInside(container);
-    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test("focuses an element with a non-negative tabindex", () => {
@@ -69,7 +69,7 @@ describe("focusInside", () => {
     container.append(element);
     const spy = vi.spyOn(element, "focus");
     focusInside(container);
-    expect(spy).toHaveBeenCalledOnce();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   test("does not focus an element with a negative tabindex", () => {
@@ -99,7 +99,7 @@ describe("focusInside", () => {
     const spy1 = vi.spyOn(button1, "focus");
     const spy2 = vi.spyOn(button2, "focus");
     focusInside(container);
-    expect(spy1).toHaveBeenCalledOnce();
+    expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).not.toHaveBeenCalled();
   });
 
@@ -110,7 +110,7 @@ describe("focusInside", () => {
     const spy1 = vi.spyOn(container, "focus");
     const spy2 = vi.spyOn(element, "focus");
     focusInside(container);
-    expect(spy1).toHaveBeenCalledOnce();
+    expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).not.toHaveBeenCalled();
   });
 

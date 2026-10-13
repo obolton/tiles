@@ -15,7 +15,7 @@ describe("If", () => {
         </If>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("SPAN");
       expect(container.children[0]?.textContent).toBe("visible");
     });
@@ -29,7 +29,7 @@ describe("If", () => {
         </If>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
 
     test("renders children for truthy non-boolean values", () => {
@@ -53,7 +53,7 @@ describe("If", () => {
         </If>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
   });
 
@@ -70,7 +70,7 @@ describe("If", () => {
       expect(container.children[0]?.tagName).toBe("SPAN");
 
       condition.value = false;
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
 
     test("renders children when the condition becomes true", () => {
@@ -82,10 +82,10 @@ describe("If", () => {
         </If>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
 
       condition.value = true;
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("SPAN");
       expect(container.children[0]?.textContent).toBe("visible");
     });

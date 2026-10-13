@@ -46,6 +46,6 @@ describe("openFontBucket", () => {
     const session = await openFontBucket();
     await session.dispose();
 
-    expect(dispose).toHaveBeenCalledOnce();
+    expect(dispose).toHaveBeenCalledTimes(1);
   });
 });

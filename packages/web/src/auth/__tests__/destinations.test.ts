@@ -1,13 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, test, expect } from "vitest";
 import { validateDestination } from "../destinations";
 
 describe("validateDestination", () => {
-  it("should accept valid paths", () => {
+  test("should accept valid paths", () => {
     expect(validateDestination("invites/accept/abc-DEF123_")).toBe(true);
     expect(validateDestination("invites/join-workspace/abc-DEF123_")).toBe(true);
   });
 
-  it("should reject invalid paths", () => {
+  test("should reject invalid paths", () => {
     expect(validateDestination("")).toBe(false);
     expect(validateDestination("/")).toBe(false);
     expect(validateDestination("invalid/path")).toBe(false);

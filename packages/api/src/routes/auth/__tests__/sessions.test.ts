@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma.ts";
 import { createSession, deleteSession } from "../sessions.ts";
 
@@ -13,7 +13,7 @@ describe("createSession", () => {
     });
   });
 
-  it("should create a session with a cryptographically random ID", async () => {
+  test("should create a session with a cryptographically random ID", async () => {
     await createSession(prisma, "user-123");
 
     expect(prisma.session.create).toHaveBeenCalledWith({
@@ -28,7 +28,7 @@ describe("createSession", () => {
     });
   });
 
-  it("should set expiration to 2 weeks from now", async () => {
+  test("should set expiration to 2 weeks from now", async () => {
     const now = new Date("2025-01-01T00:00:00Z");
     vi.setSystemTime(now);
 
@@ -47,7 +47,7 @@ describe("createSession", () => {
     vi.useRealTimers();
   });
 
-  it("should generate unique session IDs", async () => {
+  test("should generate unique session IDs", async () => {
     await createSession(prisma, "user-123");
     await createSession(prisma, "user-123");
 
@@ -68,7 +68,7 @@ describe("deleteSession", () => {
     });
   });
 
-  it("should delete the session by ID", async () => {
+  test("should delete the session by ID", async () => {
     await deleteSession("session-to-delete");
 
     expect(prisma.session.delete).toHaveBeenCalledWith({

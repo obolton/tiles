@@ -12,7 +12,7 @@ describe("buildTextMap", () => {
     expect(map.get("align")).toBe("TOP");
     const content = map.get("content");
     expect(content).toBeInstanceOf(Y.XmlFragment);
-    expect((content as Y.XmlFragment).length).toBe(0);
+    expect(content as Y.XmlFragment).toHaveLength(0);
   });
 
   test("respects a provided alignment", () => {

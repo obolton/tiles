@@ -33,7 +33,7 @@ describe("CREATE_TEXT_TOOL", () => {
     const map = tile(result);
     expect(map.get("type")).toBe("TEXT");
     expect(map.get("content")).toBeInstanceOf(Y.XmlFragment);
-    expect((map.get("content") as Y.XmlFragment).length).toBe(0);
+    expect(map.get("content") as Y.XmlFragment).toHaveLength(0);
   });
 
   test("sets dimensions for small size", async () => {

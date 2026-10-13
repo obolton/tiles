@@ -148,6 +148,6 @@ describe("DocWriter over a live Hocuspocus document", () => {
     session.createTile(buildSectionMap({}));
 
     expect(tiles(peer).size).toBe(1);
-    expect(undoManager.undoStack.length).toBe(0);
+    expect(undoManager.undoStack).toHaveLength(0);
   });
 });

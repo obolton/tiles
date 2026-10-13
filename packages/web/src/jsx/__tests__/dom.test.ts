@@ -21,7 +21,7 @@ const HelloComponent = ({ name }: { name: string }) => jsx("span", { children: `
 describe("render", () => {
   test("creates an element with the given type", () => {
     const nodes = render(jsx("div", {}));
-    expect(nodes.length).toBe(1);
+    expect(nodes).toHaveLength(1);
     expect(nodes[0]).toBeInstanceOf(HTMLElement);
     expect((nodes[0] as HTMLElement).tagName).toBe("DIV");
   });
@@ -134,7 +134,7 @@ describe("render", () => {
 
   test("adds a child element", () => {
     const [element] = render(jsx("div", { children: jsx("span", {}) })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(1);
+    expect(element.childNodes).toHaveLength(1);
     expect(element.children[0]?.tagName).toBe("SPAN");
   });
 
@@ -142,7 +142,7 @@ describe("render", () => {
     const [element] = render(jsx("div", { children: jsx(HelloComponent, { name: "Test" }) })) as [
       HTMLElement,
     ];
-    expect(element.childNodes.length).toBe(1);
+    expect(element.childNodes).toHaveLength(1);
     expect(element.children[0]?.tagName).toBe("SPAN");
     expect(element.children[0]?.textContent).toBe("Hello Test");
   });
@@ -151,45 +151,45 @@ describe("render", () => {
     const [element] = render(jsx("div", { children: [jsx("span", {}), jsx("p", {})] })) as [
       HTMLElement,
     ];
-    expect(element.childNodes.length).toBe(2);
+    expect(element.childNodes).toHaveLength(2);
     expect(element.children[0]?.tagName).toBe("SPAN");
     expect(element.children[1]?.tagName).toBe("P");
   });
 
   test("adds a text child node", () => {
     const [element] = render(jsx("div", { children: "Hello World" })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(1);
+    expect(element.childNodes).toHaveLength(1);
     expect(element.childNodes[0]?.nodeType).toBe(Node.TEXT_NODE);
     expect(element.childNodes[0]?.textContent).toBe("Hello World");
   });
 
   test("adds a numberic child node", () => {
     const [element] = render(jsx("div", { children: 2 })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(1);
+    expect(element.childNodes).toHaveLength(1);
     expect(element.childNodes[0]?.nodeType).toBe(Node.TEXT_NODE);
     expect(element.childNodes[0]?.textContent).toBe("2");
   });
 
   test("adds a numberic child node with value 0", () => {
     const [element] = render(jsx("div", { children: 0 })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(1);
+    expect(element.childNodes).toHaveLength(1);
     expect(element.childNodes[0]?.nodeType).toBe(Node.TEXT_NODE);
     expect(element.childNodes[0]?.textContent).toBe("0");
   });
 
   test("ignores a boolean child node", () => {
     const [element] = render(jsx("div", { children: [true] })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(0);
+    expect(element.childNodes).toHaveLength(0);
   });
 
   test("ignores a null child node", () => {
     const [element] = render(jsx("div", { children: [null] })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(0);
+    expect(element.childNodes).toHaveLength(0);
   });
 
   test("ignores an undefined child node", () => {
     const [element] = render(jsx("div", { children: [undefined] })) as [HTMLElement];
-    expect(element.childNodes.length).toBe(0);
+    expect(element.childNodes).toHaveLength(0);
   });
 
   test("throws for an invalid child node", () => {
@@ -228,7 +228,7 @@ describe("hydrate", () => {
     const existing = document.createElement("span");
     container.appendChild(existing);
     hydrate(jsx("span", {}), container);
-    expect(container.children.length).toBe(1);
+    expect(container.children).toHaveLength(1);
     expect(container.firstElementChild).toBe(existing);
   });
 
@@ -237,7 +237,7 @@ describe("hydrate", () => {
     const existing = document.createElement("span");
     container.appendChild(existing);
     hydrate(jsx("p", {}), container);
-    expect(container.children.length).toBe(1);
+    expect(container.children).toHaveLength(1);
     expect(container.firstElementChild?.tagName).toBe("P");
     expect(container.firstElementChild).not.toBe(existing);
   });
@@ -245,7 +245,7 @@ describe("hydrate", () => {
   test("creates an element when the container is empty", () => {
     const container = document.createElement("div");
     hydrate(jsx("span", {}), container);
-    expect(container.children.length).toBe(1);
+    expect(container.children).toHaveLength(1);
     expect(container.firstElementChild?.tagName).toBe("SPAN");
   });
 
@@ -295,7 +295,7 @@ describe("hydrate", () => {
     span.appendChild(document.createTextNode("hello world"));
     container.appendChild(span);
     hydrate(jsx("span", { children: ["hello ", "world"] }), container);
-    expect(span.childNodes.length).toBe(2);
+    expect(span.childNodes).toHaveLength(2);
     expect(span.childNodes[0]?.nodeValue).toBe("hello ");
     expect(span.childNodes[1]?.nodeValue).toBe("world");
   });
@@ -354,7 +354,7 @@ describe("hydrate", () => {
     existingP.appendChild(document.createTextNode("b"));
     container.append(existingSpan, existingP);
     hydrate([jsx("span", { children: "a" }), jsx("p", { children: "b" })], container);
-    expect(container.children.length).toBe(2);
+    expect(container.children).toHaveLength(2);
     expect(container.children[0]).toBe(existingSpan);
     expect(container.children[1]).toBe(existingP);
   });

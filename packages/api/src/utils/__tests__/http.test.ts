@@ -15,7 +15,7 @@ describe("getStream", () => {
     );
     const { stream, contentType } = await getStream("https://example.com/stream", ["image/jpeg"]);
     expect(stream).toBeInstanceOf(ReadableStream);
-    expect(contentType).toEqual("image/jpeg");
+    expect(contentType).toBe("image/jpeg");
   });
 
   test("throws an error if the response does not include a content type", async () => {

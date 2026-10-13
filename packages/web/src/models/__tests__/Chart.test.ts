@@ -44,7 +44,7 @@ describe("Chart", () => {
 
       expect(chart.series.value).toHaveLength(3);
       const added = chart.series.value[2];
-      expect(added?.id).toBeTruthy();
+      expect(added?.id).toEqual(expect.any(String));
       expect(added?.type.value).toBe("BAR");
       expect(added?.column.value).toEqual({ id: "col-4", title: "Growth" });
       expect(added?.fill.value).toBeNull();

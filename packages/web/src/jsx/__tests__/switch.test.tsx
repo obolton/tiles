@@ -20,7 +20,7 @@ describe("Switch", () => {
         </Switch>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("SPAN");
       expect(container.children[0]?.textContent).toBe("A");
     });
@@ -39,7 +39,7 @@ describe("Switch", () => {
         </Switch>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("P");
       expect(container.children[0]?.textContent).toBe("fallback");
     });
@@ -55,7 +55,7 @@ describe("Switch", () => {
         </Switch>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
 
     test("works with a single non-array child", () => {
@@ -91,7 +91,7 @@ describe("Switch", () => {
       expect(container.children[0]?.tagName).toBe("SPAN");
 
       value.value = "b";
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("P");
       expect(container.children[0]?.textContent).toBe("B");
     });
@@ -113,7 +113,7 @@ describe("Switch", () => {
       expect(container.children[0]?.tagName).toBe("SPAN");
 
       value.value = "z";
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("P");
       expect(container.children[0]?.textContent).toBe("fallback");
     });
@@ -129,10 +129,10 @@ describe("Switch", () => {
         </Switch>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
 
       value.value = "a";
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("SPAN");
     });
   });
@@ -188,7 +188,7 @@ describe("Switch", () => {
         </Switch>,
       );
       container.append(...nodes);
-      expect(container.children.length).toBe(1);
+      expect(container.children).toHaveLength(1);
       expect(container.children[0]?.tagName).toBe("SPAN");
     });
   });

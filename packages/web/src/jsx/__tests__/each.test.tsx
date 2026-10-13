@@ -15,7 +15,7 @@ describe("Each", () => {
       const container = document.createElement("div");
       const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
-      expect(container.children.length).toBe(3);
+      expect(container.children).toHaveLength(3);
       expect(container.children[0]?.textContent).toBe("a");
       expect(container.children[1]?.textContent).toBe("b");
       expect(container.children[2]?.textContent).toBe("c");
@@ -40,7 +40,7 @@ describe("Each", () => {
       const container = document.createElement("div");
       const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
   });
 
@@ -52,7 +52,7 @@ describe("Each", () => {
       container.append(...nodes);
 
       items.value = ["a", "b", "c"];
-      expect(container.children.length).toBe(3);
+      expect(container.children).toHaveLength(3);
       expect(container.children[2]?.textContent).toBe("c");
     });
 
@@ -63,7 +63,7 @@ describe("Each", () => {
       container.append(...nodes);
 
       items.value = ["a", "b", "c"];
-      expect(container.children.length).toBe(3);
+      expect(container.children).toHaveLength(3);
       expect(container.children[0]?.textContent).toBe("a");
       expect(container.children[1]?.textContent).toBe("b");
       expect(container.children[2]?.textContent).toBe("c");
@@ -76,7 +76,7 @@ describe("Each", () => {
       container.append(...nodes);
 
       items.value = ["a", "c"];
-      expect(container.children.length).toBe(2);
+      expect(container.children).toHaveLength(2);
       expect(container.children[0]?.textContent).toBe("a");
       expect(container.children[1]?.textContent).toBe("c");
     });
@@ -117,10 +117,10 @@ describe("Each", () => {
       const container = document.createElement("div");
       const nodes = render(<Each items={items}>{(item) => <span>{item}</span>}</Each>);
       container.append(...nodes);
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
 
       items.value = ["a", "b"];
-      expect(container.children.length).toBe(2);
+      expect(container.children).toHaveLength(2);
       expect(container.children[0]?.textContent).toBe("a");
       expect(container.children[1]?.textContent).toBe("b");
     });
@@ -132,7 +132,7 @@ describe("Each", () => {
       container.append(...nodes);
 
       items.value = [];
-      expect(container.children.length).toBe(0);
+      expect(container.children).toHaveLength(0);
     });
   });
 

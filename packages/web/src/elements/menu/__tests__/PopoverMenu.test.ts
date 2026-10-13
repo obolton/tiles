@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { describe, test, expect, beforeEach, vi, afterEach } from "vitest";
 
 vi.hoisted(() => {
   vi.stubGlobal("CSS", {
@@ -41,13 +41,13 @@ describe("PopoverMenu", () => {
   });
 
   describe("keyboard navigation", () => {
-    it("should focus the first menu item on open", () => {
+    test("should focus the first menu item on open", () => {
       menu.showPopover();
 
       expect(document.activeElement).toBe(items[0]);
     });
 
-    it("should navigate down with ArrowDown", () => {
+    test("should navigate down with ArrowDown", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -56,7 +56,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[1]);
     });
 
-    it("should navigate up with ArrowUp", () => {
+    test("should navigate up with ArrowUp", () => {
       items[1]!.tabIndex = 0;
       items[1]!.focus();
 
@@ -65,7 +65,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    it("should wrap from last to first with ArrowDown", () => {
+    test("should wrap from last to first with ArrowDown", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
@@ -74,7 +74,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    it("should wrap from first to last with ArrowUp", () => {
+    test("should wrap from first to last with ArrowUp", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -83,7 +83,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[2]);
     });
 
-    it("should jump to the first item with Home", () => {
+    test("should jump to the first item with Home", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
@@ -92,7 +92,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    it("should jump to the last item with End", () => {
+    test("should jump to the last item with End", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -101,7 +101,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[2]);
     });
 
-    it("should not navigate with ArrowLeft or ArrowRight", () => {
+    test("should not navigate with ArrowLeft or ArrowRight", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 

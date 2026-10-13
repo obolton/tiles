@@ -68,7 +68,7 @@ describe("PageUndoManager", () => {
     expect(undoManager.canUndo.value).toBe(true);
 
     undoManager.undo();
-    expect(content.length).toBe(0);
+    expect(content).toHaveLength(0);
     expect(tiles.has("a")).toBe(true);
   });
 

@@ -123,7 +123,7 @@ describe("KeyboardNavigation", () => {
 
       nav.setActiveItem(items[1]!, true);
 
-      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     test("calls onFocus callback when focus=true", () => {
@@ -406,7 +406,7 @@ describe("KeyboardNavigation", () => {
       items[0]!.focus();
       const event = press(items[0]!, "ArrowRight");
 
-      expect(event.preventDefault).toHaveBeenCalledOnce();
+      expect(event.preventDefault).toHaveBeenCalledTimes(1);
     });
 
     test("does not call preventDefault on unhandled keys", () => {

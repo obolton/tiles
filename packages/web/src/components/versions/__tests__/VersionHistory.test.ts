@@ -106,7 +106,7 @@ describe("VersionHistory", () => {
 
       state.select(NAMED_VERSION.id);
 
-      expect(navigate).toHaveBeenCalledOnce();
+      expect(navigate).toHaveBeenCalledTimes(1);
       const url = navigate.mock.lastCall?.[0];
       expect(url?.pathname).toBe("/pages/page-id");
       expect(url?.searchParams.get("version")).toBe(NAMED_VERSION.id);

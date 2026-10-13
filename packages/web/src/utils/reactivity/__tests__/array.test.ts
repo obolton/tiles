@@ -5,19 +5,19 @@ describe("ReactiveArray", () => {
   describe("length", () => {
     test("returns the array length", () => {
       const arr = new ReactiveArray([1, 2, 3]);
-      expect(arr.length).toBe(3);
+      expect(arr).toHaveLength(3);
     });
 
     test("updates after push", () => {
       const arr = new ReactiveArray([1, 2]);
       arr.push(3);
-      expect(arr.length).toBe(3);
+      expect(arr).toHaveLength(3);
     });
 
     test("updates after clear", () => {
       const arr = new ReactiveArray([1, 2, 3]);
       arr.clear();
-      expect(arr.length).toBe(0);
+      expect(arr).toHaveLength(0);
     });
   });
 

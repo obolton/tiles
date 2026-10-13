@@ -85,6 +85,6 @@ describe("toPlainText", () => {
         ],
       },
     ];
-    expect(toPlainText(text)).toEqual("Heading\nFirst line\nSecond line\nDONE\nList item\n");
+    expect(toPlainText(text)).toBe("Heading\nFirst line\nSecond line\nDONE\nList item\n");
   });
 });

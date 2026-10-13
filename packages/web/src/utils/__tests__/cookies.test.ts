@@ -9,7 +9,7 @@ describe("getCookie", () => {
 
   test("returns null if the cookie does not exist", () => {
     const cookies = "test=123; abc=def";
-    expect(getCookie(cookies, "nonexistent")).toBe(null);
+    expect(getCookie(cookies, "nonexistent")).toBeNull();
   });
 
   test("returns an empty value", () => {

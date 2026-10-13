@@ -64,7 +64,7 @@ describe("YXmlStreamWriter concurrency", () => {
     writer.apply("two");
 
     // Both edits survive
-    expect(fragment.length).toBe(3);
+    expect(fragment).toHaveLength(3);
     expect(textOf(fragment, 0)).toBe("human");
     expect(textOf(fragment, 1)).toBe("one");
     expect(textOf(fragment, 2)).toBe("two");

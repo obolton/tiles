@@ -1,3 +1,4 @@
+/* oxlint-disable vitest/prefer-to-contain */
 import { describe, expect, test } from "vitest";
 import { keyRange } from "../key-range";
 
