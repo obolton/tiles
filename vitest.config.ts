@@ -10,7 +10,6 @@ export default defineConfig({
       "packages/image-upload-worker",
       "packages/web",
     ],
-    // With `projects`, Vitest only reads coverage options from the root config.
     coverage: {
       include: ["packages/*/src/**/*.{ts,tsx}"],
       exclude: [
