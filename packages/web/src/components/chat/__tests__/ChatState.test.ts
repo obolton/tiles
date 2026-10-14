@@ -77,9 +77,8 @@ describe("ChatState", () => {
 
       chat.completeStreaming();
 
-      expect(chat.messages.value).toHaveLength(1);
-      expect(chat.messages.value[0]).toMatchObject({ role: "assistant" });
-      expect(chat.messages.value[0]).not.toHaveProperty("content", expect.anything());
+      expect(chat.messages.value).toMatchObject([{ role: "assistant" }]);
+      expect(chat.messages.value[0]?.content).toBeUndefined();
     });
 
     test("completeStreaming does not push a message when nothing was streamed", () => {
