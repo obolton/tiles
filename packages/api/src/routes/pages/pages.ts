@@ -28,7 +28,7 @@ import { PAGE_FIELDS, type Page } from "./fields";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
 
-function canViewCollaborators(page: Page, userId: string | null) {
+function isCollaborator(page: Page, userId: string | null) {
   return (
     userId !== null &&
     (page.author.id === userId || page.access.some(({ user }) => user.id === userId))
@@ -51,7 +51,7 @@ export async function getPageById({ id }: GetPageByIdSchema, { userId }: Request
     return null;
   }
 
-  const showCollaborators = canViewCollaborators(page, userId);
+  const showCollaborators = isCollaborator(page, userId);
 
   return {
     ...page,
