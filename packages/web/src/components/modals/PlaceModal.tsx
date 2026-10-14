@@ -19,26 +19,6 @@ interface PlaceModalProps extends ModalProps<PlaceModalResult> {
   boundingBox?: [number, number, number, number];
 }
 
-// Arrow keys move focus between the search input and the result buttons
-function onKeyDown(event: KeyboardEvent) {
-  if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
-    return;
-  }
-  const container = event.currentTarget as HTMLElement;
-  const controls = Array.from(
-    container.querySelectorAll<HTMLElement>("input[type='search'], ol button"),
-  );
-  const index = controls.findIndex((control) => control === document.activeElement);
-  if (index === -1) {
-    return;
-  }
-  const next = controls[index + (event.key === "ArrowDown" ? 1 : -1)];
-  if (next) {
-    event.preventDefault();
-    next.focus();
-  }
-}
-
 export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalProps) {
   const isPending = new ReactiveValue(false);
   const location = new ReactiveValue<GeolocationPosition | null>(null);
@@ -97,32 +77,30 @@ export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalP
       </ModalHeader>
 
       <ModalBody>
-        <div className={styles.search} on:keydown={onKeyDown}>
-          <label>
-            Search for a place
-            <input
-              className={styles.input}
-              name="search"
-              type="search"
-              placeholder="Address or name"
-              autofocus
-              on:input={onInput}
-            />
-          </label>
+        <label>
+          Search for a place
+          <input
+            className={styles.input}
+            name="search"
+            type="search"
+            placeholder="Address or name"
+            autofocus
+            on:input={onInput}
+          />
+        </label>
 
-          <ol className={styles["place-select"]} aria-label="Results">
-            {results.derive((items) =>
-              items.map((result) => (
-                <li>
-                  <button type="button" on:click={() => selectPlace(result)}>
-                    <span>{result.name}</span>
-                    <span className={styles.description}>{result.address}</span>
-                  </button>
-                </li>
-              )),
-            )}
-          </ol>
-        </div>
+        <ol className={styles["place-select"]} aria-label="Results">
+          {results.derive((items) =>
+            items.map((result) => (
+              <li>
+                <button type="button" on:click={() => selectPlace(result)}>
+                  <span>{result.name}</span>
+                  <span className={styles.description}>{result.address}</span>
+                </button>
+              </li>
+            )),
+          )}
+        </ol>
       </ModalBody>
 
       <ModalFooter>
