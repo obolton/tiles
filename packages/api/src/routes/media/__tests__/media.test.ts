@@ -14,10 +14,6 @@ const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   role: "ADMIN",
 };
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("createImage", () => {
   beforeEach(() => {
     vi.mocked(prisma.image.create<CreateQuery<typeof IMAGE_FIELDS>>).mockResolvedValue({

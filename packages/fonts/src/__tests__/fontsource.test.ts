@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ZodError } from "zod";
 import { getFontUrl, fetchFontMetadata, fetchVariableFontMetadata } from "../fontsource";
 
@@ -24,10 +24,6 @@ const VALID_VARIABLE_RESPONSE = {
 describe("fetchFontMetadata", () => {
   beforeEach(() => {
     vi.spyOn(global, "fetch");
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   test("requests the per-font endpoint by id", async () => {
@@ -71,10 +67,6 @@ describe("fetchFontMetadata", () => {
 describe("fetchVariableFontMetadata", () => {
   beforeEach(() => {
     vi.spyOn(global, "fetch");
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   test("requests the variable endpoint by id", async () => {

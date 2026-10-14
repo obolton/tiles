@@ -4,7 +4,6 @@ import { createSession, deleteSession } from "../sessions";
 
 describe("createSession", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prisma.session.create).mockResolvedValue({
       id: "mock-session-id",
       expiresAt: new Date("2025-01-15T00:00:00Z"),
@@ -59,7 +58,6 @@ describe("createSession", () => {
 
 describe("deleteSession", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prisma.session.delete).mockResolvedValue({
       id: "session-id",
       expiresAt: new Date(),

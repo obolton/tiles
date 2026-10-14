@@ -23,7 +23,6 @@ const mockFoldersResponse = {
 
 describe("folders", () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
     await initializeCache("user-123", "workspace-123");
   });
 

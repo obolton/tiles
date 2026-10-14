@@ -64,8 +64,6 @@ describe("uploadImage", () => {
   const deleteImageMock = vi.mocked(client.media.deleteImage.mutate);
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
     createImageMock.mockResolvedValue(CREATED_IMAGE);
     updateImageMock.mockResolvedValue(UPDATED_IMAGE);
     vi.mocked(bucket.put).mockResolvedValue(R2_OBJECT);

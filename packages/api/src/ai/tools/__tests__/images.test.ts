@@ -18,7 +18,6 @@ vi.mock("@/utils/storage", () => ({
 const IMAGE_DATA = Buffer.from("image-bytes").toString("base64");
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(openai.images.generate).mockResolvedValue({
     created: 0,
     data: [{ b64_json: IMAGE_DATA }],

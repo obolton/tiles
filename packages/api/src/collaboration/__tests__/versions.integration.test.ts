@@ -37,7 +37,6 @@ describe("version capture over a live Hocuspocus document", () => {
   let disconnected: boolean;
 
   beforeEach(async () => {
-    vi.clearAllMocks();
     vi.mocked(
       prisma.page.findUniqueOrThrow<FindUniqueQuery<typeof PAGE_DOCUMENT_FIELDS>>,
     ).mockResolvedValue({

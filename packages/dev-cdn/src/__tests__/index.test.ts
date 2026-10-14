@@ -35,7 +35,6 @@ function createObject(body?: string, contentType = "image/png") {
 
 describe("fetch handler", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     get.mockResolvedValue(createObject("image-bytes"));
     getFont.mockResolvedValue(createObject("font-bytes", "font/woff2"));
   });

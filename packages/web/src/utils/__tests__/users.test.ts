@@ -36,7 +36,6 @@ const mockUsersResponse = {
 
 describe("users", () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
     await initializeCache("user-123", "workspace-123");
   });
 

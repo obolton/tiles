@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import PageInvite from "@/models/PageInvite";
 import Page from "@/models/Page";
@@ -23,10 +23,6 @@ describe("PageInvite", () => {
   const page = new Page(PAGE, new Y.Doc());
   const inviteToPageMock = vi.mocked(client.collaboration.inviteToPage.mutate);
   const deletePageInviteMock = vi.mocked(client.collaboration.deletePageInvite.mutate);
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
   test("maps properties to values", () => {
     const invite = new PageInvite(page, PAGE_INVITE);

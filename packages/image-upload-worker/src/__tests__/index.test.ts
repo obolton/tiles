@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createClient } from "../client";
 import { uploadImage } from "../upload";
 import handler from "../index";
@@ -22,10 +22,6 @@ const HEADERS = {
 const env = { IMAGES: {} } as Env;
 
 describe("fetch handler", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("returns preflight response for OPTIONS requests", async () => {
     const request: Request<unknown, IncomingRequestCfProperties> = new Request(URL, {
       method: "OPTIONS",

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { DocWriter } from "@/collaboration/DocWriter";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
@@ -17,7 +17,6 @@ describe("CREATE_TEXT_TOOL", () => {
   let context: ToolContext;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     doc = new Y.Doc();
     context = { ...MOCK_TOOL_CONTEXT, session: new DocWriter(doc) };
   });
