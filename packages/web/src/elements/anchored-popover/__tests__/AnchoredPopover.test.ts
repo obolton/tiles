@@ -32,7 +32,6 @@ describe("AnchoredPopover", () => {
 
   afterEach(() => {
     document.body.innerHTML = "";
-    vi.restoreAllMocks();
   });
 
   test("should initialize the popover attribute", () => {

@@ -14,7 +14,6 @@ function createContextOptions(headers: IncomingMessage["headers"] = {}) {
 }
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(getSessionContext).mockImplementation(async (sessionId) =>
     sessionId.startsWith("valid-") ? { userId: "user-1" } : null,
   );

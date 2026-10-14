@@ -56,7 +56,6 @@ function createdUserData() {
 }
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(getStream).mockResolvedValue({ stream: MOCK_STREAM, contentType: "image/png" });
 });
 

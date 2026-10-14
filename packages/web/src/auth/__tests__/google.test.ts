@@ -85,10 +85,6 @@ describe("google", () => {
   });
 
   describe("verifyIdToken", () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     test("should verify the ID token and return user info", async () => {
       vi.mocked(jwtVerify).mockResolvedValue({
         payload: {

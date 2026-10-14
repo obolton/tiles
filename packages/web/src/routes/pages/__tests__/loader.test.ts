@@ -61,7 +61,6 @@ function unwrapResponse(result: Awaited<ReturnType<typeof runLoader>>) {
 
 describe("pages/[id] loader", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     getPage.mockResolvedValue({ ...PAGE, document: LIVE_DOCUMENT });
   });
 

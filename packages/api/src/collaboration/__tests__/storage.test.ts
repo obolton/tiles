@@ -1,12 +1,8 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import * as Y from "yjs";
 import prisma from "@/database/prisma";
 import { loadDoc, saveDoc } from "../storage";
 import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator";
-
-beforeEach(() => {
-  vi.clearAllMocks();
-});
 
 describe("loadDoc", () => {
   test("returns the persisted state for an up-to-date snapshot", async () => {

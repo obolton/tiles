@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import prisma from "@/database/prisma";
 import { invalidateCachedPages } from "@/utils/cdn";
 import { router } from "@/utils/trpc";
@@ -43,10 +43,6 @@ function mockMembership(role: WorkspaceRole | null) {
 function createCaller<T extends TRPCRouterRecord>(procedures: T, ctx: RequestContext) {
   return router(procedures).createCaller(ctx);
 }
-
-beforeEach(() => {
-  vi.clearAllMocks();
-});
 
 describe("authenticatedProcedure", () => {
   const procedures = {

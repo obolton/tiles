@@ -36,7 +36,6 @@ const MOCK_METADATA = {
 const INPUT = { pageId: "page-1", url: "https://example.com/" };
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(getVideoInfo).mockReturnValue(null);
   vi.mocked(getLinkMetadata).mockResolvedValue(MOCK_METADATA);
   vi.mocked(fetchImage).mockResolvedValue("image-1");
