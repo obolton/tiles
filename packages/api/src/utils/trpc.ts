@@ -5,9 +5,11 @@ import { getCookie } from "@/utils/cookies";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
 import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
+import { isServiceName } from "@/constants/services";
 import { clearSessionCookie } from "@/utils/cookies";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import type { ServiceName } from "@/constants/services";
 
 function getServiceApiToken() {
   const token = process.env.SERVICE_API_TOKEN;
@@ -35,7 +37,7 @@ export interface AuthenticatedServiceRequestContext {
   res: ServerResponse;
   sessionId: null;
   userId: null;
-  serviceName: string;
+  serviceName: ServiceName;
 }
 
 export type RequestContext =
@@ -88,7 +90,7 @@ function getServiceName(req: IncomingMessage) {
   }
 
   const serviceName = getHeader(req, SERVICE_NAME_HEADER);
-  if (!serviceName || !isValidServiceToken(token)) {
+  if (!serviceName || !isServiceName(serviceName) || !isValidServiceToken(token)) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Invalid service credentials",

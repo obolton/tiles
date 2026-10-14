@@ -4,6 +4,7 @@ import type {
   AuthenticatedServiceRequestContext,
   UnauthenticatedRequestContext,
 } from "@/utils/trpc";
+import type { ServiceName } from "@/constants/services";
 
 export function createUnauthenticatedContext(): UnauthenticatedRequestContext {
   return { res: createResponse(), sessionId: null, userId: null, serviceName: null };
@@ -22,7 +23,7 @@ export function createAuthenticatedContext(
 }
 
 export function createServiceContext(
-  serviceName = "service-1",
+  serviceName: ServiceName = "web",
 ): AuthenticatedServiceRequestContext {
   return { res: createResponse(), sessionId: null, userId: null, serviceName };
 }

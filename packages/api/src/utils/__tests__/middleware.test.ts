@@ -95,8 +95,8 @@ describe("authenticatedServiceProcedure", () => {
   });
 
   test("should pass a service caller through", async () => {
-    const caller = createCaller(procedures, createServiceContext("service-1"));
-    await expect(caller.probe()).resolves.toBe("service-1");
+    const caller = createCaller(procedures, createServiceContext("web"));
+    await expect(caller.probe()).resolves.toBe("web");
   });
 });
 

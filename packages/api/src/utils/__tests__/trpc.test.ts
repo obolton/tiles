@@ -168,6 +168,7 @@ describe("createContext with service credentials", () => {
     ["an empty token", { [SERVICE_TOKEN_KEY]: "", [SERVICE_NAME_KEY]: "web" }],
     ["a missing service name", { [SERVICE_TOKEN_KEY]: "test" }],
     ["an empty service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "" }],
+    ["an unknown service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "unknown" }],
   ])("rejects %s", async (_, headers) => {
     const opts = createContextOptions({
       ...headers,
