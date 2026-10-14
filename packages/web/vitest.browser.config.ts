@@ -19,6 +19,8 @@ export default defineConfig({
     },
   },
   test: {
+    clearMocks: true,
+    restoreMocks: true,
     include: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
     env: {
       GOOGLE_CLIENT_ID: "test-client-id",

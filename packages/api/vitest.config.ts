@@ -4,6 +4,8 @@ import path from "node:path";
 export default defineConfig({
   test: {
     environment: "node",
+    clearMocks: true,
+    restoreMocks: true,
     setupFiles: ["src/test/setup.ts"],
     env: {
       PROFILE_IMAGES_BASE_URL: "https://example.com/profile-images",

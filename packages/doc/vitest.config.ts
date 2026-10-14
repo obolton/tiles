@@ -9,5 +9,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    clearMocks: true,
+    restoreMocks: true,
   },
 });
