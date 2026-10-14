@@ -17,10 +17,6 @@ describe("signIn", () => {
     imageUrl: "https://example.com/photo.jpg",
   };
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   describe("existing user", () => {
     beforeEach(() => {
       vi.mocked(prisma.key.findUnique).mockResolvedValue({
@@ -179,7 +175,6 @@ describe("signIn", () => {
 
 describe("signOut", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prisma.session.delete).mockResolvedValue({
       id: "session-id",
       expiresAt: new Date(),

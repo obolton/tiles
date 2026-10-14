@@ -19,7 +19,6 @@ const MOCK_CATEGORY = {
 };
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(fetch).mockResolvedValue(jsonResponse({ items: [] }));
 });
 

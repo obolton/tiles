@@ -21,7 +21,6 @@ describe("CREATE_LINK_TOOL", () => {
   let context: ToolContext;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     ({ doc, context } = createToolContext());
   });
 

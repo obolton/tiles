@@ -15,7 +15,6 @@ vi.mock("@/api/client", () => ({
 
 describe("bookmarks", () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
     await initializeCache("user-123", "workspace-123");
   });
 

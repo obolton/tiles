@@ -21,7 +21,6 @@ function spyOnNavigate(state: VersionHistory) {
 
 describe("VersionHistory", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     history.replaceState(null, "", "/pages/page-id");
   });
 

@@ -4,7 +4,6 @@ import { createKey, getUserIdByProviderId } from "../keys";
 
 describe("createKey", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(prisma.key.create).mockResolvedValue({
       createdAt: new Date(),
       provider: "GOOGLE",
@@ -31,10 +30,6 @@ describe("createKey", () => {
 });
 
 describe("getUserIdByProviderId", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("should return userId when key exists", async () => {
     vi.mocked(prisma.key.findUnique).mockResolvedValue({
       createdAt: new Date(),

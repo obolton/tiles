@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import * as Y from "yjs";
 import { equalBytes } from "doc/encoding";
 import prisma from "@/database/prisma";
@@ -32,10 +32,6 @@ function createdVersionData() {
   }
   return call[0].data;
 }
-
-beforeEach(() => {
-  vi.clearAllMocks();
-});
 
 describe("createVersion", () => {
   test("inserts a version row with the encoded document state", async () => {

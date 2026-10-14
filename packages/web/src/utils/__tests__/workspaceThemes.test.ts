@@ -20,7 +20,6 @@ const mockThemesResponse = [DARK_THEME, THEME];
 
 describe("workspaceThemes", () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
     await initializeCache("user-123", "workspace-123");
   });
 

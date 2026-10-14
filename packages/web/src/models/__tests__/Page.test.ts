@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import Page from "@/models/Page";
 import Dropdown from "@/models/Dropdown";
@@ -29,10 +29,6 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("Page", () => {
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("maps properties to reactive values", () => {
     const page = new Page(PAGE, new Y.Doc());
 

@@ -20,7 +20,6 @@ describe("CREATE_IMAGE_TOOL", () => {
   let context: ToolContext;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     ({ doc, context } = createToolContext());
     vi.mocked(generateAndUploadImage).mockResolvedValue("generated-image-id");
   });

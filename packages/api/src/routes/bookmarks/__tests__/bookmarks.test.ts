@@ -33,10 +33,6 @@ function createMockBookmarks(count: number) {
   return Array.from({ length: count }, (_, i) => ({ page: createMockPage(i + 1) }));
 }
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("createBookmark", () => {
   const MOCK_BOOKMARK = { page: createMockPage(1) };
 

@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, useFunctionTool } from "../tools";
 
@@ -40,10 +40,6 @@ describe("FUNCTION_TOOLS", () => {
 });
 
 describe("useFunctionTool", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("finds and executes create_text tool", async () => {
     const result = await useFunctionTool(
       {

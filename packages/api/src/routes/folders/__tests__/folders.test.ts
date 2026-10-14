@@ -51,10 +51,6 @@ function createMockPages(count: number): LibraryPage[] {
   }));
 }
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("createFolder", () => {
   beforeEach(() => {
     vi.mocked(prisma.folder.create<CreateQuery<typeof FOLDER_FIELDS>>).mockResolvedValue(

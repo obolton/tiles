@@ -13,7 +13,6 @@ describe("DELETE_TILES_TOOL", () => {
   let sectionC: string;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     ({ doc, context } = createToolContext());
     sectionA = context.session.createTile(buildSectionMap({}));
     sectionB = context.session.createTile(buildSectionMap({}));

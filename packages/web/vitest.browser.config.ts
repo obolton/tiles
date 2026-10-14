@@ -1,8 +1,9 @@
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import path from "node:path";
-import { defineConfig } from "vitest/config";
-import svgPlugin from "./src/vite/svg";
+import { defineConfig, mergeConfig } from "vitest/config";
+import shared from "../../vitest.shared.ts";
+import svgPlugin from "./src/vite/svg.ts";
 
 const packageRoot = path.dirname(import.meta.filename);
 
@@ -19,53 +20,56 @@ function createBrowserConfig() {
   };
 }
 
-export default defineConfig({
-  root: import.meta.dirname,
-  server: {
-    host: APP_HOST,
-    allowedHosts: [APP_HOST],
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(packageRoot, "./src"),
+export default mergeConfig(
+  shared,
+  defineConfig({
+    root: import.meta.dirname,
+    server: {
+      host: APP_HOST,
+      allowedHosts: [APP_HOST],
     },
-  },
-  plugins: [svgPlugin({ importSource: "@/jsx" })],
-  test: {
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: "browser",
-          include: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
-          env: {
-            GOOGLE_CLIENT_ID: "test-client-id",
-            GOOGLE_CLIENT_SECRET: "test-client-secret",
-            GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
-          },
-          browser: createBrowserConfig(),
-        },
+    resolve: {
+      alias: {
+        "@": path.resolve(packageRoot, "./src"),
       },
-      {
-        extends: true,
-        plugins: [
-          storybookTest({
-            configDir: path.join(packageRoot, ".storybook"),
-            storybookUrl: "http://localhost:6001",
-          }),
-        ],
-        test: {
-          name: "storybook",
-          env: {
-            PUBLIC_API_ORIGIN: "https://api.test",
-            PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
-          },
-          browser: createBrowserConfig(),
-        },
-      },
-    ],
-    coverage: {
-      include: ["src/**/*.{ts,tsx}"],
     },
-  },
-});
+    plugins: [svgPlugin({ importSource: "@/jsx" })],
+    test: {
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: "browser",
+            include: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
+            env: {
+              GOOGLE_CLIENT_ID: "test-client-id",
+              GOOGLE_CLIENT_SECRET: "test-client-secret",
+              GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
+            },
+            browser: createBrowserConfig(),
+          },
+        },
+        {
+          extends: true,
+          plugins: [
+            storybookTest({
+              configDir: path.join(packageRoot, ".storybook"),
+              storybookUrl: "http://localhost:6001",
+            }),
+          ],
+          test: {
+            name: "storybook",
+            env: {
+              PUBLIC_API_ORIGIN: "https://api.test",
+              PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
+            },
+            browser: createBrowserConfig(),
+          },
+        },
+      ],
+      coverage: {
+        include: ["src/**/*.{ts,tsx}"],
+      },
+    },
+  }),
+);
