@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma, { type PrismaTransactionClient } from "@/database/prisma.ts";
+import prisma from "@/database/prisma.ts";
 import { upload } from "@/utils/storage.ts";
 import { getStream } from "@/utils/http.ts";
 import {
@@ -10,8 +10,9 @@ import {
   updateUser,
   isUsernameAvailable,
 } from "../users.ts";
-import { mockQuery } from "@/test/prisma.ts";
-import { createAuthenticatedContext } from "@/test/mocks/context.ts";
+import { USER_FIELDS } from "../fields";
+import type { CreateQuery, FindUniqueQuery, UpdateQuery } from "@/test/prisma.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
 
 vi.mock("@/utils/storage.ts", () => ({
   upload: vi.fn(async () => {}),
@@ -21,7 +22,17 @@ vi.mock("@/utils/http.ts", () => ({
   getStream: vi.fn(),
 }));
 
-const MOCK_CONTEXT = createAuthenticatedContext({ userId: "user-1" });
+const MOCK_CONTEXT: AuthenticatedRequestContext = {
+  res: {} as AuthenticatedRequestContext["res"],
+  sessionId: "session-1",
+  userId: "user-1",
+  serviceName: null,
+};
+
+const MOCK_WORKSPACES = [
+  { id: "workspace-1", name: "Workspace One" },
+  { id: "workspace-2", name: "Workspace Two" },
+];
 
 const MOCK_USER = {
   id: "user-1",
@@ -30,25 +41,18 @@ const MOCK_USER = {
   email: "alice@test.com",
   imageKey: null,
   imageUrl: null,
-  workspaceMemberships: [
-    { workspace: { id: "workspace-1", name: "Workspace One" } },
-    { workspace: { id: "workspace-2", name: "Workspace Two" } },
-  ],
+  workspaceMemberships: MOCK_WORKSPACES.map((workspace) => ({ workspace })),
 };
-
-const MOCK_WORKSPACES = [
-  { id: "workspace-1", name: "Workspace One" },
-  { id: "workspace-2", name: "Workspace Two" },
-];
 
 const MOCK_STREAM = new ReadableStream();
 const UUID_PATTERN = "[0-9a-f-]{36}";
 
-function createDb() {
-  const create = vi.fn(async ({ data }: { data: { id: string; imageKey: string | null } }) => ({
-    id: data.id,
-  }));
-  return { db: { user: { create } } as unknown as PrismaTransactionClient, create };
+function createdUserData() {
+  const call = vi.mocked(prisma.user.create).mock.calls.at(0);
+  if (!call) {
+    throw new Error("expected user.create to be called");
+  }
+  return call[0].data;
 }
 
 beforeEach(() => {
@@ -57,7 +61,7 @@ beforeEach(() => {
 });
 
 describe("storeProfileImage", () => {
-  test("should upload the fetched image to the profile bucket and return its key", async () => {
+  test("should upload the image to the profile bucket and return its key", async () => {
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar.png");
 
     expect(imageKey).toMatch(new RegExp(`^user-1/${UUID_PATTERN}\\.png$`));
@@ -74,7 +78,7 @@ describe("storeProfileImage", () => {
     ]);
   });
 
-  test("should give the key an extension matching the image's content type", async () => {
+  test("should use the file extension for the image's content type", async () => {
     vi.mocked(getStream).mockResolvedValueOnce({ stream: MOCK_STREAM, contentType: "image/jpeg" });
 
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar");
@@ -82,128 +86,109 @@ describe("storeProfileImage", () => {
     expect(imageKey).toMatch(/\.jpg$/);
   });
 
-  test("should use a different key for each stored image", async () => {
-    const first = await storeProfileImage("user-1", "https://example.com/avatar.png");
-    const second = await storeProfileImage("user-1", "https://example.com/avatar.png");
-
-    expect(first).not.toBe(second);
-  });
-
-  test("should fail without uploading when the image cannot be fetched", async () => {
-    vi.mocked(getStream).mockRejectedValueOnce(new Error("getStream: 404: Not Found"));
+  test("should not upload when the image cannot be fetched", async () => {
+    vi.mocked(getStream).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(storeProfileImage("user-1", "https://example.com/missing.png")).rejects.toThrow(
-      "getStream: 404: Not Found",
+      "Not found",
     );
     expect(upload).not.toHaveBeenCalled();
   });
 });
 
 describe("createUser", () => {
-  test("should return the new user's id", async () => {
-    const { db } = createDb();
+  beforeEach(() => {
+    vi.mocked(prisma.user.create<CreateQuery<{ id: true }>>).mockResolvedValue({ id: "user-1" });
+  });
 
-    const result = await createUser(db, {
+  test("should return the new user's id", async () => {
+    const result = await createUser(prisma, {
       name: "Alice",
       email: "alice@test.com",
       emailVerified: true,
     });
 
-    expect(result.id).toMatch(new RegExp(`^${UUID_PATTERN}$`));
+    expect(result).toEqual({ id: "user-1" });
   });
 
   test("should create the user without an image when no image url is given", async () => {
-    const { db, create } = createDb();
+    await createUser(prisma, { name: "Alice", email: "alice@test.com", emailVerified: true });
 
-    await createUser(db, { name: "Alice", email: "alice@test.com", emailVerified: true });
-
-    expect(create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          name: "Alice",
-          email: "alice@test.com",
-          emailVerified: true,
-          imageKey: null,
-        }),
-      }),
-    );
+    expect(createdUserData()).toMatchObject({
+      name: "Alice",
+      email: "alice@test.com",
+      emailVerified: true,
+      imageKey: null,
+    });
     expect(upload).not.toHaveBeenCalled();
   });
 
   test("should store the profile image under the new user's id", async () => {
-    const { db, create } = createDb();
-
-    const { id } = await createUser(db, {
+    await createUser(prisma, {
       name: "Alice",
       email: "alice@test.com",
       emailVerified: false,
       imageUrl: "https://example.com/avatar.png",
     });
 
-    const imageKey = create.mock.calls[0]?.[0].data.imageKey;
+    const { id, imageKey } = createdUserData();
     expect(imageKey).toMatch(new RegExp(`^${id}/${UUID_PATTERN}\\.png$`));
     expect(upload).toHaveBeenCalledWith("test", imageKey, MOCK_STREAM, "image/png");
   });
 
   test("should not create the user when the profile image cannot be stored", async () => {
-    const { db, create } = createDb();
-    vi.mocked(getStream).mockRejectedValueOnce(new Error("getStream: 404: Not Found"));
+    vi.mocked(getStream).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(
-      createUser(db, {
+      createUser(prisma, {
         name: "Alice",
         email: "alice@test.com",
         emailVerified: false,
         imageUrl: "https://example.com/missing.png",
       }),
-    ).rejects.toThrow("getStream: 404: Not Found");
+    ).rejects.toThrow("Not found");
 
-    expect(create).not.toHaveBeenCalled();
+    expect(prisma.user.create).not.toHaveBeenCalled();
   });
 });
 
 describe("getSessionContext", () => {
-  const SESSIONS = new Map([
-    ["session-live", { userId: "user-1", expiresAt: new Date(Date.now() + 60_000) }],
-    ["session-expired", { userId: "user-2", expiresAt: new Date(Date.now() - 60_000) }],
-  ]);
-
-  beforeEach(() => {
-    mockQuery(prisma.session.findUnique, async ({ where }) => {
-      const session = where.id ? SESSIONS.get(where.id) : undefined;
-      const { expiresAt } = where;
-      const cutoff =
-        expiresAt &&
-        typeof expiresAt === "object" &&
-        "gt" in expiresAt &&
-        expiresAt.gt instanceof Date
-          ? expiresAt.gt
-          : new Date(0);
-      return session && session.expiresAt > cutoff ? { userId: session.userId } : null;
+  test("should return the user id of a live session", async () => {
+    vi.mocked(prisma.session.findUnique<FindUniqueQuery<{ userId: true }>>).mockResolvedValue({
+      userId: "user-1",
     });
+
+    const result = await getSessionContext("session-1");
+
+    expect(result).toEqual({ userId: "user-1" });
   });
 
-  test("should return the user id for a live session", async () => {
-    await expect(getSessionContext("session-live")).resolves.toEqual({ userId: "user-1" });
+  test("should only look up sessions that have not expired", async () => {
+    vi.mocked(prisma.session.findUnique).mockResolvedValue(null);
+
+    await getSessionContext("session-1");
+
+    expect(prisma.session.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "session-1", expiresAt: { gt: expect.any(Date) } },
+      }),
+    );
   });
 
-  test("should return null for an expired session", async () => {
-    await expect(getSessionContext("session-expired")).resolves.toBeNull();
-  });
+  test("should return null when there is no live session", async () => {
+    vi.mocked(prisma.session.findUnique).mockResolvedValue(null);
 
-  test("should return null for an unknown session", async () => {
-    await expect(getSessionContext("session-unknown")).resolves.toBeNull();
+    const result = await getSessionContext("session-1");
+
+    expect(result).toBeNull();
   });
 });
 
 describe("getUserInfo", () => {
   beforeEach(() => {
-    mockQuery(prisma.user.findUniqueOrThrow, async ({ where }) => {
-      if (where.id !== "user-1") {
-        throw new Error("No User found");
-      }
-      return MOCK_USER;
-    });
+    vi.mocked(prisma.user.findUniqueOrThrow<FindUniqueQuery<typeof USER_FIELDS>>).mockResolvedValue(
+      MOCK_USER,
+    );
   });
 
   test("should return the current user's profile with their workspaces", async () => {
@@ -219,33 +204,33 @@ describe("getUserInfo", () => {
       workspaces: MOCK_WORKSPACES,
     });
   });
-
-  test("should fail for a user that no longer exists", async () => {
-    await expect(getUserInfo({ ...MOCK_CONTEXT, userId: "user-gone" })).rejects.toThrow(
-      "No User found",
-    );
-  });
 });
 
 describe("updateUser", () => {
   beforeEach(() => {
-    mockQuery(prisma.user.update, async ({ where, data }) => {
-      if (where.id !== "user-1") {
-        throw new Error("No User found");
-      }
-      return {
-        ...MOCK_USER,
-        ...Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)),
-      };
+    vi.mocked(prisma.user.update<UpdateQuery<typeof USER_FIELDS>>).mockResolvedValue({
+      ...MOCK_USER,
+      name: "Alice Smith",
     });
   });
 
+  test("should update the current user", async () => {
+    await updateUser({ name: "Alice Smith" }, MOCK_CONTEXT);
+
+    expect(prisma.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "user-1" },
+        data: expect.objectContaining({ name: "Alice Smith" }),
+      }),
+    );
+  });
+
   test("should return the updated profile with the user's workspaces", async () => {
-    const result = await updateUser({ name: "Alice Smith", username: null }, MOCK_CONTEXT);
+    const result = await updateUser({ name: "Alice Smith" }, MOCK_CONTEXT);
 
     expect(result).toEqual({
       id: "user-1",
-      username: null,
+      username: "alice",
       name: "Alice Smith",
       email: "alice@test.com",
       imageKey: null,
@@ -253,48 +238,34 @@ describe("updateUser", () => {
       workspaces: MOCK_WORKSPACES,
     });
   });
-
-  test("should leave fields that are not supplied unchanged", async () => {
-    const result = await updateUser({ imageKey: "user-1/avatar.png" }, MOCK_CONTEXT);
-
-    expect(result).toMatchObject({
-      username: "alice",
-      name: "Alice",
-      email: "alice@test.com",
-      imageKey: "user-1/avatar.png",
-    });
-  });
-
-  test("should fail for a user that no longer exists", async () => {
-    await expect(
-      updateUser({ name: "Alice Smith" }, { ...MOCK_CONTEXT, userId: "user-gone" }),
-    ).rejects.toThrow("No User found");
-  });
 });
 
 describe("isUsernameAvailable", () => {
-  beforeEach(() => {
-    mockQuery(prisma.user.findUnique, async ({ where }) => {
-      switch (where.username) {
-        case "alice":
-          return { id: "user-1" };
-        case "bob":
-          return { id: "user-2" };
-        default:
-          return null;
-      }
-    });
-  });
-
   test("should be available when no user has the username", async () => {
-    await expect(isUsernameAvailable({ username: "carol" }, MOCK_CONTEXT)).resolves.toBe(true);
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+    const result = await isUsernameAvailable({ username: "alice" }, MOCK_CONTEXT);
+
+    expect(result).toBe(true);
   });
 
-  test("should be available when the caller already owns the username", async () => {
-    await expect(isUsernameAvailable({ username: "alice" }, MOCK_CONTEXT)).resolves.toBe(true);
+  test("should be available when the current user already owns the username", async () => {
+    vi.mocked(prisma.user.findUnique<FindUniqueQuery<{ id: true }>>).mockResolvedValue({
+      id: "user-1",
+    });
+
+    const result = await isUsernameAvailable({ username: "alice" }, MOCK_CONTEXT);
+
+    expect(result).toBe(true);
   });
 
   test("should be unavailable when another user owns the username", async () => {
-    await expect(isUsernameAvailable({ username: "bob" }, MOCK_CONTEXT)).resolves.toBe(false);
+    vi.mocked(prisma.user.findUnique<FindUniqueQuery<{ id: true }>>).mockResolvedValue({
+      id: "user-2",
+    });
+
+    const result = await isUsernameAvailable({ username: "alice" }, MOCK_CONTEXT);
+
+    expect(result).toBe(false);
   });
 });

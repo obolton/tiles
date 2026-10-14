@@ -52,13 +52,3 @@ export type UpdateQuery<T> = { select: T; where: never; data: never };
 export type FindUniqueQuery<T> = { select: T; where: never };
 export type FindManyQuery<T> = { select: T; where: never };
 export type DeleteQuery<T> = { select: T; where: never };
-
-type QueryMethod = (...args: never[]) => unknown;
-
-/** Gives a mocked Prisma query a behaviour that depends on its arguments. */
-export function mockQuery<M extends QueryMethod, R>(
-  method: M,
-  implementation: (...args: Parameters<M>) => Promise<R>,
-) {
-  vi.mocked<QueryMethod>(method).mockImplementation(implementation);
-}
