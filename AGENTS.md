@@ -61,7 +61,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 ### Testing tiers
 
 - `pnpm test:compact` runs unit tests across all packages (included in `pnpm check`).
-- `pnpm --filter web test:browser` runs browser-based tests with Playwright (not included in `pnpm check`).
+- `pnpm --filter web test:browser` runs browser-based tests (`*.browser.test.{ts,tsx}`) in headless Chromium via Vitest browser mode and Playwright (not included in `pnpm check`; CI runs it as a separate "Browser tests" job).
 - `pnpm test:e2e` runs the end-to-end tests with Playwright (not part of `pnpm check`).
 
 ### Important notes
