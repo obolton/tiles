@@ -1,22 +1,22 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { sendEmail } from "@/utils/email.ts";
-import { createKey } from "@/utils/keys.ts";
+import prisma from "@/database/prisma";
+import { sendEmail } from "@/utils/email";
+import { createKey } from "@/utils/keys";
 import {
   inviteToPage,
   acceptPageInvite,
   deletePageInvite,
   revokePageAccess,
-} from "../collaboration.ts";
+} from "../collaboration";
 import { PAGE_INVITE_FIELDS } from "../fields";
-import type { CreateQuery, FindUniqueQuery, DeleteQuery } from "@/test/prisma.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { CreateQuery, FindUniqueQuery, DeleteQuery } from "@/test/prisma";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 
-vi.mock("@/utils/keys.ts", () => ({
+vi.mock("@/utils/keys", () => ({
   createKey: vi.fn(async () => "mock-invite-key"),
 }));
 
-vi.mock("@/utils/email.ts", () => ({
+vi.mock("@/utils/email", () => ({
   sendEmail: vi.fn(async () => {}),
 }));
 

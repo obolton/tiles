@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { upload } from "@/utils/storage.ts";
-import { getStream } from "@/utils/http.ts";
+import prisma from "@/database/prisma";
+import { upload } from "@/utils/storage";
+import { getStream } from "@/utils/http";
 import {
   storeProfileImage,
   createUser,
@@ -9,16 +9,16 @@ import {
   getUserInfo,
   updateUser,
   isUsernameAvailable,
-} from "../users.ts";
+} from "../users";
 import { USER_FIELDS } from "../fields";
-import type { CreateQuery, FindUniqueQuery, UpdateQuery } from "@/test/prisma.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { CreateQuery, FindUniqueQuery, UpdateQuery } from "@/test/prisma";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 
-vi.mock("@/utils/storage.ts", () => ({
+vi.mock("@/utils/storage", () => ({
   upload: vi.fn(async () => {}),
 }));
 
-vi.mock("@/utils/http.ts", () => ({
+vi.mock("@/utils/http", () => ({
   getStream: vi.fn(),
 }));
 
