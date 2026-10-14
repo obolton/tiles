@@ -18,7 +18,7 @@
     "test:e2e": "playwright test",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
-    "test:compact": "vitest run",
+    "test:compact": "vitest run --reporter=minimal",
     "lint": "oxlint --type-aware && pnpm --filter web lint:css",
     "lint:compact": "oxlint --type-aware --format=agent && pnpm --filter web lint:css",
     "check": "node scripts/check.ts",
