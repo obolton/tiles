@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
+import { imageResponse } from "@/test/mocks/fetch";
 import { fetchImage } from "../fetchImage";
 
 vi.mock("@/utils/storage", () => ({
@@ -11,17 +12,6 @@ vi.mock("@/utils/storage", () => ({
 const WORKSPACE_ID = "workspace-1";
 const USER_ID = "user-1";
 
-function imageResponse(
-  contentType = "image/jpeg",
-  { status = 200, contentLength }: { status?: number; contentLength?: string } = {},
-) {
-  const headers: Record<string, string> = { "Content-Type": contentType };
-  if (contentLength) {
-    headers["Content-Length"] = contentLength;
-  }
-  return new Response(new Uint8Array([0xff, 0xd8]), { status, headers });
-}
-
 describe("fetchImage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -29,7 +19,7 @@ describe("fetchImage", () => {
 
   test("downloads image, uploads to R2, and creates database record", async () => {
     const response = imageResponse();
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(response);
+    vi.mocked(fetch).mockResolvedValue(response);
 
     const imageId = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
 
@@ -57,8 +47,8 @@ describe("fetchImage", () => {
     ] as const;
 
     for (const [contentType, imageType] of types) {
-      vi.restoreAllMocks();
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse(contentType));
+      vi.clearAllMocks();
+      vi.mocked(fetch).mockResolvedValue(imageResponse(contentType));
 
       await fetchImage("https://example.com/img", WORKSPACE_ID, USER_ID);
 
@@ -69,7 +59,7 @@ describe("fetchImage", () => {
   });
 
   test("handles content type with charset parameter", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/png; charset=utf-8"));
+    vi.mocked(fetch).mockResolvedValue(imageResponse("image/png; charset=utf-8"));
 
     const imageId = await fetchImage("https://example.com/img.png", WORKSPACE_ID, USER_ID);
 
@@ -100,7 +90,7 @@ describe("fetchImage", () => {
 
   describe("response validation", () => {
     test("returns null on non-OK response", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/jpeg", { status: 404 }));
+      vi.mocked(fetch).mockResolvedValue(imageResponse("image/jpeg", { status: 404 }));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage("https://example.com/missing.jpg", WORKSPACE_ID, USER_ID);
@@ -111,7 +101,7 @@ describe("fetchImage", () => {
     });
 
     test("rejects invalid content types", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("text/html"));
+      vi.mocked(fetch).mockResolvedValue(imageResponse("text/html"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage("https://example.com/page.html", WORKSPACE_ID, USER_ID);
@@ -122,7 +112,7 @@ describe("fetchImage", () => {
     });
 
     test("rejects SVG images", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse("image/svg+xml"));
+      vi.mocked(fetch).mockResolvedValue(imageResponse("image/svg+xml"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage("https://example.com/logo.svg", WORKSPACE_ID, USER_ID);
@@ -133,7 +123,7 @@ describe("fetchImage", () => {
     });
 
     test("rejects images exceeding size limit", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      vi.mocked(fetch).mockResolvedValue(
         imageResponse("image/jpeg", { contentLength: "10000000" }),
       );
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -146,9 +136,7 @@ describe("fetchImage", () => {
     });
 
     test("allows images within size limit", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        imageResponse("image/jpeg", { contentLength: "1000" }),
-      );
+      vi.mocked(fetch).mockResolvedValue(imageResponse("image/jpeg", { contentLength: "1000" }));
 
       const result = await fetchImage("https://example.com/small.jpg", WORKSPACE_ID, USER_ID);
 
@@ -156,7 +144,7 @@ describe("fetchImage", () => {
     });
 
     test("returns null when response has no body", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      vi.mocked(fetch).mockResolvedValue(
         new Response(null, {
           status: 200,
           headers: { "Content-Type": "image/jpeg" },
@@ -173,7 +161,7 @@ describe("fetchImage", () => {
 
   describe("error handling", () => {
     test("returns null on fetch failure", async () => {
-      vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("Network error"));
+      vi.mocked(fetch).mockRejectedValue(new Error("Network error"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
@@ -183,7 +171,7 @@ describe("fetchImage", () => {
     });
 
     test("returns null on upload failure", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse());
+      vi.mocked(fetch).mockResolvedValue(imageResponse());
       vi.mocked(upload).mockRejectedValue(new Error("R2 upload failed"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -194,7 +182,7 @@ describe("fetchImage", () => {
     });
 
     test("returns null on database failure", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(imageResponse());
+      vi.mocked(fetch).mockResolvedValue(imageResponse());
       vi.mocked(prisma.image.create).mockRejectedValue(new Error("DB error"));
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 

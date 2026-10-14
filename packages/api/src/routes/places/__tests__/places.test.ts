@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { searchPlaces } from "../places.ts";
-import type { HereAutosuggestQueryResults } from "../schema.ts";
+import { fetchedUrl, jsonResponse } from "@/test/mocks/fetch";
+import { searchPlaces } from "../places";
 
 const MOCK_PLACE = {
   id: "here:pds:place:1",
@@ -14,32 +14,20 @@ const MOCK_PLACE = {
 const MOCK_CATEGORY = {
   id: "here:cm:ontology:bridge",
   title: "Bridges",
-  resultType: "categoryQuery" as const,
+  resultType: "categoryQuery",
   href: "https://discover.search.hereapi.com/v1/discover?q=bridges",
 };
 
-function jsonResponse(body: HereAutosuggestQueryResults, init?: ResponseInit) {
-  return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-}
-
-function requestedUrl() {
-  const [input] = vi.mocked(fetch).mock.calls[0] ?? [];
-  return new URL(input instanceof Request ? input.url : (input ?? ""));
-}
-
 beforeEach(() => {
-  vi.spyOn(globalThis, "fetch").mockResolvedValue(jsonResponse({ items: [] }));
+  vi.clearAllMocks();
+  vi.mocked(fetch).mockResolvedValue(jsonResponse({ items: [] }));
 });
 
 describe("searchPlaces", () => {
   test("should search around a point with the API key, query and result limit", async () => {
     await searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 });
 
-    const url = requestedUrl();
+    const url = fetchedUrl();
     expect(url.origin + url.pathname).toBe("https://autosuggest.search.hereapi.com/v1/autosuggest");
     expect(Object.fromEntries(url.searchParams)).toEqual({
       apiKey: "test",
@@ -52,7 +40,7 @@ describe("searchPlaces", () => {
   test("should search within a bounding box when one is given", async () => {
     await searchPlaces({ query: "bridge", boundingBox: [-0.2, 51.4, 0.1, 51.6] });
 
-    const params = Object.fromEntries(requestedUrl().searchParams);
+    const params = Object.fromEntries(fetchedUrl().searchParams);
     expect(params.in).toBe("bbox:-0.2,51.4,0.1,51.6");
     expect(params).not.toHaveProperty("at");
   });
