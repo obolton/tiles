@@ -1,7 +1,7 @@
-import { router } from "@/utils/trpc.ts";
-import { pageUpdateProcedure } from "@/utils/middleware.ts";
-import { resolveLinkMetadata } from "./links.ts";
-import { GetLinkMetadataSchema } from "./schema.ts";
+import { router } from "@/utils/trpc";
+import { pageUpdateProcedure } from "@/utils/middleware";
+import { resolveLinkMetadata } from "./links";
+import { GetLinkMetadataSchema } from "./schema";
 
 export default router({
   getMetadata: pageUpdateProcedure

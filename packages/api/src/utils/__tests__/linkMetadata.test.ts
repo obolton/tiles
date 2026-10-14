@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { htmlResponse } from "@/test/mocks/fetch.ts";
-import { getLinkMetadata, matchContentType } from "../linkMetadata.ts";
+import { htmlResponse } from "@/test/mocks/fetch";
+import { getLinkMetadata, matchContentType } from "../linkMetadata";
 
 describe("matchContentType", () => {
   const htmlTypes = ["text/html", "application/xhtml+xml", "application/xml"];

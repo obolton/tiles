@@ -8,8 +8,8 @@ import {
   LATEST_VERSION_FIELDS,
   createVersion,
   maybeCreateVersion,
-} from "../versions.ts";
-import type { FindUniqueQuery } from "@/test/prisma.ts";
+} from "../versions";
+import type { FindUniqueQuery } from "@/test/prisma";
 
 const PAGE_ID = "page-1";
 

@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { MapStyle } from "doc/types/tiles/section";
 import { buildSectionMap } from "doc/tiles/section";
-import { SizeSchema, getDimensions } from "./schema.ts";
-import type { FunctionToolOptions, TileResult, ToolContext } from "./types.ts";
+import { SizeSchema, getDimensions } from "./schema";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateMapSchema = z.strictObject({
   size: SizeSchema,

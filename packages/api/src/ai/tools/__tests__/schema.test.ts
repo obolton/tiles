@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { getDimensions } from "../schema.ts";
+import { getDimensions } from "../schema";
 
 describe("getDimensions", () => {
   test("returns 12x10 for small", () => {

@@ -2,7 +2,7 @@ import prisma from "@/database/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import { PAGE_ACCESS_FIELDS, PAGE_INVITE_FIELDS } from "@/routes/collaboration/fields";
 
-export const PAGE_FIELDS = {
+export const PUBLIC_PAGE_FIELDS = {
   id: true,
   workspaceId: true,
   folderId: true,
@@ -18,18 +18,29 @@ export const PAGE_FIELDS = {
       imageUrl: true,
     },
   },
-  access: {
-    select: PAGE_ACCESS_FIELDS,
-  },
-  invites: {
-    select: PAGE_INVITE_FIELDS,
-  },
   document: {
     select: {
       snapshot: true,
     },
   },
 } as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
+
+// Collaborator and invite details are only returned to the author and collaborators.
+export const PAGE_FIELDS = {
+  ...PUBLIC_PAGE_FIELDS,
+  access: {
+    select: PAGE_ACCESS_FIELDS,
+  },
+  invites: {
+    select: PAGE_INVITE_FIELDS,
+  },
+} as const satisfies Prisma.Args<typeof prisma.page, "findMany">["select"];
+
+export type Page = Prisma.Result<
+  typeof prisma.page,
+  { select: typeof PAGE_FIELDS },
+  "findUniqueOrThrow"
+>;
 
 export const LIBRARY_PAGE_FIELDS = {
   id: true,

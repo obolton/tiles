@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getVideoInfo } from "../videos.ts";
+import { getVideoInfo } from "../videos";
 
 describe("getVideoInfo", () => {
   test("returns video info for a valid YouTube URL", () => {

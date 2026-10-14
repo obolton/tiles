@@ -1,4 +1,4 @@
-import type { Color } from "./color.ts";
+import type { Color } from "./color";
 
 export interface ColorFill {
   type: "color";

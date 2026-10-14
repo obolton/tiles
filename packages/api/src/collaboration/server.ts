@@ -1,8 +1,8 @@
 import * as Y from "yjs";
 import { Hocuspocus } from "@hocuspocus/server";
-import { authenticateConnection } from "./auth.ts";
-import { loadDoc, saveDoc } from "./storage.ts";
-import { maybeCreateVersion } from "./versions.ts";
+import { authenticateConnection } from "./auth";
+import { loadDoc, saveDoc } from "./storage";
+import { maybeCreateVersion } from "./versions";
 
 const DOC_NAME_PREFIX = "page:";
 

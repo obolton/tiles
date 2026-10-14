@@ -1,5 +1,5 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedWorkspaceProcedure } from "@/utils/middleware";
 import {
   createFolder,
   getFolder,
@@ -7,7 +7,7 @@ import {
   deleteFolder,
   listFolders,
   listPages,
-} from "./folders.ts";
+} from "./folders";
 import {
   CreateFolderSchema,
   GetFolderSchema,
@@ -15,7 +15,7 @@ import {
   DeleteFolderSchema,
   ListFoldersSchema,
   ListPagesSchema,
-} from "./schema.ts";
+} from "./schema";
 
 export default router({
   create: authenticatedWorkspaceProcedure

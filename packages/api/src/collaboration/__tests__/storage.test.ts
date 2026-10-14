@@ -1,8 +1,8 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import * as Y from "yjs";
-import prisma from "@/database/prisma.ts";
-import { loadDoc, saveDoc } from "../storage.ts";
-import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator.ts";
+import prisma from "@/database/prisma";
+import { loadDoc, saveDoc } from "../storage";
+import { createEmptyDoc, CURRENT_SCHEMA_VERSION } from "../migrator";
 
 beforeEach(() => {
   vi.clearAllMocks();

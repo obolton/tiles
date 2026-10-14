@@ -1,7 +1,7 @@
-import { getCookie } from "@/utils/cookies.ts";
-import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
-import { getSessionContext } from "@/routes/users/users.ts";
-import { getPage } from "@/utils/middleware.ts";
+import { getCookie } from "@/utils/cookies";
+import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { getSessionContext } from "@/routes/users/users";
+import { getPage } from "@/utils/middleware";
 
 interface AuthenticateConnectionParams {
   requestHeaders: Headers;

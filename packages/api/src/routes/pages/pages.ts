@@ -24,9 +24,16 @@ import type {
   AuthenticatedWorkspaceProcedureContext,
   AuthenticatedPageProcedureContext,
 } from "@/utils/middleware";
-import { PAGE_FIELDS } from "./fields";
+import { PAGE_FIELDS, type Page } from "./fields";
 
 const DELETED_PAGE_AVAILABILITY = 1000 * 60 * 60 * 24 * 30; // 30 days
+
+function isCollaborator(page: Page, userId: string | null) {
+  return (
+    userId !== null &&
+    (page.author.id === userId || page.access.some(({ user }) => user.id === userId))
+  );
+}
 
 export async function getPageById({ id }: GetPageByIdSchema, { userId }: RequestContext) {
   const page = await prisma.page.findUnique({
@@ -44,8 +51,12 @@ export async function getPageById({ id }: GetPageByIdSchema, { userId }: Request
     return null;
   }
 
+  const showCollaborators = isCollaborator(page, userId);
+
   return {
     ...page,
+    access: showCollaborators ? page.access : [],
+    invites: showCollaborators ? page.invites : [],
     document: bytesToBase64(page.document.snapshot),
   };
 }

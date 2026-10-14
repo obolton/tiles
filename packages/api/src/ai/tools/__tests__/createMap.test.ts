@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
-import { createToolContext, getCreatedTile } from "@/test/fixtures/ai.ts";
-import { CREATE_MAP_TOOL } from "../createMap.ts";
-import type { ToolContext } from "../types.ts";
+import { createToolContext, getCreatedTile } from "@/test/fixtures/ai";
+import { CREATE_MAP_TOOL } from "../createMap";
+import type { ToolContext } from "../types";
 
 describe("CREATE_MAP_TOOL", () => {
   let doc: Y.Doc;

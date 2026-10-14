@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
 import { ReadableStream } from "node:stream/web";
-import { getStream } from "../http.ts";
+import { getStream } from "../http";
 
 describe("getStream", () => {
   test("returns a stream and content type", async () => {

@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { invalidateCachedPages } from "@/utils/cdn.ts";
-import { router } from "@/utils/trpc.ts";
+import prisma from "@/database/prisma";
+import { invalidateCachedPages } from "@/utils/cdn";
+import { router } from "@/utils/trpc";
 import {
   adminWorkspaceProcedure,
   authenticatedPageProcedure,
@@ -10,18 +10,18 @@ import {
   authenticatedWorkspaceProcedure,
   getPage,
   pageUpdateProcedure,
-} from "@/utils/middleware.ts";
+} from "@/utils/middleware";
 import {
   createAuthenticatedContext,
   createServiceContext,
   createUnauthenticatedContext,
-} from "@/test/mocks/context.ts";
-import type { FindUniqueQuery } from "@/test/prisma.ts";
+} from "@/test/mocks/context";
+import type { FindUniqueQuery } from "@/test/prisma";
 import type { TRPCRouterRecord } from "@trpc/server";
-import type { RequestContext } from "@/utils/trpc.ts";
+import type { RequestContext } from "@/utils/trpc";
 import type { WorkspaceRole } from "@/generated/prisma/client";
 
-vi.mock("@/utils/cdn.ts", () => ({
+vi.mock("@/utils/cdn", () => ({
   invalidateCachedPages: vi.fn(),
 }));
 

@@ -1,5 +1,5 @@
-import { router, publicProcedure } from "@/utils/trpc.ts";
-import { authenticatedWorkspaceProcedure, pageUpdateProcedure } from "@/utils/middleware.ts";
+import { router, publicProcedure } from "@/utils/trpc";
+import { authenticatedWorkspaceProcedure, pageUpdateProcedure } from "@/utils/middleware";
 import {
   GetPageByIdSchema,
   ListPagesSchema,
@@ -8,7 +8,7 @@ import {
   DeletePageSchema,
   RestorePageSchema,
   MovePagesSchema,
-} from "./schema.ts";
+} from "./schema";
 import {
   getPageById,
   listPages,
@@ -20,7 +20,7 @@ import {
   restorePages,
   movePages,
   emptyTrash,
-} from "./pages.ts";
+} from "./pages";
 
 export default router({
   // TODO: Support server-only procedures

@@ -1,11 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { createBookmark, deleteBookmarks, listBookmarks, isBookmarked } from "../bookmarks.ts";
+import prisma from "@/database/prisma";
+import { createBookmark, deleteBookmarks, listBookmarks, isBookmarked } from "../bookmarks";
 import { BOOKMARK_FIELDS } from "../fields";
 import type { LibraryPage } from "@/routes/pages/fields";
 import { RESULTS_PER_PAGE } from "@/utils/pagination";
-import type { FindManyQuery } from "@/test/prisma.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { FindManyQuery } from "@/test/prisma";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 
 const MOCK_CONTEXT: AuthenticatedRequestContext = {
   res: {} as AuthenticatedRequestContext["res"],

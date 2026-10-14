@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { fetchedUrl, jsonResponse } from "@/test/mocks/fetch.ts";
-import { searchPlaces } from "../places.ts";
+import { fetchedUrl, jsonResponse } from "@/test/mocks/fetch";
+import { searchPlaces } from "../places";
 
 const MOCK_PLACE = {
   id: "here:pds:place:1",

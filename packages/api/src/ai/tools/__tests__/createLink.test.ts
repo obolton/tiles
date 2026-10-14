@@ -5,7 +5,7 @@ import { createToolContext, getCreatedTile } from "@/test/fixtures/ai";
 import { CREATE_LINK_TOOL } from "../createLink";
 import type { ToolContext } from "../types";
 
-vi.mock("@/routes/links/links.ts", () => ({
+vi.mock("@/routes/links/links", () => ({
   resolveLinkMetadata: vi.fn(),
 }));
 

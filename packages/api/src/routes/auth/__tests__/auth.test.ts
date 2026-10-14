@@ -1,11 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { signIn, signOut } from "../auth.ts";
-import { createUser } from "@/routes/users/users.ts";
-import { sendEmail } from "@/utils/email.ts";
+import prisma from "@/database/prisma";
+import { signIn, signOut } from "../auth";
+import { createUser } from "@/routes/users/users";
+import { sendEmail } from "@/utils/email";
 
-vi.mock("@/routes/users/users.ts");
-vi.mock("@/utils/email.ts");
+vi.mock("@/routes/users/users");
+vi.mock("@/utils/email");
 
 describe("signIn", () => {
   const validInput = {

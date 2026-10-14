@@ -1,4 +1,4 @@
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import type {
   CreateFolderSchema,
   GetFolderSchema,
@@ -6,11 +6,11 @@ import type {
   DeleteFolderSchema,
   ListFoldersSchema,
   ListPagesSchema,
-} from "./schema.ts";
+} from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import { LIBRARY_PAGE_FIELDS } from "@/routes/pages/fields";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { FOLDER_FIELDS } from "./fields";
 
 export async function createFolder(

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import { buildSectionMap } from "doc/tiles/section";
-import { createToolContext, getTile } from "@/test/fixtures/ai.ts";
-import { EDIT_STYLE_TOOL } from "../editStyle.ts";
-import type { ToolContext } from "../types.ts";
+import { createToolContext, getTile } from "@/test/fixtures/ai";
+import { EDIT_STYLE_TOOL } from "../editStyle";
+import type { ToolContext } from "../types";
 
 const BASE_ARGS = {
   id: 0,

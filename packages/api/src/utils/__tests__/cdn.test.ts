@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getProfileImageUrl } from "../cdn.ts";
+import { getProfileImageUrl } from "../cdn";
 
 describe("getProfileImageUrl", () => {
   test("returns the profile image URL", () => {

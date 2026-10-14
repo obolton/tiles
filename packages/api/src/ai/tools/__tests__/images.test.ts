@@ -6,11 +6,11 @@ import { openai } from "@/ai/openai";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { generateAndUploadImage, generateImageFromPrompt } from "../images";
 
-vi.mock("@/ai/openai.ts", () => ({
+vi.mock("@/ai/openai", () => ({
   openai: { images: { generate: vi.fn() } },
 }));
 
-vi.mock("@/utils/storage.ts", () => ({
+vi.mock("@/utils/storage", () => ({
   upload: vi.fn(),
   IMAGES_BUCKET: "images-bucket",
 }));

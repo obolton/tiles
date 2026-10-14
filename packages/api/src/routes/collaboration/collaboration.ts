@@ -1,14 +1,14 @@
-import prisma from "@/database/prisma.ts";
-import { createKey } from "@/utils/keys.ts";
-import { sendEmail } from "@/utils/email.ts";
-import { inviteToPageEmail } from "@/emails/inviteToPage.ts";
+import prisma from "@/database/prisma";
+import { createKey } from "@/utils/keys";
+import { sendEmail } from "@/utils/email";
+import { inviteToPageEmail } from "@/emails/inviteToPage";
 import type {
   InviteToPageSchema,
   AcceptPageInviteSchema,
   DeletePageInviteSchema,
   RevokePageAccessSchema,
-} from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+} from "./schema";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import { PAGE_INVITE_FIELDS } from "./fields";
 
 const INVITE_KEY_BYTES = 32;

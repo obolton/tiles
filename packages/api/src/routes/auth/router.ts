@@ -1,7 +1,7 @@
-import { router, publicProcedure } from "@/utils/trpc.ts";
-import { signIn, signOut } from "./auth.ts";
-import { SignInSchema } from "./schema.ts";
-import { clearSessionCookie } from "@/utils/cookies.ts";
+import { router, publicProcedure } from "@/utils/trpc";
+import { signIn, signOut } from "./auth";
+import { SignInSchema } from "./schema";
+import { clearSessionCookie } from "@/utils/cookies";
 
 export default router({
   signIn: publicProcedure.input(SignInSchema).mutation(async ({ input }) => {

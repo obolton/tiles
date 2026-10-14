@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { MOCK_PRISMA } from "./prisma.ts";
+import { MOCK_PRISMA } from "./prisma";
 
 // Globals
 vi.stubGlobal(
@@ -8,4 +8,4 @@ vi.stubGlobal(
 );
 
 // Database
-vi.mock("@/database/prisma.ts", () => ({ default: MOCK_PRISMA }));
+vi.mock("@/database/prisma", () => ({ default: MOCK_PRISMA }));

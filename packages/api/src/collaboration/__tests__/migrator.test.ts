@@ -5,7 +5,7 @@ import {
   createEmptyDoc,
   migrateSnapshot,
   CURRENT_SCHEMA_VERSION,
-} from "../migrator.ts";
+} from "../migrator";
 
 describe("createEmptyDoc", () => {
   test("returns a doc stamped at the current schema version", () => {

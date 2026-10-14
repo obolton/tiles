@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ColorSchema } from "./Color.ts";
+import { ColorSchema } from "./Color";
 import { GradientDirection } from "@/generated/prisma/client";
 
 export const ColorBackgroundSchema = z.object({

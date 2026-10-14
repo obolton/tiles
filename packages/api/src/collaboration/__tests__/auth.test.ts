@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { authenticateConnection } from "../auth.ts";
+import prisma from "@/database/prisma";
+import { authenticateConnection } from "../auth";
 
 beforeEach(() => {
   vi.clearAllMocks();

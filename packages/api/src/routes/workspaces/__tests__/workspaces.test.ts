@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import {
   getWorkspace,
   createWorkspace,
@@ -8,7 +8,7 @@ import {
   removeFromWorkspace,
   listWorkspaceUsers,
   updateWorkspaceRole,
-} from "../workspaces.ts";
+} from "../workspaces";
 import { WORKSPACE_FIELDS, WORKSPACE_MEMBERSHIP_FIELDS } from "../fields";
 import type {
   CreateQuery,
@@ -16,19 +16,19 @@ import type {
   FindManyQuery,
   UpdateQuery,
   DeleteQuery,
-} from "@/test/prisma.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+} from "@/test/prisma";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 
-vi.mock("@/utils/keys.ts", () => ({
+vi.mock("@/utils/keys", () => ({
   createKey: async () => "mock-invite-key",
 }));
 
-vi.mock("@/utils/email.ts", () => ({
+vi.mock("@/utils/email", () => ({
   sendEmail: vi.fn(async () => {}),
 }));
 
-vi.mock("@/utils/themes.ts", () => ({
+vi.mock("@/utils/themes", () => ({
   getDefaultThemesData: () => [],
 }));
 
