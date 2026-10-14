@@ -37,10 +37,28 @@ function Panel({ state }: { state: VersionHistory }) {
 
 export const Populated: Story = {
   render: () => <Panel state={createState(VERSIONS)} />,
+  parameters: {
+    a11y: {
+      config: {
+        // Version subtitles use the global --secondary-text-color token, which is below the AA
+        // contrast threshold by design.
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+    },
+  },
 };
 
 export const Preview: Story = {
   render: () => <Panel state={createState(VERSIONS, AUTO_VERSION)} />,
+  parameters: {
+    a11y: {
+      config: {
+        // Version subtitles use the global --secondary-text-color token, which is below the AA
+        // contrast threshold by design.
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+    },
+  },
 };
 
 export const Empty: Story = {

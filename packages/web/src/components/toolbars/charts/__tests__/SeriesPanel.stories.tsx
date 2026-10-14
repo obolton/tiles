@@ -8,9 +8,8 @@ import { buildTableMap } from "doc/tiles/table";
 import { buildChartMap } from "doc/tiles/chart";
 import type { Meta, Story } from "@/test/storybook";
 
-const doc = createDoc([
-  buildTableMap({
-    id: "table",
+const doc = createDoc({
+  table: buildTableMap({
     columns: [
       { id: "col-1", title: "Revenue" },
       { id: "col-2", title: "Expenses" },
@@ -18,8 +17,7 @@ const doc = createDoc([
       { id: "col-4", title: null },
     ],
   }),
-  buildChartMap({
-    id: "chart",
+  chart: buildChartMap({
     tableId: "table",
     label: { id: "col-1", title: "Revenue" },
     series: [
@@ -35,17 +33,15 @@ const doc = createDoc([
       },
     ],
   }),
-  buildChartMap({ id: "empty-chart", tableId: "table", series: [] }),
-  buildTableMap({
-    id: "table-2",
+  "empty-chart": buildChartMap({ tableId: "table", series: [] }),
+  "table-2": buildTableMap({
     columns: [
       { id: "col-4", title: null },
       { id: "col-5", title: "" },
       { id: "col-6", title: "Named Column" },
     ],
   }),
-  buildChartMap({
-    id: "chart-2",
+  "chart-2": buildChartMap({
     tableId: "table-2",
     series: [
       {
@@ -55,7 +51,7 @@ const doc = createDoc([
       },
     ],
   }),
-]);
+});
 
 const editor = Editor.init(PAGE, doc);
 

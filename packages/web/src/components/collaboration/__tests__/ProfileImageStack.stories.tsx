@@ -40,6 +40,15 @@ export const Single: Story = {
 
 export const Overflow: Story = {
   render: () => <ProfileImageStack peers={peers(5)} />,
+  parameters: {
+    a11y: {
+      config: {
+        // The "+N" chip is drawn with the global --secondary-text-color token, which is below the
+        // AA contrast threshold by design.
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+    },
+  },
 };
 
 export const Unbordered: Story = {

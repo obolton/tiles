@@ -27,16 +27,16 @@ export const WithItems: Story = {
         <div style={{ ...chip, background: "royalblue" }}>Sprint review</div>
       </calendar-date>
       <calendar-date start="2026-02-10">
-        <div style={{ ...chip, background: "coral" }}>Design sync</div>
+        <div style={{ ...chip, background: "sienna" }}>Design sync</div>
       </calendar-date>
       <calendar-date start="2026-02-16" end="2026-02-18">
-        <div style={{ ...chip, background: "seagreen" }}>Workshop</div>
+        <div style={{ ...chip, background: "darkgreen" }}>Workshop</div>
       </calendar-date>
       <calendar-date start="2026-02-24" end="2026-02-27">
-        <div style={{ ...chip, background: "tomato" }}>Conference</div>
+        <div style={{ ...chip, background: "firebrick" }}>Conference</div>
       </calendar-date>
       <calendar-date start="2026-02-12" end="2026-02-17">
-        <div style={{ ...chip, background: "mediumpurple" }}>Sprint</div>
+        <div style={{ ...chip, background: "rebeccapurple" }}>Sprint</div>
       </calendar-date>
     </calendar-grid>
   ),

@@ -29,6 +29,7 @@ function createImage(overrides: Partial<ImageProps> = {}): Image {
       imageId: "sample-image",
       size: { width: 1200, height: 800 },
       text: CAPTION,
+      alt: "A sample image",
       ...overrides,
     }),
     {},
@@ -59,6 +60,15 @@ export const Deleted: Story = {
     const image = createImage();
     image.imageId.value = null;
     return <ImageView image={image} />;
+  },
+  parameters: {
+    a11y: {
+      config: {
+        // The placeholder text uses the global --placeholder-color token, which is below the AA
+        // contrast threshold by design.
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+    },
   },
 };
 

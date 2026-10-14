@@ -138,4 +138,13 @@ export const WithTextLabels: Story = {
       </toolbar-tab>
     </floating-toolbar>
   ),
+  parameters: {
+    a11y: {
+      config: {
+        // The destructive button uses the global --destructive-color token, which is below the AA
+        // contrast threshold by design.
+        rules: [{ id: "color-contrast", enabled: false }],
+      },
+    },
+  },
 };

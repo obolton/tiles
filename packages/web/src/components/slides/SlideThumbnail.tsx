@@ -34,11 +34,14 @@ export default function SlideThumbnail({ section }: SlideThumbnailProps) {
     ({ sizing, width, height }) => getSizeStyle(sizing, width, height),
   );
 
+  const label = section.parent?.derive((tiles) => `Slide ${tiles.indexOf(section) + 1}`) ?? "Slide";
+
   return (
     <div
       role="option"
       aria-controls={section.id}
       aria-selected="false"
+      aria-label={label}
       classList={{
         [styles.thumbnail]: true,
         [styles.hide]: section.hide,

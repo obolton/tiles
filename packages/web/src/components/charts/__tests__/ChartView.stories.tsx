@@ -7,9 +7,8 @@ import { buildTableMap } from "doc/tiles/table";
 import { buildChartMap } from "doc/tiles/chart";
 import type { Meta, Story } from "@/test/storybook";
 
-const doc = createDoc([
-  buildTableMap({
-    id: "table",
+const doc = createDoc({
+  table: buildTableMap({
     columns: [
       { id: "col-1", title: "Quarter" },
       { id: "col-2", title: "Expenses" },
@@ -22,8 +21,7 @@ const doc = createDoc([
       { cells: ["Q4", "240", "200"] },
     ],
   }),
-  buildChartMap({
-    id: "chart-default",
+  "chart-default": buildChartMap({
     tableId: "table",
     label: { id: "col-1", title: "Quarter" },
     series: [
@@ -39,8 +37,7 @@ const doc = createDoc([
       },
     ],
   }),
-  buildChartMap({
-    id: "chart-single",
+  "chart-single": buildChartMap({
     tableId: "table",
     series: [
       {
@@ -50,8 +47,7 @@ const doc = createDoc([
       },
     ],
   }),
-  buildChartMap({
-    id: "chart-area",
+  "chart-area": buildChartMap({
     tableId: "table",
     series: [
       {
@@ -66,13 +62,21 @@ const doc = createDoc([
       },
     ],
   }),
-  buildChartMap({ id: "chart-empty", tableId: "table", series: [] }),
-]);
+  "chart-empty": buildChartMap({ tableId: "table", series: [] }),
+});
 
 const editor = Editor.init(PAGE, doc);
 
 const meta = {
   title: "ChartView",
+  parameters: {
+    a11y: {
+      config: {
+        // Observable Plot puts an aria-label on each mark's <g>, which has no role to permit it.
+        rules: [{ id: "aria-prohibited-attr", enabled: false }],
+      },
+    },
+  },
 } satisfies Meta;
 export default meta;
 

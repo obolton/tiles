@@ -34,12 +34,12 @@ export default function VersionHistoryPanel({
       on:keydown={onKeyDown}
       {...props}
     >
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h2 className={styles.title}>Version history</h2>
         <ToolbarButton classList={{ small: true }} label="Close" on:click={() => state.close()}>
           <CloseIcon aria-hidden="true" />
         </ToolbarButton>
-      </header>
+      </div>
 
       <VersionList state={state} />
     </resizable-panel>

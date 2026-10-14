@@ -16,6 +16,15 @@ import type { Meta, Story } from "@/test/storybook";
 
 const meta = {
   title: "ListSelect",
+  parameters: {
+    a11y: {
+      config: {
+        // The options are slotted into a listbox inside a closed shadow root, which axe cannot
+        // traverse, so it reports them as lacking a listbox parent.
+        rules: [{ id: "aria-required-parent", enabled: false }],
+      },
+    },
+  },
 } satisfies Meta;
 export default meta;
 
