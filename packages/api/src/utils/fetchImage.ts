@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
 import { matchContentType } from "@/utils/linkMetadata";
+import { safeFetch } from "@/utils/safeFetch";
+import { guardImageStream } from "@/utils/imageStream";
 import type { ImageType } from "@/generated/prisma/client";
-
-// TODO: Validate uploaded images match the reported Content-Type.
 
 const FETCH_TIMEOUT_MS = 10000;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -18,16 +18,12 @@ const IMAGE_CONTENT_TYPES: Record<string, ImageType> = {
 
 const ALLOWED_CONTENT_TYPES = Object.keys(IMAGE_CONTENT_TYPES);
 
-function validateUrl(url: string): void {
-  const parsed = new URL(url);
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    throw new Error(`Disallowed protocol: ${parsed.protocol}`);
-  }
-}
-
 /**
  * Fetches an image from an external URL, uploads it to R2,
  * and creates an Image record in the database.
+ *
+ * Private and internal destinations are rejected, the download is capped at
+ * MAX_FILE_SIZE and the bytes must match the declared image type.
  *
  * Returns the image ID, or null if the fetch fails for any reason.
  * Failures are logged but never propagated — link creation must not
@@ -39,15 +35,12 @@ export async function fetchImage(
   userId: string,
 ): Promise<string | null> {
   try {
-    validateUrl(url);
-
-    const response = await fetch(url, {
+    const response = await safeFetch(url, {
       headers: {
         Accept: ALLOWED_CONTENT_TYPES.join(", "),
         "User-Agent": "facebookexternalhit/1.1",
       },
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      redirect: "follow",
     });
 
     if (!response.ok) {
@@ -77,7 +70,7 @@ export async function fetchImage(
 
     const imageId = randomUUID();
 
-    await upload(IMAGES_BUCKET, imageId, body, mimeType);
+    await upload(IMAGES_BUCKET, imageId, guardImageStream(body, mimeType, MAX_FILE_SIZE), mimeType);
 
     await prisma.image.create({
       data: {

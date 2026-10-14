@@ -1,5 +1,7 @@
 import { Readable } from "node:stream";
 import { WritableStream } from "htmlparser2/WritableStream";
+import { safeFetch } from "@/utils/safeFetch";
+import { limitBytes } from "@/utils/streams";
 
 type LinkMetadata = {
   title: string | null;
@@ -11,6 +13,7 @@ type LinkMetadata = {
 };
 
 const FETCH_TIMEOUT_MS = 10000;
+const MAX_DOCUMENT_BYTES = 1024 * 1024; // 1 MB
 const HTML_CONTENT_TYPES = ["text/html", "application/xhtml+xml", "application/xml"];
 
 export function matchContentType(contentType: string, allowedTypes: string[]): boolean {
@@ -27,7 +30,7 @@ function resolveImageUrl(imageUrl: string, baseUrl: string): string | null {
 }
 
 async function parseDocument(url: string, language: string) {
-  const response = await fetch(url, {
+  const response = await safeFetch(url, {
     headers: {
       Accept: "text/html,application/xhtml+xml,application/xml",
       "Accept-Language": language,
@@ -63,6 +66,8 @@ async function parseDocument(url: string, language: string) {
     };
     let tag: string | null = null;
     let tagText = "";
+    const readable = Readable.fromWeb(body.pipeThrough(limitBytes(MAX_DOCUMENT_BYTES)));
+    readable.on("error", reject);
     const parserStream = new WritableStream({
       onopentag: (name, attributes) => {
         tag = name;
@@ -119,13 +124,16 @@ async function parseDocument(url: string, language: string) {
           data.title = tagText.trim();
         }
         if (name === "head") {
+          // Nothing of interest follows the head; stop downloading the rest.
+          readable.destroy();
           parserStream.end();
           resolve(data);
         }
       },
+      onend: () => resolve(data),
       onerror: reject,
     });
-    Readable.fromWeb(body).pipe(parserStream);
+    readable.pipe(parserStream);
   });
 }
 

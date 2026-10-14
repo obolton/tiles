@@ -4,11 +4,13 @@ import prisma, { type PrismaTransactionClient } from "@/database/prisma";
 import { upload } from "@/utils/storage";
 import { IMAGE_CONTENT_TYPES, IMAGE_FILE_EXTENSIONS } from "@/constants/images";
 import { getStream } from "@/utils/http";
+import { guardImageStream } from "@/utils/imageStream";
 import type { CreateUserSchema, UpdateUserSchema, IsUsernameAvailableSchema } from "./schema";
 import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import { USER_FIELDS } from "./fields";
 
 const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
+const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export async function storeProfileImage(userId: string, imageUrl: string) {
   assert(PROFILE_IMAGES_BUCKET, "CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES is not defined.");
@@ -16,8 +18,19 @@ export async function storeProfileImage(userId: string, imageUrl: string) {
   const extension = IMAGE_FILE_EXTENSIONS[contentType];
   const imageId = crypto.randomUUID();
   const imageKey = `${userId}/${imageId}.${extension}`;
-  await upload(PROFILE_IMAGES_BUCKET, imageKey, stream, contentType);
+  const body = guardImageStream(stream, contentType, MAX_PROFILE_IMAGE_SIZE);
+  await upload(PROFILE_IMAGES_BUCKET, imageKey, body, contentType);
   return imageKey;
+}
+
+// The avatar comes from a third-party URL; failing to fetch it must not block sign-up.
+async function tryStoreProfileImage(userId: string, imageUrl: string) {
+  try {
+    return await storeProfileImage(userId, imageUrl);
+  } catch (error) {
+    console.error(`Failed to store profile image for user ${userId}:`, error);
+    return null;
+  }
 }
 
 export async function createUser(
@@ -25,7 +38,7 @@ export async function createUser(
   { name, email, emailVerified, imageUrl }: CreateUserSchema,
 ) {
   const id = crypto.randomUUID();
-  const imageKey = imageUrl ? await storeProfileImage(id, imageUrl) : null;
+  const imageKey = imageUrl ? await tryStoreProfileImage(id, imageUrl) : null;
   return db.user.create({
     data: {
       id,

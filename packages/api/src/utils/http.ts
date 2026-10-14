@@ -1,13 +1,18 @@
+import { safeFetch } from "@/utils/safeFetch";
+
 export type ContentType = `${string}/${string}`;
+
+const FETCH_TIMEOUT_MS = 10000;
 
 export async function getStream<T extends readonly ContentType[]>(
   url: string,
   acceptContentTypes: T,
 ) {
-  const response = await fetch(url, {
+  const response = await safeFetch(url, {
     headers: {
       Accept: acceptContentTypes.join(", "),
     },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!response.ok) {
     throw new Error(`getStream: ${response.status}: ${response.statusText}`);

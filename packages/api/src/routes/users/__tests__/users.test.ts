@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma";
 import { upload } from "@/utils/storage";
 import { getStream } from "@/utils/http";
+import { imageBytes } from "@/test/mocks/fetch";
 import {
   storeProfileImage,
   createUser,
@@ -44,8 +45,19 @@ const MOCK_USER = {
   workspaceMemberships: MOCK_WORKSPACES.map((workspace) => ({ workspace })),
 };
 
-const MOCK_STREAM = new ReadableStream();
 const UUID_PATTERN = "[0-9a-f-]{36}";
+
+function imageStream(contentType = "image/png") {
+  return new Response(imageBytes(contentType)).body!;
+}
+
+function uploadedBody() {
+  const call = vi.mocked(upload).mock.calls.at(0);
+  if (!call) {
+    throw new Error("expected upload to be called");
+  }
+  return call[2];
+}
 
 function createdUserData() {
   const call = vi.mocked(prisma.user.create).mock.calls.at(0);
@@ -57,7 +69,10 @@ function createdUserData() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(getStream).mockResolvedValue({ stream: MOCK_STREAM, contentType: "image/png" });
+  vi.mocked(getStream).mockImplementation(async () => ({
+    stream: imageStream(),
+    contentType: "image/png",
+  }));
 });
 
 describe("storeProfileImage", () => {
@@ -65,7 +80,27 @@ describe("storeProfileImage", () => {
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar.png");
 
     expect(imageKey).toMatch(new RegExp(`^user-1/${UUID_PATTERN}\\.png$`));
-    expect(upload).toHaveBeenCalledWith("test", imageKey, MOCK_STREAM, "image/png");
+    expect(upload).toHaveBeenCalledWith("test", imageKey, expect.any(ReadableStream), "image/png");
+  });
+
+  test("should pass the image bytes through to the upload", async () => {
+    await storeProfileImage("user-1", "https://example.com/avatar.png");
+
+    const body = await new Response(uploadedBody()).bytes();
+    expect(body).toEqual(imageBytes("image/png"));
+  });
+
+  test("should reject content that does not match the declared image type", async () => {
+    vi.mocked(getStream).mockResolvedValueOnce({
+      stream: new Response("<html></html>").body!,
+      contentType: "image/png",
+    });
+
+    await storeProfileImage("user-1", "https://example.com/avatar.png");
+
+    await expect(new Response(uploadedBody()).bytes()).rejects.toThrow(
+      "Content does not match image/png",
+    );
   });
 
   test("should only accept image content types", async () => {
@@ -79,7 +114,10 @@ describe("storeProfileImage", () => {
   });
 
   test("should use the file extension for the image's content type", async () => {
-    vi.mocked(getStream).mockResolvedValueOnce({ stream: MOCK_STREAM, contentType: "image/jpeg" });
+    vi.mocked(getStream).mockResolvedValueOnce({
+      stream: imageStream("image/jpeg"),
+      contentType: "image/jpeg",
+    });
 
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar");
 
@@ -133,22 +171,26 @@ describe("createUser", () => {
 
     const { id, imageKey } = createdUserData();
     expect(imageKey).toMatch(new RegExp(`^${id}/${UUID_PATTERN}\\.png$`));
-    expect(upload).toHaveBeenCalledWith("test", imageKey, MOCK_STREAM, "image/png");
+    expect(upload).toHaveBeenCalledWith("test", imageKey, expect.any(ReadableStream), "image/png");
   });
 
-  test("should not create the user when the profile image cannot be stored", async () => {
+  test("should create the user without an image when the profile image cannot be stored", async () => {
     vi.mocked(getStream).mockRejectedValueOnce(new Error("Not found"));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await expect(
-      createUser(prisma, {
-        name: "Alice",
-        email: "alice@test.com",
-        emailVerified: false,
-        imageUrl: "https://example.com/missing.png",
-      }),
-    ).rejects.toThrow("Not found");
+    const result = await createUser(prisma, {
+      name: "Alice",
+      email: "alice@test.com",
+      emailVerified: false,
+      imageUrl: "https://example.com/missing.png",
+    });
 
-    expect(prisma.user.create).not.toHaveBeenCalled();
+    expect(result).toEqual({ id: "user-1" });
+    expect(createdUserData()).toMatchObject({ imageKey: null });
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Failed to store profile image"),
+      expect.any(Error),
+    );
   });
 });
 

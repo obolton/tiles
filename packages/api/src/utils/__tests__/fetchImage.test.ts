@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
-import { imageResponse } from "@/test/mocks/fetch";
+import { imageBytes, imageResponse, redirectResponse } from "@/test/mocks/fetch";
 import { fetchImage } from "../fetchImage";
 
 vi.mock("@/utils/storage", () => ({
@@ -12,9 +12,18 @@ vi.mock("@/utils/storage", () => ({
 const WORKSPACE_ID = "workspace-1";
 const USER_ID = "user-1";
 
+// Drain the body like the real uploader would, so stream guards run.
+function consumeUploads() {
+  vi.mocked(upload).mockImplementation(async (_bucket, _key, body) => {
+    await new Response(body).bytes();
+    return undefined as never;
+  });
+}
+
 describe("fetchImage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(upload).mockResolvedValue(undefined as never);
   });
 
   test("downloads image, uploads to R2, and creates database record", async () => {
@@ -67,6 +76,18 @@ describe("fetchImage", () => {
     expect(upload).toHaveBeenCalledWith(IMAGES_BUCKET, imageId, expect.anything(), "image/png");
   });
 
+  test("uploads the downloaded bytes", async () => {
+    consumeUploads();
+    vi.mocked(fetch).mockResolvedValue(imageResponse("image/png"));
+    const uploadSpy = vi.mocked(upload);
+
+    const imageId = await fetchImage("https://example.com/image.png", WORKSPACE_ID, USER_ID);
+
+    expect(imageId).toBeTypeOf("string");
+    const body = uploadSpy.mock.calls[0]?.[2];
+    expect(body).toBeInstanceOf(ReadableStream);
+  });
+
   describe("URL validation", () => {
     test("rejects non-http/https protocols", async () => {
       const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -75,7 +96,51 @@ describe("fetchImage", () => {
 
       expect(result).toBeNull();
       expect(errorSpy).toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalled();
       expect(upload).not.toHaveBeenCalled();
+    });
+
+    test.each([
+      "http://localhost:3000/image.jpg",
+      "http://127.0.0.1/image.jpg",
+      "http://10.0.0.1/image.jpg",
+      "http://169.254.169.254/latest/meta-data/",
+      "http://[::1]/image.jpg",
+    ])("rejects private destination %s", async (url) => {
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchImage(url, WORKSPACE_ID, USER_ID);
+
+      expect(result).toBeNull();
+      expect(errorSpy).toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalled();
+      expect(upload).not.toHaveBeenCalled();
+    });
+
+    test("rejects redirects to private destinations", async () => {
+      vi.mocked(fetch).mockResolvedValueOnce(redirectResponse("http://127.0.0.1/image.jpg"));
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
+
+      expect(result).toBeNull();
+      expect(errorSpy).toHaveBeenCalled();
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(upload).not.toHaveBeenCalled();
+    });
+
+    test("follows redirects to public destinations", async () => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(redirectResponse("https://cdn.example.com/image.jpg"))
+        .mockResolvedValueOnce(imageResponse());
+
+      const result = await fetchImage("https://example.com/image.jpg", WORKSPACE_ID, USER_ID);
+
+      expect(result).toBeTypeOf("string");
+      expect(fetch).toHaveBeenLastCalledWith(
+        "https://cdn.example.com/image.jpg",
+        expect.objectContaining({ redirect: "manual" }),
+      );
     });
 
     test("rejects invalid URLs", async () => {
@@ -141,6 +206,46 @@ describe("fetchImage", () => {
       const result = await fetchImage("https://example.com/small.jpg", WORKSPACE_ID, USER_ID);
 
       expect(result).toBeTypeOf("string");
+    });
+
+    test("aborts bodies that exceed the size limit without a Content-Length", async () => {
+      consumeUploads();
+      const body = new ReadableStream<Uint8Array>({
+        start(controller) {
+          controller.enqueue(imageBytes("image/jpeg"));
+        },
+        pull(controller) {
+          controller.enqueue(new Uint8Array(1024 * 1024));
+        },
+      });
+      vi.mocked(fetch).mockResolvedValue(imageResponse("image/jpeg", { body }));
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchImage("https://example.com/huge.jpg", WORKSPACE_ID, USER_ID);
+
+      expect(result).toBeNull();
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Failed to fetch image"),
+        expect.objectContaining({ name: "ByteLimitExceededError" }),
+      );
+      expect(prisma.image.create).not.toHaveBeenCalled();
+    });
+
+    test("rejects content that does not match the declared image type", async () => {
+      consumeUploads();
+      vi.mocked(fetch).mockResolvedValue(
+        imageResponse("image/png", { body: new TextEncoder().encode("<!doctype html>") }),
+      );
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const result = await fetchImage("https://example.com/fake.png", WORKSPACE_ID, USER_ID);
+
+      expect(result).toBeNull();
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Failed to fetch image"),
+        expect.objectContaining({ name: "InvalidImageError" }),
+      );
+      expect(prisma.image.create).not.toHaveBeenCalled();
     });
 
     test("returns null when response has no body", async () => {

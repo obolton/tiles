@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { htmlResponse } from "@/test/mocks/fetch";
+import { htmlResponse, redirectResponse } from "@/test/mocks/fetch";
 import { getLinkMetadata, matchContentType } from "../linkMetadata";
 
 describe("matchContentType", () => {
@@ -66,6 +66,7 @@ describe("getLinkMetadata", () => {
         "User-Agent": "facebookexternalhit/1.1",
       },
       signal: expect.any(AbortSignal),
+      redirect: "manual",
     });
   });
 
@@ -105,6 +106,80 @@ describe("getLinkMetadata", () => {
     expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining("Failed to fetch metadata for https://example.com/error"),
     );
+  });
+
+  test("rejects private destinations without fetching", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const metadata = await getLinkMetadata("http://169.254.169.254/latest/meta-data/");
+
+    expect(metadata).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Disallowed address"));
+  });
+
+  test("rejects redirects to private destinations", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(redirectResponse("http://localhost:5432/"));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const metadata = await getLinkMetadata("https://example.com/redirect");
+
+    expect(metadata).toBeNull();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Disallowed host"));
+  });
+
+  test("gives up on documents larger than the byte limit", async () => {
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode("<!doctype html><html><head><title>Big"));
+      },
+      pull(controller) {
+        controller.enqueue(new Uint8Array(1024 * 1024).fill(0x20));
+      },
+    });
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(body, { status: 200, headers: { "Content-Type": "text/html" } }),
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const metadata = await getLinkMetadata("https://example.com/huge");
+
+    expect(metadata).toBeNull();
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("exceeded the limit"));
+  });
+
+  test("resolves when the document has no head element", async () => {
+    vi.mocked(fetch).mockResolvedValue(htmlResponse("<p>No head here</p>"));
+
+    const metadata = await getLinkMetadata("https://example.com/fragment");
+
+    expect(metadata).toEqual({ title: null, description: null, siteName: null, imageUrl: null });
+  });
+
+  test("stops reading the body once the head has been parsed", async () => {
+    let cancelled = false;
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(
+          new TextEncoder().encode("<!doctype html><html><head><title>Done</title></head><body>"),
+        );
+      },
+      pull(controller) {
+        controller.enqueue(new TextEncoder().encode("<p>more</p>"));
+      },
+      cancel() {
+        cancelled = true;
+      },
+    });
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(body, { status: 200, headers: { "Content-Type": "text/html" } }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/long");
+
+    expect(metadata?.title).toBe("Done");
+    await vi.waitFor(() => expect(cancelled).toBe(true));
   });
 
   test("returns null and logs on invalid content type", async () => {
