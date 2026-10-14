@@ -6,12 +6,28 @@ import Body from "./Body";
 import { internalError, notFound } from "@/router/responses";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
-import type { ModuleNode, ViteDevServer } from "vite";
 import type { RouteMetadata, RouteMatch, APIRoute } from "@/router/router";
 
 const router = getRouter();
 
-function inspectModuleStylesheets(module: ModuleNode, stylesheets: string[], seen: Set<string>) {
+interface StylesheetModule {
+  id: string | null;
+  url: string;
+  importedModules: Iterable<StylesheetModule>;
+}
+
+/** The subset of a Vite dev server used to collect a route's stylesheets. */
+export interface ModuleGraphServer {
+  moduleGraph: {
+    getModuleByUrl(url: string): Promise<StylesheetModule | undefined>;
+  };
+}
+
+function inspectModuleStylesheets(
+  module: StylesheetModule,
+  stylesheets: string[],
+  seen: Set<string>,
+) {
   const id = module.id;
   if (!id || seen.has(id)) {
     return;
@@ -25,7 +41,7 @@ function inspectModuleStylesheets(module: ModuleNode, stylesheets: string[], see
   }
 }
 
-async function collectStylesheets(moduleUrl: string, viteDevServer?: ViteDevServer) {
+export async function collectStylesheets(moduleUrl: string, viteDevServer?: ModuleGraphServer) {
   const stylesheets: string[] = [];
   const seen = new Set<string>();
   const module = await viteDevServer?.moduleGraph.getModuleByUrl(moduleUrl);
@@ -36,20 +52,20 @@ async function collectStylesheets(moduleUrl: string, viteDevServer?: ViteDevServ
   return stylesheets;
 }
 
-interface LinkResource {
+export interface LinkResource {
   href: string;
   type: "script" | "style";
   crossorigin?: boolean;
 }
 
-function getLinks(resources: LinkResource[]) {
+export function getLinks(resources: LinkResource[]) {
   return resources.map(({ href, type, crossorigin }) => {
     const crossoriginAttr = crossorigin ? "; crossorigin" : "";
     return `<${href}>; rel=preload; as=${type}${crossoriginAttr}`;
   });
 }
 
-function mergeRouteMetadata(...metadata: RouteMetadata[]) {
+export function mergeRouteMetadata(...metadata: RouteMetadata[]) {
   const merged: RouteMetadata = {};
   for (const entry of metadata) {
     if (entry.links) {
@@ -86,7 +102,7 @@ async function renderRoute(
   url: URL,
   request: Request,
   routeMatch: RouteMatch,
-  viteDevServer?: ViteDevServer,
+  viteDevServer?: ModuleGraphServer,
 ) {
   const method = request.method;
   const { route, parameters } = routeMatch;
@@ -195,7 +211,7 @@ async function renderRoute(
   });
 }
 
-export default async function respond(request: Request, viteDevServer?: ViteDevServer) {
+export default async function respond(request: Request, viteDevServer?: ModuleGraphServer) {
   const url = new URL(request.url);
   const route = router.match(url.pathname);
 

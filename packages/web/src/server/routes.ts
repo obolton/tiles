@@ -6,7 +6,7 @@ const routeModules = import.meta.glob(["@/routes/**/*.ts", "!**/__tests__/**", "
   import: "default",
 });
 
-function getPathFromModuleUrl(url: string) {
+export function getPathFromModuleUrl(url: string) {
   const matches = url.match(/^\/src\/routes\/(.*)\.ts$/);
   if (!matches?.[1]) {
     return null;
@@ -21,9 +21,9 @@ function getPathFromModuleUrl(url: string) {
   return path;
 }
 
-export function getRouter() {
+export function getRouter(modules = routeModules) {
   const router = new Router();
-  for (const [moduleUrl, importer] of Object.entries(routeModules)) {
+  for (const [moduleUrl, importer] of Object.entries(modules)) {
     const path = getPathFromModuleUrl(moduleUrl);
     if (typeof path === "string") {
       router.add(path, {
