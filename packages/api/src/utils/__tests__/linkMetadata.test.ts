@@ -1,12 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { htmlResponse } from "@/test/mocks/fetch.ts";
 import { getLinkMetadata, matchContentType } from "../linkMetadata.ts";
-
-function htmlResponse(html: string, contentType = "text/html") {
-  return new Response(html, {
-    status: 200,
-    headers: { "Content-Type": contentType },
-  });
-}
 
 describe("matchContentType", () => {
   const htmlTypes = ["text/html", "application/xhtml+xml", "application/xml"];
@@ -55,7 +49,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page", "es-ES,es");
 
@@ -65,7 +59,7 @@ describe("getLinkMetadata", () => {
       siteName: "OG Site",
       imageUrl: "https://example.com/image.png",
     });
-    expect(fetchMock).toHaveBeenCalledWith("https://example.com/page", {
+    expect(fetch).toHaveBeenCalledWith("https://example.com/page", {
       headers: {
         Accept: "text/html,application/xhtml+xml,application/xml",
         "Accept-Language": "es-ES,es",
@@ -84,7 +78,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/plain");
 
@@ -97,7 +91,7 @@ describe("getLinkMetadata", () => {
   });
 
   test("returns null and logs on fetch failure", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    vi.mocked(fetch).mockResolvedValue(
       new Response("fail", {
         status: 502,
         statusText: "Bad Gateway",
@@ -114,7 +108,7 @@ describe("getLinkMetadata", () => {
   });
 
   test("returns null and logs on invalid content type", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    vi.mocked(fetch).mockResolvedValue(
       new Response("{}", {
         status: 200,
         headers: { "Content-Type": "application/json" },
@@ -137,7 +131,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page");
 
@@ -153,7 +147,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page");
 
@@ -170,7 +164,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page");
 
@@ -186,7 +180,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page");
 
@@ -202,7 +196,7 @@ describe("getLinkMetadata", () => {
     </head>
     <body></body>
     </html>`;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(htmlResponse(html));
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
 
     const metadata = await getLinkMetadata("https://example.com/page");
 
