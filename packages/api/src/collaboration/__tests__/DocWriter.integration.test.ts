@@ -25,7 +25,6 @@ describe("DocWriter over a live Hocuspocus document", () => {
   let session: DocWriter;
 
   beforeEach(async () => {
-    vi.clearAllMocks();
     vi.mocked(prisma.page.findUniqueOrThrow).mockResolvedValue({
       document: {
         snapshot: Buffer.from(Y.encodeStateAsUpdate(createEmptyDoc())),

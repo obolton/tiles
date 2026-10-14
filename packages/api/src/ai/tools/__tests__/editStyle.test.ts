@@ -23,7 +23,6 @@ describe("EDIT_STYLE_TOOL", () => {
   let tileId: string;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     ({ doc, context } = createToolContext());
     tileId = context.session.createTile(buildSectionMap({ layout: "GRID" }));
     context.resolveArtifactId = vi.fn(() => tileId);

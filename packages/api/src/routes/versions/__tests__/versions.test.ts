@@ -85,7 +85,6 @@ function mockSourcePageAccess(page: { id: string; workspaceId: string } | null) 
 }
 
 beforeEach(() => {
-  vi.clearAllMocks();
   liveDoc = buildDoc();
 });
 

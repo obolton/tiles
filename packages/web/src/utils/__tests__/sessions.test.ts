@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
+import { describe, expect, test, vi, beforeEach } from "vitest";
 import {
   user,
   getSessionId,
@@ -30,13 +30,8 @@ const mockUser = {
 };
 
 beforeEach(() => {
-  vi.clearAllMocks();
   user.value = null;
   localStorage.clear();
-});
-
-afterEach(() => {
-  vi.restoreAllMocks();
 });
 
 describe("getSessionId", () => {

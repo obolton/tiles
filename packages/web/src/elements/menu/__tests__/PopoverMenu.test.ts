@@ -37,7 +37,6 @@ describe("PopoverMenu", () => {
 
   afterEach(() => {
     document.body.innerHTML = "";
-    vi.restoreAllMocks();
   });
 
   describe("keyboard navigation", () => {

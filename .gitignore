@@ -27,5 +27,8 @@ wrangler.json
 # Playwright
 /test-results/
 
+# Vitest browser mode
+.vitest/
+
 # Claude
 .claude/settings.local.json
