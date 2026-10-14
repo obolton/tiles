@@ -1,5 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { ServiceName } from "@/constants/services";
 import { signIn, signOut } from "../auth";
 import router from "../router";
 import {
@@ -49,14 +50,14 @@ describe("signIn", () => {
   });
 
   test("creates a session for a service caller", async () => {
-    const caller = router.createCaller(createServiceContext("web"));
+    const caller = router.createCaller(createServiceContext(ServiceName.WEB));
 
     await expect(caller.signIn(SIGN_IN_INPUT)).resolves.toEqual(SESSION);
     expect(signIn).toHaveBeenCalledExactlyOnceWith(SIGN_IN_INPUT);
   });
 
   test("validates the input for a service caller", async () => {
-    const caller = router.createCaller(createServiceContext("web"));
+    const caller = router.createCaller(createServiceContext(ServiceName.WEB));
 
     await expect(caller.signIn({ ...SIGN_IN_INPUT, email: "not-an-email" })).rejects.toMatchObject({
       code: "BAD_REQUEST",

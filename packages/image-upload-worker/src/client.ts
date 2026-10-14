@@ -1,8 +1,8 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
-import type { ServiceName } from "api/constants/services";
+import { ServiceName } from "api/constants/services";
 
-const SERVICE_NAME: ServiceName = "image-upload-worker";
+const SERVICE_NAME = ServiceName.IMAGE_UPLOAD_WORKER;
 const API_ORIGIN = process.env.INTERNAL_API_ORIGIN!;
 
 export function createClient(sessionId: string) {

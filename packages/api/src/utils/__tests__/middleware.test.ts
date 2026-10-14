@@ -1,4 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
+import { ServiceName } from "@/constants/services";
 import prisma from "@/database/prisma";
 import { invalidateCachedPages } from "@/utils/cdn";
 import { router } from "@/utils/trpc";
@@ -95,8 +96,8 @@ describe("authenticatedServiceProcedure", () => {
   });
 
   test("should pass a service caller through", async () => {
-    const caller = createCaller(procedures, createServiceContext("web"));
-    await expect(caller.probe()).resolves.toBe("web");
+    const caller = createCaller(procedures, createServiceContext(ServiceName.WEB));
+    await expect(caller.probe()).resolves.toBe(ServiceName.WEB);
   });
 });
 

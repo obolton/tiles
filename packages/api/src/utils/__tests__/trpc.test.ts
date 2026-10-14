@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
 import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
+import { ServiceName } from "@/constants/services";
 import { createContext } from "@/utils/trpc";
 import { createRequest, createResponse } from "@/test/mocks/http";
 import type { IncomingMessage } from "node:http";
@@ -138,7 +139,7 @@ describe("createContext with service credentials", () => {
       res: opts.res,
       sessionId: null,
       userId: null,
-      serviceName: "web",
+      serviceName: ServiceName.WEB,
     });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
@@ -154,7 +155,7 @@ describe("createContext with service credentials", () => {
     await expect(createContext(opts)).resolves.toMatchObject({
       sessionId: null,
       userId: null,
-      serviceName: "web",
+      serviceName: ServiceName.WEB,
     });
     expect(getSessionContext).not.toHaveBeenCalled();
   });

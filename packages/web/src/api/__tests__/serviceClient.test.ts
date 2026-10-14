@@ -39,7 +39,7 @@ describe("serviceClient", () => {
     vi.stubEnv("INTERNAL_API_ORIGIN", "https://internal.test");
 
     await expect(loadServiceClient()).rejects.toThrow(
-      "The service API client is only available during SSR",
+      "The service API client is only available in the server context",
     );
     expect(fetch).not.toHaveBeenCalled();
   });
