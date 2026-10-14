@@ -14,3 +14,16 @@ describe("ChartSeries", () => {
     expect(events[0]?.bubbles).toBe(true);
   });
 });
+
+describe("ChartSeries label", () => {
+  test("reflects the label attribute to the label property", () => {
+    const series = document.createElement("chart-series");
+    expect(series.label).toBeNull();
+
+    series.setAttribute("label", "Expenses");
+    expect(series.label).toBe("Expenses");
+
+    series.removeAttribute("label");
+    expect(series.label).toBeNull();
+  });
+});

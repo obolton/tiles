@@ -61,13 +61,6 @@ export const Deleted: Story = {
     image.imageId.value = null;
     return <ImageView image={image} />;
   },
-  parameters: {
-    a11y: {
-      // The placeholder text uses the global --placeholder-color token, which is below the AA
-      // contrast threshold by design.
-      test: "todo",
-    },
-  },
 };
 
 export const WithLightbox: Story = {

@@ -1,11 +1,22 @@
 import { plot, axisX, axisY, barY, lineY, areaY } from "@observablehq/plot";
 import { toCSSColor } from "@/utils/color";
 import { createSVGGradient } from "@/utils/svg-gradient";
+import type ChartSeries from "./ChartSeries";
 
 declare global {
   interface HTMLElementTagNameMap {
     "chart-view": ChartView;
   }
+}
+
+function describeSeries(seriesElements: ChartSeries[]) {
+  const description = seriesElements
+    .map((series) => {
+      const type = series.type.toLowerCase();
+      return series.label ? `${series.label} (${type})` : type;
+    })
+    .join(", ");
+  return `Chart: ${description}`;
 }
 
 export default class ChartView extends HTMLElement {
@@ -29,7 +40,7 @@ export default class ChartView extends HTMLElement {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ["type", "color", "gradient"],
+      attributeFilter: ["type", "color", "gradient", "label"],
     });
     this.resizeObserver.observe(this);
     this.addEventListener("serieschange", this);
@@ -108,18 +119,21 @@ export default class ChartView extends HTMLElement {
                 x: "label",
                 y: "value",
                 fill: fillOrStroke,
+                ariaHidden: "true",
               });
             case "LINE":
               return lineY(marks, {
                 x: "label",
                 y: "value",
                 stroke: fillOrStroke,
+                ariaHidden: "true",
               });
             case "AREA":
               return areaY(marks, {
                 x: "label",
                 y: "value",
                 fill: fillOrStroke,
+                ariaHidden: "true",
               });
           }
         }),
@@ -133,6 +147,8 @@ export default class ChartView extends HTMLElement {
     }
 
     chart.part = "chart";
+    chart.setAttribute("role", "img");
+    chart.setAttribute("aria-label", describeSeries(seriesElements));
     this.shadowRoot?.replaceChildren(chart);
   }
 }

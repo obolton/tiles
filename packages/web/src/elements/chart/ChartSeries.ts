@@ -10,6 +10,7 @@ export interface ChartSeriesAttributes extends GlobalHTMLAttributes {
   type?: ChartSeriesType;
   color?: string | null;
   gradient?: GradientDirection | null;
+  label?: string | null;
 }
 
 declare global {
@@ -31,11 +32,13 @@ export default class ChartSeries extends HTMLElement {
     "type",
     "color",
     "gradient",
+    "label",
   ] as const;
 
   type: ChartSeriesType = DEFAULT_TYPE;
   color: string[] = [];
   gradient: GradientDirection | null = null;
+  label: string | null = null;
   #values: DataPoint[] = [];
 
   get values(): DataPoint[] {
@@ -64,6 +67,9 @@ export default class ChartSeries extends HTMLElement {
         break;
       case "gradient":
         this.gradient = value as GradientDirection | null;
+        break;
+      case "label":
+        this.label = value;
         break;
     }
   }
