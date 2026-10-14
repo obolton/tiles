@@ -17,7 +17,7 @@ const checks: Check[] = [
   { name: "typecheck", script: "typecheck" },
   { name: "lint", script: "lint:compact" },
   { name: "format", script: "format:check" },
-  { name: "test", script: "test:compact" },
+  { name: "test", script: "test" },
 ];
 const results: CheckResult[] = [];
 
