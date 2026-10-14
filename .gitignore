@@ -29,3 +29,6 @@ wrangler.json
 
 # Claude
 .claude/settings.local.json
+
+# Vitest
+.vitest/
