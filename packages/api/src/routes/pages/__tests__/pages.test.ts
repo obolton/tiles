@@ -25,10 +25,10 @@ const PAGE: Page = {
   published: true,
   title: "Shared page",
   type: "DOCUMENT",
-  updatedAt: new Date("2026-01-01"),
+  updatedAt: new Date(),
   author: { id: "author-1", username: "author", name: "Author", imageUrl: null },
   access: [{ user: { id: "collaborator-1", name: "Collaborator", imageUrl: null } }],
-  invites: [{ id: "invite-1", email: "invitee@example.com", createdAt: new Date("2026-01-02") }],
+  invites: [{ id: "invite-1", email: "invitee@example.com", createdAt: new Date() }],
   document: { snapshot: Buffer.from([1, 2, 3]) },
 };
 
