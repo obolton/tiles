@@ -4,7 +4,6 @@ import path from "node:path";
 import { defineConfig, mergeConfig } from "vitest/config";
 import shared from "../../vitest.shared.ts";
 import svgPlugin from "./src/vite/svg.ts";
-import A11yWarningsReporter from "./src/test/a11yWarningsReporter.ts";
 
 const packageRoot = path.dirname(import.meta.filename);
 
@@ -26,7 +25,6 @@ export default mergeConfig(
     },
     plugins: [svgPlugin({ importSource: "@/jsx" })],
     test: {
-      reporters: ["default", new A11yWarningsReporter()],
       browser: {
         enabled: true,
         headless: true,
