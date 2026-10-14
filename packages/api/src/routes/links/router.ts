@@ -1,10 +1,10 @@
 import { router } from "@/utils/trpc";
-import { pageUpdateProcedure } from "@/utils/middleware";
+import { authenticatedPageProcedure } from "@/utils/middleware";
 import { resolveLinkMetadata } from "./links";
 import { GetLinkMetadataSchema } from "./schema";
 
 export default router({
-  getMetadata: pageUpdateProcedure
+  getMetadata: authenticatedPageProcedure
     .input(GetLinkMetadataSchema)
     .query(({ input, ctx }) => resolveLinkMetadata(input, ctx)),
 });

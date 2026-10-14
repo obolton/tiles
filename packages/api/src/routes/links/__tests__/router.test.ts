@@ -8,7 +8,7 @@ vi.mock("@/utils/cdn", () => ({ invalidateCachedPages: vi.fn() }));
 
 describeRouter("externalLinks", {
   getMetadata: {
-    guard: "pageUpdate",
+    guard: "page",
     handler: resolveLinkMetadata,
     input: { pageId: PAGE_ID, url: "https://example.com/" },
     invalid: { pageId: PAGE_ID, url: "not-a-url" },
