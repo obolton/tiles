@@ -2,6 +2,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import route, { signedOutRoute } from "../index";
 import { requestProperties, SESSION_COOKIE, unwrapData } from "@/test/routes";
 
+vi.mock("@/api/client", () => import("@/test/mocks/apiClient"));
+
 describe("signedOutRoute", () => {
   test("redirects signed-in users to the index route", () => {
     const response = signedOutRoute(

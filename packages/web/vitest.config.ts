@@ -27,6 +27,7 @@ export default mergeConfig(
         PUBLIC_FONTS_BASE_URL: "https://test-fonts.example.com",
         PUBLIC_IMAGES_BASE_URL: "https://images.test",
         PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
+        PUBLIC_SESSION_COOKIE_DOMAIN: "localhost",
       },
     },
   }),
