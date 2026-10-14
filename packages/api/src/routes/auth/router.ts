@@ -1,10 +1,11 @@
 import { router, publicProcedure } from "@/utils/trpc";
+import { authenticatedServiceProcedure } from "@/utils/middleware";
 import { signIn, signOut } from "./auth";
 import { SignInSchema } from "./schema";
 import { clearSessionCookie } from "@/utils/cookies";
 
 export default router({
-  signIn: publicProcedure.input(SignInSchema).mutation(async ({ input }) => {
+  signIn: authenticatedServiceProcedure.input(SignInSchema).mutation(async ({ input }) => {
     const session = await signIn(input);
     return session;
   }),

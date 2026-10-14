@@ -34,14 +34,17 @@ export async function signIn({
   emailVerified,
   imageUrl,
 }: SignInOptions) {
-  return client.auth.signIn.mutate({
-    provider,
-    providerId,
-    name,
-    email,
-    emailVerified,
-    imageUrl,
-  });
+  return client.auth.signIn.mutate(
+    {
+      provider,
+      providerId,
+      name,
+      email,
+      emailVerified,
+      imageUrl,
+    },
+    { context: { service: true } },
+  );
 }
 
 export function setAuthenticationCookies(sessionId: string, expiresAt: Date) {
