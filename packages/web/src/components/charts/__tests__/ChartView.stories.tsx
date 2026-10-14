@@ -71,10 +71,8 @@ const meta = {
   title: "ChartView",
   parameters: {
     a11y: {
-      config: {
-        // Observable Plot puts an aria-label on each mark's <g>, which has no role to permit it.
-        rules: [{ id: "aria-prohibited-attr", enabled: false }],
-      },
+      // Observable Plot puts an aria-label on each mark's <g>, which has no role to permit it.
+      test: "todo",
     },
   },
 } satisfies Meta;

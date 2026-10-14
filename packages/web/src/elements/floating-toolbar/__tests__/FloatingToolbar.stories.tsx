@@ -140,11 +140,9 @@ export const WithTextLabels: Story = {
   ),
   parameters: {
     a11y: {
-      config: {
-        // The destructive button uses the global --destructive-color token, which is below the AA
-        // contrast threshold by design.
-        rules: [{ id: "color-contrast", enabled: false }],
-      },
+      // The destructive button uses the global --destructive-color token, which is below the AA
+      // contrast threshold by design.
+      test: "todo",
     },
   },
 };

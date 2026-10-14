@@ -63,11 +63,9 @@ export const Deleted: Story = {
   },
   parameters: {
     a11y: {
-      config: {
-        // The placeholder text uses the global --placeholder-color token, which is below the AA
-        // contrast threshold by design.
-        rules: [{ id: "color-contrast", enabled: false }],
-      },
+      // The placeholder text uses the global --placeholder-color token, which is below the AA
+      // contrast threshold by design.
+      test: "todo",
     },
   },
 };

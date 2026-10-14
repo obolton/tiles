@@ -4,21 +4,12 @@ import path from "node:path";
 import { defineConfig, mergeConfig } from "vitest/config";
 import shared from "../../vitest.shared.ts";
 import svgPlugin from "./src/vite/svg.ts";
+import A11yWarningsReporter from "./src/test/a11yWarningsReporter.ts";
 
 const packageRoot = path.dirname(import.meta.filename);
 
 const WS_ENDPOINT = process.env.PLAYWRIGHT_WS_ENDPOINT;
 const APP_HOST = process.env.APP_HOST ?? "localhost";
-
-// Each project needs its own copy: Vitest mutates the instances it expands.
-function createBrowserConfig() {
-  return {
-    enabled: true,
-    headless: true,
-    provider: playwright(WS_ENDPOINT ? { connectOptions: { wsEndpoint: WS_ENDPOINT } } : {}),
-    instances: [{ browser: "chromium" }],
-  };
-}
 
 export default mergeConfig(
   shared,
@@ -35,6 +26,12 @@ export default mergeConfig(
     },
     plugins: [svgPlugin({ importSource: "@/jsx" })],
     test: {
+      reporters: ["default", new A11yWarningsReporter()],
+      browser: {
+        enabled: true,
+        headless: true,
+        provider: playwright(WS_ENDPOINT ? { connectOptions: { wsEndpoint: WS_ENDPOINT } } : {}),
+      },
       projects: [
         {
           extends: true,
@@ -46,7 +43,7 @@ export default mergeConfig(
               GOOGLE_CLIENT_SECRET: "test-client-secret",
               GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
             },
-            browser: createBrowserConfig(),
+            browser: { instances: [{ browser: "chromium" }] },
           },
         },
         {
@@ -63,7 +60,7 @@ export default mergeConfig(
               PUBLIC_API_ORIGIN: "https://api.test",
               PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
             },
-            browser: createBrowserConfig(),
+            browser: { instances: [{ browser: "chromium" }] },
           },
         },
       ],
