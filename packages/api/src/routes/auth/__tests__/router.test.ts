@@ -24,8 +24,8 @@ const SIGN_IN_INPUT = {
 const SESSION = {
   id: "session-1",
   userId: "user-1",
-  createdAt: new Date("2025-01-01"),
-  expiresAt: new Date("2025-02-01"),
+  createdAt: new Date(),
+  expiresAt: new Date(),
 };
 
 beforeEach(() => {
@@ -34,28 +34,28 @@ beforeEach(() => {
 });
 
 describe("signIn", () => {
-  test("should reject an unauthenticated caller", async () => {
+  test("rejects an unauthenticated caller", async () => {
     const caller = router.createCaller(createUnauthenticatedContext());
 
     await expect(caller.signIn(SIGN_IN_INPUT)).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     expect(signIn).not.toHaveBeenCalled();
   });
 
-  test("should reject a signed-in user", async () => {
+  test("rejects a signed-in user", async () => {
     const caller = router.createCaller(createAuthenticatedContext());
 
     await expect(caller.signIn(SIGN_IN_INPUT)).rejects.toMatchObject({ code: "UNAUTHORIZED" });
     expect(signIn).not.toHaveBeenCalled();
   });
 
-  test("should create a session for a service caller", async () => {
+  test("creates a session for a service caller", async () => {
     const caller = router.createCaller(createServiceContext("web"));
 
     await expect(caller.signIn(SIGN_IN_INPUT)).resolves.toEqual(SESSION);
     expect(signIn).toHaveBeenCalledExactlyOnceWith(SIGN_IN_INPUT);
   });
 
-  test("should validate the input for a service caller", async () => {
+  test("validates the input for a service caller", async () => {
     const caller = router.createCaller(createServiceContext("web"));
 
     await expect(caller.signIn({ ...SIGN_IN_INPUT, email: "not-an-email" })).rejects.toMatchObject({
@@ -66,7 +66,7 @@ describe("signIn", () => {
 });
 
 describe("signOut", () => {
-  test("should delete the session and clear the cookie for a signed-in user", async () => {
+  test("deletes the session and clears the cookie for a signed-in user", async () => {
     const ctx = createAuthenticatedContext({ sessionId: "session-1" });
     const caller = router.createCaller(ctx);
 
@@ -77,7 +77,7 @@ describe("signOut", () => {
     );
   });
 
-  test("should do nothing for an unauthenticated caller", async () => {
+  test("does nothing for an unauthenticated caller", async () => {
     const ctx = createUnauthenticatedContext();
     const caller = router.createCaller(ctx);
 

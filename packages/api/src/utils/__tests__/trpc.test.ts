@@ -128,7 +128,7 @@ describe("createContext with service credentials", () => {
   const SERVICE_TOKEN_KEY = SERVICE_TOKEN_HEADER.toLowerCase();
   const SERVICE_NAME_KEY = SERVICE_NAME_HEADER.toLowerCase();
 
-  test("should authenticate a service with a valid token and name", async () => {
+  test("authenticates a service with a valid token and name", async () => {
     const opts = createContextOptions({
       [SERVICE_TOKEN_KEY]: "test",
       [SERVICE_NAME_KEY]: "web",
@@ -143,7 +143,7 @@ describe("createContext with service credentials", () => {
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  test("should ignore session credentials on a service request", async () => {
+  test("ignores session credentials on a service request", async () => {
     const opts = createContextOptions({
       [SERVICE_TOKEN_KEY]: "test",
       [SERVICE_NAME_KEY]: "web",
@@ -168,7 +168,7 @@ describe("createContext with service credentials", () => {
     ["an empty token", { [SERVICE_TOKEN_KEY]: "", [SERVICE_NAME_KEY]: "web" }],
     ["a missing service name", { [SERVICE_TOKEN_KEY]: "test" }],
     ["an empty service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "" }],
-  ])("should reject %s", async (_, headers) => {
+  ])("rejects %s", async (_, headers) => {
     const opts = createContextOptions({
       ...headers,
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
@@ -181,7 +181,7 @@ describe("createContext with service credentials", () => {
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  test("should treat a service name without a token as a regular request", async () => {
+  test("treats a service name without a token as a regular request", async () => {
     const opts = createContextOptions({
       [SERVICE_NAME_KEY]: "image-upload-worker",
       authorization: "Bearer valid-header",
