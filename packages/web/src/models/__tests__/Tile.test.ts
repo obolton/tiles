@@ -5,10 +5,11 @@ import Section, { type CreateSectionInput } from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
 import type TileCollection from "@/models/TileCollection";
-import Editor from "@/editor/Editor";
+import { createEditor } from "@/test/editor";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
+import type Editor from "@/editor/Editor";
 
 // Tile is abstract; exercise its base behavior via Section.
 const PROPS: CreateSectionInput = {
@@ -28,7 +29,11 @@ function ids(collection: TileCollection): string[] {
 }
 
 describe("Tile", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createTile(
     overrides: Partial<CreateSectionInput> = {},

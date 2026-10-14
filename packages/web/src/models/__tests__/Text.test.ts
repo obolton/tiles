@@ -1,15 +1,19 @@
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import Text, { type CreateTextInput } from "@/models/Text";
-import Editor from "@/editor/Editor";
-import { PAGE } from "@/test/fixtures/Page";
+import { createEditor } from "@/test/editor";
+import type Editor from "@/editor/Editor";
 
 const TEXT_PROPS: Omit<CreateTextInput, "parentId" | "beforeId"> = {
   align: "TOP",
 };
 
 describe("Text", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createText(overrides: Partial<CreateTextInput> = {}): Text {
     return editor.page.createTile(Text.createMap({ ...TEXT_PROPS, ...overrides }), {}) as Text;

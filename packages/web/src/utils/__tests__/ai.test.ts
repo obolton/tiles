@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import * as Y from "yjs";
 import client from "@/api/client";
-import Editor from "@/editor/Editor";
+import { createEditor } from "@/test/editor";
 import Section from "@/models/Section";
 import { uploadMedia } from "@/utils/media";
 import { generateImage, submitPrompt } from "@/utils/ai";
 import { PAGE } from "@/test/fixtures/Page";
+import type Editor from "@/editor/Editor";
 import type { WriteEvent } from "api/routes/ai/ai";
 
 vi.mock("@/api/client", () => ({
@@ -31,8 +31,7 @@ async function* stream(events: WriteEvent[], error?: Error): AsyncGenerator<Writ
 }
 
 describe("ai", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
-  const { chat } = editor;
+  let editor: Editor;
   const writeMock = vi.mocked(client.ai.write.mutate);
   const generateImageMock = vi.mocked(client.ai.generateImage.mutate);
   const uploadMock = vi.mocked(uploadMedia);
@@ -45,10 +44,7 @@ describe("ai", () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    editor.clearSelection();
-    editor.clearReferences();
-    chat.clear();
+    editor = createEditor();
   });
 
   afterEach(() => {
@@ -77,7 +73,9 @@ describe("ai", () => {
         },
         { context: { stream: true } },
       );
-      expect(chat.messages.value).toMatchObject([{ role: "user", content: "Write something" }]);
+      expect(editor.chat.messages.value).toMatchObject([
+        { role: "user", content: "Write something" },
+      ]);
     });
 
     test("sends a null section id when nothing is selected", async () => {
@@ -92,7 +90,7 @@ describe("ai", () => {
     });
 
     test("includes the history when there are earlier messages", async () => {
-      chat.addUserMessage("Earlier");
+      editor.chat.addUserMessage("Earlier");
       writeMock.mockResolvedValue(stream([]));
 
       await submitPrompt("Later");
@@ -107,8 +105,8 @@ describe("ai", () => {
     });
 
     test("routes message events to append and reference events to addReference", async () => {
-      const append = vi.spyOn(chat, "append");
-      const addReference = vi.spyOn(chat, "addReference");
+      const append = vi.spyOn(editor.chat, "append");
+      const addReference = vi.spyOn(editor.chat, "addReference");
       writeMock.mockResolvedValue(
         stream([
           { message: "Hello" },
@@ -122,8 +120,8 @@ describe("ai", () => {
 
       expect(append.mock.calls).toEqual([["Hello"], [{ type: "paragraph" }], [{ bold: true }]]);
       expect(addReference).toHaveBeenCalledExactlyOnceWith(REFERENCE);
-      expect(chat.state.value).toBe("idle");
-      expect(chat.messages.value).toMatchObject([
+      expect(editor.chat.state.value).toBe("idle");
+      expect(editor.chat.messages.value).toMatchObject([
         { role: "user", content: "Hi" },
         { role: "assistant", references: [REFERENCE] },
         { role: "assistant" },
@@ -131,23 +129,23 @@ describe("ai", () => {
     });
 
     test("completes streaming even when the stream throws", async () => {
-      const completeStreaming = vi.spyOn(chat, "completeStreaming");
+      const completeStreaming = vi.spyOn(editor.chat, "completeStreaming");
       writeMock.mockResolvedValue(stream([{ message: "partial" }], new Error("boom")));
 
       await expect(submitPrompt("Hi")).rejects.toThrow("boom");
 
       expect(completeStreaming).toHaveBeenCalledTimes(1);
-      expect(chat.state.value).toBe("idle");
+      expect(editor.chat.state.value).toBe("idle");
     });
 
     test("does not begin streaming when the request fails", async () => {
-      const beginStreaming = vi.spyOn(chat, "beginStreaming");
+      const beginStreaming = vi.spyOn(editor.chat, "beginStreaming");
       writeMock.mockRejectedValue(new Error("network"));
 
       await expect(submitPrompt("Hi")).rejects.toThrow("network");
 
       expect(beginStreaming).not.toHaveBeenCalled();
-      expect(chat.messages.value).toMatchObject([{ role: "user", content: "Hi" }]);
+      expect(editor.chat.messages.value).toMatchObject([{ role: "user", content: "Hi" }]);
     });
   });
 

@@ -8,6 +8,8 @@ import CSS from "./mocks/CSS";
 import FontFace from "./mocks/FontFace";
 import IntersectionObserver from "./mocks/IntersectionObserver";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 vi.stubGlobal("DOMPoint", DOMPoint);
 vi.stubGlobal("ToggleEvent", ToggleEvent);
 vi.stubGlobal("DragEvent", DragEvent);

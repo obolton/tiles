@@ -1,23 +1,22 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
-import Editor from "@/editor/Editor";
+import { createEditor } from "@/test/editor";
 import Table from "@/models/Table";
 import type { CellValue } from "@/models/Table";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTableMap, DEFAULT_COLUMN_WIDTH, DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
-import { PAGE } from "@/test/fixtures/Page";
-
-const editor = Editor.init(PAGE, new Y.Doc());
-const { page } = editor;
+import type Editor from "@/editor/Editor";
 
 describe("Table", () => {
+  let editor: Editor;
   let table: Table;
   let r1: string;
   let r2: string;
   let r3: string;
 
   beforeEach(() => {
-    table = page.createTile(
+    editor = createEditor();
+    table = editor.page.createTile(
       buildTableMap({
         columns: [{ id: "a" }, { id: "b" }, { id: "c" }],
         rows: [
@@ -46,10 +45,14 @@ describe("Table", () => {
 
   describe("create", () => {
     test("adds the table to the page and selects it", async () => {
-      const section = page.createTile(buildSectionMap({ layout: "VERTICAL" }), {});
+      const section = editor.page.createTile(buildSectionMap({ layout: "VERTICAL" }), {});
       const addTile = vi.spyOn(editor, "addTile");
 
-      const created = await Table.create(page, { parentId: section.id, columns: 2, rows: 1 });
+      const created = await Table.create(editor.page, {
+        parentId: section.id,
+        columns: 2,
+        rows: 1,
+      });
 
       expect(created).toBeInstanceOf(Table);
       expect(created.parentId.value).toBe(section.id);
@@ -69,7 +72,7 @@ describe("Table", () => {
       new Y.Doc().getMap("tiles").set("broken-table", map);
       map.delete("rows");
 
-      expect(() => new Table(page, map)).toThrow("Table tile missing columns or rows");
+      expect(() => new Table(editor.page, map)).toThrow("Table tile missing columns or rows");
     });
   });
 
@@ -206,7 +209,7 @@ describe("Table", () => {
     });
 
     test("adds the first row of an empty table", () => {
-      const empty = page.createTile(buildTableMap({ columns: 1 }), {}) as Table;
+      const empty = editor.page.createTile(buildTableMap({ columns: 1 }), {}) as Table;
 
       const row = empty.appendRow();
 

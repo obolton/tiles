@@ -1,9 +1,9 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import * as Y from "yjs";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import Link from "@/models/Link";
-import Editor from "@/editor/Editor";
-import client from "@/api/client";
+import { createEditor } from "@/test/editor";
 import { PAGE } from "@/test/fixtures/Page";
+import client from "@/api/client";
+import type Editor from "@/editor/Editor";
 
 const LINK_PROPS = {
   url: "https://tiles.dev",
@@ -24,8 +24,12 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("Link", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
   const getMetadataMock = vi.mocked(client.externalLinks.getMetadata.query);
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   afterEach(() => {
     getMetadataMock.mockReset();

@@ -1,8 +1,7 @@
-import { describe, expect, test } from "vitest";
-import * as Y from "yjs";
+import { beforeEach, describe, expect, test } from "vitest";
 import Video, { type CreateVideoInput } from "@/models/Video";
-import Editor from "@/editor/Editor";
-import { PAGE } from "@/test/fixtures/Page";
+import { createEditor } from "@/test/editor";
+import type Editor from "@/editor/Editor";
 
 const VIDEO_PROPS: Omit<CreateVideoInput, "parentId" | "beforeId"> = {
   videoType: "YOUTUBE",
@@ -13,7 +12,11 @@ const VIDEO_PROPS: Omit<CreateVideoInput, "parentId" | "beforeId"> = {
 };
 
 describe("Video", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createVideo() {
     const map = Video.createMap(VIDEO_PROPS);
