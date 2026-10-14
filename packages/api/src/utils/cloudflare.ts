@@ -1,14 +1,25 @@
 import assert from "node:assert";
-import { Cloudflare } from "cloudflare";
 
 assert(process.env.CLOUDFLARE_API_TOKEN);
 assert(process.env.CLOUDFLARE_ZONE_ID);
 
 const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
-export const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
+const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
 
-const cloudflare = new Cloudflare({
-  apiToken: CLOUDFLARE_API_TOKEN,
-});
+const API_BASE_URL = "https://api.cloudflare.com/client/v4";
 
-export default cloudflare;
+type PurgeCacheOptions = { files: string[] } | { purge_everything: true };
+
+export async function purgeCache(options: PurgeCacheOptions) {
+  const response = await fetch(`${API_BASE_URL}/zones/${CLOUDFLARE_ZONE_ID}/purge_cache`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(options),
+  });
+  if (!response.ok) {
+    throw new Error(`Cloudflare cache purge failed: ${response.status} ${await response.text()}`);
+  }
+}
