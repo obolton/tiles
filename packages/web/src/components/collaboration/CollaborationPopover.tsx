@@ -1,6 +1,10 @@
 import UserRow from "./UserRow";
 import InviteRow from "./InviteRow";
 import NewIcon from "@/icons/new.svg?jsx";
+import CopyIcon from "@/icons/duplicate.svg?jsx";
+import OpenIcon from "@/icons/arrow-outward.svg?jsx";
+import If from "@/jsx/if";
+import { getPublicPageUrl } from "@/utils/pages";
 import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
@@ -23,13 +27,26 @@ function deleteInvite(invite: PageInvite) {
     .catch(handleError);
 }
 
+function selectUrl(event: Event) {
+  const input = event.currentTarget as HTMLInputElement;
+  input.select();
+}
+
 export default function CollaborationPopover({ page, ...props }: CollaborationPopoverProps) {
   const { access, invites, isPublished } = page;
+  const url = getPublicPageUrl(page.id);
 
   function setPublished(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const publish = input.checked;
     page.setPublished(publish).catch(handleError);
+  }
+
+  function copyUrl() {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => showToast("Link copied", "success"))
+      .catch(handleError);
   }
 
   function showInviteModal() {
@@ -58,7 +75,7 @@ export default function CollaborationPopover({ page, ...props }: CollaborationPo
   return (
     <anchored-popover {...props} className={styles.popover}>
       <label>
-        Public link
+        Anyone with the link can view
         <input
           id="public"
           type="checkbox"
@@ -67,6 +84,29 @@ export default function CollaborationPopover({ page, ...props }: CollaborationPo
           checked={isPublished}
         />
       </label>
+
+      <If condition={isPublished}>
+        <div className={styles.link}>
+          <input type="url" value={url} readonly aria-label="Public link" on:focus={selectUrl} />
+          <button
+            type="button"
+            className="floating small"
+            aria-label="Copy link"
+            on:click={copyUrl}
+          >
+            <CopyIcon aria-hidden="true" />
+          </button>
+          <a
+            className="floating small"
+            href={url}
+            target="_blank"
+            rel="noopener"
+            aria-label="Open in new tab"
+          >
+            <OpenIcon aria-hidden="true" />
+          </a>
+        </div>
+      </If>
 
       <button type="button" className="secondary" on:click={showInviteModal}>
         <NewIcon aria-hidden="true" />
