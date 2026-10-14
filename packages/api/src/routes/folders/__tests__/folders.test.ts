@@ -24,7 +24,7 @@ const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],
   sessionId: "session-1",
   userId: "user-1",
-  serviceName: null,
+  isService: false,
   workspaceId: "workspace-1",
   role: "ADMIN",
 };

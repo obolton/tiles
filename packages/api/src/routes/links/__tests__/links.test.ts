@@ -21,7 +21,7 @@ const MOCK_CONTEXT: AuthenticatedPageProcedureContext = {
   res: {} as AuthenticatedPageProcedureContext["res"],
   sessionId: "session-1",
   userId: "user-1",
-  serviceName: null,
+  isService: false,
   pageId: "page-1",
   workspaceId: "workspace-1",
 };

@@ -1,8 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
-import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
-import { ServiceName } from "@/constants/services";
+import { SERVICE_TOKEN_HEADER } from "@/constants/headers";
 import { createContext } from "@/utils/trpc";
 import { createRequest, createResponse } from "@/test/mocks/http";
 import type { IncomingMessage } from "node:http";
@@ -30,7 +29,7 @@ describe("createContext", () => {
       res: opts.res,
       sessionId: null,
       userId: null,
-      serviceName: null,
+      isService: false,
     });
     expect(getSessionContext).not.toHaveBeenCalled();
     expect(opts.res.getHeader("Set-Cookie")).toBeUndefined();
@@ -43,7 +42,7 @@ describe("createContext", () => {
       res: opts.res,
       sessionId: "valid-header",
       userId: "user-1",
-      serviceName: null,
+      isService: false,
     });
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-header");
   });
@@ -84,7 +83,7 @@ describe("createContext", () => {
       res: opts.res,
       sessionId: "valid-cookie",
       userId: "user-1",
-      serviceName: null,
+      isService: false,
     });
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-cookie");
   });
@@ -110,7 +109,7 @@ describe("createContext", () => {
       res: opts.res,
       sessionId: null,
       userId: null,
-      serviceName: null,
+      isService: false,
     });
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("expired-cookie");
     expect(opts.res.getHeader("Set-Cookie")).toMatch(
@@ -125,21 +124,17 @@ describe("createContext", () => {
   });
 });
 
-describe("createContext with service credentials", () => {
+describe("createContext with a service token", () => {
   const SERVICE_TOKEN_KEY = SERVICE_TOKEN_HEADER.toLowerCase();
-  const SERVICE_NAME_KEY = SERVICE_NAME_HEADER.toLowerCase();
 
-  test("authenticates a service with a valid token and name", async () => {
-    const opts = createContextOptions({
-      [SERVICE_TOKEN_KEY]: "test",
-      [SERVICE_NAME_KEY]: "web",
-    });
+  test("authenticates a service with a valid token", async () => {
+    const opts = createContextOptions({ [SERVICE_TOKEN_KEY]: "test" });
 
     await expect(createContext(opts)).resolves.toEqual({
       res: opts.res,
       sessionId: null,
       userId: null,
-      serviceName: ServiceName.WEB,
+      isService: true,
     });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
@@ -147,7 +142,6 @@ describe("createContext with service credentials", () => {
   test("ignores session credentials on a service request", async () => {
     const opts = createContextOptions({
       [SERVICE_TOKEN_KEY]: "test",
-      [SERVICE_NAME_KEY]: "web",
       authorization: "Bearer valid-header",
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
     });
@@ -155,46 +149,26 @@ describe("createContext with service credentials", () => {
     await expect(createContext(opts)).resolves.toMatchObject({
       sessionId: null,
       userId: null,
-      serviceName: ServiceName.WEB,
+      isService: true,
     });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
   test.each([
-    ["an invalid token", { [SERVICE_TOKEN_KEY]: "wrong", [SERVICE_NAME_KEY]: "web" }],
-    [
-      "a token with a different length",
-      { [SERVICE_TOKEN_KEY]: "test-longer", [SERVICE_NAME_KEY]: "web" },
-    ],
-    ["an empty token", { [SERVICE_TOKEN_KEY]: "", [SERVICE_NAME_KEY]: "web" }],
-    ["a missing service name", { [SERVICE_TOKEN_KEY]: "test" }],
-    ["an empty service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "" }],
-    ["an unknown service name", { [SERVICE_TOKEN_KEY]: "test", [SERVICE_NAME_KEY]: "unknown" }],
-  ])("rejects %s", async (_, headers) => {
+    ["an invalid token", "wrong"],
+    ["a token with a different length", "test-longer"],
+    ["an empty token", ""],
+  ])("rejects %s", async (_, token) => {
     const opts = createContextOptions({
-      ...headers,
+      [SERVICE_TOKEN_KEY]: token,
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
     });
 
     await expect(createContext(opts)).rejects.toMatchObject({
       code: "UNAUTHORIZED",
-      message: "Invalid service credentials",
+      message: "Invalid service token",
     });
     expect(getSessionContext).not.toHaveBeenCalled();
-  });
-
-  test("treats a service name without a token as a regular request", async () => {
-    const opts = createContextOptions({
-      [SERVICE_NAME_KEY]: "image-upload-worker",
-      authorization: "Bearer valid-header",
-    });
-
-    await expect(createContext(opts)).resolves.toEqual({
-      res: opts.res,
-      sessionId: "valid-header",
-      userId: "user-1",
-      serviceName: null,
-    });
   });
 });
 

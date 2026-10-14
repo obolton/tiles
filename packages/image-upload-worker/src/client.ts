@@ -1,8 +1,6 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
-import { ServiceName } from "api/constants/services";
 
-const SERVICE_NAME = ServiceName.IMAGE_UPLOAD_WORKER;
 const API_ORIGIN = process.env.INTERNAL_API_ORIGIN!;
 
 export function createClient(sessionId: string) {
@@ -13,7 +11,6 @@ export function createClient(sessionId: string) {
         headers() {
           return {
             Authorization: `Bearer ${sessionId}`,
-            "X-Service-Name": SERVICE_NAME,
           };
         },
       }),

@@ -4,12 +4,10 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { getCookie } from "@/utils/cookies";
 import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
-import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "@/constants/headers";
-import { isServiceName } from "@/constants/services";
+import { SERVICE_TOKEN_HEADER } from "@/constants/headers";
 import { clearSessionCookie } from "@/utils/cookies";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { ServiceName } from "@/constants/services";
 
 function getServiceApiToken() {
   const token = process.env.SERVICE_API_TOKEN;
@@ -23,21 +21,21 @@ export interface UnauthenticatedRequestContext {
   res: ServerResponse;
   sessionId: null;
   userId: null;
-  serviceName: null;
+  isService: false;
 }
 
 export interface AuthenticatedRequestContext {
   res: ServerResponse;
   sessionId: string;
   userId: string;
-  serviceName: null;
+  isService: false;
 }
 
 export interface AuthenticatedServiceRequestContext {
   res: ServerResponse;
   sessionId: null;
   userId: null;
-  serviceName: ServiceName;
+  isService: true;
 }
 
 export type RequestContext =
@@ -83,35 +81,32 @@ function isValidServiceToken(token: string) {
   );
 }
 
-function getServiceName(req: IncomingMessage) {
+function isServiceRequest(req: IncomingMessage) {
   const token = getHeader(req, SERVICE_TOKEN_HEADER);
   if (token === null) {
-    return null;
+    return false;
   }
 
-  const serviceName = getHeader(req, SERVICE_NAME_HEADER);
-  if (!serviceName || !isServiceName(serviceName) || !isValidServiceToken(token)) {
+  if (!isValidServiceToken(token)) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
-      message: "Invalid service credentials",
+      message: "Invalid service token",
     });
   }
 
-  return serviceName;
+  return true;
 }
 
 export async function createContext({
   req,
   res,
 }: Pick<CreateHTTPContextOptions, "req" | "res">): Promise<RequestContext> {
-  const serviceName = getServiceName(req);
-
-  if (serviceName) {
+  if (isServiceRequest(req)) {
     return {
       res,
       sessionId: null,
       userId: null,
-      serviceName,
+      isService: true,
     };
   }
 
@@ -124,7 +119,7 @@ export async function createContext({
         ...session,
         res,
         sessionId,
-        serviceName: null,
+        isService: false,
       };
     } else {
       clearSessionCookie(res);
@@ -135,7 +130,7 @@ export async function createContext({
     res,
     sessionId: null,
     userId: null,
-    serviceName: null,
+    isService: false,
   };
 }
 

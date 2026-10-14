@@ -1,5 +1,4 @@
 import { createResponse } from "./http";
-import { ServiceName } from "@/constants/services";
 import type {
   AuthenticatedRequestContext,
   AuthenticatedServiceRequestContext,
@@ -7,7 +6,7 @@ import type {
 } from "@/utils/trpc";
 
 export function createUnauthenticatedContext(): UnauthenticatedRequestContext {
-  return { res: createResponse(), sessionId: null, userId: null, serviceName: null };
+  return { res: createResponse(), sessionId: null, userId: null, isService: false };
 }
 
 export function createAuthenticatedContext(
@@ -17,13 +16,11 @@ export function createAuthenticatedContext(
     res: createResponse(),
     sessionId: "session-1",
     userId: "user-1",
-    serviceName: null,
+    isService: false,
     ...overrides,
   };
 }
 
-export function createServiceContext(
-  serviceName: ServiceName = ServiceName.WEB,
-): AuthenticatedServiceRequestContext {
-  return { res: createResponse(), sessionId: null, userId: null, serviceName };
+export function createServiceContext(): AuthenticatedServiceRequestContext {
+  return { res: createResponse(), sessionId: null, userId: null, isService: true };
 }

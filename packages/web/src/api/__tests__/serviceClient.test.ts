@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
-import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "api/constants/headers";
+import { SERVICE_TOKEN_HEADER } from "api/constants/headers";
 import { fetchedUrl, jsonResponse } from "api/test/mocks/fetch";
 
 const SIGN_IN_INPUT = {
@@ -58,13 +58,12 @@ describe("serviceClient", () => {
       expect(fetchedUrl().origin).toBe("https://internal.test");
     });
 
-    test("sends service credentials on every call", async () => {
+    test("sends the service token on every call", async () => {
       const serviceClient = await loadServiceClient();
       await serviceClient.auth.signIn.mutate(SIGN_IN_INPUT);
 
       const headers = fetchedHeaders();
       expect(headers.get(SERVICE_TOKEN_HEADER)).toBe("secret");
-      expect(headers.get(SERVICE_NAME_HEADER)).toBe("web");
       expect(headers.get("Authorization")).toBeNull();
     });
 

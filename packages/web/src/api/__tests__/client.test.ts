@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
-import { SERVICE_NAME_HEADER, SERVICE_TOKEN_HEADER } from "api/constants/headers";
+import { SERVICE_TOKEN_HEADER } from "api/constants/headers";
 import { fetchedUrl, jsonResponse } from "api/test/mocks/fetch";
 
 async function loadClient() {
@@ -56,13 +56,12 @@ describe("client", () => {
       expect(fetchedUrl().origin).toBe("https://internal.test");
     });
 
-    test("never sends service credentials", async () => {
+    test("never sends the service token", async () => {
       const client = await loadClient();
       await client.auth.signOut.mutate(undefined, { context: { sessionId: "session-1" } });
 
       const headers = fetchedHeaders();
       expect(headers.get(SERVICE_TOKEN_HEADER)).toBeNull();
-      expect(headers.get(SERVICE_NAME_HEADER)).toBeNull();
       expect(headers.get("Authorization")).toBe("Bearer session-1");
     });
 
