@@ -37,7 +37,7 @@ export default function NavigationMenu({ user, workspaceId }: NavigationMenuProp
 
   return (
     <>
-      <ToolbarButton label={workspace?.name} popovertarget="navigation-menu" aria-haspopup="menu">
+      <ToolbarButton popovertarget="navigation-menu" aria-haspopup="menu">
         <ProfileImage imageUrl={user.imageUrl} name={user.name} />
         {workspace?.name}
       </ToolbarButton>

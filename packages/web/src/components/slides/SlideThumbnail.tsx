@@ -39,6 +39,7 @@ export default function SlideThumbnail({ section }: SlideThumbnailProps) {
       role="option"
       aria-controls={section.id}
       aria-selected="false"
+      aria-label="Slide"
       classList={{
         [styles.thumbnail]: true,
         [styles.hide]: section.hide,

@@ -16,6 +16,13 @@ import type { Meta, Story } from "@/test/storybook";
 
 const meta = {
   title: "ListSelect",
+  parameters: {
+    a11y: {
+      // The options are slotted into a listbox inside a closed shadow root, which axe cannot
+      // traverse, so it reports them as lacking a listbox parent.
+      test: "todo",
+    },
+  },
 } satisfies Meta;
 export default meta;
 
