@@ -1,17 +1,17 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedProcedure, authenticatedPageProcedure } from "@/utils/middleware.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedProcedure, authenticatedPageProcedure } from "@/utils/middleware";
 import {
   inviteToPage,
   acceptPageInvite,
   deletePageInvite,
   revokePageAccess,
-} from "./collaboration.ts";
+} from "./collaboration";
 import {
   InviteToPageSchema,
   AcceptPageInviteSchema,
   DeletePageInviteSchema,
   RevokePageAccessSchema,
-} from "./schema.ts";
+} from "./schema";
 
 export default router({
   inviteToPage: authenticatedPageProcedure

@@ -1,9 +1,9 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { createImage, updateImage, deleteImage } from "../media.ts";
+import prisma from "@/database/prisma";
+import { createImage, updateImage, deleteImage } from "../media";
 import { IMAGE_FIELDS } from "../fields";
-import type { CreateQuery, UpdateQuery } from "@/test/prisma.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+import type { CreateQuery, UpdateQuery } from "@/test/prisma";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 
 const MOCK_CONTEXT: AuthenticatedWorkspaceProcedureContext = {
   res: {} as AuthenticatedWorkspaceProcedureContext["res"],

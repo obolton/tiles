@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { signUpEmail } from "../signUp.ts";
-import { inviteToPageEmail } from "../inviteToPage.ts";
-import { inviteToWorkspaceEmail } from "../inviteToWorkspace.ts";
+import { signUpEmail } from "../signUp";
+import { inviteToPageEmail } from "../inviteToPage";
+import { inviteToWorkspaceEmail } from "../inviteToWorkspace";
 
 const UNSAFE_NAME = `<script>alert("x")</script> & O'Co`;
 const ESCAPED_NAME = "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; O&apos;Co";

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { transformMarkdown } from "../markdown.ts";
+import { transformMarkdown } from "../markdown";
 
 async function getEvents(input: string[]) {
   const stream = ReadableStream.from(input).pipeThrough(transformMarkdown());

@@ -5,7 +5,7 @@ import { createToolContext, getCreatedTile } from "@/test/fixtures/ai";
 import { CREATE_IMAGE_TOOL } from "../createImage";
 import type { ToolContext } from "../types";
 
-vi.mock("@/ai/tools/images.ts", () => ({
+vi.mock("@/ai/tools/images", () => ({
   generateAndUploadImage: vi.fn(),
 }));
 

@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, useFunctionTool } from "../tools";
 
-vi.mock("@/routes/links/links.ts", () => ({
+vi.mock("@/routes/links/links", () => ({
   resolveLinkMetadata: vi.fn().mockResolvedValue({
     type: "LINK",
     url: "https://example.com",

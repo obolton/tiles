@@ -1,9 +1,9 @@
-import { createResponse } from "./http.ts";
+import { createResponse } from "./http";
 import type {
   AuthenticatedRequestContext,
   AuthenticatedServiceRequestContext,
   UnauthenticatedRequestContext,
-} from "@/utils/trpc.ts";
+} from "@/utils/trpc";
 
 export function createUnauthenticatedContext(): UnauthenticatedRequestContext {
   return { res: createResponse(), sessionId: null, userId: null, serviceName: null };

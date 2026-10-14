@@ -1,9 +1,9 @@
-import { router } from "@/utils/trpc.ts";
+import { router } from "@/utils/trpc";
 import {
   authenticatedProcedure,
   authenticatedWorkspaceProcedure,
   adminWorkspaceProcedure,
-} from "@/utils/middleware.ts";
+} from "@/utils/middleware";
 import {
   GetWorkspaceSchema,
   CreateWorkspaceSchema,
@@ -15,7 +15,7 @@ import {
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
   UpdateRoleSchema,
-} from "./schema.ts";
+} from "./schema";
 import {
   getWorkspace,
   createWorkspace,
@@ -29,7 +29,7 @@ import {
   removeFromWorkspace,
   listWorkspaceUsers,
   updateWorkspaceRole,
-} from "./workspaces.ts";
+} from "./workspaces";
 
 export default router({
   get: authenticatedWorkspaceProcedure

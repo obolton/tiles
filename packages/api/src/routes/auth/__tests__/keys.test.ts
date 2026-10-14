@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import prisma from "@/database/prisma.ts";
-import { createKey, getUserIdByProviderId } from "../keys.ts";
+import prisma from "@/database/prisma";
+import { createKey, getUserIdByProviderId } from "../keys";
 
 describe("createKey", () => {
   beforeEach(() => {

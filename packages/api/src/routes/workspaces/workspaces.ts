@@ -1,10 +1,10 @@
 import { TRPCError } from "@trpc/server";
-import prisma from "@/database/prisma.ts";
-import { createKey } from "@/utils/keys.ts";
-import { sendEmail } from "@/utils/email.ts";
-import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace.ts";
+import prisma from "@/database/prisma";
+import { createKey } from "@/utils/keys";
+import { sendEmail } from "@/utils/email";
+import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
-import { getDefaultThemesData } from "@/utils/themes.ts";
+import { getDefaultThemesData } from "@/utils/themes";
 import type { Prisma } from "@/generated/prisma/client";
 import type {
   GetWorkspaceSchema,
@@ -17,9 +17,9 @@ import type {
   RemoveFromWorkspaceSchema,
   ListWorkspaceUsersSchema,
   UpdateRoleSchema,
-} from "./schema.ts";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
-import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware.ts";
+} from "./schema";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
+import type { AuthenticatedWorkspaceProcedureContext } from "@/utils/middleware";
 import { WORKSPACE_FIELDS, WORKSPACE_MEMBERSHIP_FIELDS, WORKSPACE_INVITE_FIELDS } from "./fields";
 
 const INVITE_KEY_BYTES = 32;

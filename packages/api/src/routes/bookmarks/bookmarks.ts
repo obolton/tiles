@@ -1,13 +1,13 @@
-import prisma from "@/database/prisma.ts";
+import prisma from "@/database/prisma";
 import type {
   CreateBookmarkSchema,
   DeleteBookmarkSchema,
   ListBookmarksSchema,
   IsBookmarkedSchema,
-} from "./schema.ts";
+} from "./schema";
 import type { Prisma } from "@/generated/prisma/client";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
-import type { AuthenticatedRequestContext } from "@/utils/trpc.ts";
+import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import { BOOKMARK_FIELDS } from "./fields";
 
 export async function createBookmark(

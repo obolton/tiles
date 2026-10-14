@@ -1,9 +1,9 @@
 import assert from "node:assert";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { getCookie } from "@/utils/cookies.ts";
-import { getSessionContext } from "@/routes/users/users.ts";
-import { SESSION_COOKIE_NAME } from "@/constants/cookies.ts";
-import { clearSessionCookie } from "@/utils/cookies.ts";
+import { getCookie } from "@/utils/cookies";
+import { getSessionContext } from "@/routes/users/users";
+import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { clearSessionCookie } from "@/utils/cookies";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
 

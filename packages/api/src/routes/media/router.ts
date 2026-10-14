@@ -1,7 +1,7 @@
-import { router } from "@/utils/trpc.ts";
-import { authenticatedWorkspaceProcedure } from "@/utils/middleware.ts";
-import { CreateImageSchema, UpdateImageSchema, DeleteImageSchema } from "./schema.ts";
-import { createImage, updateImage, deleteImage } from "./media.ts";
+import { router } from "@/utils/trpc";
+import { authenticatedWorkspaceProcedure } from "@/utils/middleware";
+import { CreateImageSchema, UpdateImageSchema, DeleteImageSchema } from "./schema";
+import { createImage, updateImage, deleteImage } from "./media";
 
 export default router({
   // TODO: Restrict access to services

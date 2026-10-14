@@ -89,12 +89,14 @@ export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalP
           />
         </label>
 
-        <ol className={styles["place-select"]}>
+        <ol className={styles["place-select"]} aria-label="Results">
           {results.derive((items) =>
             items.map((result) => (
-              <li on:click={() => selectPlace(result)}>
-                <div>{result.name}</div>
-                <div className={styles.description}>{result.address}</div>
+              <li>
+                <button type="button" on:click={() => selectPlace(result)}>
+                  <span>{result.name}</span>
+                  <span className={styles.description}>{result.address}</span>
+                </button>
               </li>
             )),
           )}

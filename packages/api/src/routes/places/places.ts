@@ -1,6 +1,6 @@
 import assert from "node:assert";
-import { HereAutosuggestQueryResults } from "./schema.ts";
-import type { SearchPlacesSchema } from "./schema.ts";
+import { HereAutosuggestQueryResults } from "./schema";
+import type { SearchPlacesSchema } from "./schema";
 
 type SearchPlacesResult = {
   providerId: string;

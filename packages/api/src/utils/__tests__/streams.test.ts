@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { Buffer } from "node:buffer";
 import { Readable } from "node:stream";
-import { streamToBase64String } from "../streams.ts";
+import { streamToBase64String } from "../streams";
 
 // Helper function to create a ReadableStream from a string or Buffer
 function createTestStream(data: string | Buffer) {

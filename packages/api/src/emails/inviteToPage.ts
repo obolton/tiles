@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { escapeUTF8 } from "entities";
-import type { Email } from "@/utils/email.ts";
+import type { Email } from "@/utils/email";
 
 interface InviteToPageEmailOptions {
   inviter: { id: string; name: string };
