@@ -24,7 +24,7 @@ const MOCK_CONTEXT: AuthenticatedRequestContext = {
   res: {} as AuthenticatedRequestContext["res"],
   sessionId: "session-1",
   userId: "user-1",
-  serviceName: null,
+  isService: false,
 };
 
 const MOCK_INVITE = {

@@ -16,7 +16,7 @@ export const authenticatedProcedure = publicProcedure.use(async (opts) => {
 
 export const authenticatedServiceProcedure = publicProcedure.use(async (opts) => {
   const { ctx } = opts;
-  if (!ctx.serviceName) {
+  if (!ctx.isService) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return opts.next({ ctx });

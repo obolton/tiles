@@ -31,13 +31,4 @@ describe("createClient", () => {
 
     expect(headers.Authorization).toBe("Bearer my-session-id");
   });
-
-  test("includes X-Service-Name header", () => {
-    createClient("test-session");
-
-    const config = getLastLinkConfig();
-    const headers = (config.headers as () => Record<string, string>)();
-
-    expect(headers["X-Service-Name"]).toBe("image-upload-worker");
-  });
 });

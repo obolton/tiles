@@ -11,7 +11,7 @@ const MOCK_CONTEXT: AuthenticatedRequestContext = {
   res: {} as AuthenticatedRequestContext["res"],
   sessionId: "session-1",
   userId: "user-1",
-  serviceName: null,
+  isService: false,
 };
 
 type UpsertQuery<T> = { select: T; where: never; create: never; update: never };

@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { stringifySetCookie } from "cookie";
-import client, { type AppRouterInputs } from "../api/client";
+import serviceClient from "@/api/serviceClient";
+import type { AppRouterInputs } from "@/api/client";
 import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
 
@@ -34,17 +35,14 @@ export async function signIn({
   emailVerified,
   imageUrl,
 }: SignInOptions) {
-  return client.auth.signIn.mutate(
-    {
-      provider,
-      providerId,
-      name,
-      email,
-      emailVerified,
-      imageUrl,
-    },
-    { context: { service: true } },
-  );
+  return serviceClient.auth.signIn.mutate({
+    provider,
+    providerId,
+    name,
+    email,
+    emailVerified,
+    imageUrl,
+  });
 }
 
 export function setAuthenticationCookies(sessionId: string, expiresAt: Date) {

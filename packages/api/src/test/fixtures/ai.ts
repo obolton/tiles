@@ -8,7 +8,7 @@ export const MOCK_TOOL_CONTEXT: ToolContext = {
   res: {} as ServerResponse,
   sessionId: "test-session",
   userId: "test-user",
-  serviceName: null,
+  isService: false,
   workspaceId: "test-workspace",
   pageId: "test-page",
   sectionId: null,
