@@ -54,13 +54,13 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - `pnpm lint:compact`: Lint TypeScript and CSS files (compact output).
 - `pnpm format`: Format files with oxfmt.
 - `pnpm format:check`: Check formatting without writing changes.
-- `pnpm test:compact`: Run unit tests with Vitest (compact output).
+- `pnpm test`: Run unit tests with Vitest.
 - `pnpm build`: Build all packages.
 - `pnpm storybook`: Run Storybook for UI component development.
 
 ### Testing tiers
 
-- `pnpm test:compact` runs unit tests across all packages (included in `pnpm check`).
+- `pnpm test` runs unit tests across all packages (included in `pnpm check`).
 - `pnpm --filter web test:browser` runs browser-mode tests (`*.browser.test.{ts,tsx}`) in headless Chromium with Playwright. It is not included in `pnpm check`, so run it when changing browser tests. CI runs it in a separate `Browser tests` job.
 - `pnpm test:e2e` runs the end-to-end tests with Playwright (not part of `pnpm check`).
 
@@ -96,7 +96,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Use `__tests__/*.test.ts` files.
 - Use `describe` blocks for each function being tested and to provide structure to test suites.
 - Mock external services (database, external APIs etc).
-- Run tests with `pnpm test:compact` and check coverage with `pnpm test:coverage`.
+- Run tests with `pnpm test` and check coverage with `pnpm test:coverage`.
 
 ### Storybook stories
 
