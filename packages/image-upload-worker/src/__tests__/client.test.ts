@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { httpBatchLink } from "@trpc/client";
 import { createClient } from "../client";
 
@@ -13,10 +13,6 @@ function getLastLinkConfig() {
 }
 
 describe("createClient", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("configures link with API origin", () => {
     createClient("test-session");
 

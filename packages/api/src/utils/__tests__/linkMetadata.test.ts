@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { htmlResponse } from "@/test/mocks/fetch";
 import { getLinkMetadata, matchContentType } from "../linkMetadata";
 
@@ -32,10 +32,6 @@ describe("matchContentType", () => {
 });
 
 describe("getLinkMetadata", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("prefers Open Graph fields and forwards headers", async () => {
     const html = `<!doctype html>
     <html>

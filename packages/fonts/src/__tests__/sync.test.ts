@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("../fontsource", async () => {
   const actual = await vi.importActual<typeof import("../fontsource")>("../fontsource");
@@ -73,10 +73,6 @@ describe("syncFonts", () => {
     vi.spyOn(global, "fetch").mockImplementation(
       async () => new Response(new Uint8Array([0, 1, 2]), { status: 200 }),
     );
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   test("uploads variants that don't yet exist in the bucket", async () => {

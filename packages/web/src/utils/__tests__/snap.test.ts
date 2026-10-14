@@ -1,9 +1,5 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { findSnapPoint, getSnapPoints, type SnapPoint } from "../snap";
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe("getSnapPoints", () => {
   test("collects sorted snap points relative to the provided origin", () => {

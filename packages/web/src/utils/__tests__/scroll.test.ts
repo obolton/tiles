@@ -3,10 +3,6 @@ import { reveal, scrollIntoViewIfNeeded, whenVisible } from "../scroll";
 import IntersectionObserver from "@/test/mocks/IntersectionObserver";
 
 describe("reveal", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const containerRect = new DOMRect(0, 100, 400, 300);
 
   test("does not scroll when element is fully visible", () => {
@@ -228,10 +224,6 @@ describe("reveal", () => {
 });
 
 describe("scrollIntoViewIfNeeded", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   window.innerWidth = 800;
   window.innerHeight = 600;
   const options = { behavior: "smooth", block: "center" } as const;

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { createToolContext, getCreatedTile } from "@/test/fixtures/ai";
 import { CREATE_SECTION_TOOL } from "../createSection";
@@ -9,7 +9,6 @@ describe("CREATE_SECTION_TOOL", () => {
   let context: ToolContext;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     ({ doc, context } = createToolContext());
   });
 

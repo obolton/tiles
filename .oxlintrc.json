@@ -38,6 +38,12 @@
       }
     },
     {
+      "files": ["**/vitest.*.ts"],
+      "rules": {
+        "import/extensions": ["error", { "ts": "always" }]
+      }
+    },
+    {
       "files": ["**/e2e/**"],
       "rules": {
         "vitest/prefer-importing-vitest-globals": "off"

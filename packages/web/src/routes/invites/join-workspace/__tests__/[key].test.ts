@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { SESSION_COOKIE_NAME } from "api/constants/cookies";
 import route from "../[key]";
 import client from "@/api/client";
@@ -24,10 +24,6 @@ async function get(key: string | undefined, cookie?: string) {
 }
 
 describe("invites/join-workspace/[key]", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("returns 404 without a key", async () => {
     const response = await get(undefined);
     expect(response.status).toBe(404);

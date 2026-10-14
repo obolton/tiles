@@ -74,10 +74,6 @@ function createMockPages(count: number): LibraryPage[] {
   }));
 }
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("getPageById", () => {
   const findUnique = vi.mocked(prisma.page.findUnique<FindUniqueQuery<typeof PAGE_FIELDS>>);
 

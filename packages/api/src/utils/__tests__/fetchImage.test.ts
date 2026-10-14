@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
 import { imageResponse } from "@/test/mocks/fetch";
@@ -13,10 +13,6 @@ const WORKSPACE_ID = "workspace-1";
 const USER_ID = "user-1";
 
 describe("fetchImage", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("downloads image, uploads to R2, and creates database record", async () => {
     const response = imageResponse();
     vi.mocked(fetch).mockResolvedValue(response);

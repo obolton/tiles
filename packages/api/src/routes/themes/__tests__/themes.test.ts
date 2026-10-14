@@ -33,10 +33,6 @@ const CREATE_INPUT: CreateThemeSchema = {
   fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
 };
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("listThemes", () => {
   beforeEach(() => {
     vi.mocked(prisma.theme.findMany<FindManyQuery<typeof THEME_FIELDS>>).mockResolvedValue([

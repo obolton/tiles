@@ -3,7 +3,6 @@ import prisma from "@/database/prisma";
 import { authenticateConnection } from "../auth";
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(prisma.page.findUnique).mockResolvedValue({
     id: "page-1",
     workspaceId: "ws-1",

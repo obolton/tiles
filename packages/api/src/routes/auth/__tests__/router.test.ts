@@ -29,7 +29,6 @@ const SESSION = {
 };
 
 beforeEach(() => {
-  vi.clearAllMocks();
   vi.mocked(signIn).mockResolvedValue(SESSION);
 });
 
