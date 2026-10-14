@@ -57,5 +57,8 @@ jobs:
       - name: Install Chromium
         run: pnpm --filter web exec playwright install --with-deps chromium
 
-      - name: Run browser tests and stories
+      - name: Run browser tests
         run: pnpm --filter web test:browser
+
+      - name: Run stories
+        run: pnpm --filter web test:storybook

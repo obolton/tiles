@@ -61,7 +61,8 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 ### Testing tiers
 
 - `pnpm test` runs unit tests across all packages (included in `pnpm check`).
-- `pnpm --filter web test:browser` runs browser-mode tests (`*.browser.test.{ts,tsx}`) and every Storybook story (`*.stories.tsx`, rendered and checked for accessibility violations with the Storybook Vitest addon) in headless Chromium with Playwright. It is not included in `pnpm check`, so run it when changing browser tests or stories. CI runs it in a separate `Browser tests` job.
+- `pnpm --filter web test:browser` runs browser-mode tests (`*.browser.test.{ts,tsx}`) in headless Chromium with Playwright. It is not included in `pnpm check`, so run it when changing browser tests. CI runs it in a separate `Browser tests` job.
+- `pnpm --filter web test:storybook` runs every Storybook story (`*.stories.tsx`) as a browser-mode test with the Storybook Vitest addon: each story is rendered and checked for accessibility violations. It is not included in `pnpm check`, so run it when changing stories or components with stories. CI runs it in the `Browser tests` job.
 - `pnpm test:e2e` runs the end-to-end tests with Playwright (not part of `pnpm check`).
 
 ### Important notes

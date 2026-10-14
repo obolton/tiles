@@ -12,6 +12,7 @@
     "generate": "cmk",
     "test": "vitest run",
     "test:browser": "vitest run --config vitest.browser.config.ts",
+    "test:storybook": "vitest run --config vitest.storybook.config.ts",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage",
     "lint:ts": "oxlint --type-aware",
