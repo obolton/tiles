@@ -52,12 +52,12 @@ export default function SharePanel({
       on:keydown={onKeyDown}
       {...props}
     >
-      <header className={styles.header}>
+      <div className={styles.header}>
         <h2 className={styles.title}>Share</h2>
         <ToolbarButton classList={{ small: true }} label="Close" on:click={() => state.close()}>
           <CloseIcon aria-hidden="true" />
         </ToolbarButton>
-      </header>
+      </div>
 
       <div className={styles.scroll}>
         <PublicLink page={editor.page} />

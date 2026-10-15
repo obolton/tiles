@@ -6,7 +6,7 @@
   grid-column: 1 / -1;
   padding-block: 0.5em;
   gap: 24px;
-  color: var(--placeholder-color);
+  color: var(--secondary-text-color);
 }
 
 .actions {
