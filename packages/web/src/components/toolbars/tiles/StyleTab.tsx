@@ -40,7 +40,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           value={tile.sizing}
           onChange={(sizing) => tile.setSizing(sizing)}
           // Only tiles with intrinsic content height can be auto-sized
-          showAuto={tile.type === "TEXT" || tile.type === "IMAGE"}
+          showAuto={tile.type === "TEXT" || tile.type === "IMAGE" || tile.type === "TABLE"}
         />
 
         {tile.page.type === "FREE" && <DockSelect tile={tile} />}

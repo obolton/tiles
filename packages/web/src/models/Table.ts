@@ -7,8 +7,10 @@ import {
   clearRowCells,
   getCell,
   idsInRange,
+  DEFAULT_ROW_HEIGHT,
   type TableMapInput,
 } from "doc/tiles/table";
+import { TABLE_HEADER_HEIGHT } from "@/constants/tables";
 import Tile from "./Tile";
 import Column from "./Column";
 import Row, { type CellValue } from "./Row";
@@ -51,6 +53,8 @@ export default class Table extends Tile {
 
   readonly columns: SharedList<Column>;
   readonly rows: SharedList<Row>;
+  /** Height (px) of the header row plus every body row. */
+  readonly contentHeight: Reactive<number>;
 
   private readonly columnsMap: Y.Map<Y.Map<unknown>>;
   private readonly rowsMap: Y.Map<Y.Map<unknown>>;
@@ -78,6 +82,12 @@ export default class Table extends Tile {
 
     this.columns = new SharedList(this.columnsMap, (id, columnMap) => new Column(id, columnMap));
     this.rows = new SharedList(this.rowsMap, (id, rowMap) => new Row(id, rowMap));
+    this.contentHeight = this.rowsContent.derive((rows) =>
+      Array.from(rows.values()).reduce((height, row) => {
+        const rowHeight = row.get("height");
+        return height + (typeof rowHeight === "number" ? rowHeight : DEFAULT_ROW_HEIGHT);
+      }, TABLE_HEADER_HEIGHT),
+    );
   }
 
   getColumnData(columnId: string): Reactive<CellValue[]> {

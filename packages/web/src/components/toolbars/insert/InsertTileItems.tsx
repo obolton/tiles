@@ -13,6 +13,9 @@ import Image from "@/models/Image";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
+import { DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
+import { SIZE_UNIT } from "@/constants/size";
+import { TABLE_HEADER_HEIGHT, TABLE_FOOTER_HEIGHT } from "@/constants/tables";
 import type { TileType } from "doc/types/enums";
 import type { JSX } from "@/jsx/jsx";
 
@@ -28,6 +31,13 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
+
+const TABLE_COLUMNS = 3;
+const TABLE_ROWS = 5;
+// Fallback height if the table is later switched from auto to a fixed size
+const TABLE_HEIGHT = Math.ceil(
+  (TABLE_HEADER_HEIGHT + TABLE_ROWS * DEFAULT_ROW_HEIGHT + TABLE_FOOTER_HEIGHT) / SIZE_UNIT,
+);
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
@@ -104,9 +114,10 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
           await Table.create(Editor.current.page, {
             parentId: sectionId,
             beforeId: null,
-            height: 15,
-            columns: 3,
-            rows: 5,
+            sizing: "AUTO",
+            height: TABLE_HEIGHT,
+            columns: TABLE_COLUMNS,
+            rows: TABLE_ROWS,
           });
           break;
       }

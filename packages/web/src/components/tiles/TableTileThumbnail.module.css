@@ -3,4 +3,10 @@
   inset: 0;
   border-radius: inherit;
   overflow: hidden;
+
+  &.auto {
+    position: relative;
+    inset: auto;
+    width: 100%;
+  }
 }
