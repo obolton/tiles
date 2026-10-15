@@ -236,4 +236,37 @@ describe("Editor", () => {
       expect(editor.references.size).toBe(0);
     });
   });
+
+  describe("sidebar panels", () => {
+    beforeEach(() => {
+      vi.spyOn(editor.versionHistory, "refresh").mockResolvedValue();
+      editor.setEditable(true);
+    });
+
+    test("opening the share panel closes version history", () => {
+      editor.versionHistory.open();
+      editor.share.open();
+
+      expect(editor.share.isOpen.value).toBe(true);
+      expect(editor.versionHistory.isOpen.value).toBe(false);
+      editor.share.close();
+    });
+
+    test("opening version history closes the share panel", () => {
+      editor.share.open();
+      editor.versionHistory.open();
+
+      expect(editor.versionHistory.isOpen.value).toBe(true);
+      expect(editor.share.isOpen.value).toBe(false);
+      editor.versionHistory.close();
+    });
+
+    test("leaving edit mode closes the share panel", () => {
+      editor.share.open();
+
+      editor.setEditable(false);
+
+      expect(editor.share.isOpen.value).toBe(false);
+    });
+  });
 });

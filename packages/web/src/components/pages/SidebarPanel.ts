@@ -1,0 +1,46 @@
+import { flag } from "@/utils/reactivity";
+import { focusInside, getFocusedDescendant } from "@/utils/focus";
+
+/** Open state for a panel in the editor's end slot, moving focus into the panel on open and back to its button on close. */
+export default class SidebarPanel {
+  readonly isOpen = flag(false);
+
+  constructor(
+    readonly panelId: string,
+    readonly buttonId: string,
+  ) {}
+
+  open() {
+    if (this.isOpen.value) {
+      return;
+    }
+    this.isOpen.on();
+    requestAnimationFrame(() => {
+      const panel = document.getElementById(this.panelId);
+      if (panel) {
+        focusInside(panel);
+      }
+    });
+  }
+
+  close() {
+    if (!this.isOpen.value) {
+      return;
+    }
+    // Capture focus before the flag flips and the panel detaches
+    const panel = document.getElementById(this.panelId);
+    const hadFocus = !!panel && !!getFocusedDescendant(panel);
+    this.isOpen.off();
+    if (hadFocus) {
+      document.getElementById(this.buttonId)?.focus();
+    }
+  }
+
+  toggle() {
+    if (this.isOpen.value) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+}

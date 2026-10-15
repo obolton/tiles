@@ -1,10 +1,14 @@
 import Row from "@/components/rows/Row";
+import ProfileImage from "@/components/profile-image/ProfileImage";
 import RemoveIcon from "@/icons/remove.svg?jsx";
+import styles from "./UserRow.module.css";
 import type { User } from "@/types/collaboration";
+import type { Reactive } from "@/utils/reactivity";
 
 export interface UserRowProps {
   user: User;
-  description?: string;
+  description?: string | Reactive<string>;
+  online?: Reactive<boolean>;
   showRemoveButton?: boolean;
   onRemove?: (user: User) => void;
 }
@@ -12,13 +16,16 @@ export interface UserRowProps {
 export default function UserRow({
   user,
   description,
+  online,
   showRemoveButton = false,
   onRemove,
 }: UserRowProps) {
   return (
     <Row
       icon={
-        user.imageUrl ? <img className="profile-image" src={user.imageUrl} alt={user.name} /> : null
+        <span classList={{ [styles.avatar]: true, [styles.online]: online ?? false }}>
+          <ProfileImage imageUrl={user.imageUrl} name={user.name} size="medium" />
+        </span>
       }
       title={user.name}
       subtitle={description}
