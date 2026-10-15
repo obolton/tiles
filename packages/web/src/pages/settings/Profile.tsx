@@ -1,12 +1,14 @@
 import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
+import ProfileImage from "@/components/profile-image/ProfileImage";
 import client from "@/api/client";
 import { setSearchParams } from "@/utils/urls";
 import { showToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import { user as userProperties } from "@/utils/sessions";
+import { reactive } from "@/utils/reactivity";
 import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/file-picker/FilePicker";
@@ -68,10 +70,15 @@ async function onSubmit(event: SubmitEvent) {
   }
 }
 
+function getLargeImageUrl(imageUrl: string | null) {
+  return imageUrl ? setSearchParams(imageUrl, { class: "large" }) : null;
+}
+
 export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
+  const imageUrl = reactive(getLargeImageUrl(user.imageUrl));
+
   async function onChangeProfileImage(event: Event) {
     const filePicker = event.currentTarget as FilePicker;
-    const image = filePicker.firstElementChild as HTMLImageElement;
 
     try {
       const file = filePicker.file;
@@ -79,7 +86,7 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
         return;
       }
       const url = URL.createObjectURL(file);
-      image.src = url;
+      imageUrl.value = url;
       const { id: imageKey } = await uploadMedia({
         file,
         purpose: "profile",
@@ -87,7 +94,7 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
       });
       const userInfo = await client.users.update.mutate({ imageKey });
       userProperties.value = userInfo;
-      image.src = setSearchParams(userInfo.imageUrl!, { class: "large" })!;
+      imageUrl.value = getLargeImageUrl(userInfo.imageUrl);
       URL.revokeObjectURL(url);
     } catch (error) {
       handleError(error);
@@ -103,15 +110,13 @@ export default function Profile({ workspaceId, user, isAdmin }: ProfileProps) {
           <file-picker
             className={styles.file}
             accept={ACCEPT_CONTENT_TYPES.join(",")}
+            data-tooltip="Select a new profile image"
+            data-tooltip-position="right"
             on:change={onChangeProfileImage}
           >
-            <img
-              className="profile-image large"
-              src={setSearchParams(user.imageUrl!, { class: "large" })}
-              alt={user.name}
-              data-tooltip="Select a new profile image"
-              data-tooltip-position="right"
-            />
+            {imageUrl.derive((url) => (
+              <ProfileImage imageUrl={url} name={user.name} size="xlarge" />
+            ))}
           </file-picker>
 
           <label>

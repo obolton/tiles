@@ -3,7 +3,7 @@ import styles from "./ProfileImage.module.css";
 interface ProfileImageProps {
   imageUrl: string | null;
   name: string;
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "xlarge";
   color?: string;
 }
 
