@@ -27,10 +27,18 @@ describe("purgeCache", () => {
     );
   });
 
+  test("maps purgeEverything to the API field name", async () => {
+    fetchMock.mockResolvedValue(new Response("{}", { status: 200 }));
+
+    await purgeCache({ purgeEverything: true });
+
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ purge_everything: true }));
+  });
+
   test("throws when the request fails", async () => {
     fetchMock.mockResolvedValue(new Response("nope", { status: 403 }));
 
-    await expect(purgeCache({ purge_everything: true })).rejects.toThrow(
+    await expect(purgeCache({ purgeEverything: true })).rejects.toThrow(
       "Cloudflare cache purge failed: 403 nope",
     );
   });

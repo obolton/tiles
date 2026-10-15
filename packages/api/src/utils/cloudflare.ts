@@ -8,7 +8,7 @@ const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
 
 const API_BASE_URL = "https://api.cloudflare.com/client/v4";
 
-type PurgeCacheOptions = { files: string[] } | { purge_everything: true };
+type PurgeCacheOptions = { files: string[] } | { purgeEverything: true };
 
 export async function purgeCache(options: PurgeCacheOptions) {
   const response = await fetch(`${API_BASE_URL}/zones/${CLOUDFLARE_ZONE_ID}/purge_cache`, {
@@ -17,7 +17,7 @@ export async function purgeCache(options: PurgeCacheOptions) {
       Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(options),
+    body: JSON.stringify("files" in options ? options : { purge_everything: true }),
   });
   if (!response.ok) {
     throw new Error(`Cloudflare cache purge failed: ${response.status} ${await response.text()}`);

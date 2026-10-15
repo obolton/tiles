@@ -1,5 +1,5 @@
 import { purgeCache } from "@/utils/cloudflare";
 
 console.log("Purging CDN cache...");
-await purgeCache({ purge_everything: true });
+await purgeCache({ purgeEverything: true });
 console.log("Purged CDN cache.");
