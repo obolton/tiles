@@ -85,7 +85,7 @@ body[data-editing] .figure {
   & > p {
     overflow: hidden;
     text-align: center;
-    color: var(--placeholder-color);
+    color: var(--secondary-text-color);
     text-overflow: ellipsis;
   }
 }

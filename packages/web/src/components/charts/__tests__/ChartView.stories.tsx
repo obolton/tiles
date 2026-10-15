@@ -69,12 +69,6 @@ const editor = Editor.init(PAGE, doc);
 
 const meta = {
   title: "ChartView",
-  parameters: {
-    a11y: {
-      // Observable Plot puts an aria-label on each mark's <g>, which has no role to permit it.
-      test: "todo",
-    },
-  },
 } satisfies Meta;
 export default meta;
 

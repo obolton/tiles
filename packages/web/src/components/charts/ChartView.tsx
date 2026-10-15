@@ -35,6 +35,7 @@ export default function ChartView({ chart, className }: ChartViewProps) {
         {(series) => (
           <chart-series
             type={series.type}
+            label={series.column.derive((column) => column.title)}
             color={series.fill.derive((fill) => {
               switch (fill?.type) {
                 case "color":
