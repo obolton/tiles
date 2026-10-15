@@ -16,21 +16,21 @@ export default function ImageModal({ file, cancel, confirm }: ImageModalProps) {
         <h2>Image</h2>
 
         <tab-bar>
-          <tab-item id="upload-tab" for="upload-tab-panel" selected>
+          <tab-item id="image-modal-upload-tab" for="image-modal-upload-tab-panel" selected>
             Upload
           </tab-item>
 
-          <tab-item id="generate-tab" for="generate-tab-panel">
+          <tab-item id="image-modal-generate-tab" for="image-modal-generate-tab-panel">
             Generate
           </tab-item>
         </tab-bar>
       </ModalHeader>
 
-      <tab-panel id="upload-tab-panel" open>
+      <tab-panel id="image-modal-upload-tab-panel" open>
         <UploadImage file={file} confirm={confirm} cancel={cancel} />
       </tab-panel>
 
-      <tab-panel id="generate-tab-panel">
+      <tab-panel id="image-modal-generate-tab-panel">
         <GenerateImage confirm={confirm} cancel={cancel} />
       </tab-panel>
     </>
