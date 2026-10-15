@@ -51,7 +51,7 @@ export default class ListSelect extends HTMLElement {
     this.internals.role = "combobox";
     this.internals.ariaHasPopup = "listbox";
 
-    const shadow = this.attachShadow({ mode: "closed" });
+    const shadow = this.attachShadow({ mode: "open" });
     shadow.adoptedStyleSheets = [stylesheet];
 
     this.defaultIconSlot = document.createElement("slot");

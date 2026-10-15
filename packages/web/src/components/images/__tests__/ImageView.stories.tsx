@@ -29,6 +29,7 @@ function createImage(overrides: Partial<ImageProps> = {}): Image {
       imageId: "sample-image",
       size: { width: 1200, height: 800 },
       text: CAPTION,
+      alt: "A sample image",
       ...overrides,
     }),
     {},

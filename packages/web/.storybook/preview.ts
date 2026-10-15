@@ -20,6 +20,9 @@ function renderStory(node: JSX.Node) {
 export default {
   decorators: [(Story) => renderStory(Story())],
   parameters: {
+    a11y: {
+      test: "error",
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

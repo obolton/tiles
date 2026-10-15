@@ -1,4 +1,4 @@
-import cloudflare, { CLOUDFLARE_ZONE_ID } from "./cloudflare";
+import { purgeCache } from "./cloudflare";
 
 const HOME_PAGE_ID = process.env.PAGE_ID;
 
@@ -19,12 +19,9 @@ export function invalidateCachedUrls(urls: string[]) {
     return;
   }
 
-  cloudflare.cache
-    .purge({
-      zone_id: CLOUDFLARE_ZONE_ID,
-      files: urls,
-    })
-    .catch((error: unknown) => console.error("Failed to invalidate cached URLs:", urls, error));
+  purgeCache({ files: urls }).catch((error: unknown) =>
+    console.error("Failed to invalidate cached URLs:", urls, error),
+  );
 }
 
 export function invalidateCachedPages(ids: string[]) {

@@ -5,7 +5,7 @@
   --focus-outline: 3px solid var(--focus-ring-color);
   --reference-color: color(display-p3 0.3 0 1);
   --success-color: rgb(0 255 0 / 80%);
-  --destructive-color: rgb(255 0 0 / 80%);
+  --destructive-color: rgb(220 0 0);
   --lightness: 90%;
   --chroma: 25%;
   --ui-font: "Inter", system, sans-serif;
@@ -23,7 +23,7 @@ html {
 }
 
 body {
-  --secondary-text-color: color-mix(in oklch, var(--text-color) 50%, transparent);
+  --secondary-text-color: color-mix(in oklch, var(--text-color) 70%, transparent);
   --placeholder-color: color-mix(in oklch, var(--text-color) 30%, transparent);
   --highlight-color: var(--accent-color, rgb(0 112 243 / 70%));
   --accent: linear-gradient(
