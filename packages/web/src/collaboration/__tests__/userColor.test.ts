@@ -7,8 +7,9 @@ describe("getUserColor", () => {
     expect(getUserColor(7)).toBe(getUserColor(7));
   });
 
-  test("returns a hex color string", () => {
-    expect(getUserColor(0)).toMatch(/^#[0-9a-f]{6}$/i);
+  test("returns an oklch color string", () => {
+    expect(getUserColor(0)).toBe("oklch(0.7 0.15 0.000)");
+    expect(getUserColor(1)).toBe("oklch(0.7 0.15 137.508)");
   });
 
   test("returns distinct colors for the first many participants", () => {
