@@ -11,6 +11,8 @@ import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
 import type Editor from "@/editor/Editor";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 // Tile is abstract; exercise its base behavior via Section.
 const PROPS: CreateSectionInput = {
   layout: "VERTICAL",

@@ -1,8 +1,10 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Section, { type CreateSectionInput } from "@/models/Section";
 import { createEditor } from "@/test/editor";
 import type { Layout } from "doc/types/tiles/section";
 import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const SECTION_PROPS: Omit<CreateSectionInput, "parentId" | "beforeId"> = {
   layout: "GRID",

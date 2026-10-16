@@ -8,6 +8,8 @@ import { PAGE } from "@/test/fixtures/Page";
 import type Editor from "@/editor/Editor";
 import type { WriteEvent } from "api/routes/ai/ai";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 vi.mock("@/api/client", () => ({
   default: {
     ai: {

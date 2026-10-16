@@ -1,8 +1,10 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import Text, { type CreateTextInput } from "@/models/Text";
 import { createEditor } from "@/test/editor";
 import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const TEXT_PROPS: Omit<CreateTextInput, "parentId" | "beforeId"> = {
   align: "TOP",

@@ -13,11 +13,6 @@ interface CreateEditorOptions {
 
 let current: Editor | null = null;
 
-/**
- * Creates an editor on a fresh document. `Editor` is a singleton, so the
- * previously created editor is disposed first; call this in `beforeEach` to
- * give every test its own page.
- */
 export function createEditor({ page, editable = true }: CreateEditorOptions = {}): Editor {
   current?.dispose();
   setEditMode(false);

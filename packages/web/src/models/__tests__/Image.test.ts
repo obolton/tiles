@@ -1,9 +1,11 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Image, { type CreateImageInput } from "@/models/Image";
 import { createEditor } from "@/test/editor";
 import { createState } from "@/utils/richText/state";
 import type { RichText } from "@/utils/richText/types";
 import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const IMAGE_TEXT: RichText = [
   {

@@ -5,6 +5,8 @@ import { createEditor } from "@/test/editor";
 import { publishSelection } from "@/test/mocks/PageCollaboration";
 import type Editor from "@/editor/Editor";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 const PROPS: CreateSectionInput = {
   layout: "VERTICAL",
   sizing: "CUSTOM",

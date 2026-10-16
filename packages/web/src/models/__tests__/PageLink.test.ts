@@ -1,7 +1,9 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import PageLink, { type CreatePageLinkInput } from "@/models/PageLink";
 import { createEditor } from "@/test/editor";
 import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const LINKED_PAGE = {
   id: "linked-page-id",

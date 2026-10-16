@@ -91,7 +91,6 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 - Package test helpers:
   - `src/test/mocks`: Shared mocks
   - `src/test/fixtures`: Fixtures
-  - `packages/web/src/test/editor.ts`: `createEditor()` for tests that need an `Editor`; call it in `beforeEach` so each test gets a fresh page.
 
 ### Unit tests
 

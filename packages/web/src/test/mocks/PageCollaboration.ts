@@ -5,10 +5,8 @@ import type { PageCollaboration as ActualPageCollaboration } from "@/collaborati
 export const publishSelection = vi.fn<ActualPageCollaboration["publishSelection"]>();
 export const dispose = vi.fn<ActualPageCollaboration["dispose"]>();
 
-/**
- * Stands in for the real session, which needs a collaboration server and
- * IndexedDB. Registered for every test in `src/test/setup.ts`.
- */
+// Stands in for the real session, which needs a collaboration server and IndexedDB. Use with:
+// vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 export class PageCollaboration implements Pick<
   ActualPageCollaboration,
   "pageId" | "doc" | "publishSelection" | "dispose"

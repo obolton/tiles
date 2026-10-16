@@ -7,6 +7,8 @@ import { buildSectionMap } from "doc/tiles/section";
 import { buildTableMap, DEFAULT_COLUMN_WIDTH, DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
 import type Editor from "@/editor/Editor";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 describe("Table", () => {
   let editor: Editor;
   let table: Table;

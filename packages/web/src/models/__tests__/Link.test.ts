@@ -5,6 +5,8 @@ import { PAGE } from "@/test/fixtures/Page";
 import client from "@/api/client";
 import type Editor from "@/editor/Editor";
 
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
 const LINK_PROPS = {
   url: "https://tiles.dev",
   title: "Link title",
