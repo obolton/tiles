@@ -1,3 +1,4 @@
 .heading {
   margin: 1em 8px 0.5em;
+  font-size: clamp(1rem, 2vw, 1.25rem);
 }

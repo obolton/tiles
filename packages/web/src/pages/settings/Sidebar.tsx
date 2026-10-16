@@ -26,7 +26,7 @@ export default function Sidebar({ workspaceId, page, isAdmin = false }: SidebarP
         </li>
       </ul>
 
-      <h3 className={styles.heading}>Workspace</h3>
+      <h2 className={styles.heading}>Workspace</h2>
 
       <ul className="navigation-menu">
         <li aria-current={page === "GENERAL" ? "page" : "false"}>
