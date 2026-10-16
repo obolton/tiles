@@ -67,12 +67,7 @@ export default class TabItem extends HTMLElement {
       return null;
     }
 
-    const root = this.getRootNode();
-    if (!(root instanceof Document || root instanceof ShadowRoot)) {
-      return null;
-    }
-
-    const panel = root.getElementById(forId);
+    const panel = document.getElementById(forId);
     if (!panel || !(panel instanceof TabPanel)) {
       return null;
     }

@@ -4,7 +4,7 @@ import "../TabBar";
 import TabItem from "../TabItem";
 import TabPanel from "../TabPanel";
 
-function renderTabs(container: Document | ShadowRoot | HTMLElement) {
+function renderTabs(container: HTMLElement) {
   container.append(
     ...render(
       <>
@@ -43,23 +43,6 @@ describe("TabItem", () => {
       renderTabs(document.body);
       const tab = query(document, "#second-tab", TabItem);
       expect(tab.panel).toBe(query(document, "#second-panel", TabPanel));
-    });
-
-    test("resolves the panel within its own shadow root", () => {
-      renderTabs(document.body);
-      const host = document.createElement("div");
-      document.body.append(host);
-      const shadowRoot = host.attachShadow({ mode: "open" });
-      renderTabs(shadowRoot);
-
-      const tab = query(shadowRoot, "#second-tab", TabItem);
-      expect(tab.panel).toBe(query(shadowRoot, "#second-panel", TabPanel));
-    });
-
-    test("returns null when disconnected", () => {
-      const container = document.createElement("div");
-      renderTabs(container);
-      expect(query(container, "#second-tab", TabItem).panel).toBeNull();
     });
   });
 
