@@ -4,6 +4,7 @@ import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
+import SharePanel from "@/components/collaboration/SharePanel";
 import If from "@/jsx/if";
 import { combine } from "@/utils/reactivity";
 import { handleError } from "@/utils/errors";
@@ -19,11 +20,16 @@ export interface EditablePageProps {
 }
 
 export default function EditablePage({ editor }: EditablePageProps) {
-  const { isEditable, selection } = editor;
+  const { isEditable, selection, versionHistory, share } = editor;
 
   const showPageToolbar = combine(
     { selection, isEditable },
     ({ selection, isEditable }) => isEditable && selection.size === 0,
+  );
+
+  const isSidebarOpen = combine(
+    { versionHistory: versionHistory.isOpen, share: share.isOpen },
+    ({ versionHistory, share }) => versionHistory || share,
   );
 
   return (
@@ -50,8 +56,17 @@ export default function EditablePage({ editor }: EditablePageProps) {
         page={editor.page}
         isEditable={isEditable}
         tiles={editor.page.tiles}
-        end={<VersionHistoryPanel state={editor.versionHistory} />}
-        endVisible={editor.versionHistory.isOpen}
+        end={
+          <>
+            <If condition={versionHistory.isOpen}>
+              <VersionHistoryPanel state={versionHistory} />
+            </If>
+            <If condition={share.isOpen}>
+              <SharePanel state={share} editor={editor} />
+            </If>
+          </>
+        }
+        endVisible={isSidebarOpen}
       />
     </>
   );

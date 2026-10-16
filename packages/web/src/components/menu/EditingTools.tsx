@@ -1,9 +1,9 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
-import CollaborationPopover from "@/components/collaboration/CollaborationPopover";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
-import PeopleIcon from "@/icons/people.svg?jsx";
+import ShareIcon from "@/icons/share.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
+import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import {
   VERSION_HISTORY_BUTTON_ID,
   VERSION_HISTORY_PANEL_ID,
@@ -36,15 +36,14 @@ export default function EditingTools({ editor }: EditingToolsProps) {
       </ToolbarButton>
 
       <ToolbarButton
-        id="collaboration-button"
-        label="Collaboration"
-        popovertarget="collaboration-popover"
-        aria-haspopup="menu"
+        id={SHARE_BUTTON_ID}
+        label="Share"
+        aria-pressed={editor.share.isOpen}
+        aria-controls={SHARE_PANEL_ID}
+        on:click={() => editor.share.toggle()}
       >
-        <PeopleIcon aria-hidden="true" />
+        <ShareIcon aria-hidden="true" />
       </ToolbarButton>
-
-      <CollaborationPopover page={editor.page} id="collaboration-popover" />
 
       <ToolbarButton
         id={VERSION_HISTORY_BUTTON_ID}

@@ -5,6 +5,7 @@
   --focus-outline: 3px solid var(--focus-ring-color);
   --reference-color: color(display-p3 0.3 0 1);
   --success-color: rgb(0 255 0 / 80%);
+  --online-color: rgb(52 199 89);
   --destructive-color: rgb(220 0 0);
   --lightness: 90%;
   --chroma: 25%;

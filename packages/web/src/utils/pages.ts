@@ -12,3 +12,8 @@ const PAGE_TYPE_LABELS: Record<PageData["type"], string> = {
 export function getPageDescription(page: Pick<PageData, "type" | "author">) {
   return `A ${PAGE_TYPE_LABELS[page.type]} by ${page.author.name}, created with ${SITE_NAME}.`;
 }
+
+/** The shareable URL of a page, for visitors with the public link. */
+export function getPublicPageUrl(pageId: string, origin = location.origin) {
+  return new URL(`/pages/${pageId}`, origin).href;
+}

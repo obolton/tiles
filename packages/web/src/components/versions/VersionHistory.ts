@@ -1,6 +1,6 @@
 import client from "@/api/client";
+import SidebarPanel from "@/components/pages/SidebarPanel";
 import { flag, reactive } from "@/utils/reactivity";
-import { focusInside, getFocusedDescendant } from "@/utils/focus";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 
@@ -9,8 +9,7 @@ export type VersionEntry = AppRouterOutputs["versions"]["list"]["versions"][numb
 export const VERSION_HISTORY_PANEL_ID = "version-history-panel";
 export const VERSION_HISTORY_BUTTON_ID = "version-history-button";
 
-export default class VersionHistory {
-  readonly isOpen = flag(false);
+export default class VersionHistory extends SidebarPanel {
   readonly selectedId = reactive<string | null>(null);
   readonly versions = reactive<VersionEntry[]>([]);
   readonly nextCursor = reactive<string | null>(null);
@@ -20,6 +19,7 @@ export default class VersionHistory {
     private readonly pageId: string,
     readonly previewVersion: VersionEntry | null = null,
   ) {
+    super(VERSION_HISTORY_PANEL_ID, VERSION_HISTORY_BUTTON_ID);
     if (previewVersion) {
       this.isOpen.on();
       this.selectedId.value = previewVersion.id;
@@ -29,43 +29,20 @@ export default class VersionHistory {
     }
   }
 
-  open() {
+  override open() {
     if (this.isOpen.value) {
       return;
     }
-    this.isOpen.on();
+    super.open();
     this.refresh().catch(handleError);
-    requestAnimationFrame(() => {
-      const panel = document.getElementById(VERSION_HISTORY_PANEL_ID);
-      if (panel) {
-        focusInside(panel);
-      }
-    });
   }
 
-  close() {
+  override close() {
     if (this.previewVersion) {
       this.exit();
       return;
     }
-    if (!this.isOpen.value) {
-      return;
-    }
-    // Capture focus before the flag flips and the panel detaches
-    const panel = document.getElementById(VERSION_HISTORY_PANEL_ID);
-    const hadFocus = !!panel && !!getFocusedDescendant(panel);
-    this.isOpen.off();
-    if (hadFocus) {
-      document.getElementById(VERSION_HISTORY_BUTTON_ID)?.focus();
-    }
-  }
-
-  toggle() {
-    if (this.isOpen.value) {
-      this.close();
-    } else {
-      this.open();
-    }
+    super.close();
   }
 
   select(id: string) {

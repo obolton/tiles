@@ -1,0 +1,27 @@
+@layer base {
+  .sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    block-size: 100%;
+    background: var(--ui-background, #fff);
+    border-inline-start: 1px solid rgb(0 0 0 / 8%);
+  }
+
+  .sidebar-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 12px 12px 4px 16px;
+  }
+
+  .sidebar-panel-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -19,6 +19,7 @@ import Image from "@/models/Image";
 import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
 import VersionHistory from "@/components/versions/VersionHistory";
+import Share from "@/components/collaboration/Share";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
@@ -44,6 +45,7 @@ export default class Editor {
   readonly isTileEditable: Reactive<boolean>;
   readonly chat: ChatState;
   readonly versionHistory: VersionHistory;
+  readonly share = new Share();
 
   readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
@@ -125,6 +127,9 @@ export default class Editor {
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
     this.versionHistory = new VersionHistory(this.page.id, version ?? null);
+    // Only one end-slot panel at a time
+    this.versionHistory.isOpen.subscribe(({ value }) => value && this.share.close());
+    this.share.isOpen.subscribe(({ value }) => value && this.versionHistory.close());
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -185,6 +190,7 @@ export default class Editor {
     } else {
       this.clearSelection();
       this.versionHistory.close();
+      this.share.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();
