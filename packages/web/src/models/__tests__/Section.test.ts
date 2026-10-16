@@ -1,16 +1,10 @@
-import { describe, expect, test, vi } from "vitest";
-import * as Y from "yjs";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Section, { type CreateSectionInput } from "@/models/Section";
-import Editor from "@/editor/Editor";
-import { PAGE } from "@/test/fixtures/Page";
+import { createEditor } from "@/test/editor";
 import type { Layout } from "doc/types/tiles/section";
+import type Editor from "@/editor/Editor";
 
-vi.mock("@/collaboration/PageCollaboration", () => ({
-  PageCollaboration: class {
-    publishSelection() {}
-    dispose() {}
-  },
-}));
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const SECTION_PROPS: Omit<CreateSectionInput, "parentId" | "beforeId"> = {
   layout: "GRID",
@@ -19,8 +13,11 @@ const SECTION_PROPS: Omit<CreateSectionInput, "parentId" | "beforeId"> = {
 };
 
 describe("Section", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
-  editor.setEditable(true);
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createSection(overrides: Partial<CreateSectionInput> = {}): Section {
     return editor.page.createTile(

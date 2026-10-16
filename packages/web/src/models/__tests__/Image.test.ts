@@ -1,10 +1,11 @@
-import { describe, expect, test } from "vitest";
-import * as Y from "yjs";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Image, { type CreateImageInput } from "@/models/Image";
-import Editor from "@/editor/Editor";
+import { createEditor } from "@/test/editor";
 import { createState } from "@/utils/richText/state";
-import { PAGE } from "@/test/fixtures/Page";
 import type { RichText } from "@/utils/richText/types";
+import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const IMAGE_TEXT: RichText = [
   {
@@ -22,7 +23,11 @@ const IMAGE_PROPS: Omit<CreateImageInput, "parentId" | "beforeId"> = {
 };
 
 describe("Image", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createImage(overrides: Partial<CreateImageInput> = {}): Image {
     return editor.page.createTile(Image.createMap({ ...IMAGE_PROPS, ...overrides }), {}) as Image;

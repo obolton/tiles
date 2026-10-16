@@ -51,6 +51,8 @@ export default class Editor {
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
 
+  #abort = new AbortController();
+
   get pageId() {
     return this.page.id;
   }
@@ -198,14 +200,16 @@ export default class Editor {
   }
 
   enablePointerEvents() {
+    const { signal } = this.#abort;
     document.addEventListener("pointerdown", this.pointerDown.bind(this), {
       passive: true,
+      signal,
     });
-    document.addEventListener("focusin", this.focusIn.bind(this));
-    document.addEventListener("keydown", this.keyDown.bind(this));
-    document.addEventListener("paste", this.paste.bind(this));
-    document.addEventListener("dragover", this.dragOver.bind(this));
-    document.addEventListener("drop", this.drop.bind(this));
+    document.addEventListener("focusin", this.focusIn.bind(this), { signal });
+    document.addEventListener("keydown", this.keyDown.bind(this), { signal });
+    document.addEventListener("paste", this.paste.bind(this), { signal });
+    document.addEventListener("dragover", this.dragOver.bind(this), { signal });
+    document.addEventListener("drop", this.drop.bind(this), { signal });
   }
 
   private pointerDown(event: PointerEvent) {
@@ -577,8 +581,12 @@ export default class Editor {
   }
 
   dispose(): void {
+    this.#abort.abort();
     this.stopCollaboration();
     this.undoManager?.dispose();
+    if (Editor.#current === this) {
+      Editor.#current = undefined;
+    }
   }
 
   private rememberSelection(meta: Map<unknown, unknown>) {

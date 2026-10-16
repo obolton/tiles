@@ -1,8 +1,9 @@
-import { describe, expect, test } from "vitest";
-import * as Y from "yjs";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import PageLink, { type CreatePageLinkInput } from "@/models/PageLink";
-import Editor from "@/editor/Editor";
-import { PAGE } from "@/test/fixtures/Page";
+import { createEditor } from "@/test/editor";
+import type Editor from "@/editor/Editor";
+
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const LINKED_PAGE = {
   id: "linked-page-id",
@@ -12,7 +13,11 @@ const LINKED_PAGE = {
 };
 
 describe("PageLink", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createPageLink(overrides: Partial<CreatePageLinkInput> = {}): PageLink {
     return editor.page.createTile(

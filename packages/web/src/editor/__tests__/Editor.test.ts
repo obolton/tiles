@@ -1,16 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
-import Editor from "@/editor/Editor";
 import Section, { type CreateSectionInput } from "@/models/Section";
-import { PAGE } from "@/test/fixtures/Page";
-import type { PageCollaboration } from "@/collaboration/PageCollaboration";
+import { createEditor } from "@/test/editor";
+import { publishSelection } from "@/test/mocks/PageCollaboration";
+import type Editor from "@/editor/Editor";
 
-vi.mock("@/collaboration/PageCollaboration", () => ({
-  PageCollaboration: class {
-    publishSelection() {}
-    dispose() {}
-  },
-}));
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
 const PROPS: CreateSectionInput = {
   layout: "VERTICAL",
@@ -25,8 +20,11 @@ const PROPS: CreateSectionInput = {
 };
 
 describe("Editor", () => {
-  const editor = Editor.init(PAGE, new Y.Doc());
-  editor.setEditable(true);
+  let editor: Editor;
+
+  beforeEach(() => {
+    editor = createEditor();
+  });
 
   function createTile() {
     return editor.page.createTile(Section.createMap(PROPS), {});
@@ -35,19 +33,6 @@ describe("Editor", () => {
   function tilesMap() {
     return editor.page.doc.getMap<Y.Map<unknown>>("tiles");
   }
-
-  function mockCollaboration() {
-    const publishSelection = vi.fn<PageCollaboration["publishSelection"]>();
-    const collaboration: Pick<PageCollaboration, "publishSelection"> = { publishSelection };
-    editor.collaboration = collaboration as PageCollaboration;
-    return publishSelection;
-  }
-
-  beforeEach(() => {
-    editor.clearSelection();
-    editor.clearReferences();
-    editor.collaboration = null;
-  });
 
   describe("selection", () => {
     test("starts a new undo step on selection change", () => {
@@ -89,11 +74,10 @@ describe("Editor", () => {
 
     test("publishes selection changes to collaborators", () => {
       const tile = createTile();
-      const publishSelection = mockCollaboration();
 
       editor.select([tile.id]);
 
-      expect(publishSelection).toHaveBeenCalledWith([tile.id]);
+      expect(publishSelection).toHaveBeenLastCalledWith([tile.id]);
     });
 
     test("prunes deleted tiles from the selection and references", () => {
@@ -112,13 +96,12 @@ describe("Editor", () => {
     test("publishes the pruned selection to collaborators", () => {
       const tile = createTile();
       editor.select([tile.id]);
-      const publishSelection = mockCollaboration();
 
       editor.page.doc.transact(() => {
         tilesMap().delete(tile.id);
       });
 
-      expect(publishSelection).toHaveBeenCalledWith([]);
+      expect(publishSelection).toHaveBeenLastCalledWith([]);
     });
 
     test("prunes tiles deleted by a remote client", () => {

@@ -1,14 +1,14 @@
-import { describe, expect, test } from "vitest";
-import * as Y from "yjs";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import Chart from "@/models/Chart";
-import Editor from "@/editor/Editor";
-import { PAGE } from "@/test/fixtures/Page";
+import { createEditor } from "@/test/editor";
+import type Editor from "@/editor/Editor";
 
-const editor = Editor.init(PAGE, new Y.Doc());
-const { page } = editor;
+vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
+
+let editor: Editor;
 
 function createChart(): Chart {
-  const chart = page.createTile(
+  const chart = editor.page.createTile(
     Chart.createMap({
       tableId: "table-id",
       label: { id: "col-1", title: "Revenue" },
@@ -21,6 +21,10 @@ function createChart(): Chart {
 }
 
 describe("Chart", () => {
+  beforeEach(() => {
+    editor = createEditor();
+  });
+
   test("maps properties to reactive values", () => {
     const chart = createChart();
 
