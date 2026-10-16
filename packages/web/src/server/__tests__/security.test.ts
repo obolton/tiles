@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { buildCSPHeader, buildCSPPolicy, securityHeaders, type CSPPolicy } from "../security";
+import {
+  buildCSPHeader,
+  buildCSPPolicy,
+  buildCSPSources,
+  buildSecurityHeaders,
+  securityHeaders,
+  type CSPEnv,
+  type CSPPolicy,
+} from "../security";
 
 describe("buildCSPHeader", () => {
   test("formats a single directive with sources", () => {
@@ -154,5 +162,61 @@ describe("securityHeaders", () => {
 
   test("includes Referrer-Policy header", () => {
     expect(securityHeaders["Referrer-Policy"]).toBe("strict-origin-when-cross-origin");
+  });
+});
+
+const PRODUCTION_ENV: CSPEnv = {
+  PUBLIC_API_ORIGIN: "https://api.example.com",
+  PUBLIC_UPLOAD_ORIGIN: "https://uploads.example.com",
+  PUBLIC_COLLABORATION_URL: "wss://api.example.com/collaboration",
+  PUBLIC_FONTS_BASE_URL: "https://cdn.example.com/fonts",
+  PUBLIC_IMAGES_BASE_URL: "https://cdn.example.com/images",
+  PUBLIC_PROFILE_IMAGES_BASE_URL: "https://cdn.example.com/profile-images",
+};
+
+describe("buildCSPSources", () => {
+  test("reduces base URLs to their origins and dedupes them", () => {
+    const sources = buildCSPSources(PRODUCTION_ENV);
+    expect(sources.fontSrc).toEqual(["https://cdn.example.com"]);
+    expect(sources.imgSrc).toEqual(["https://cdn.example.com"]);
+  });
+
+  test("includes the collaboration WebSocket origin in connect-src", () => {
+    const sources = buildCSPSources(PRODUCTION_ENV);
+    expect(sources.connectSrc).toEqual([
+      "https://api.example.com",
+      "https://uploads.example.com",
+      "wss://api.example.com",
+    ]);
+  });
+
+  test("keeps a collaboration origin that differs from the API origin", () => {
+    const sources = buildCSPSources({
+      ...PRODUCTION_ENV,
+      PUBLIC_COLLABORATION_URL: "wss://collab.example.com/collaboration",
+    });
+    expect(sources.connectSrc).toContain("wss://collab.example.com");
+  });
+
+  test("ignores unset variables", () => {
+    const sources = buildCSPSources({});
+    expect(sources).toEqual({ fontSrc: [], imgSrc: [], connectSrc: [] });
+  });
+});
+
+describe("buildSecurityHeaders", () => {
+  test("omits the CSP header when disabled", () => {
+    const headers = buildSecurityHeaders(PRODUCTION_ENV, false);
+    expect(headers["Content-Security-Policy"]).toBeUndefined();
+    expect(headers["X-Content-Type-Options"]).toBe("nosniff");
+  });
+
+  test("renders a CSP header without undefined sources", () => {
+    const header = buildSecurityHeaders(PRODUCTION_ENV, true)["Content-Security-Policy"];
+    expect(header).toBeDefined();
+    expect(header).not.toContain("undefined");
+    expect(header).toContain("img-src 'self' data: blob: https://cdn.example.com");
+    expect(header).toContain("font-src 'self' https://cdn.example.com");
+    expect(header).toContain("wss://api.example.com");
   });
 });

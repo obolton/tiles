@@ -51,30 +51,60 @@ export function buildCSPPolicy(sources: CSPSources): CSPPolicy {
   };
 }
 
-function buildSecurityHeaders(): Record<string, string> {
+export interface CSPEnv {
+  PUBLIC_API_ORIGIN?: string;
+  PUBLIC_UPLOAD_ORIGIN?: string;
+  PUBLIC_COLLABORATION_URL?: string;
+  PUBLIC_FONTS_BASE_URL?: string;
+  PUBLIC_IMAGES_BASE_URL?: string;
+  PUBLIC_PROFILE_IMAGES_BASE_URL?: string;
+}
+
+// CSP source expressions with a path only match that exact path (or prefix if it
+// ends in "/"), so reduce each configured URL to its origin.
+function toOrigins(urls: (string | undefined)[]): string[] {
+  const origins = new Set<string>();
+  for (const url of urls) {
+    if (url) {
+      origins.add(new URL(url).origin);
+    }
+  }
+  return [...origins];
+}
+
+export function buildCSPSources(env: CSPEnv): CSPSources {
+  return {
+    fontSrc: toOrigins([env.PUBLIC_FONTS_BASE_URL]),
+    imgSrc: toOrigins([env.PUBLIC_IMAGES_BASE_URL, env.PUBLIC_PROFILE_IMAGES_BASE_URL]),
+    connectSrc: toOrigins([
+      env.PUBLIC_API_ORIGIN,
+      env.PUBLIC_UPLOAD_ORIGIN,
+      env.PUBLIC_COLLABORATION_URL,
+    ]),
+  };
+}
+
+export function buildSecurityHeaders(env: CSPEnv, enableCSP: boolean): Record<string, string> {
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
   };
 
-  if (import.meta.env.PROD) {
-    const cspPolicy = buildCSPPolicy({
-      fontSrc: [import.meta.env.PUBLIC_FONTS_BASE_URL as string],
-      imgSrc: [
-        import.meta.env.PROFILE_IMAGES_BASE_URL as string,
-        import.meta.env.IMAGES_BASE_URL as string,
-        import.meta.env.RESOURCES_BASE_URL as string,
-      ],
-      connectSrc: [
-        import.meta.env.PUBLIC_API_ORIGIN as string,
-        import.meta.env.PUBLIC_UPLOAD_ORIGIN as string,
-      ],
-    });
-
-    headers["Content-Security-Policy"] = buildCSPHeader(cspPolicy);
+  if (enableCSP) {
+    headers["Content-Security-Policy"] = buildCSPHeader(buildCSPPolicy(buildCSPSources(env)));
   }
 
   return headers;
 }
 
-export const securityHeaders = buildSecurityHeaders();
+export const securityHeaders = buildSecurityHeaders(
+  {
+    PUBLIC_API_ORIGIN: import.meta.env.PUBLIC_API_ORIGIN,
+    PUBLIC_UPLOAD_ORIGIN: import.meta.env.PUBLIC_UPLOAD_ORIGIN,
+    PUBLIC_COLLABORATION_URL: import.meta.env.PUBLIC_COLLABORATION_URL,
+    PUBLIC_FONTS_BASE_URL: import.meta.env.PUBLIC_FONTS_BASE_URL,
+    PUBLIC_IMAGES_BASE_URL: import.meta.env.PUBLIC_IMAGES_BASE_URL,
+    PUBLIC_PROFILE_IMAGES_BASE_URL: import.meta.env.PUBLIC_PROFILE_IMAGES_BASE_URL,
+  },
+  import.meta.env.PROD,
+);
