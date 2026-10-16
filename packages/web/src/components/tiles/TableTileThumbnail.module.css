@@ -8,5 +8,6 @@
     position: relative;
     inset: auto;
     width: 100%;
+    contain: content;
   }
 }

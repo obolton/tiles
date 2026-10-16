@@ -9,6 +9,8 @@ import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
 import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
 import { viewTransition } from "@/utils/transitions";
+import { SIZE_UNIT } from "@/constants/size";
+import type { Sizing } from "doc/types/enums";
 import type { JSX } from "@/jsx/jsx";
 import type Theme from "@/models/Theme";
 import type Tile from "@/models/Tile";
@@ -25,6 +27,17 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
     return resolved ? getThemeColors(resolved) : [];
   });
 
+  function setSizing(sizing: Sizing) {
+    const element = tile.sizing.value === "AUTO" ? document.getElementById(id) : null;
+    tile.page.doc.transact(() => {
+      // Keep the auto-sized height as the starting point for manual sizing
+      if (sizing === "CUSTOM" && element) {
+        tile.setSize({ height: Math.max(1, Math.round(element.offsetHeight / SIZE_UNIT)) });
+      }
+      tile.setSizing(sizing);
+    });
+  }
+
   async function setTheme(theme: Theme | null) {
     if (theme) {
       await loadThemeFonts(theme.id);
@@ -38,7 +51,7 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
       <ToolbarGroup label="Layout">
         <AspectRatioSelect
           value={tile.sizing}
-          onChange={(sizing) => tile.setSizing(sizing)}
+          onChange={setSizing}
           // Only tiles with intrinsic content height can be auto-sized
           showAuto={tile.type === "TEXT" || tile.type === "IMAGE" || tile.type === "TABLE"}
         />

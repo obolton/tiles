@@ -6,8 +6,7 @@ import { createState } from "@/utils/richText/state";
 import styles from "./TableTile.module.css";
 import { EditorView } from "prosemirror-view";
 import { handleError } from "@/utils/errors";
-import { combine, reactive } from "@/utils/reactivity";
-import { TABLE_FOOTER_HEIGHT } from "@/constants/tables";
+import { reactive } from "@/utils/reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { render } from "@/jsx/dom";
 import If from "@/jsx/if";
@@ -43,11 +42,6 @@ export default function TableTile({ table, showToolbar, signal }: TableTileProps
   const { isEditable } = editor;
   const selectionType = reactive<"row" | "column" | "range" | null>(null);
   const isAuto = table.sizing.derive((sizing) => sizing === "AUTO");
-  const autoHeight = combine(
-    { isAuto, contentHeight: table.contentHeight, isEditable },
-    ({ isAuto, contentHeight, isEditable }) =>
-      isAuto ? `${contentHeight + (isEditable ? TABLE_FOOTER_HEIGHT : 0)}px` : undefined,
-  );
 
   signal?.addEventListener(
     "abort",
@@ -262,10 +256,10 @@ export default function TableTile({ table, showToolbar, signal }: TableTileProps
       <table-view
         ref={ref}
         classList={{ "rich-text": true, [styles.table]: true, [styles.auto]: isAuto }}
-        style={{ height: autoHeight }}
         $columns={columns}
         $rows={rows}
         editable={isEditable}
+        autoheight={isAuto}
         on:edittablecellstart={onEditCell}
         on:edittablecellend={onEditCellEnd}
         on:updatetablecolumn={onUpdateColumn}

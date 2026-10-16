@@ -5,7 +5,6 @@ import Table from "@/models/Table";
 import type { CellValue } from "@/models/Table";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTableMap, DEFAULT_COLUMN_WIDTH, DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
-import { TABLE_HEADER_HEIGHT } from "@/constants/tables";
 import { PAGE } from "@/test/fixtures/Page";
 
 const editor = Editor.init(PAGE, new Y.Doc());
@@ -100,37 +99,6 @@ describe("Table", () => {
 
       expect(subscriber).toHaveBeenCalledTimes(1);
       expect(data.value).toEqual(["b1", "b2", "b3", null]);
-    });
-  });
-
-  describe("contentHeight", () => {
-    test("sums the header and every row's height", () => {
-      expect(table.contentHeight.value).toBe(TABLE_HEADER_HEIGHT + 3 * DEFAULT_ROW_HEIGHT);
-    });
-
-    test("notifies and updates when a row is added or removed", () => {
-      const subscriber = vi.fn();
-      table.contentHeight.subscribe(subscriber);
-
-      table.appendRow();
-
-      expect(subscriber).toHaveBeenCalledTimes(1);
-      expect(table.contentHeight.value).toBe(TABLE_HEADER_HEIGHT + 4 * DEFAULT_ROW_HEIGHT);
-
-      table.removeRows([r1, r2]);
-
-      expect(subscriber).toHaveBeenCalledTimes(2);
-      expect(table.contentHeight.value).toBe(TABLE_HEADER_HEIGHT + 2 * DEFAULT_ROW_HEIGHT);
-    });
-
-    test("notifies and updates when a row is resized", () => {
-      const subscriber = vi.fn();
-      table.contentHeight.subscribe(subscriber);
-
-      table.rows.get(r2).height.value = 100;
-
-      expect(subscriber).toHaveBeenCalledTimes(1);
-      expect(table.contentHeight.value).toBe(TABLE_HEADER_HEIGHT + 2 * DEFAULT_ROW_HEIGHT + 100);
     });
   });
 

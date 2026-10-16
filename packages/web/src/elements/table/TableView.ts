@@ -33,6 +33,8 @@ export interface ColumnItem {
 
 export interface TableViewAttributes extends GlobalHTMLAttributes {
   editable?: boolean;
+  /** Size the element to its table instead of virtualizing rows within a fixed height. */
+  autoheight?: boolean;
 }
 
 declare global {
@@ -99,13 +101,17 @@ const ROW_BUFFER_MIN_SIZE = 3;
 const CELL_BUFFER_MIN_SIZE = 10;
 
 export default class TableView extends HTMLElement {
-  static readonly observedAttributes: (keyof TableViewAttributes)[] = ["editable"] as const;
+  static readonly observedAttributes: (keyof TableViewAttributes)[] = [
+    "editable",
+    "autoheight",
+  ] as const;
 
   #columns?: ReactiveList<ColumnItem>;
   #rows?: ReactiveList<RowItem>;
   #unsubscribeColumns?: () => void;
   #unsubscribeRows?: () => void;
   #editable = false;
+  #autoHeight = false;
 
   readonly selection = new Set<Selection>();
   updateCell?: (row: Row, column: Column, cell: HTMLTableCellElement) => void;
@@ -128,6 +134,7 @@ export default class TableView extends HTMLElement {
   private firstVisibleRow = 0;
   private firstVisibleColumn = 0;
   private resizeObserver?: ResizeObserver;
+  private tableResizeObserver?: ResizeObserver;
   private translateX = 0;
   private translateY = 0;
   private width = 0;
@@ -198,6 +205,31 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  get autoHeight() {
+    return this.#autoHeight;
+  }
+
+  set autoHeight(value: boolean) {
+    if (value === this.#autoHeight) {
+      return;
+    }
+
+    this.#autoHeight = value;
+
+    if (!value) {
+      this.style.removeProperty("height");
+    }
+
+    this.update();
+    this.reposition();
+    this.updateAutoHeight();
+  }
+
+  /** Whether every row is rendered rather than a virtualized window. */
+  private get fillsAllRows() {
+    return this.#autoHeight && this.virtualize;
+  }
+
   refreshCell(rowId: string, columnId: string) {
     const row = this.visibleRows.find((candidate) => candidate.id === rowId);
     const column = this.visibleColumns.find((candidate) => candidate.id === columnId);
@@ -257,7 +289,7 @@ export default class TableView extends HTMLElement {
       throw new Error("Virtualization is already enabled");
     }
 
-    if (!this.colGroup || !this.tableHead || !this.tableBody) {
+    if (!this.table || !this.colGroup || !this.tableHead || !this.tableBody) {
       return;
     }
 
@@ -336,6 +368,9 @@ export default class TableView extends HTMLElement {
 
     this.resizeObserver = new ResizeObserver(this.resizeObserverCallback.bind(this));
     this.resizeObserver.observe(this, { box: "border-box" });
+
+    this.tableResizeObserver = new ResizeObserver(() => this.updateAutoHeight());
+    this.tableResizeObserver.observe(this.table);
   }
 
   connectedCallback() {
@@ -382,6 +417,8 @@ export default class TableView extends HTMLElement {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
+    this.tableResizeObserver?.disconnect();
+    this.tableResizeObserver = undefined;
     this.editAbortController?.abort();
     this.editAbortController = null;
   }
@@ -394,6 +431,9 @@ export default class TableView extends HTMLElement {
     switch (name) {
       case "editable":
         this.editable = value !== null;
+        break;
+      case "autoheight":
+        this.autoHeight = value !== null;
         break;
     }
   }
@@ -1526,7 +1566,10 @@ export default class TableView extends HTMLElement {
   }
 
   private fillTop() {
-    while (this.firstVisibleRow > 0 && this.scrollTop - this.translateY < this.verticalBufferSize) {
+    while (
+      this.firstVisibleRow > 0 &&
+      (this.fillsAllRows || this.scrollTop - this.translateY < this.verticalBufferSize)
+    ) {
       const index = this.firstVisibleRow - 1;
       const { id, height, style } = this.getRow(index);
       this.insertRow(0, index, height, id, style);
@@ -1541,7 +1584,9 @@ export default class TableView extends HTMLElement {
   private fillBottom() {
     while (
       this.firstVisibleRow + this.visibleRows.length < this.#rowCount &&
-      this.translateY - this.scrollTop + this.contentHeight - this.height < this.verticalBufferSize
+      (this.fillsAllRows ||
+        this.translateY - this.scrollTop + this.contentHeight - this.height <
+          this.verticalBufferSize)
     ) {
       const index = this.firstVisibleRow + this.visibleRows.length;
       const { id, height, style } = this.getRow(index);
@@ -1579,6 +1624,10 @@ export default class TableView extends HTMLElement {
   }
 
   private drainTop() {
+    if (this.fillsAllRows) {
+      return;
+    }
+
     let row = this.visibleRows[0];
 
     while (row && this.scrollTop - this.translateY - row.height > this.verticalBufferSize) {
@@ -1595,6 +1644,10 @@ export default class TableView extends HTMLElement {
   }
 
   private drainBottom() {
+    if (this.fillsAllRows) {
+      return;
+    }
+
     const bottom = this.scrollTop - this.translateY + this.height;
     let row = this.visibleRows.at(-1);
 
@@ -1898,14 +1951,26 @@ export default class TableView extends HTMLElement {
     }
 
     const width = this.getColumnSpan(0, this.#columnCount);
-    const averageRowHeight =
-      this.visibleRows.length > 0 ? this.contentHeight / this.visibleRows.length : 0;
-    const height = this.#rowCount * averageRowHeight + this.footerHeight;
-
     this.scrollContainer.style.setProperty("--scroll-width", width + "px");
-    this.scrollContainer.style.setProperty("--scroll-height", height + "px");
+
+    if (this.#autoHeight) {
+      this.scrollContainer.style.removeProperty("--scroll-height");
+    } else {
+      const averageRowHeight =
+        this.visibleRows.length > 0 ? this.contentHeight / this.visibleRows.length : 0;
+      const height = this.#rowCount * averageRowHeight + this.footerHeight;
+      this.scrollContainer.style.setProperty("--scroll-height", height + "px");
+    }
     this.contents.style.setProperty("--translate-x", this.translateX + "px");
     this.contents.style.setProperty("--translate-y", this.translateY + "px");
+  }
+
+  /** Mirrors the rendered table's height onto the host while auto-sized. */
+  private updateAutoHeight() {
+    if (!this.#autoHeight || !this.table) {
+      return;
+    }
+    this.style.height = this.table.getBoundingClientRect().height + "px";
   }
 
   private updateHeaders() {

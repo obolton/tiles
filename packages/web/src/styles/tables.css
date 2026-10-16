@@ -17,6 +17,10 @@
   overflow: auto;
   contain: strict;
 
+  &[autoheight]:not(:defined) {
+    contain: content;
+  }
+
   & table {
     width: max-content;
     border: none;
