@@ -23,9 +23,12 @@ export default function UserRow({
   return (
     <Row
       icon={
-        <span classList={{ [styles.avatar]: true, [styles.online]: online ?? false }}>
-          <ProfileImage imageUrl={user.imageUrl} name={user.name} size="medium" />
-        </span>
+        <ProfileImage
+          imageUrl={user.imageUrl}
+          name={user.name}
+          size="medium"
+          classList={{ [styles.online]: online ?? false }}
+        />
       }
       title={user.name}
       subtitle={description}

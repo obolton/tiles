@@ -43,7 +43,7 @@ export default function SharePanel({
   return (
     <resizable-panel
       id={SHARE_PANEL_ID}
-      classList={{ [styles.panel]: true, ...classList }}
+      classList={{ "sidebar-panel": true, ...classList }}
       role="complementary"
       aria-label="Share"
       edge="inline-end"
@@ -52,8 +52,8 @@ export default function SharePanel({
       on:keydown={onKeyDown}
       {...props}
     >
-      <div className={styles.header}>
-        <h2 className={styles.title}>Share</h2>
+      <div className="sidebar-panel-header">
+        <h2 className="sidebar-panel-title">Share</h2>
         <ToolbarButton classList={{ small: true }} label="Close" on:click={() => state.close()}>
           <CloseIcon aria-hidden="true" />
         </ToolbarButton>

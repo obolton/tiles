@@ -1,6 +1,5 @@
 import UserRow from "./UserRow";
 import InviteRow from "./InviteRow";
-import Placeholder from "@/components/placeholder/Placeholder";
 import NewIcon from "@/icons/new.svg?jsx";
 import If from "@/jsx/if";
 import PageInvite from "@/models/PageInvite";
@@ -110,7 +109,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
       </If>
 
       <If condition={isEmpty}>
-        <Placeholder>Only you have access</Placeholder>
+        <p className={styles.empty}>Only you have access</p>
       </If>
     </section>
   );
