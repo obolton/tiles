@@ -12,6 +12,7 @@ import type { Fill } from "./types";
 import type { JSX } from "@/jsx/jsx";
 
 export interface FillPopoverProps extends JSX.Attributes<"anchored-popover"> {
+  id: string;
   themeColors?: Reactive<ThemeColor[]>;
   value: Reactive<Fill | null>;
   onChange: (value: Fill | null) => void;
@@ -19,6 +20,7 @@ export interface FillPopoverProps extends JSX.Attributes<"anchored-popover"> {
 }
 
 export default function FillPopover({
+  id,
   themeColors,
   value,
   onChange,
@@ -26,34 +28,34 @@ export default function FillPopover({
   ...props
 }: FillPopoverProps) {
   return (
-    <anchored-popover {...props} className={styles.popover}>
+    <anchored-popover {...props} id={id} className={styles.popover}>
       <tab-bar>
-        <tab-item id="color-tab" for="color-tab-panel" selected>
+        <tab-item id={`${id}-color-tab`} for={`${id}-color-tab-panel`} selected>
           <SolidColorIcon aria-hidden="true" />
           Color
         </tab-item>
 
         {allowImage && (
-          <tab-item id="image-tab" for="image-tab-panel">
+          <tab-item id={`${id}-image-tab`} for={`${id}-image-tab-panel`}>
             <ImageIcon aria-hidden="true" />
             Image
           </tab-item>
         )}
 
         {allowImage && (
-          <tab-item id="generate-tab" for="generate-tab-panel">
+          <tab-item id={`${id}-generate-tab`} for={`${id}-generate-tab-panel`}>
             <AIIcon aria-hidden="true" />
             Generate
           </tab-item>
         )}
 
-        <tab-item id="none-tab" on:click={() => onChange(null)}>
+        <tab-item id={`${id}-none-tab`} on:click={() => onChange(null)}>
           <EmptyIcon aria-hidden="true" />
           None
         </tab-item>
       </tab-bar>
 
-      <tab-panel id="color-tab-panel" open>
+      <tab-panel id={`${id}-color-tab-panel`} open>
         <ColorPanel
           themeColors={themeColors}
           value={value.derive((fill) =>
@@ -64,13 +66,13 @@ export default function FillPopover({
       </tab-panel>
 
       {allowImage && (
-        <tab-panel id="image-tab-panel">
+        <tab-panel id={`${id}-image-tab-panel`}>
           <ImagePanel onChange={onChange} />
         </tab-panel>
       )}
 
       {allowImage && (
-        <tab-panel id="generate-tab-panel">
+        <tab-panel id={`${id}-generate-tab-panel`}>
           <GenerateImagePanel onChange={onChange} />
         </tab-panel>
       )}
