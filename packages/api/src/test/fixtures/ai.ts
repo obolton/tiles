@@ -44,22 +44,3 @@ export function getCreatedTile(doc: Y.Doc, result: ToolResult): Y.Map<unknown> {
   }
   return getTile(doc, result.tileId);
 }
-
-export const MOCK_TILE_PLACEMENT = {
-  id: "tile-1",
-  order: "a0",
-  width: 24,
-  height: 20,
-  x: 0,
-  y: 0,
-  sectionId: null,
-  theme: null,
-  textColor: null,
-  background: null,
-  anchor: null,
-  sizing: "CUSTOM" as const,
-  rowSpan: 1,
-  animation: null,
-  hide: false,
-  dock: null,
-};

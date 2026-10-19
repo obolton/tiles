@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Layout } from "doc/types/tiles/section";
+import { Layout } from "doc/types/enums";
 import { buildSectionMap } from "doc/tiles/section";
 import { SizeSchema, getDimensions } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";

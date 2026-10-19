@@ -5,7 +5,7 @@ import { reactive, type Reactive } from "reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { getImageUrl } from "@/utils/images";
 import type Page from "@/models/Page";
-import type { ImageTile } from "doc/types/tiles";
+import type { RichText } from "doc/types/richText";
 import type { EditorState } from "prosemirror-state";
 
 export interface ImageOrigin {
@@ -17,7 +17,7 @@ export interface CreateImageInput extends Omit<CreateTileInput, "type"> {
   imageId: string;
   size: { width: number; height: number };
   alt?: string | null;
-  text?: ImageTile["text"];
+  text?: RichText | null;
 }
 
 export default class Image extends Tile {
@@ -26,7 +26,7 @@ export default class Image extends Tile {
   readonly imageId: Reactive<string | null>;
   readonly size: Reactive<{ width: number; height: number }>;
   readonly alt: Reactive<string | null>;
-  readonly text: Reactive<ImageTile["text"]>;
+  readonly text: Reactive<RichText | null>;
   readonly origin: Reactive<ImageOrigin>;
   readonly state: Reactive<EditorState | null>;
 

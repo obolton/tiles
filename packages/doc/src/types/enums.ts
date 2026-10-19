@@ -54,3 +54,40 @@ export const HorizontalAlignment = {
   RIGHT: "RIGHT",
 } as const;
 export type HorizontalAlignment = (typeof HorizontalAlignment)[keyof typeof HorizontalAlignment];
+
+export const VerticalAlignment = {
+  TOP: "TOP",
+  CENTER: "CENTER",
+  BOTTOM: "BOTTOM",
+} as const;
+export type VerticalAlignment = (typeof VerticalAlignment)[keyof typeof VerticalAlignment];
+
+export const Layout = {
+  GRID: "GRID",
+  HORIZONTAL: "HORIZONTAL",
+  VERTICAL: "VERTICAL",
+  FREEFORM: "FREEFORM",
+  CALENDAR: "CALENDAR",
+  MAP: "MAP",
+} as const;
+export type Layout = (typeof Layout)[keyof typeof Layout];
+
+export const MapStyle = {
+  DEFAULT: "DEFAULT",
+  SATELLITE: "SATELLITE",
+  WATERCOLOR: "WATERCOLOR",
+  MONOCHROME: "MONOCHROME",
+} as const;
+export type MapStyle = (typeof MapStyle)[keyof typeof MapStyle];
+
+export const VideoType = {
+  YOUTUBE: "YOUTUBE",
+} as const;
+export type VideoType = (typeof VideoType)[keyof typeof VideoType];
+
+export const ChartSeriesType = {
+  BAR: "BAR",
+  LINE: "LINE",
+  AREA: "AREA",
+} as const;
+export type ChartSeriesType = (typeof ChartSeriesType)[keyof typeof ChartSeriesType];

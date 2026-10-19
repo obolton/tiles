@@ -1,4 +1,4 @@
-import type { VideoType } from "doc/types/tiles/video";
+import type { VideoType } from "doc/types/enums";
 
 export type Video = {
   videoType: VideoType;

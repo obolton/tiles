@@ -12,7 +12,7 @@ import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";
 import { handleError } from "@/utils/errors";
 import { viewTransition } from "@/utils/transitions";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { Layout } from "@/types/pages";
+import type { Layout } from "doc/types/enums";
 import type Section from "@/models/Section";
 
 export interface SectionToolbarProps {

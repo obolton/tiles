@@ -1,8 +1,13 @@
 import * as Y from "yjs";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
 
+export interface LinkedPage {
+  id: string;
+  title: string;
+}
+
 export interface PageLinkMapInput extends Omit<CreateTileInput, "type"> {
-  linkedPage: unknown;
+  linkedPage: LinkedPage;
 }
 
 export function buildPageLinkMap(
