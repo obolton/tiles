@@ -3,7 +3,6 @@ import { getLoaderContext } from "@/utils/loaderContext";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { initRoute } from "@/routes/init";
 import { initBookmarkStatus } from "@/utils/bookmarks";
-import { cachePage } from "@/utils/cache/pages";
 import { handleError } from "@/utils/errors";
 import Page, { type PageProps } from "@/pages/Page";
 import { generateFontFaceCSS } from "@/utils/fonts";
@@ -90,6 +89,5 @@ export default {
   beforeHydrate: ({ data }) => initRoute(data.page.workspaceId),
   afterHydrate: ({ data }) => {
     initBookmarkStatus(data.page.id).catch(handleError);
-    cachePage(data.page).catch(handleError);
   },
 } satisfies Route<PageProps>;

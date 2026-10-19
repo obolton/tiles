@@ -13,7 +13,6 @@ const schema = {
     keyPath: "id",
     indexes: {
       byName: { keyPath: "name" },
-      byValue: { keyPath: "value" },
     },
   },
 } as const;
@@ -90,39 +89,6 @@ describe("ObjectStore", () => {
     });
   });
 
-  describe("add", () => {
-    test("persists a new record to IndexedDB", async () => {
-      const store = db.store<Item>("items");
-      await store.add({ id: "1", name: "test", value: 42 });
-
-      const result = await readFromIdb(idb, "items", "1");
-      expect(result).toEqual({ id: "1", name: "test", value: 42 });
-    });
-
-    test("throws if key already exists", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "existing", value: 1 });
-
-      const store = db.store<Item>("items");
-      await expect(store.add({ id: "1", name: "new", value: 2 })).rejects.toThrow(
-        "constraint was not satisfied",
-      );
-    });
-  });
-
-  describe("has", () => {
-    test("returns true if record exists in IndexedDB", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "test", value: 42 });
-
-      const store = db.store<Item>("items");
-      expect(await store.has("1")).toBe(true);
-    });
-
-    test("returns false if record does not exist", async () => {
-      const store = db.store<Item>("items");
-      expect(await store.has("nonexistent")).toBe(false);
-    });
-  });
-
   describe("getAll", () => {
     test("retrieves all records from IndexedDB", async () => {
       await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
@@ -137,27 +103,6 @@ describe("ObjectStore", () => {
       const store = db.store<Item>("items");
       const results = await store.getAll();
       expect(results).toEqual([]);
-    });
-
-    test("respects count limit", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.getAll(undefined, 2);
-      expect(results).toHaveLength(2);
-    });
-  });
-
-  describe("getKeys", () => {
-    test("returns all keys from IndexedDB", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-
-      const store = db.store<Item>("items");
-      const keys = await store.getKeys();
-      expect(new Set(keys)).toEqual(new Set(["1", "2"]));
     });
   });
 
@@ -191,58 +136,6 @@ describe("ObjectStore", () => {
     });
   });
 
-  describe("count", () => {
-    test("returns the number of records in IndexedDB", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-
-      const store = db.store<Item>("items");
-      expect(await store.count()).toBe(2);
-    });
-  });
-
-  describe("getByIndex", () => {
-    test("retrieves a record by index value from IndexedDB", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "alice", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "bob", value: 2 });
-
-      const store = db.store<Item>("items");
-      const result = await store.getByIndex("byName", "bob");
-      expect(result).toEqual({ id: "2", name: "bob", value: 2 });
-    });
-
-    test("returns undefined if not found", async () => {
-      const store = db.store<Item>("items");
-      const result = await store.getByIndex("byName", "nonexistent");
-      expect(result).toBeUndefined();
-    });
-  });
-
-  describe("getAllByIndex", () => {
-    test("retrieves all records matching an index value", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "alice", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "bob", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "alice", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.getAllByIndex("byName", "alice");
-      expect(results).toHaveLength(2);
-      expect(results.every((r) => r.name === "alice")).toBe(true);
-    });
-  });
-
-  describe("countByIndex", () => {
-    test("counts records matching an index value", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "alice", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "bob", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "alice", value: 3 });
-
-      const store = db.store<Item>("items");
-      expect(await store.countByIndex("byName", "alice")).toBe(2);
-      expect(await store.countByIndex("byName", "bob")).toBe(1);
-    });
-  });
-
   describe("putMany", () => {
     test("persists multiple records to IndexedDB", async () => {
       const store = db.store<Item>("items");
@@ -269,75 +162,6 @@ describe("ObjectStore", () => {
       const results = await readAllFromIdb(idb, "items");
       expect(results).toHaveLength(1);
       expect(results[0]).toEqual({ id: "2", name: "b", value: 2 });
-    });
-  });
-
-  describe("query", () => {
-    test("returns all records", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.query();
-      expect(results).toHaveLength(3);
-    });
-
-    test("respects limit option", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.query({ limit: 2 });
-      expect(results).toHaveLength(2);
-    });
-
-    test("respects offset option", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.query({ offset: 1 });
-      expect(results).toHaveLength(2);
-    });
-
-    test("supports pagination with offset and limit", async () => {
-      for (let i = 1; i <= 5; i++) {
-        await writeToIdb(idb, "items", {
-          id: String(i),
-          name: `item${i}`,
-          value: i,
-        });
-      }
-
-      const store = db.store<Item>("items");
-      const results = await store.query({ offset: 2, limit: 2 });
-      expect(results).toHaveLength(2);
-      expect(results[0]?.id).toBe("3");
-      expect(results[1]?.id).toBe("4");
-    });
-
-    test("queries by index and returns ordered results", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 3 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 1 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 2 });
-
-      const store = db.store<Item>("items");
-      const results = await store.query({ index: "byValue" });
-      expect(results.map((r) => r.value)).toEqual([1, 2, 3]);
-    });
-
-    test("supports reverse direction", async () => {
-      await writeToIdb(idb, "items", { id: "1", name: "a", value: 1 });
-      await writeToIdb(idb, "items", { id: "2", name: "b", value: 2 });
-      await writeToIdb(idb, "items", { id: "3", name: "c", value: 3 });
-
-      const store = db.store<Item>("items");
-      const results = await store.query({ direction: "prev" });
-      expect(results[0]?.id).toBe("3");
-      expect(results[2]?.id).toBe("1");
     });
   });
 });

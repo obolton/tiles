@@ -60,17 +60,19 @@ describe("Database (browser)", () => {
 
   describe("close", () => {
     test("closes the database connection", async () => {
-      await db.open();
+      const connection = await db.open();
       db.close();
-      expect(db.isOpen).toBe(false);
+      expect(await db.open()).not.toBe(connection);
     });
   });
 
   describe("deleteDatabase", () => {
     test("deletes the database", async () => {
-      await db.open();
+      const store = db.store<{ id: string }>("items");
+      await store.put({ id: "1" });
       await db.deleteDatabase();
-      expect(db.isOpen).toBe(false);
+
+      expect(await store.getAll()).toEqual([]);
     });
   });
 });
