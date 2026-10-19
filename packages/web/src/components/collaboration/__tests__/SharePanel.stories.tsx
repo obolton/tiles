@@ -3,7 +3,7 @@ import SharePanel from "../SharePanel";
 import Editor from "@/editor/Editor";
 import PageInvite from "@/models/PageInvite";
 import { PAGE } from "@/test/fixtures/Page";
-import { PAGE_INVITE } from "@/test/fixtures/PageInvite";
+import { PAGE_INVITE, PAGE_LINK_INVITE } from "@/test/fixtures/PageInvite";
 import { reactive } from "reactivity";
 import type { PageAccess } from "@/types/collaboration";
 import type { Meta, Story } from "@/test/storybook";
@@ -31,7 +31,9 @@ interface PanelOptions {
 function Panel({ published = true, access = [], invites = false, online = [] }: PanelOptions) {
   page.isPublished.value = published;
   page.access.replace(access);
-  page.invites.replace(invites ? [new PageInvite(page, PAGE_INVITE)] : []);
+  page.invites.replace(
+    invites ? [new PageInvite(page, PAGE_INVITE), new PageInvite(page, PAGE_LINK_INVITE)] : [],
+  );
 
   const width = reactive(280);
   const style = width.derive((value) => ({ "--sidebar-width": `${value}px` }));

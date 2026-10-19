@@ -17,7 +17,7 @@ export const UpdateWorkspaceSchema = z.object({
 export type UpdateWorkspaceSchema = z.infer<typeof UpdateWorkspaceSchema>;
 
 export const InviteToWorkspaceSchema = z.object({
-  email: z.email().max(254),
+  email: z.email().max(254).optional(),
 });
 export type InviteToWorkspaceSchema = z.infer<typeof InviteToWorkspaceSchema>;
 

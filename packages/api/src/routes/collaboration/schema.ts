@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const InviteToPageSchema = z.object({
   pageId: z.uuid(),
-  email: z.email().max(254),
+  email: z.email().max(254).optional(),
 });
 export type InviteToPageSchema = z.infer<typeof InviteToPageSchema>;
 

@@ -1,7 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi, afterEach } from "vitest";
 import { SendEmailCommand } from "@aws-sdk/client-sesv2";
 import type { SendEmailCommandInput } from "@aws-sdk/client-sesv2";
-import { sendEmail } from "../email";
+import { sendEmail, isEmailEnabled } from "../email";
 
 const send = vi.fn(() => Promise.resolve());
 
@@ -42,4 +42,23 @@ describe("sendEmail", () => {
       }),
     );
   });
+});
+
+describe("isEmailEnabled", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test("is enabled when the sender and SES credentials are configured", () => {
+    expect(isEmailEnabled()).toBe(true);
+  });
+
+  test.each(["EMAIL_FROM", "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"])(
+    "is disabled when %s is missing",
+    (name) => {
+      vi.stubEnv(name, "");
+
+      expect(isEmailEnabled()).toBe(false);
+    },
+  );
 });

@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma";
-import { sendEmail } from "@/utils/email";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 import { createKey } from "@/utils/keys";
 import {
   inviteToPage,
@@ -18,6 +18,7 @@ vi.mock("@/utils/keys", () => ({
 
 vi.mock("@/utils/email", () => ({
   sendEmail: vi.fn(async () => {}),
+  isEmailEnabled: vi.fn(() => true),
 }));
 
 const MOCK_CONTEXT: AuthenticatedRequestContext = {
@@ -30,6 +31,7 @@ const MOCK_CONTEXT: AuthenticatedRequestContext = {
 const MOCK_INVITE = {
   id: "invite-1",
   email: "invitee@test.com",
+  key: "mock-invite-key",
   createdAt: new Date("2026-01-01T00:00:00Z"),
 };
 
@@ -73,6 +75,30 @@ describe("inviteToPage", () => {
       subject: 'Alice has invited you to collaborate on "Shared Page"',
       body: expect.stringContaining("/invites/accept/mock-invite-key"),
     });
+  });
+
+  test("creates a link-only invite when no email is given", async () => {
+    const result = await inviteToPage({ pageId: "page-1" }, MOCK_CONTEXT);
+
+    expect(result).toEqual(MOCK_INVITE);
+    expect(prisma.pageInvite.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ pageId: "page-1", email: undefined }),
+      }),
+    );
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  test("does not send an email when email is not configured", async () => {
+    vi.mocked(isEmailEnabled).mockReturnValueOnce(false);
+
+    const result = await inviteToPage(
+      { pageId: "page-1", email: "invitee@test.com" },
+      MOCK_CONTEXT,
+    );
+
+    expect(result).toEqual(MOCK_INVITE);
+    expect(sendEmail).not.toHaveBeenCalled();
   });
 
   test("returns the invite even when the email cannot be sent", async () => {

@@ -8,6 +8,16 @@ export interface Email {
 
 let client: SESv2Client | null = null;
 
+/** Whether the SES credentials needed to send email are configured. */
+export function isEmailEnabled() {
+  return Boolean(
+    process.env.EMAIL_FROM &&
+    process.env.AWS_ACCESS_KEY_ID &&
+    process.env.AWS_SECRET_ACCESS_KEY &&
+    process.env.AWS_REGION,
+  );
+}
+
 function getClient() {
   if (client) {
     return client;

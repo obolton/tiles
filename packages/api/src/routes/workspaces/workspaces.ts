@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import prisma from "@/database/prisma";
 import { createKey } from "@/utils/keys";
-import { sendEmail } from "@/utils/email";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import { getDefaultThemesData } from "@/utils/themes";
@@ -112,9 +112,11 @@ export async function inviteToWorkspace(
   );
 
   // Don't block on sending email
-  sendEmail(email, inviteToWorkspaceEmail({ inviter, workspaceName: workspace.name, key })).catch(
-    (error: unknown) => console.error(error),
-  );
+  if (email && isEmailEnabled()) {
+    sendEmail(email, inviteToWorkspaceEmail({ inviter, workspaceName: workspace.name, key })).catch(
+      (error: unknown) => console.error(error),
+    );
+  }
 
   return invite;
 }

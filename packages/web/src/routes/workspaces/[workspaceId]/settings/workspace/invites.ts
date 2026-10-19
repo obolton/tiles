@@ -19,15 +19,17 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
 
   const options = getLoaderContext(headers);
 
-  const [workspace, invites, user] = await Promise.all([
+  const [workspace, user] = await Promise.all([
     client.workspaces.get.query({ workspaceId }, options),
-    client.workspaces.listInvites.query({ workspaceId }, options),
     client.users.getUserInfo.query(undefined, options),
   ]);
 
+  // Invites include their keys, so only admins may list them.
   if (workspace.role !== "ADMIN") {
     return forbidden();
   }
+
+  const invites = await client.workspaces.listInvites.query({ workspaceId }, options);
 
   return {
     title: "Invites settings - Tiles",

@@ -4,7 +4,7 @@ import PageInvite from "@/models/PageInvite";
 import Page from "@/models/Page";
 import client from "@/api/client";
 import { PAGE } from "@/test/fixtures/Page";
-import { PAGE_INVITE } from "@/test/fixtures/PageInvite";
+import { PAGE_INVITE, PAGE_LINK_INVITE } from "@/test/fixtures/PageInvite";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -30,7 +30,14 @@ describe("PageInvite", () => {
     expect(invite.page).toBe(page);
     expect(invite.id).toBe(PAGE_INVITE.id);
     expect(invite.email).toBe(PAGE_INVITE.email);
+    expect(invite.key).toBe(PAGE_INVITE.key);
     expect(invite.createdAt).toBe(PAGE_INVITE.createdAt);
+  });
+
+  test("builds the accept URL from the invite key", () => {
+    const invite = new PageInvite(page, PAGE_INVITE);
+
+    expect(invite.url).toBe(`${location.origin}/invites/accept/${PAGE_INVITE.key}`);
   });
 
   describe("create", () => {
@@ -45,6 +52,19 @@ describe("PageInvite", () => {
       });
       expect(invite.id).toBe(PAGE_INVITE.id);
       expect(invite.email).toBe(PAGE_INVITE.email);
+      expect(page.invites.value).toContain(invite);
+    });
+
+    test("creates a link-only invite when no email is given", async () => {
+      inviteToPageMock.mockResolvedValue(PAGE_LINK_INVITE);
+
+      const invite = await PageInvite.create(page);
+
+      expect(inviteToPageMock).toHaveBeenCalledWith({
+        pageId: PAGE.id,
+        email: undefined,
+      });
+      expect(invite.email).toBeNull();
       expect(page.invites.value).toContain(invite);
     });
   });

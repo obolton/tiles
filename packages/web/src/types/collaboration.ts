@@ -10,6 +10,8 @@ export interface PageAccess {
 
 export interface Invite {
   id: string;
-  email: string;
+  /** The address the invite was sent to, or `null` for a link-only invite. */
+  email: string | null;
+  key: string;
   createdAt: string;
 }

@@ -38,7 +38,7 @@ model WorkspaceInvite {
   createdAt   DateTime @default(now()) @map("created_at")
   creatorId   String   @map("creator_id") @db.Uuid
   workspaceId String   @map("workspace_id") @db.Uuid
-  email       String
+  email       String?
   key         String   @unique
 
   creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)

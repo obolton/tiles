@@ -90,7 +90,7 @@ describe("Page", () => {
       const pageWithInvites = new Page(
         {
           ...PAGE,
-          invites: [{ id: "inv-1", email: "a@b.com", createdAt: "2025-01-01" }],
+          invites: [{ id: "inv-1", email: "a@b.com", key: "inv-key", createdAt: "2025-01-01" }],
         },
         new Y.Doc(),
       );

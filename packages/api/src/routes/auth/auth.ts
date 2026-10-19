@@ -2,7 +2,7 @@ import prisma from "@/database/prisma";
 import { createUser } from "../users/users";
 import { createKey, getUserIdByProviderId } from "./keys";
 import { createSession, deleteSession } from "./sessions";
-import { sendEmail } from "@/utils/email";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 import { signUpEmail } from "@/emails/signUp";
 import { getDefaultThemesData } from "@/utils/themes";
 import type { SignInSchema } from "./schema";
@@ -14,6 +14,9 @@ type SendWelcomeEmailOptions = {
 };
 
 async function sendWelcomeEmail({ userId, name, email }: SendWelcomeEmailOptions) {
+  if (!isEmailEnabled()) {
+    return;
+  }
   try {
     await sendEmail(email, signUpEmail({ id: userId, name }));
   } catch (error) {

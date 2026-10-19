@@ -1,6 +1,6 @@
 import prisma from "@/database/prisma";
 import { createKey } from "@/utils/keys";
-import { sendEmail } from "@/utils/email";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 import { inviteToPageEmail } from "@/emails/inviteToPage";
 import type {
   InviteToPageSchema,
@@ -41,9 +41,11 @@ export async function inviteToPage(
   );
 
   // Don't block on sending email
-  sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key })).catch((error: unknown) =>
-    console.error(error),
-  );
+  if (email && isEmailEnabled()) {
+    sendEmail(email, inviteToPageEmail({ inviter, title: page.title, key })).catch(
+      (error: unknown) => console.error(error),
+    );
+  }
 
   return invite;
 }

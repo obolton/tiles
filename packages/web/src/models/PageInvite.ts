@@ -1,21 +1,29 @@
 import client from "@/api/client";
+import { getPageInviteUrl } from "@/utils/invites";
 import type { Invite } from "@/types/collaboration";
 import type Page from "@/models/Page";
 
 export default class PageInvite {
   readonly page: Page;
   readonly id: string;
-  readonly email: string;
+  readonly email: string | null;
+  readonly key: string;
   readonly createdAt: string;
 
   constructor(page: Page, data: Invite) {
     this.page = page;
     this.id = data.id;
     this.email = data.email;
+    this.key = data.key;
     this.createdAt = data.createdAt;
   }
 
-  static async create(page: Page, email: string) {
+  /** The link the invitee opens to accept the invite. */
+  get url() {
+    return getPageInviteUrl(this.key);
+  }
+
+  static async create(page: Page, email?: string) {
     const result = await client.collaboration.inviteToPage.mutate({
       pageId: page.id,
       email,

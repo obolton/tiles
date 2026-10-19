@@ -1,15 +1,17 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 import {
   getWorkspace,
   createWorkspace,
+  inviteToWorkspace,
   acceptWorkspaceInvite,
   leaveWorkspace,
   removeFromWorkspace,
   listWorkspaceUsers,
   updateWorkspaceRole,
 } from "../workspaces";
-import { WORKSPACE_FIELDS, WORKSPACE_MEMBERSHIP_FIELDS } from "../fields";
+import { WORKSPACE_FIELDS, WORKSPACE_MEMBERSHIP_FIELDS, WORKSPACE_INVITE_FIELDS } from "../fields";
 import type {
   CreateQuery,
   FindUniqueQuery,
@@ -26,6 +28,7 @@ vi.mock("@/utils/keys", () => ({
 
 vi.mock("@/utils/email", () => ({
   sendEmail: vi.fn(async () => {}),
+  isEmailEnabled: vi.fn(() => true),
 }));
 
 vi.mock("@/utils/themes", () => ({
@@ -92,6 +95,62 @@ describe("createWorkspace", () => {
         }),
       }),
     );
+  });
+});
+
+describe("inviteToWorkspace", () => {
+  const MOCK_INVITE = {
+    id: "invite-1",
+    email: "invitee@test.com",
+    key: "mock-invite-key",
+    createdAt: new Date("2026-01-01T00:00:00Z"),
+  };
+
+  beforeEach(() => {
+    vi.mocked(
+      prisma.workspace.findUniqueOrThrow<FindUniqueQuery<{ name: true }>>,
+    ).mockResolvedValue({ name: "Test Workspace" });
+    vi.mocked(
+      prisma.user.findUniqueOrThrow<FindUniqueQuery<{ id: true; name: true }>>,
+    ).mockResolvedValue({ id: "user-1", name: "Alice" });
+    vi.mocked(
+      prisma.workspaceInvite.create<CreateQuery<typeof WORKSPACE_INVITE_FIELDS>>,
+    ).mockResolvedValue(MOCK_INVITE);
+  });
+
+  test("returns the new invite including its key", async () => {
+    const result = await inviteToWorkspace({ email: "invitee@test.com" }, MOCK_WORKSPACE_CONTEXT);
+
+    expect(result).toEqual(MOCK_INVITE);
+    expect(prisma.workspaceInvite.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ workspaceId: "workspace-1", key: "mock-invite-key" }),
+      }),
+    );
+  });
+
+  test("emails the invitee a link containing the invite key", async () => {
+    await inviteToWorkspace({ email: "invitee@test.com" }, MOCK_WORKSPACE_CONTEXT);
+
+    expect(sendEmail).toHaveBeenCalledWith("invitee@test.com", {
+      subject: "Alice has invited you to Test Workspace on Tiles",
+      body: expect.stringContaining("/invites/join-workspace/mock-invite-key"),
+    });
+  });
+
+  test("creates a link-only invite when no email is given", async () => {
+    const result = await inviteToWorkspace({}, MOCK_WORKSPACE_CONTEXT);
+
+    expect(result).toEqual(MOCK_INVITE);
+    expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  test("does not send an email when email is not configured", async () => {
+    vi.mocked(isEmailEnabled).mockReturnValueOnce(false);
+
+    await inviteToWorkspace({ email: "invitee@test.com" }, MOCK_WORKSPACE_CONTEXT);
+
+    expect(sendEmail).not.toHaveBeenCalled();
   });
 });
 

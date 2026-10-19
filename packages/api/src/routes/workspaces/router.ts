@@ -58,7 +58,7 @@ export default router({
     .input(DeleteWorkspaceInviteSchema)
     .mutation(async ({ input, ctx }) => deleteWorkspaceInvite(input, ctx)),
 
-  listInvites: authenticatedWorkspaceProcedure
+  listInvites: adminWorkspaceProcedure
     .input(ListWorkspaceInvitesSchema)
     .query(async ({ input, ctx }) => listWorkspaceInvites(input, ctx)),
 

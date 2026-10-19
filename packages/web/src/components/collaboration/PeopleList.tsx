@@ -24,7 +24,14 @@ export interface PeopleListProps {
 function deleteInvite(invite: PageInvite) {
   invite
     .delete()
-    .then(() => showToast(`The invite for ${invite.email} was cancelled.`, "success"))
+    .then(() =>
+      showToast(
+        invite.email
+          ? `The invite for ${invite.email} was cancelled.`
+          : "The invite was cancelled.",
+        "success",
+      ),
+    )
     .catch(handleError);
 }
 
@@ -47,7 +54,10 @@ export default function PeopleList({ page, online }: PeopleListProps) {
       async onConfirm({ email }) {
         try {
           await PageInvite.create(page, email);
-          showToast(`An invite was sent to ${email}`, "success");
+          showToast(
+            email ? `An invite was created for ${email}` : "Invite link created",
+            "success",
+          );
         } catch (error) {
           handleError(error);
         }
@@ -101,7 +111,12 @@ export default function PeopleList({ page, online }: PeopleListProps) {
           <ul className={styles.list} aria-labelledby="share-pending">
             {invites.derive((items) =>
               items.map((invite) => (
-                <InviteRow invite={invite} showRemoveButton onRemove={deleteInvite} />
+                <InviteRow
+                  invite={invite}
+                  url={invite.url}
+                  showRemoveButton
+                  onRemove={deleteInvite}
+                />
               )),
             )}
           </ul>

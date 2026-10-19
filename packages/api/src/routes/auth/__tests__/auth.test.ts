@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma";
 import { signIn, signOut } from "../auth";
 import { createUser } from "@/routes/users/users";
-import { sendEmail } from "@/utils/email";
+import { sendEmail, isEmailEnabled } from "@/utils/email";
 
 vi.mock("@/routes/users/users");
 vi.mock("@/utils/email");
@@ -89,6 +89,7 @@ describe("signIn", () => {
         createdAt: new Date(),
         userId: "new-user-id",
       });
+      vi.mocked(isEmailEnabled).mockReturnValue(true);
       vi.mocked(sendEmail).mockResolvedValue();
     });
 
@@ -148,6 +149,14 @@ describe("signIn", () => {
       await signIn(validInput);
 
       expect(sendEmail).toHaveBeenCalledWith("test@example.com", expect.anything());
+    });
+
+    test("does not send welcome email when email is not configured", async () => {
+      vi.mocked(isEmailEnabled).mockReturnValue(false);
+
+      await signIn(validInput);
+
+      expect(sendEmail).not.toHaveBeenCalled();
     });
 
     test("returns a session for new user", async () => {

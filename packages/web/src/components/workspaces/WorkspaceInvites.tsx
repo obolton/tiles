@@ -8,6 +8,7 @@ import { reactive } from "reactivity";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";
+import { getWorkspaceInviteUrl } from "@/utils/invites";
 import styles from "./WorkspaceInvites.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Invite } from "@/types/collaboration";
@@ -60,7 +61,10 @@ export default function WorkspaceInvites({
         id: invite.id,
       });
       invites.value = invites.value.filter((existingInvite) => existingInvite !== invite);
-      showToast(`The invite for ${invite.email} was revoked.`, "success");
+      showToast(
+        invite.email ? `The invite for ${invite.email} was revoked.` : "The invite was revoked.",
+        "success",
+      );
     } catch (error) {
       handleError(error);
     }
@@ -78,7 +82,10 @@ export default function WorkspaceInvites({
             email,
           });
           invites.value = invites.value.concat(invite);
-          showToast(`An invite was sent to ${email}`, "success");
+          showToast(
+            email ? `An invite was created for ${email}` : "Invite link created",
+            "success",
+          );
         } catch (error) {
           handleError(error);
         }
@@ -101,7 +108,14 @@ export default function WorkspaceInvites({
         results={invites}
         nextCursor={nextCursor}
         query={query}
-        render={(invite) => <InviteRow invite={invite} showRemoveButton onRemove={onRemove} />}
+        render={(invite) => (
+          <InviteRow
+            invite={invite}
+            url={getWorkspaceInviteUrl(invite.key)}
+            showRemoveButton
+            onRemove={onRemove}
+          />
+        )}
         renderPlaceholder={(query) => (
           <Placeholder>{query ? "There are no results" : "No invites"}</Placeholder>
         )}

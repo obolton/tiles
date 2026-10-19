@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 export const PAGE_INVITE_FIELDS = {
   id: true,
   email: true,
+  key: true,
   createdAt: true,
 } as const satisfies Prisma.PageInviteSelect<ExtensionArgs>;
 
