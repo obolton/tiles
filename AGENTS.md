@@ -97,7 +97,7 @@ The user experience is intended to be highly intuitive, usable, accessible and d
 
 - Use `__tests__/*.test.ts` files.
 - Use `describe` blocks for each function being tested and to provide structure to test suites.
-- Name tests as present-tense sentences describing the behavior, e.g. `test("rejects an unauthenticated caller")`. Titles containing "should" fail lint.
+- Name tests as present-tense sentences describing the behavior, e.g. `test("rejects an unauthenticated caller")`.
 - Mock external services (database, external APIs etc).
 - Run tests with `pnpm test` and check coverage with `pnpm test:coverage`.
 
