@@ -12,7 +12,7 @@ import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 
-interface PagesSearchResults {
+export interface PagesSearchResults {
   pages: LibraryPage[];
   nextCursor: string | null;
 }

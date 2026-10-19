@@ -1,26 +1,11 @@
 import client from "@/api/client";
-import PageLayout from "@/layouts/PageLayout";
-import SidebarLayout from "@/layouts/SidebarLayout";
-import Sidebar from "./Sidebar";
-import Placeholder from "@/components/placeholder/Placeholder";
-import PagesGrid, {
-  PageSortOptions,
-  parsePageSort,
-  type PageSort,
-} from "@/components/grid/PagesGrid";
-import SearchToolbar from "@/components/search/SearchToolbar";
+import LibraryPage, { type LibraryPageState } from "./LibraryPage";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
-import { persistent } from "@/utils/persistent";
-import { reactive } from "reactivity";
 import If from "jsx/if";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
-
-if (!import.meta.env.SSR) {
-  import("@/elements/editor").catch(handleError);
-}
 
 export interface TrashProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -29,21 +14,8 @@ export interface TrashProps {
   user: User;
 }
 
-function renderPlaceholder(query: string) {
-  return (
-    <Placeholder>
-      {query ? "There are no results." : "There are no pages in the trash."}
-    </Placeholder>
-  );
-}
-
-export default function Trash({ workspace, folders, pages: initialPages, user }: TrashProps) {
-  const query = reactive("");
-  const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
-  const pages = reactive(initialPages.pages);
-  const cursor = reactive<string | null>(initialPages.nextCursor);
-
-  async function emptyTrash() {
+export default function Trash({ workspace, folders, pages, user }: TrashProps) {
+  async function emptyTrash({ pages, cursor }: LibraryPageState) {
     try {
       await client.pages.emptyTrash.mutate({ workspaceId: workspace.id });
       pages.value = [];
@@ -55,54 +27,31 @@ export default function Trash({ workspace, folders, pages: initialPages, user }:
   }
 
   return (
-    <PageLayout
-      workspaceId={workspace.id}
+    <LibraryPage
+      workspace={workspace}
+      folders={folders}
+      selectedFolderId="TRASH"
+      pages={pages}
       user={user}
-      center={
-        <SearchToolbar
-          id="search-pages"
-          placeholder="Search trash"
-          query={query}
-          sortOptions={<PageSortOptions />}
-          sort={sort}
-        />
+      placeholder="Search trash"
+      emptyMessage="There are no pages in the trash."
+      search={(options) =>
+        client.pages.listDeleted.query({ workspaceId: workspace.id, ...options })
       }
-      actions={
-        <button type="button" className="secondary" on:click={emptyTrash}>
+      link={false}
+      restore
+      renderActions={(state) => (
+        <button type="button" className="secondary" on:click={() => emptyTrash(state)}>
           Empty trash
         </button>
-      }
-    >
-      <SidebarLayout
-        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="TRASH" />}
-      >
+      )}
+      renderBefore={({ pages }) => (
         <If condition={pages.derive((p) => p.length > 0)}>
           <aside className={styles.aside}>
             <p>Pages in the trash will be permanently deleted after 30 days.</p>
           </aside>
         </If>
-
-        <PagesGrid
-          workspaceId={workspace.id}
-          query={query}
-          pages={pages}
-          cursor={cursor}
-          search={(query, searchCursor) => {
-            const { sortBy, sortDirection } = parsePageSort(sort.value);
-            return client.pages.listDeleted.query({
-              workspaceId: workspace.id,
-              query: query || undefined,
-              cursor: searchCursor ?? undefined,
-              sortBy,
-              sortDirection,
-            });
-          }}
-          renderPlaceholder={renderPlaceholder}
-          sort={sort}
-          link={false}
-          restore
-        />
-      </SidebarLayout>
-    </PageLayout>
+      )}
+    />
   );
 }
