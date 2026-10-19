@@ -41,7 +41,6 @@ export function createHocuspocus() {
       const pageId = parseDocName(documentName);
       const state = Y.encodeStateAsUpdate(document);
       await saveDoc(pageId, state);
-      console.log(`collaboration: stored page=${pageId} bytes=${state.byteLength}`);
     },
 
     async afterStoreDocument({ documentName, document }) {
@@ -55,16 +54,6 @@ export function createHocuspocus() {
       } catch (error) {
         console.error(`collaboration: session-end version capture failed page=${pageId}`, error);
       }
-    },
-
-    async onConnect({ documentName }) {
-      console.log(`collaboration: connect page=${parseDocName(documentName)}`);
-    },
-
-    async onDisconnect({ documentName, context }) {
-      console.log(
-        `collaboration: disconnect page=${parseDocName(documentName)} user=${context.userId}`,
-      );
     },
   });
 }

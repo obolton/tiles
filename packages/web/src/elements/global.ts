@@ -6,7 +6,6 @@ import "./maps/MapPoint";
 import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
 import "./thumbnails/ThumbnailList";
-import "./calendar/CalendarMonth";
 import "./file-picker/FilePicker";
 import "./scroll-view/ScrollView";
 import "./resizable-panel/ResizablePanel";
