@@ -13,7 +13,7 @@ import { CalendarEvent } from "./events";
 import type CalendarDate from "./CalendarDate";
 import type ResizeHandle from "@/elements/resize/ResizeHandle";
 import type { ResizeEvent } from "@/elements/resize/events";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 interface ItemSegments {
   elements: HTMLElement[];
@@ -37,7 +37,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "calendar-grid": CalendarGridAttributes;
   }

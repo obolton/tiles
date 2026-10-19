@@ -1,9 +1,9 @@
 import "./ThumbnailList.css";
 import { ThumbnailListEvent } from "./events";
 import { getDragPosition } from "@/utils/drag-placeholder";
-import { moveBefore } from "@/utils/dom";
+import { moveBefore } from "jsx/move-before";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const ACTIVE_THRESHOLD = 0.5;
 
@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "thumbnail-list": ThumbnailListAttributes;
   }

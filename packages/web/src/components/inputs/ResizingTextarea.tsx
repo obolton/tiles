@@ -1,5 +1,5 @@
 import styles from "./ResizingTextarea.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 type ResizingTextareaProps = JSX.Attributes<"textarea">;
 

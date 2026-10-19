@@ -5,7 +5,7 @@ import { formatRelativeDate } from "@/utils/dates";
 import styles from "./VersionListItem.module.css";
 import type { VersionEntry } from "./VersionHistory";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface VersionListItemProps {
   version?: VersionEntry;

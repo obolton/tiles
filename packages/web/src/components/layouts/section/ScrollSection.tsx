@@ -1,6 +1,6 @@
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./ScrollSection.module.css";
 import type ScrollView from "@/elements/scroll-view/ScrollView";

@@ -1,7 +1,7 @@
 import css from "./PageItem.css?inline";
 import "./ItemHandle";
 import type ItemHandle from "./ItemHandle";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "page-item": PageItemAttributes;
   }

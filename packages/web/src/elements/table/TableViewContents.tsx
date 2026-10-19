@@ -1,8 +1,8 @@
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import type Table from "@/models/Table";
 import type { CellValue } from "@/models/Row";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface TableViewContentsProps {
   table: Table;

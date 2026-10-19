@@ -1,5 +1,5 @@
 import InsertTileItems from "./InsertTileItems";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface PresentationInsertMenuProps extends JSX.Attributes<"popover-menu"> {
   getParentId: () => string | undefined;

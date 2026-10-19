@@ -3,7 +3,7 @@ import { getWorkspaceUsers } from "@/utils/users";
 import type FilterSelect from "@/elements/filter-select/FilterSelect";
 import { handleError } from "@/utils/errors";
 import ListOption from "@/components/lists/ListOption";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import styles from "./MentionPicker.module.css";
 
 export interface MentionPickerProps {

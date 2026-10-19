@@ -1,7 +1,7 @@
 import { toCSSColor, type Color } from "@/utils/color";
 import styles from "./GradientPalette.module.css";
 import type { Reactive } from "reactivity";
-import type { StyleDeclaration } from "@/jsx/html-attributes";
+import type { StyleDeclaration } from "jsx/html-attributes";
 import type { GradientFill } from "@/components/fills/types";
 
 export interface GradientPaletteProps {

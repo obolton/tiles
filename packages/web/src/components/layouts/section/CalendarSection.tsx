@@ -12,7 +12,7 @@ import { getBackgroundStyle } from "@/utils/backgrounds";
 import { getThemeStyles } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
 import { reactive, combine } from "reactivity";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import styles from "./CalendarSection.module.css";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type { CalendarEvent } from "@/elements/calendar-grid/events";

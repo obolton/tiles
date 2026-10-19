@@ -1,7 +1,7 @@
 import LibraryCard from "@/components/library/LibraryCard";
 import LibrarySelectionToolbar from "@/components/library/LibrarySelectionToolbar";
-import If from "@/jsx/if";
-import Portal from "@/jsx/portal";
+import If from "jsx/if";
+import Portal from "jsx/portal";
 import Search from "@/components/search/Search";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
@@ -9,7 +9,7 @@ import { handleError } from "@/utils/errors";
 import { set } from "reactivity";
 import styles from "./PagesGrid.module.css";
 import type { LibraryPage } from "@/components/library/LibraryCard";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 
 interface PagesSearchResults {

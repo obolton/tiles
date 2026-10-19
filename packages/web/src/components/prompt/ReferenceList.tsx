@@ -1,6 +1,6 @@
 import ReferenceChip from "./ReferenceChip";
 import Editor from "@/editor/Editor";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import styles from "./ReferenceList.module.css";
 
 export default function ReferenceList() {

@@ -1,8 +1,8 @@
 import Tile from "./Tile";
 import ChartToolbar from "@/components/toolbars/charts/ChartToolbar";
 import ChartView from "@/components/charts/ChartView";
-import If from "@/jsx/if";
-import Portal from "@/jsx/portal";
+import If from "jsx/if";
+import Portal from "jsx/portal";
 import styles from "./ChartTile.module.css";
 import type { Reactive } from "reactivity";
 import type Chart from "@/models/Chart";

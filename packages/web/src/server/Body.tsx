@@ -1,5 +1,5 @@
 import { safeJsonStringify } from "@/utils/serialize";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { RouteParameters } from "@/router/router";
 
 export interface RouteContext {

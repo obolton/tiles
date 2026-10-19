@@ -1,7 +1,7 @@
 import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import client from "@/api/client";
 import { reactive } from "reactivity";
 import { showToast, redirectWithToast } from "@/utils/toasts";

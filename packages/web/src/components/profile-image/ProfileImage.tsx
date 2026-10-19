@@ -1,5 +1,5 @@
 import styles from "./ProfileImage.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 interface ProfileImageProps extends Pick<JSX.Attributes<"span">, "classList"> {
   imageUrl: string | null;

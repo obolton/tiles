@@ -1,5 +1,5 @@
 import styles from "./Row.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 
 export interface RowProps {

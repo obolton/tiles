@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const VIEWPORT_MARGIN = 64;
 const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "anchored-popover": AnchoredPopoverAttributes;
   }

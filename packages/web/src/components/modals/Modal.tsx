@@ -1,5 +1,5 @@
 import styles from "./Modal.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ModalProps {
   children: JSX.Node;

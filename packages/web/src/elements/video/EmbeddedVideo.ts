@@ -1,5 +1,5 @@
 import css from "./EmbeddedVideo.css?inline";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "embedded-video": EmbeddedVideoAttributes;
   }

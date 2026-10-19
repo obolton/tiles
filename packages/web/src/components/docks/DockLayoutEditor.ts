@@ -1,5 +1,5 @@
 import { handleError } from "@/utils/errors";
-import { moveBefore } from "@/utils/dom";
+import { moveBefore } from "jsx/move-before";
 import { focusInside } from "@/utils/focus";
 import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";

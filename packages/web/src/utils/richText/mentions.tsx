@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import type { EditorView, NodeView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
 import MentionPicker from "@/components/mentions/MentionPicker";
-import { render } from "@/jsx/dom";
+import { render } from "jsx/dom";
 import { getUserName } from "@/utils/users";
 import { schema } from "./schema";
 

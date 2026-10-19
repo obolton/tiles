@@ -1,5 +1,5 @@
 import styles from "./ModalHeader.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 interface ModalHeaderProps {
   children: JSX.Node;

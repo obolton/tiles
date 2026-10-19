@@ -14,7 +14,7 @@ import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
 import type { TileType } from "doc/types/enums";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 type InsertTileButton = {
   label: string;

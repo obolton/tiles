@@ -9,7 +9,7 @@ import styles from "./FillPopover.module.css";
 import type { Reactive } from "reactivity";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "./types";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface FillPopoverProps extends JSX.Attributes<"anchored-popover"> {
   id: string;

@@ -10,7 +10,7 @@ import styles from "./LibraryCard.module.css";
 import type { Reactive } from "reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { PageType } from "api/types/pages";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export type LibraryPage = AppRouterOutputs["pages"]["list"]["pages"][number];
 

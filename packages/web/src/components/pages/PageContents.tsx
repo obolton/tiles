@@ -5,7 +5,7 @@ import FreePage from "./FreePage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface PageContentsProps {
   page: Page;

@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "table-of-contents": TableOfContentsAttributes;
   }

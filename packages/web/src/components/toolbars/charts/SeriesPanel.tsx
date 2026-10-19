@@ -1,4 +1,4 @@
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import SeriesRow from "./SeriesRow";
@@ -11,7 +11,7 @@ import type Series from "@/models/Series";
 import type { ChartType } from "@/models/Series";
 import type Table from "@/models/Table";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 
 export interface SeriesPanelProps extends JSX.Attributes<"anchored-popover"> {

@@ -1,5 +1,5 @@
 import TabPanel from "./TabPanel";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -12,7 +12,7 @@ export interface TabItemAttributes extends GlobalHTMLAttributes {
   for?: string;
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "tab-item": TabItemAttributes;
   }

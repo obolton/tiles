@@ -1,5 +1,5 @@
 import type SwipeView from "@/elements/swipe/SwipeView";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 export type GetItem = (index: number, contents: Node) => HTMLElement;
 
@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "theme-selector": ThemeSelectorAttributes;
   }

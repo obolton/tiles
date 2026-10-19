@@ -1,6 +1,6 @@
 import { combine } from "reactivity";
-import If from "@/jsx/if";
-import Each from "@/jsx/each";
+import If from "jsx/if";
+import Each from "jsx/each";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import DockLayoutEditor from "./DockLayoutEditor";

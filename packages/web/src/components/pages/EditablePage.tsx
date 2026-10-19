@@ -5,7 +5,7 @@ import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
 import SharePanel from "@/components/collaboration/SharePanel";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import { combine } from "reactivity";
 import { handleError } from "@/utils/errors";
 import styles from "./EditablePage.module.css";

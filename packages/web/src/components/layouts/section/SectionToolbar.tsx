@@ -5,7 +5,7 @@ import TileTools from "@/components/toolbars/tiles/TileTools";
 import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import MapTab from "./MapTab";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import HorizontalLayoutIcon from "@/icons/horizontal-layout.svg?jsx";
 import VerticalLayoutIcon from "@/icons/vertical-layout.svg?jsx";

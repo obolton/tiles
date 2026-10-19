@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 export interface ToolbarTabAttributes extends GlobalHTMLAttributes {
   label?: string;
@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "toolbar-tab": ToolbarTabAttributes;
   }

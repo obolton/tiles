@@ -2,7 +2,7 @@ import DefaultHeading from "./DefaultHeading";
 import UnderlinedHeading from "./UnderlinedHeading";
 import InvertedHeading from "./InvertedHeading";
 import type { ThemeRegistry } from "@/types/themes";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface HeadingThemeProps {
   level: 1 | 2 | 3;

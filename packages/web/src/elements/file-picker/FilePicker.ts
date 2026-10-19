@@ -1,5 +1,5 @@
 import { getAcceptableDragItem } from "@/utils/media";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 export interface FilePickerAttributes extends GlobalHTMLAttributes {
   accept?: string;
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "file-picker": FilePickerAttributes;
   }

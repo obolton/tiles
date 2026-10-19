@@ -1,4 +1,4 @@
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import ThumbnailItem from "@/components/thumbnails/ThumbnailItem";
 import getTileThumbnail from "@/components/thumbnails/getTileThumbnail";
 import { getSizeStyle } from "@/components/item/Item";

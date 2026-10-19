@@ -5,7 +5,7 @@ import { flag } from "reactivity";
 import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
 import styles from "./Prompt.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface PromptProps extends JSX.Attributes<"form"> {
   className?: string;

@@ -1,5 +1,5 @@
 import { classNames } from "@/utils/css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface HeadingTagProps {
   className?: string;

@@ -1,8 +1,8 @@
 import Tile from "./Tile";
 import LinkToolbar from "@/components/toolbars/links/LinkToolbar";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
-import If from "@/jsx/if";
-import Portal from "@/jsx/portal";
+import If from "jsx/if";
+import Portal from "jsx/portal";
 import styles from "./PageLinkTile.module.css";
 import Editor from "@/editor/Editor";
 import type PageLink from "@/models/PageLink";

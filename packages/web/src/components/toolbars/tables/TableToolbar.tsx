@@ -4,7 +4,7 @@ import RowTab from "./RowTab";
 import CellTab from "./CellTab";
 import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
-import { Switch, Case } from "@/jsx/switch";
+import { Switch, Case } from "jsx/switch";
 import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { EditorView } from "prosemirror-view";

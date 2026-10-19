@@ -3,7 +3,7 @@ import { PageItemEvent } from "@/elements/item/events";
 import { getResizeHandleDirections, type ResizeHandleDirection } from "@/elements/item/resize";
 import { makeDraggable } from "@/utils/drag";
 import { trackAnchor } from "@/utils/anchor";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const DRAG_THRESHOLD = 10;
 
@@ -22,7 +22,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "item-handle": ItemHandleAttributes;
   }

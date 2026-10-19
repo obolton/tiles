@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 import type { GradientDirection } from "@/utils/svg-gradient";
 
 export type ChartSeriesType = "BAR" | "LINE" | "AREA";
@@ -19,7 +19,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "chart-series": ChartSeriesAttributes;
   }

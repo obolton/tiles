@@ -1,4 +1,4 @@
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import Editor from "@/editor/Editor";
 import Table from "@/models/Table";
 import { toPlainText } from "@/utils/richText/plainText";

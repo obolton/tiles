@@ -6,7 +6,7 @@ import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";

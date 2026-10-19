@@ -9,7 +9,7 @@ import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
 import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
 import { viewTransition } from "@/utils/transitions";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type Theme from "@/models/Theme";
 import type Tile from "@/models/Tile";
 

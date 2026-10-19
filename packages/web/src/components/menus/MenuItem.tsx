@@ -1,4 +1,4 @@
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 
 export interface MenuItemProps extends JSX.Attributes<"button"> {

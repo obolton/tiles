@@ -4,7 +4,7 @@
     "lib": ["ESNext", "DOM"],
     "outDir": "dist",
     "jsx": "react-jsx",
-    "jsxImportSource": "@/jsx",
+    "jsxImportSource": "jsx",
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -15,6 +15,7 @@
     { "path": "../api" },
     { "path": "../doc" },
     { "path": "../fonts" },
+    { "path": "../jsx" },
     { "path": "../reactivity" }
   ],
 

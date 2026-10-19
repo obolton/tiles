@@ -5,7 +5,7 @@ import styles from "./ColorPicker.module.css";
 import type { Color } from "@/utils/color";
 import type { Reactive } from "reactivity";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ColorPickerProps {
   id: string;

@@ -3,7 +3,7 @@ import Row from "./Row";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { TableEvent } from "./events";
 import { makeDraggable } from "@/utils/drag";
-import { moveBefore } from "@/utils/dom";
+import { moveBefore } from "jsx/move-before";
 import { getFocusedDescendant } from "@/utils/focus";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import css from "./TableView.css?inline";
@@ -13,7 +13,7 @@ import type { DragDropEvent } from "@/utils/drag";
 import type { Fill } from "@/components/fills/types";
 import { applyListChange } from "reactivity";
 import type { Reactive, ReactiveList, ListChange } from "reactivity";
-import type { StyleDeclaration, GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { StyleDeclaration, GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -41,7 +41,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "table-view": TableViewAttributes;
   }

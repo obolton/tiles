@@ -27,7 +27,7 @@ export default defineConfig(({ isSsrBuild }) => ({
       "@": resolve(__dirname, "./src"),
     },
   },
-  plugins: [svgPlugin({ importSource: "@/jsx" }), routeManifestPlugin(), cloudflarePlugin()],
+  plugins: [svgPlugin({ importSource: "jsx" }), routeManifestPlugin(), cloudflarePlugin()],
   build: {
     target: "esnext",
     assetsDir: isSsrBuild ? "" : "assets",

@@ -1,6 +1,6 @@
 import Modal from "@/components/modals/Modal";
-import { render } from "@/jsx/dom";
-import type { JSX } from "@/jsx/jsx";
+import { render } from "jsx/dom";
+import type { JSX } from "jsx/jsx";
 
 export type ModalOptions<T, P> = {
   onConfirm?: (result: T) => Promise<void> | void;

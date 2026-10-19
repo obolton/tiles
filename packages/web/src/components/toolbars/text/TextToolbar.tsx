@@ -9,7 +9,7 @@ import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import VerticalAlignTopIcon from "@/icons/vertical-align-top.svg?jsx";
 import VerticalAlignCenterIcon from "@/icons/vertical-align-center.svg?jsx";
 import VerticalAlignBottomIcon from "@/icons/vertical-align-bottom.svg?jsx";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import type Text from "@/models/Text";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { EditorView } from "prosemirror-view";

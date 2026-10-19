@@ -1,6 +1,6 @@
-import Each from "@/jsx/each";
-import If from "@/jsx/if";
-import Portal from "@/jsx/portal";
+import Each from "jsx/each";
+import If from "jsx/if";
+import Portal from "jsx/portal";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import InsertButton from "@/components/buttons/InsertButton";
@@ -11,7 +11,7 @@ import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import { reactive, type Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface CollectionPageProps {
   page: Page;

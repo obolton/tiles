@@ -1,5 +1,5 @@
 import { focusInside } from "@/utils/focus";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -11,7 +11,7 @@ export interface TabPanelAttributes extends GlobalHTMLAttributes {
   open?: boolean;
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "tab-panel": TabPanelAttributes;
   }

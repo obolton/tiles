@@ -1,9 +1,9 @@
-import If from "@/jsx/if";
+import If from "jsx/if";
 import { persistent } from "@/utils/persistent";
 import { combine, reactive } from "reactivity";
 import styles from "./EditorLayout.module.css";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export const SIDEBAR_CONSTRAINTS = { min: 120, max: 480, default: 200 };
 

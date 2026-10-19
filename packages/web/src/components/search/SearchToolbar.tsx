@@ -1,6 +1,6 @@
 import SortIcon from "@/icons/sort.svg?jsx";
 import styles from "./SearchToolbar.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 

@@ -3,11 +3,11 @@ import { getWorkspaceFolders } from "@/utils/folders";
 import { handleError } from "@/utils/errors";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import FolderIcon from "@/icons/folder.svg?jsx";
 import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 interface FolderPickerProps extends Omit<JSX.Attributes<"list-select">, "value" | "on:change"> {
   value?: Reactive<string | null>;

@@ -4,7 +4,7 @@ import CloseIcon from "@/icons/close.svg?jsx";
 import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
 import { VERSION_HISTORY_PANEL_ID } from "./VersionHistory";
 import type VersionHistory from "./VersionHistory";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface VersionHistoryPanelProps extends JSX.Attributes<"resizable-panel"> {
   state: VersionHistory;

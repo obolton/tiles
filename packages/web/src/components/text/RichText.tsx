@@ -20,7 +20,7 @@ import type {
   LinkNode,
   MentionNode,
 } from "@/utils/richText/types";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 interface RichTextProps {
   content: RichText;

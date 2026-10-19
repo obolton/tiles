@@ -3,7 +3,7 @@ import SignIn from "@/components/menu/SignIn";
 import SpeculationRules from "@/components/resources/SpeculationRules";
 import { user, type User } from "@/utils/sessions";
 import "@/styles";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface PageLayoutProps {
   workspaceId?: string;

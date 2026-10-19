@@ -23,7 +23,7 @@ export async function hydrateRoute(): Promise<HydrateResult> {
   const { module: routeModule, params: parameters } = getRouteContext();
 
   const [{ hydrate }, { default: route }] = await Promise.all([
-    import("@/jsx/dom"),
+    import("jsx/dom"),
     import(/* @vite-ignore */ routeModule),
   ]);
 

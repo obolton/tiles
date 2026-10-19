@@ -13,7 +13,7 @@ import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { persistent } from "@/utils/persistent";
 import { reactive } from "reactivity";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";

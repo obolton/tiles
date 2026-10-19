@@ -1,6 +1,6 @@
 import css from "./CalendarMonth.css?inline";
 import { getFirstDayOfWeek, getDaysInMonth } from "@/utils/dates";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "calendar-month": CalendarMonthAttributes;
   }

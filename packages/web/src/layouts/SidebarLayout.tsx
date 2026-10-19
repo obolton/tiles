@@ -1,5 +1,5 @@
 import styles from "./SidebarLayout.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface SidebarLayoutProps {
   sidebar: JSX.Node;

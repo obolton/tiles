@@ -4,7 +4,7 @@ import { getThemeStyles } from "@/utils/themes";
 import styles from "./ThumbnailItem.module.css";
 import type Tile from "@/models/Tile";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ThumbnailItemProps {
   tile: Tile;

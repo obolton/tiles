@@ -2,7 +2,7 @@ import { combine } from "reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import PeerIndicator from "@/components/collaboration/PeerIndicator";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import { ASPECT_RATIOS } from "@/constants/size";
 import styles from "./Item.module.css";
 import type Tile from "@/models/Tile";
@@ -11,8 +11,8 @@ import type PageItem from "@/elements/item/PageItem";
 import { getResizeHandleDirections } from "@/elements/item/resize";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Reactive } from "reactivity";
-import type { StyleDeclaration } from "@/jsx/html-attributes";
-import type { JSX } from "@/jsx/jsx";
+import type { StyleDeclaration } from "jsx/html-attributes";
+import type { JSX } from "jsx/jsx";
 
 const ANIMATION_NAMES: Record<Animation, string> = {
   FADE: "fade-in",

@@ -1,4 +1,4 @@
-import type { ClassList } from "@/jsx/html-attributes";
+import type { ClassList } from "jsx/html-attributes";
 
 export function classNames(...args: (string | null | undefined | false)[]) {
   return args

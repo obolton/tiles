@@ -1,5 +1,5 @@
 import NewIcon from "@/icons/new.svg?jsx";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 function preventDefault(event: Event) {
   event.preventDefault();

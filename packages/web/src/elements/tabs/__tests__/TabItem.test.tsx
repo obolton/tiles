@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "vitest";
-import { render } from "@/jsx/dom";
+import { render } from "jsx/dom";
 import "../TabBar";
 import TabItem from "../TabItem";
 import TabPanel from "../TabPanel";

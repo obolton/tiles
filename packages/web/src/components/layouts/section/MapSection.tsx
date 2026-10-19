@@ -1,6 +1,6 @@
 import MapPin from "./MapPin";
 import MapEditor from "@/editor/MapEditor";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import styles from "./MapSection.module.css";
 import type MapView from "@/elements/maps/MapView";
 import type SectionModel from "@/models/Section";

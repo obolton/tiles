@@ -1,7 +1,7 @@
 import css from "./SwipeView.css?inline";
 import upIcon from "@/icons/arrow-up.svg?raw";
 import downIcon from "@/icons/arrow-down.svg?raw";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "swipe-view": SwipeViewAttributes;
   }

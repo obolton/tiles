@@ -1,6 +1,6 @@
-import Each from "@/jsx/each";
-import If from "@/jsx/if";
-import Portal from "@/jsx/portal";
+import Each from "jsx/each";
+import If from "jsx/if";
+import Portal from "jsx/portal";
 import Slide from "@/components/slides/Slide";
 import EditorLayout from "@/components/pages/EditorLayout";
 import ThumbnailListPanel from "@/components/thumbnails/ThumbnailListPanel";
@@ -11,7 +11,7 @@ import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface PresentationPageProps {
   page: Page;

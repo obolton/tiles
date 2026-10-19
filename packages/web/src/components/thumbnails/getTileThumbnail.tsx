@@ -15,7 +15,7 @@ import TableTileThumbnail from "@/components/tiles/TableTileThumbnail";
 import VideoTileThumbnail from "@/components/tiles/VideoTileThumbnail";
 import ChartTileThumbnail from "@/components/tiles/ChartTileThumbnail";
 import type Tile from "@/models/Tile";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export default function getTileThumbnail(tile: Tile): JSX.Node {
   if (tile instanceof SectionModel) {

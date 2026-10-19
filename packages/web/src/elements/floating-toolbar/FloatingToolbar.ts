@@ -1,7 +1,7 @@
 import css from "./FloatingToolbar.css?inline";
 import ToolbarTab from "./ToolbarTab";
 import KeyboardNavigation from "@/utils/keyboard";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "floating-toolbar": FloatingToolbarAttributes;
   }

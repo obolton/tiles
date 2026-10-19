@@ -3,7 +3,7 @@ import RoundButtonLink from "./RoundButtonLink";
 import SquareButtonLink from "./SquareButtonLink";
 import type { Reactive } from "reactivity";
 import type { ThemeRegistry } from "@/types/themes";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface LinkThemeProps {
   href: Reactive<string>;

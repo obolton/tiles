@@ -1,5 +1,5 @@
 import { getRouter } from "./routes";
-import { renderToString } from "@/jsx/server";
+import { renderToString } from "jsx/server";
 import { renderHead } from "./head";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";

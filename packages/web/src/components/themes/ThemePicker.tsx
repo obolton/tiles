@@ -10,14 +10,14 @@ import ThemeEditor from "@/components/themes/ThemeEditor";
 import ThemePreview from "@/components/themes/ThemePreview";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import PaletteIcon from "@/icons/palette.svg?jsx";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ThemePickerProps extends Omit<
   JSX.Attributes<"list-select">,

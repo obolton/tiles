@@ -1,7 +1,7 @@
 import CloseIcon from "@/icons/close.svg?jsx";
 import { scrollIntoViewIfNeeded } from "@/utils/scroll";
 import styles from "./Chip.module.css";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ChipProps {
   icon: JSX.Component<JSX.Attributes<"svg">>;

@@ -47,7 +47,7 @@ import { DEFAULT_LINE_HEIGHT } from "@/constants/formatting";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import { isPromptOpen } from "@/utils/richText/prompt";
 import { showModal } from "@/utils/modals";
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import styles from "./FormattingTools.module.css";
 import {
   toggleBold,

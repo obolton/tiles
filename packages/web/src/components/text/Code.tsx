@@ -1,4 +1,4 @@
-import Each from "@/jsx/each";
+import Each from "jsx/each";
 import { reactive } from "reactivity";
 import { highlight } from "@/utils/richText/code/highlight";
 import styles from "./Code.module.css";

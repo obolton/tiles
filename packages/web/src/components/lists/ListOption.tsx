@@ -1,4 +1,4 @@
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface ListOptionProps extends JSX.Attributes<"div"> {
   value?: string;

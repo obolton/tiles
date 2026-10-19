@@ -1,6 +1,6 @@
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import { ResizeEvent } from "./events";
-import type { GlobalHTMLAttributes } from "@/jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 export type ResizeDirection = "horizontal" | "vertical";
 
@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-declare module "@/jsx/html-attributes" {
+declare module "jsx/html-attributes" {
   interface HTMLAttributesByTagName {
     "resize-handle": ResizeHandleAttributes;
   }

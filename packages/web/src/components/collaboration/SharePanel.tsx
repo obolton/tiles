@@ -9,7 +9,7 @@ import styles from "./SharePanel.module.css";
 import type Share from "./Share";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 export interface SharePanelProps extends JSX.Attributes<"resizable-panel"> {
   state: Share;

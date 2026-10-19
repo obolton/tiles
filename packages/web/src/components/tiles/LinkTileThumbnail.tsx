@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import If from "@/jsx/if";
+import If from "jsx/if";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./LinkTile.module.css";
 import type Link from "@/models/Link";

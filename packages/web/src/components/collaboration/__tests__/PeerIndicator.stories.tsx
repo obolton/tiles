@@ -3,7 +3,7 @@ import { array } from "reactivity";
 import { getUserColor } from "@/collaboration/userColor";
 import type { Meta, Story } from "@/test/storybook";
 import type { Peer } from "@/collaboration/Presence";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "jsx/jsx";
 
 const NAMES = [
   "Ada Lovelace",
