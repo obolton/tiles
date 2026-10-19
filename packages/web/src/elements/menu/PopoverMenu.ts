@@ -17,6 +17,7 @@ declare module "jsx/html-attributes" {
 }
 
 const ITEM_SELECTOR = '[role^="menuitem"]';
+const ACTION_ITEM_SELECTOR = '[role="menuitem"]';
 
 export default class PopoverMenu extends AnchoredPopover {
   private navigation = new KeyboardNavigation(this, {
@@ -32,6 +33,7 @@ export default class PopoverMenu extends AnchoredPopover {
 
     this.addEventListener("pointermove", this, { passive: true });
     this.addEventListener("keydown", this, { passive: true });
+    this.addEventListener("click", this, { passive: true });
   }
 
   connectedCallback() {
@@ -52,6 +54,17 @@ export default class PopoverMenu extends AnchoredPopover {
         return this.handlePointerMove(event as PointerEvent);
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
+      case "click":
+        return this.handleClick(event as MouseEvent);
+    }
+  }
+
+  // Activating a plain menu item dismisses the menu. Checkbox and radio items
+  // toggle state and keep the menu open.
+  private handleClick(event: MouseEvent) {
+    const target = event.target;
+    if (target instanceof Element && target.closest(ACTION_ITEM_SELECTOR)) {
+      this.hidePopover();
     }
   }
 

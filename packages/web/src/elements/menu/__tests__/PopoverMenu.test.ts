@@ -109,4 +109,48 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
   });
+
+  describe("activation", () => {
+    test("should close when a menu item is clicked", () => {
+      menu.showPopover();
+
+      items[1]!.click();
+
+      expect(menu.hasAttribute("open")).toBe(false);
+    });
+
+    test("should stay open when a checkbox item is clicked", () => {
+      const checkbox = document.createElement("button");
+      checkbox.role = "menuitemcheckbox";
+      menu.appendChild(checkbox);
+      menu.showPopover();
+
+      checkbox.click();
+
+      expect(menu.hasAttribute("open")).toBe(true);
+    });
+
+    test("should stay open when a radio item is clicked", () => {
+      const radio = document.createElement("button");
+      radio.role = "menuitemradio";
+      menu.appendChild(radio);
+      menu.showPopover();
+
+      radio.click();
+
+      expect(menu.hasAttribute("open")).toBe(true);
+    });
+
+    test("should run the item's own click handler before closing", () => {
+      const order: string[] = [];
+      items[0]!.addEventListener("click", () => order.push("item"));
+      menu.addEventListener("toggle", () => order.push("toggle"));
+      menu.showPopover();
+      order.length = 0;
+
+      items[0]!.click();
+
+      expect(order).toEqual(["item", "toggle"]);
+    });
+  });
 });

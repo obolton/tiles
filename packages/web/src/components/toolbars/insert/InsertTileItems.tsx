@@ -7,7 +7,10 @@ import TableIcon from "@/icons/table.svg?jsx";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
+import { getAspect } from "@/utils/aspect";
+import { getFreeformPlacement, type FreeformPlacement } from "@/utils/freeform";
 import Editor from "@/editor/Editor";
+import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
 import Link from "@/models/Link";
@@ -29,8 +32,32 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
 
+// Nominal aspect ratios used to position auto-height tiles on freeform sections
+const TEXT_ASPECT = 3;
+const LINK_ASPECT = 1;
+const TABLE_ASPECT = 2;
+const TABLE_FREEFORM_WIDTH = 200 / 3;
+
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
+
+/** Default geometry for a tile inserted into `sectionId`, or null when the parent is not freeform. */
+function getPlacement(
+  sectionId: string | undefined,
+  contentAspect: number,
+  width?: number,
+): FreeformPlacement | null {
+  const section = sectionId ? Editor.current.page.index.get(sectionId) : undefined;
+  if (!(section instanceof Section) || section.layout.value !== "FREEFORM") {
+    return null;
+  }
+  const sectionAspect = getAspect(
+    section.sizing.value,
+    section.width.value ?? section.page.width.value,
+    section.height.value,
+  );
+  return getFreeformPlacement(sectionAspect, contentAspect, width);
+}
 
 export interface InsertTileItemsProps {
   /** Resolves the parent for inserted tiles. May throw if there is no valid target. */
@@ -49,6 +76,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
             parentId: sectionId,
             beforeId: null,
             sizing: "AUTO",
+            ...getPlacement(sectionId, TEXT_ASPECT),
           });
           break;
 
@@ -68,6 +96,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
                 size: { width, height },
                 sizing: "AUTO",
                 width: Editor.current.page.width.value,
+                ...getPlacement(sectionId, width / height),
               });
             },
           });
@@ -79,21 +108,22 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
               workspaceId: Editor.current.workspaceId,
             },
             async onConfirm(result) {
+              const geometry = {
+                parentId: sectionId,
+                beforeId: null,
+                width: 5,
+                height: 5,
+                ...getPlacement(sectionId, LINK_ASPECT),
+              };
               if ("linkedPage" in result) {
                 await PageLink.create(Editor.current.page, {
-                  parentId: sectionId,
-                  beforeId: null,
+                  ...geometry,
                   linkedPage: result.linkedPage,
-                  width: 5,
-                  height: 5,
                 });
               } else if (result.url) {
                 await Link.create(Editor.current.page, {
-                  parentId: sectionId,
-                  beforeId: null,
+                  ...geometry,
                   url: result.url,
-                  width: 5,
-                  height: 5,
                 });
               }
             },
@@ -107,6 +137,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
             height: 15,
             columns: 3,
             rows: 5,
+            ...getPlacement(sectionId, TABLE_ASPECT, TABLE_FREEFORM_WIDTH),
           });
           break;
       }
