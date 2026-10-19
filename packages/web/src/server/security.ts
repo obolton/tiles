@@ -51,30 +51,23 @@ export function buildCSPPolicy(sources: CSPSources): CSPPolicy {
   };
 }
 
-// CSP source expressions with a path only match that exact path (or prefix if it
-// ends in "/"), so reduce each configured URL to its origin.
-function toOrigins(urls: (string | undefined)[]): string[] {
-  const origins = new Set<string>();
-  for (const url of urls) {
-    if (url) {
-      origins.add(new URL(url).origin);
-    }
-  }
-  return [...origins];
+// A CSP source with a path only matches that exact path, so use the origin.
+function getOrigin(url: string): string {
+  return new URL(url).origin;
 }
 
 export function buildCSPSources(): CSPSources {
   return {
-    fontSrc: toOrigins([import.meta.env.PUBLIC_FONTS_BASE_URL]),
-    imgSrc: toOrigins([
-      import.meta.env.PUBLIC_IMAGES_BASE_URL,
-      import.meta.env.PUBLIC_PROFILE_IMAGES_BASE_URL,
-    ]),
-    connectSrc: toOrigins([
-      import.meta.env.PUBLIC_API_ORIGIN,
-      import.meta.env.PUBLIC_UPLOAD_ORIGIN,
-      import.meta.env.PUBLIC_COLLABORATION_URL,
-    ]),
+    fontSrc: [getOrigin(import.meta.env.PUBLIC_FONTS_BASE_URL)],
+    imgSrc: [
+      getOrigin(import.meta.env.PUBLIC_IMAGES_BASE_URL),
+      getOrigin(import.meta.env.PUBLIC_PROFILE_IMAGES_BASE_URL),
+    ],
+    connectSrc: [
+      getOrigin(import.meta.env.PUBLIC_API_ORIGIN),
+      getOrigin(import.meta.env.PUBLIC_UPLOAD_ORIGIN),
+      getOrigin(import.meta.env.PUBLIC_COLLABORATION_URL),
+    ],
   };
 }
 
