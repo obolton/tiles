@@ -1,0 +1,24 @@
+{
+  "name": "jsx",
+  "version": "0.0.1",
+  "private": true,
+  "description": "JSX runtime",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "lint": "oxlint",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "entities": "^8.1.0",
+    "reactivity": "workspace:*"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
+  }
+}

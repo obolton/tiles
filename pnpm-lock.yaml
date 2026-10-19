@@ -348,6 +348,19 @@ importers:
         specifier: ^4.148.0
         version: 4.148.0(@types/node@24.13.3)
 
+  packages/jsx:
+    dependencies:
+      entities:
+        specifier: ^8.1.0
+        version: 8.1.0
+      reactivity:
+        specifier: workspace:*
+        version: link:../reactivity
+    devDependencies:
+      jsdom:
+        specifier: ^30.1.2
+        version: 30.1.2
+
   packages/reactivity: {}
 
   packages/web:
@@ -451,6 +464,9 @@ importers:
       jose:
         specifier: ^6.2.12
         version: 6.2.12
+      jsx:
+        specifier: workspace:*
+        version: link:../jsx
       maplibre-gl:
         specifier: ^6.13.0
         version: 6.13.0

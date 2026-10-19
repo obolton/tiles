@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { describe, expect, test, vi } from "vitest";
-import { moveBefore } from "../dom";
+import { moveBefore } from "../move-before";
 
 describe("moveBefore", () => {
   test("calls Element.moveBefore if the method is defined", () => {

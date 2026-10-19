@@ -20,12 +20,12 @@ The user experience is intended to be highly intuitive, usable, accessible and d
   - `api`: API server using Node with tRPC and Prisma.
   - `doc`: Document schema and utilities.
   - `fonts`: Font registry, manifest and the script that syncs fonts to R2.
+  - `jsx`: JSX runtime.
   - `reactivity`: Reactivity library.
   - `web`: Web frontend using Vite, Web Components and a custom JSX runtime.
     - `src/elements`: Web Components
     - `src/components`: JSX components
     - `src/routes`: Routing
-    - `src/jsx`: JSX runtime
     - `src/utils`: Utilities
   - `image-upload-worker`: Cloudflare Worker for media uploads.
   - `dev-cdn`: Dev-only Cloudflare Worker that serves uploaded media and fonts from the local R2 buckets.

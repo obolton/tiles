@@ -1,5 +1,5 @@
 import { hydrateNode, render, createPlaceholderNode } from "./dom";
-import { moveBefore } from "@/utils/dom";
+import { moveBefore } from "./move-before";
 import type { Reactive } from "reactivity";
 import type { JSX } from "./jsx";
 

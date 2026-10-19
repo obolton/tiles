@@ -1,5 +1,5 @@
 import type { Reactive } from "reactivity";
-import type { JSX } from "@/jsx/jsx";
+import type { JSX } from "./jsx";
 
 export interface IfProps {
   condition: Reactive<unknown>;

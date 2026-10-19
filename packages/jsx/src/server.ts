@@ -1,6 +1,6 @@
 import { escapeText } from "entities";
 import { unwrap } from "reactivity";
-import { openTag, closeTag, VOID_ELEMENTS, type Attributes } from "@/utils/html";
+import { openTag, closeTag, VOID_ELEMENTS, type Attributes } from "./html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";
 import {

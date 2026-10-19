@@ -1,6 +1,6 @@
 import { isReactive } from "reactivity";
 import type { ClassList } from "./html-attributes";
-import type { StyleDeclaration, StyleValue } from "@/jsx/html-attributes";
+import type { StyleDeclaration, StyleValue } from "./html-attributes";
 
 /**
  * Maps JSX attribute names to their HTML equivalents.
