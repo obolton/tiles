@@ -2,7 +2,6 @@ import { describe, expect, test, afterEach } from "vitest";
 import Theme from "@/models/Theme";
 import {
   initializeCache,
-  isCacheInitialized,
   getWorkspaceId,
   destroyCache,
   usersCache,
@@ -19,14 +18,17 @@ describe("cache", () => {
   describe("initializeCache", () => {
     test("initializes the cache database", async () => {
       await initializeCache("user-1", "workspace-1");
-      expect(isCacheInitialized()).toBe(true);
+      expect(getWorkspaceId()).toBe("workspace-1");
     });
 
     test("is idempotent for same workspace", async () => {
       await initializeCache("user-1", "workspace-1");
+      await bookmarksCache.set([{ id: "page-1" }]);
+
       await initializeCache("user-1", "workspace-1");
-      expect(isCacheInitialized()).toBe(true);
+
       expect(getWorkspaceId()).toBe("workspace-1");
+      expect(bookmarksCache.isWarm).toBe(true);
     });
 
     test("switches workspace automatically", async () => {
@@ -38,23 +40,6 @@ describe("cache", () => {
       expect(getWorkspaceId()).toBe("workspace-2");
       // Old cache data should be cleared
       expect(bookmarksCache.isWarm).toBe(false);
-    });
-  });
-
-  describe("isCacheInitialized", () => {
-    test("returns false before initialization", () => {
-      expect(isCacheInitialized()).toBe(false);
-    });
-
-    test("returns true after initialization", async () => {
-      await initializeCache("user-1", "workspace-1");
-      expect(isCacheInitialized()).toBe(true);
-    });
-
-    test("returns false after destroy", async () => {
-      await initializeCache("user-1", "workspace-1");
-      await destroyCache();
-      expect(isCacheInitialized()).toBe(false);
     });
   });
 
@@ -74,7 +59,6 @@ describe("cache", () => {
       await initializeCache("user-1", "workspace-1");
       await destroyCache();
 
-      expect(isCacheInitialized()).toBe(false);
       expect(() => getWorkspaceId()).toThrow("Cache not initialized");
     });
 

@@ -57,19 +57,8 @@ export class CacheCollection<Raw extends { id: string }, Item extends { id: stri
     this.database = database;
   }
 
-  get meta(): CacheMeta | null {
-    return this.cachedMeta;
-  }
-
   get isWarm(): boolean {
     return this.cachedMeta !== null;
-  }
-
-  /**
-   * Returns the number of items in the cache.
-   */
-  get count(): number {
-    return this.items.length;
   }
 
   private get itemsStore(): ObjectStore<Raw> {
@@ -202,37 +191,6 @@ export class CacheCollection<Raw extends { id: string }, Item extends { id: stri
         console.warn("Failed to delete from cache:", error);
       }
     }
-  }
-
-  /**
-   * Updates a single item's properties by ID.
-   * Accepts partial updates in the raw (serialized) form.
-   * Returns the updated item, or null if the item doesn't exist.
-   */
-  async update(id: string, updates: Partial<Omit<Raw, "id">>): Promise<Item | null> {
-    const existing = this.itemsMap.get(id);
-    if (!existing) {
-      return null;
-    }
-
-    const updatedRaw = { ...this.serialize(existing), ...updates };
-    const updated = this.deserialize(updatedRaw);
-    this.itemsMap.set(id, updated);
-
-    const index = this.items.value.findIndex((item) => item.id === id);
-    if (index >= 0) {
-      this.items.splice(index, 1, updated);
-    }
-
-    try {
-      await this.itemsStore.put(updatedRaw);
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.warn("Failed to update cache:", error);
-      }
-    }
-
-    return updated;
   }
 
   /**

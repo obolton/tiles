@@ -57,23 +57,6 @@ describe("Database", () => {
     });
   });
 
-  describe("isOpen", () => {
-    test("returns false before opening", () => {
-      expect(db.isOpen).toBe(false);
-    });
-
-    test("returns true after opening", async () => {
-      await db.open();
-      expect(db.isOpen).toBe(true);
-    });
-
-    test("returns false after closing", async () => {
-      await db.open();
-      db.close();
-      expect(db.isOpen).toBe(false);
-    });
-  });
-
   describe("store", () => {
     test("returns an ObjectStore instance", () => {
       const store = db.store("items");
@@ -89,9 +72,9 @@ describe("Database", () => {
 
   describe("close", () => {
     test("closes the database connection", async () => {
-      await db.open();
+      const connection = await db.open();
       db.close();
-      expect(db.isOpen).toBe(false);
+      expect(await db.open()).not.toBe(connection);
     });
 
     test("can be called before opening", () => {
@@ -101,28 +84,53 @@ describe("Database", () => {
 
   describe("deleteDatabase", () => {
     test("deletes the database", async () => {
-      await db.open();
+      const store = db.store<{ id: string }>("items");
+      await store.put({ id: "1" });
       await db.deleteDatabase();
-      expect(db.isOpen).toBe(false);
+
+      expect(await store.getAll()).toEqual([]);
     });
   });
 
-  describe("onUpgrade", () => {
-    test("calls the onUpgrade callback during upgrade", async () => {
-      let upgradeVersion: number | undefined;
+  describe("upgrade", () => {
+    test("adds stores and indexes missing from an existing database", async () => {
+      await db.open();
+      db.close();
 
-      const dbWithUpgrade = new Database({
-        name: "upgrade-test-db",
-        version: 1,
-        schema,
-        onUpgrade: (_db, oldVersion) => {
-          upgradeVersion = oldVersion;
+      const upgraded = new Database({
+        name: "test-db",
+        version: 2,
+        schema: {
+          items: {
+            keyPath: "id",
+            indexes: { byName: { keyPath: "name" }, byAge: { keyPath: "age" } },
+          },
+          extra: { keyPath: "id" },
         },
       });
+      const upgradedConnection = await upgraded.open();
 
-      await dbWithUpgrade.open();
-      expect(upgradeVersion).toBe(0);
-      await dbWithUpgrade.deleteDatabase();
+      expect(upgradedConnection.version).toBe(2);
+      expect(upgradedConnection.objectStoreNames.contains("extra")).toBe(true);
+      const store = upgradedConnection.transaction("items", "readonly").objectStore("items");
+      expect(store.indexNames.contains("byName")).toBe(true);
+      expect(store.indexNames.contains("byAge")).toBe(true);
+      upgraded.close();
+    });
+
+    test("drops stores that are no longer in the schema", async () => {
+      await db.open();
+      db.close();
+
+      const upgraded = new Database({
+        name: "test-db",
+        version: 2,
+        schema: { other: { keyPath: "id" } },
+      });
+      const connection = await upgraded.open();
+
+      expect(Array.from(connection.objectStoreNames)).toEqual(["other"]);
+      upgraded.close();
     });
   });
 });

@@ -21,7 +21,6 @@ export class Database<Schema extends SchemaDefinition> {
   readonly name: string;
   private readonly version: number;
   private readonly schema: Schema;
-  private readonly onUpgrade?: DatabaseOptions<Schema>["onUpgrade"];
   private readonly stores = new Map<string, ObjectStore<unknown>>();
 
   private connection: IDBDatabase | null = null;
@@ -31,14 +30,6 @@ export class Database<Schema extends SchemaDefinition> {
     this.name = options.name;
     this.version = options.version;
     this.schema = options.schema;
-    this.onUpgrade = options.onUpgrade;
-  }
-
-  /**
-   * Whether the database connection is open.
-   */
-  get isOpen(): boolean {
-    return this.connection !== null;
   }
 
   /**
@@ -72,18 +63,23 @@ export class Database<Schema extends SchemaDefinition> {
         reject(request.error ?? new Error("IndexedDB request failed")),
       );
       request.addEventListener("success", () => resolve(request.result));
-      request.addEventListener("upgradeneeded", (event) => {
-        this.handleUpgrade(request, event.oldVersion);
-      });
+      request.addEventListener("upgradeneeded", () => this.handleUpgrade(request));
     });
   }
 
-  private handleUpgrade(request: IDBOpenDBRequest, oldVersion: number) {
+  private handleUpgrade(request: IDBOpenDBRequest) {
     const db = request.result;
     const transaction = request.transaction;
 
     if (!transaction) {
       throw new Error("No transaction available during database upgrade");
+    }
+
+    // Drop stores that are no longer in the schema
+    for (const storeName of Array.from(db.objectStoreNames)) {
+      if (!(storeName in this.schema)) {
+        db.deleteObjectStore(storeName);
+      }
     }
 
     // Auto-create stores and indexes based on schema
@@ -111,9 +107,6 @@ export class Database<Schema extends SchemaDefinition> {
         }
       }
     }
-
-    // Call custom upgrade handler for additional migrations
-    this.onUpgrade?.(db, oldVersion, this.version, transaction);
   }
 
   /**

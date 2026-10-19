@@ -28,22 +28,6 @@ export interface StoreDefinition {
 export type SchemaDefinition = Record<string, StoreDefinition>;
 
 /**
- * Options for cursor-based queries.
- */
-export interface QueryOptions {
-  /** Index to query on (uses primary key if omitted) */
-  index?: string;
-  /** Key or key range to filter by */
-  query?: IDBValidKey | IDBKeyRange;
-  /** Cursor direction */
-  direction?: IDBCursorDirection;
-  /** Maximum number of results to return */
-  limit?: number;
-  /** Number of results to skip */
-  offset?: number;
-}
-
-/**
  * Options for opening a database.
  */
 export interface DatabaseOptions<Schema extends SchemaDefinition> {
@@ -53,14 +37,4 @@ export interface DatabaseOptions<Schema extends SchemaDefinition> {
   version: number;
   /** Schema definition for stores and indexes */
   schema: Schema;
-  /**
-   * Custom upgrade handler for migrations.
-   * Called after auto-creating stores/indexes from schema.
-   */
-  onUpgrade?: (
-    db: IDBDatabase,
-    oldVersion: number,
-    newVersion: number,
-    transaction: IDBTransaction,
-  ) => void;
 }
