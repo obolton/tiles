@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import type { FontId } from "fonts/config";
-import type { RichText, Node } from "./types";
+import type { RichText, Node } from "doc/types/richText";
 
 export function getRichTextFonts(content: RichText): Set<FontId> {
   const fonts = new Set<FontId>();

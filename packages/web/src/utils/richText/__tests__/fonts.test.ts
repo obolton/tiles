@@ -3,8 +3,8 @@ import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import { getRichTextFonts, getFragmentFonts } from "../fonts";
 import { deserialize } from "../deserialize";
-import { ListType } from "../types";
-import type { RichText } from "../types";
+import { ListType } from "doc/types/richText";
+import type { RichText } from "doc/types/richText";
 
 function toFragment(content: RichText): Y.XmlFragment {
   const fragment = new Y.Doc().getXmlFragment("content");

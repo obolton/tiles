@@ -7,7 +7,7 @@ import Image from "@/models/Image";
 import { deserialize } from "@/utils/richText/deserialize";
 import { THEME } from "@/test/fixtures/Theme";
 import type { Theme } from "api/types/themes";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 
 function createDoc(themes: Theme[] = [], pageThemeId?: string): Y.Doc {
   const doc = new Y.Doc();

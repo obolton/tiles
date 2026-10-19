@@ -4,7 +4,7 @@ import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import type { Node } from "prosemirror-model";
 import { fragmentToPlainText, toPlainText } from "../plainText";
 import { schema } from "../schema";
-import type { RichText } from "../types";
+import type { RichText } from "doc/types/richText";
 
 function toFragment(...blocks: Node[]): Y.XmlFragment {
   const doc = new Y.Doc();

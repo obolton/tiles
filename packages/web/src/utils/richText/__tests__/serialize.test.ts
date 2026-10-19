@@ -6,8 +6,8 @@ import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import { serialize, serializeFragment } from "../serialize";
 import { deserialize } from "../deserialize";
 import { schema } from "../schema";
-import { ListType, TextAlignment, TextFormat } from "../types";
-import type { RichText } from "../types";
+import { ListType, TextAlignment, TextFormat } from "doc/types/richText";
+import type { RichText } from "doc/types/richText";
 import { RICH_TEXT_DOCUMENTS } from "@/test/fixtures/richText";
 
 // y-prosemirror only stores marks on text, so marks on inline atoms do not survive the fragment.

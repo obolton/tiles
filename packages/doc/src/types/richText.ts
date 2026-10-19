@@ -24,7 +24,7 @@ export enum TextAlignment {
   JUSTIFY = 3,
 }
 
-interface TextNode {
+export interface TextNode {
   type: "text";
   text: string;
   format: number;
@@ -34,14 +34,14 @@ interface TextNode {
   pending?: boolean;
 }
 
-interface LinkNode {
+export interface LinkNode {
   type: "link";
   href: string;
   theme?: string;
   children: TextNode[];
 }
 
-interface DateNode {
+export interface DateNode {
   type: "date";
   value: string;
   format: number;
@@ -51,7 +51,7 @@ interface DateNode {
   theme?: string | null;
 }
 
-interface DropdownNode {
+export interface DropdownNode {
   type: "dropdown";
   dropdownType: string;
   value: string;
@@ -61,7 +61,7 @@ interface DropdownNode {
   font?: string;
 }
 
-interface MentionNode {
+export interface MentionNode {
   type: "mention";
   userId: string;
   displayName: string;
@@ -71,60 +71,60 @@ interface MentionNode {
   font?: string;
 }
 
-type InlineNode = TextNode | LinkNode | DateNode | DropdownNode | MentionNode;
+export type InlineNode = TextNode | LinkNode | DateNode | DropdownNode | MentionNode;
 
-interface ParagraphNode {
-  type: "paragraph";
+export interface BlockStyle {
   align?: TextAlignment;
   lineHeight?: number;
   indent?: number;
+}
+
+export interface ParagraphNode extends BlockStyle {
+  type: "paragraph";
   children: InlineNode[];
 }
 
-interface HeadingNode {
+export interface HeadingNode extends BlockStyle {
   type: "heading";
   level: 1 | 2 | 3;
-  align?: TextAlignment;
-  lineHeight?: number;
-  indent?: number;
   theme?: string;
   children: InlineNode[];
 }
 
-interface ListItemNode {
+export interface ListItemNode {
   type: "listitem";
   checked?: boolean;
   children: BlockNode[];
 }
 
-interface ListNode {
+export interface ListNode {
   type: "list";
   listType: ListType;
   children: ListItemNode[];
 }
 
-interface CodeNode {
+export interface CodeNode {
   type: "code";
   language: string;
   lineNumbers: boolean;
   children: TextNode[];
 }
 
-interface DividerNode {
+export interface DividerNode {
   type: "divider";
 }
 
-interface QuoteNode {
+export interface QuoteNode {
   type: "quote";
-  children: (ParagraphNode | HeadingNode | ListNode | CodeNode | DividerNode)[];
+  children: Exclude<BlockNode, { type: "quote" | "pending" }>[];
 }
 
-interface PendingNode {
+export interface PendingNode {
   type: "pending";
-  children: (ParagraphNode | HeadingNode | ListNode | QuoteNode | CodeNode | DividerNode)[];
+  children: Exclude<BlockNode, { type: "pending" }>[];
 }
 
-type BlockNode =
+export type BlockNode =
   | ParagraphNode
   | HeadingNode
   | QuoteNode
@@ -132,5 +132,7 @@ type BlockNode =
   | PendingNode
   | CodeNode
   | DividerNode;
+
+export type Node = InlineNode | BlockNode | ListItemNode;
 
 export type RichText = BlockNode[];

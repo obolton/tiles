@@ -18,7 +18,7 @@ import type { Reactive } from "reactivity";
 import type { TableEvent } from "@/elements/table/events";
 import type Column from "@/elements/table/Column";
 import type Row from "@/elements/table/Row";
-import type { RichText as RichTextType } from "@/utils/richText/types";
+import type { RichText as RichTextType } from "doc/types/richText";
 import type Table from "@/models/Table";
 import type { EditorState } from "prosemirror-state";
 

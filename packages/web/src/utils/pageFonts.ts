@@ -4,7 +4,7 @@ import { getFontPreload } from "@/utils/fonts";
 import { getPageTheme, getPageFont } from "@/utils/themes";
 import { getRichTextFonts, getFragmentFonts } from "@/utils/richText/fonts";
 import type { ThemeData } from "@/models/Theme";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 import type { Link } from "@/router/router";
 
 function getTileFonts(tile: Y.Map<unknown>): Set<FontId> {

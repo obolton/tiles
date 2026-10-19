@@ -1,4 +1,4 @@
-import { ListType, TextAlignment, TextFormat } from "@/utils/richText/types";
+import { ListType, TextAlignment, TextFormat } from "doc/types/richText";
 import type {
   BlockNode,
   BlockStyle,
@@ -12,7 +12,7 @@ import type {
   ParagraphNode,
   RichText,
   TextNode,
-} from "@/utils/richText/types";
+} from "doc/types/richText";
 
 export const COLOR = "ff0000ff0000";
 export const FONT = "lora";

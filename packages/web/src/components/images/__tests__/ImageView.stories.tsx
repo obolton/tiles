@@ -4,7 +4,7 @@ import Image from "@/models/Image";
 import ImageView from "../ImageView";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 
 const editor = Editor.init(PAGE, new Y.Doc());
 

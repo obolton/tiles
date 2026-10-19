@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import type { RichText, Node } from "./types";
+import type { RichText, Node } from "doc/types/richText";
 
 /**
  * Extracts plain text from a Y.XmlFragment.
