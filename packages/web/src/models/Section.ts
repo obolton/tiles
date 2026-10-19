@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import Tile from "./Tile";
 import { buildSectionMap, type SectionMapInput } from "doc/tiles/section";
 import type TileCollection from "./TileCollection";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { Layout, MapStyle } from "doc/types/tiles/section";
 import type Page from "@/models/Page";
 

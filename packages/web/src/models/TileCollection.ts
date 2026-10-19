@@ -1,4 +1,4 @@
-import { BaseReactive } from "@/utils/reactivity";
+import { BaseReactive } from "reactivity";
 import type Tile from "./Tile";
 
 export default class TileCollection extends BaseReactive<Tile[]> {

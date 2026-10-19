@@ -1,6 +1,6 @@
-import { BaseReactive, array, set } from "@/utils/reactivity";
+import { BaseReactive, array, set } from "reactivity";
 import { last } from "@/utils/iterables";
-import type { Reactive, ReactiveArray, ReactiveSet, SetChange } from "@/utils/reactivity";
+import type { Reactive, ReactiveArray, ReactiveSet, SetChange } from "reactivity";
 import type { Awareness } from "./types";
 
 export interface Peer {

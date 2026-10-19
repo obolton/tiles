@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import SidebarPanel from "@/components/pages/SidebarPanel";
-import { flag, reactive } from "@/utils/reactivity";
+import { flag, reactive } from "reactivity";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 

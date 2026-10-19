@@ -2,7 +2,7 @@ import ProfileImage from "@/components/profile-image/ProfileImage";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
 import styles from "./MemberCard.module.css";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { AppRouterOutputs } from "@/api/client";
 

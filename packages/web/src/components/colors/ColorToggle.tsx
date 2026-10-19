@@ -1,6 +1,6 @@
 import If from "@/jsx/if";
 import { toCSSColor, type Color } from "@/utils/color";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import styles from "./ColorToggle.module.css";
 
 export type ActiveColor = "A" | "B";

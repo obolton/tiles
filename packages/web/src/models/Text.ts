@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import Tile from "./Tile";
 import { buildTextMap, type TextMapInput } from "doc/tiles/text";
-import { type Reactive } from "@/utils/reactivity";
+import { type Reactive } from "reactivity";
 import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
 import type { TextTile } from "doc/types/tiles";

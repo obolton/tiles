@@ -8,7 +8,7 @@ import {
   serializeStyles,
   applyStyleObject,
 } from "../attributes";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 
 describe("mapAttributeName", () => {
   test("maps className to class", () => {

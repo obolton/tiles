@@ -1,7 +1,7 @@
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState } from "prosemirror-state";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface CellTabProps {
   editorView: Reactive<EditorView | null>;

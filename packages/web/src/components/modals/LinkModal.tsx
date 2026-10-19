@@ -7,7 +7,7 @@ import Search from "@/components/search/Search";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { flag, reactive } from "@/utils/reactivity";
+import { flag, reactive } from "reactivity";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
 import type { PageLinkTile } from "doc/types/tiles";

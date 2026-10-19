@@ -1,5 +1,5 @@
 import { isElementNode, toNodeArray } from "./node-types";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "./jsx";
 
 export interface SwitchProps<T> {

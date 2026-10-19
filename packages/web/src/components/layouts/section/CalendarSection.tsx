@@ -11,14 +11,14 @@ import { fragmentToPlainText, toPlainText } from "@/utils/richText/plainText";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { getThemeStyles } from "@/utils/themes";
 import { handleError } from "@/utils/errors";
-import { reactive, combine } from "@/utils/reactivity";
+import { reactive, combine } from "reactivity";
 import Each from "@/jsx/each";
 import styles from "./CalendarSection.module.css";
 import type CalendarGrid from "@/elements/calendar-grid/CalendarGrid";
 import type { CalendarEvent } from "@/elements/calendar-grid/events";
 import type Tile from "@/models/Tile";
 import type SectionModel from "@/models/Section";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 function getSegmentTextColor(tile: Tile): Reactive<string | null> {
   return combine(

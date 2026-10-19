@@ -6,7 +6,7 @@ import ChatPanel from "@/components/chat/ChatPanel";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
 import SharePanel from "@/components/collaboration/SharePanel";
 import If from "@/jsx/if";
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { handleError } from "@/utils/errors";
 import styles from "./EditablePage.module.css";
 import type Editor from "@/editor/Editor";

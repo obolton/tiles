@@ -5,7 +5,7 @@ import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
-import { ReactiveValue } from "@/utils/reactivity";
+import { ReactiveValue } from "reactivity";
 import { handleError } from "@/utils/errors";
 import debounce from "@/utils/debounce";
 

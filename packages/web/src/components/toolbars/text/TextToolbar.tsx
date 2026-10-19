@@ -14,7 +14,7 @@ import type Text from "@/models/Text";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { EditorView } from "prosemirror-view";
 import type { Command, EditorState } from "prosemirror-state";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface TextToolbarProps {
   text: Text;

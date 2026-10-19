@@ -1,5 +1,5 @@
 import styles from "./ColorfulDateTime.module.css";
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function ColorfulDateTime({ value, time }: DateTimeThemeProps) {

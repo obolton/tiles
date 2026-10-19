@@ -1,7 +1,7 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import { classNames } from "@/utils/css";
 import styles from "./Caption.module.css";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface CaptionProps {
   isEditable: Reactive<boolean>;

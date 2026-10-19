@@ -1,4 +1,4 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { setSearchParams } from "@/utils/urls";
 import type Image from "@/models/Image";
 

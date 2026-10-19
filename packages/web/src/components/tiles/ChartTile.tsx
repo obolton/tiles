@@ -4,7 +4,7 @@ import ChartView from "@/components/charts/ChartView";
 import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./ChartTile.module.css";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type Chart from "@/models/Chart";
 
 export interface ChartTileProps {

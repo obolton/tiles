@@ -12,7 +12,7 @@ import type * as Y from "yjs";
 import type { EditorState } from "prosemirror-state";
 import type { Awareness } from "@/collaboration/types";
 import type { JSX } from "@/jsx/jsx";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {
   contentFragment: Y.XmlFragment;

@@ -3,7 +3,7 @@ import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import If from "@/jsx/if";
 import client from "@/api/client";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import { showToast, redirectWithToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";

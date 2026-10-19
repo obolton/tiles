@@ -11,7 +11,7 @@ import type { ThumbnailListEvent } from "@/elements/thumbnails/events";
 import type { JSX } from "@/jsx/jsx";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface ThumbnailListPanelProps extends JSX.Attributes<"resizable-panel"> {
   page: Page;

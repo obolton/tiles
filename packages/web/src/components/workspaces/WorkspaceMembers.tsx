@@ -4,12 +4,12 @@ import MemberCard from "./MemberCard";
 import Placeholder from "@/components/placeholder/Placeholder";
 import client from "@/api/client";
 import { user as currentUser } from "@/utils/sessions";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import { handleError } from "@/utils/errors";
 import { navigate } from "@/utils/navigation";
 import styles from "./WorkspaceMembers.module.css";
 import type { AppRouterOutputs } from "@/api/client";
-import type { ReactiveValue } from "@/utils/reactivity";
+import type { ReactiveValue } from "reactivity";
 import type { WorkspaceMember } from "./MemberCard";
 
 export interface WorkspaceMembersProps {

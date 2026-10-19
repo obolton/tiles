@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { ySyncPluginKey } from "y-prosemirror";
-import { flag, type ReactiveFlag } from "@/utils/reactivity";
+import { flag, type ReactiveFlag } from "reactivity";
 
 export interface UndoStepHooks {
   onRecord?(meta: Map<unknown, unknown>): void;

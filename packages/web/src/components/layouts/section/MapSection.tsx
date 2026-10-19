@@ -4,7 +4,7 @@ import Each from "@/jsx/each";
 import styles from "./MapSection.module.css";
 import type MapView from "@/elements/maps/MapView";
 import type SectionModel from "@/models/Section";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface MapSectionProps {
   section: SectionModel;

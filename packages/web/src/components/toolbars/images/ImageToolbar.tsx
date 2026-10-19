@@ -4,7 +4,7 @@ import DateTab from "@/components/toolbars/tiles/DateTab";
 import AltTab from "./AltTab";
 import type Image from "@/models/Image";
 import type { EditorView } from "prosemirror-view";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface ImageToolbarProps {
   image: Image;

@@ -1,4 +1,4 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import If from "@/jsx/if";
 import Each from "@/jsx/each";
 import Item from "@/components/item/Item";
@@ -6,7 +6,7 @@ import TileContent from "@/components/item/TileContent";
 import DockLayoutEditor from "./DockLayoutEditor";
 import styles from "./DockZone.module.css";
 import type Page from "@/models/Page";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { DockEdge } from "@/models/Tile";
 import type TileCollection from "@/models/TileCollection";
 

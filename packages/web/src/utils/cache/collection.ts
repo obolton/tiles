@@ -1,4 +1,4 @@
-import { ReactiveArray } from "@/utils/reactivity";
+import { ReactiveArray } from "reactivity";
 import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
 
 export interface CacheMeta {

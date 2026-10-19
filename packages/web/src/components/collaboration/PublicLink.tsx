@@ -3,7 +3,7 @@ import CopyIcon from "@/icons/duplicate.svg?jsx";
 import CheckIcon from "@/icons/check.svg?jsx";
 import OpenIcon from "@/icons/arrow-outward.svg?jsx";
 import If from "@/jsx/if";
-import { flag } from "@/utils/reactivity";
+import { flag } from "reactivity";
 import { getPublicPageUrl } from "@/utils/pages";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";

@@ -8,7 +8,7 @@ import CloseIcon from "@/icons/close.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
-import type { ReactiveSet } from "@/utils/reactivity";
+import type { ReactiveSet } from "reactivity";
 
 interface LibrarySelectionToolbarProps {
   workspaceId: string;

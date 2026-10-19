@@ -1,6 +1,6 @@
 import Stepper from "@/components/stepper/Stepper";
 import styles from "./TextSizePopover.module.css";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface TextSizePopoverProps extends Omit<

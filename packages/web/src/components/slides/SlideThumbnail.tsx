@@ -4,7 +4,7 @@ import getTileThumbnail from "@/components/thumbnails/getTileThumbnail";
 import { getSizeStyle } from "@/components/item/Item";
 import { getAspect } from "@/utils/aspect";
 import { getThemeStyles } from "@/utils/themes";
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import slideStyles from "./Slide.module.css";
 import styles from "./SlideThumbnail.module.css";
 import type SectionModel from "@/models/Section";

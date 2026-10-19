@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { BaseReactive } from "@/utils/reactivity";
+import { BaseReactive } from "reactivity";
 
 /**
  * A reactive view of a single key on a {@link Y.Map}.

@@ -1,5 +1,5 @@
 import PeerIndicator from "../PeerIndicator";
-import { array } from "@/utils/reactivity";
+import { array } from "reactivity";
 import { getUserColor } from "@/collaboration/userColor";
 import type { Meta, Story } from "@/test/storybook";
 import type { Peer } from "@/collaboration/Presence";

@@ -6,7 +6,7 @@ import Portal from "@/jsx/portal";
 import styles from "./TextTile.module.css";
 import textViewStyles from "@/components/text/TextView.module.css";
 import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";
-import { combine, reactive, type Reactive } from "@/utils/reactivity";
+import { combine, reactive, type Reactive } from "reactivity";
 import type Text from "@/models/Text";
 import type { EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";

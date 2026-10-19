@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildImageMap } from "doc/tiles/image";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import { reactive, type Reactive } from "reactivity";
 import { serialize } from "@/utils/richText/serialize";
 import { getImageUrl } from "@/utils/images";
 import type Page from "@/models/Page";

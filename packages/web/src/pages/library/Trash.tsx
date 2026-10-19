@@ -11,7 +11,8 @@ import PagesGrid, {
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
-import { reactive, persistent } from "@/utils/reactivity";
+import { persistent } from "@/utils/persistent";
+import { reactive } from "reactivity";
 import If from "@/jsx/if";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";

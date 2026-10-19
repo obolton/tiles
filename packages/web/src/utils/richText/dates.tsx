@@ -4,7 +4,7 @@ import type { Node } from "prosemirror-model";
 import Themeable from "@/components/themes/Themeable";
 import { render } from "@/jsx/dom";
 import { showModal } from "@/utils/modals";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import {
   DATE_THEMES,
   DATE_THEME_OPTIONS,

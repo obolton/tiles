@@ -1,4 +1,4 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function ShortDateTime({ value, time }: DateTimeThemeProps) {

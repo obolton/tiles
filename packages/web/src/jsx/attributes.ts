@@ -1,4 +1,4 @@
-import { isReactive } from "@/utils/reactivity";
+import { isReactive } from "reactivity";
 import type { ClassList } from "./html-attributes";
 import type { StyleDeclaration, StyleValue } from "@/jsx/html-attributes";
 

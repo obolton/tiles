@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildPageLinkMap } from "doc/tiles/pageLink";
-import { type Reactive } from "@/utils/reactivity";
+import { type Reactive } from "reactivity";
 import type Page from "@/models/Page";
 import type { PageLinkTile } from "doc/types/tiles";
 

@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildLinkMap, type LinkMapInput } from "doc/tiles/link";
-import { type Reactive } from "@/utils/reactivity";
+import { type Reactive } from "reactivity";
 import client from "@/api/client";
 import Video from "./Video";
 import type Page from "@/models/Page";

@@ -1,7 +1,7 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import FrameIcon from "@/icons/frame.svg?jsx";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import { parseParentId } from "@/models/parentId";
 import styles from "./FramePicker.module.css";
 import type Tile from "@/models/Tile";

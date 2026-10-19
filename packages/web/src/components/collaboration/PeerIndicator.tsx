@@ -2,7 +2,7 @@ import If from "@/jsx/if";
 import ProfileImageStack from "./ProfileImageStack";
 import styles from "./PeerIndicator.module.css";
 import type { Peer } from "@/collaboration/Presence";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface PeerIndicatorProps {
   peers: Reactive<readonly Peer[]>;

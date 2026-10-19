@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import SharedList from "@/collaboration/SharedList";
-import { applyListChange, type ListChange } from "@/utils/reactivity";
+import { applyListChange, type ListChange } from "reactivity";
 
 class Thing {
   readonly id: string;

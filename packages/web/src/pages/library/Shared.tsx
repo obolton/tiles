@@ -10,7 +10,8 @@ import PagesGrid, {
 } from "@/components/grid/PagesGrid";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
-import { reactive, persistent } from "@/utils/reactivity";
+import { persistent } from "@/utils/persistent";
+import { reactive } from "reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
 

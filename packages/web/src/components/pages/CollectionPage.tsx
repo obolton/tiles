@@ -10,7 +10,7 @@ import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./CollectionPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import { reactive, type Reactive } from "@/utils/reactivity";
+import { reactive, type Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface CollectionPageProps {

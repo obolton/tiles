@@ -3,7 +3,7 @@ import ShortDateTime from "./ShortDateTime";
 import LongDateTime from "./LongDateTime";
 import ColorfulDateTime from "./ColorfulDateTime";
 import ColorfulStackedDateTime from "./ColorfulStackedDateTime";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { ThemeRegistry } from "@/types/themes";
 
 export interface DateTimeThemeProps {

@@ -6,7 +6,7 @@ import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid from "@/components/grid/PagesGrid";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import { handleError } from "@/utils/errors";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
 

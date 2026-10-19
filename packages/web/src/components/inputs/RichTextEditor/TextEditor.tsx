@@ -6,7 +6,7 @@ import { createState } from "@/utils/richText/state";
 import { handleError } from "@/utils/errors";
 import type { RichText } from "@/utils/richText/types";
 import type { JSX } from "@/jsx/jsx";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export type { EditorState };
 

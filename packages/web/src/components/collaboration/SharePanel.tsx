@@ -4,11 +4,11 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import CloseIcon from "@/icons/close.svg?jsx";
 import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
 import { SHARE_PANEL_ID } from "./Share";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import styles from "./SharePanel.module.css";
 import type Share from "./Share";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface SharePanelProps extends JSX.Attributes<"resizable-panel"> {

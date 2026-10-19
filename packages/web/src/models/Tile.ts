@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { combine, type Reactive } from "@/utils/reactivity";
+import { combine, type Reactive } from "reactivity";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 import { ASPECT_RATIOS } from "@/constants/size";

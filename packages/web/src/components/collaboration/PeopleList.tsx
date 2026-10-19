@@ -4,14 +4,14 @@ import NewIcon from "@/icons/new.svg?jsx";
 import If from "@/jsx/if";
 import PageInvite from "@/models/PageInvite";
 import { user as currentUser } from "@/utils/sessions";
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./SharePanel.module.css";
 import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 const InviteModalLoader = () => import("@/components/modals/invite/InviteModal");
 

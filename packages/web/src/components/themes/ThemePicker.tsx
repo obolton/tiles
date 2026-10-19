@@ -1,4 +1,4 @@
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import {
@@ -14,7 +14,7 @@ import Each from "@/jsx/each";
 import PaletteIcon from "@/icons/palette.svg?jsx";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
 import type { JSX } from "@/jsx/jsx";

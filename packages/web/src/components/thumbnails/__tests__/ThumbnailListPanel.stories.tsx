@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Section from "@/models/Section";
 import ThumbnailListPanel from "../ThumbnailListPanel";
-import { flag, reactive, type Reactive } from "@/utils/reactivity";
+import { flag, reactive, type Reactive } from "reactivity";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
 

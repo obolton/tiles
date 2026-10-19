@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { BaseReactive } from "@/utils/reactivity";
+import { BaseReactive } from "reactivity";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
 

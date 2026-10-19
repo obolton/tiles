@@ -3,7 +3,7 @@ import ProfileImage from "@/components/profile-image/ProfileImage";
 import { getProfileImageUrl } from "@/utils/images";
 import styles from "./ProfileImageStack.module.css";
 import type { Peer } from "@/collaboration/Presence";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 const DEFAULT_MAX = 3;

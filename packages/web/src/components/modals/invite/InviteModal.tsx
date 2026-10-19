@@ -1,7 +1,7 @@
 import ModalHeader from "../ModalHeader";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
-import { flag } from "@/utils/reactivity";
+import { flag } from "reactivity";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 

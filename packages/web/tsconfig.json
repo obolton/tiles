@@ -11,7 +11,12 @@
     "rootDir": "."
   },
   "include": ["./src/**/*", "./scripts/**/*"],
-  "references": [{ "path": "../api" }, { "path": "../doc" }, { "path": "../fonts" }],
+  "references": [
+    { "path": "../api" },
+    { "path": "../doc" },
+    { "path": "../fonts" },
+    { "path": "../reactivity" }
+  ],
 
   "cmkOptions": {
     "enabled": true,

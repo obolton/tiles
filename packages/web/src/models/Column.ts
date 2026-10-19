@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { DEFAULT_COLUMN_WIDTH } from "doc/tiles/table";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
 import type { Fill } from "@/components/fills/types";
 

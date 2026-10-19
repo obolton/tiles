@@ -5,7 +5,7 @@ import If from "@/jsx/if";
 import Portal from "@/jsx/portal";
 import styles from "./LinkTile.module.css";
 import type Link from "@/models/Link";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 export interface LinkTileProps {
   link: Link;

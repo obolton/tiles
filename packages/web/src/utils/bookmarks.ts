@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { bookmarksCache } from "./cache";
-import { flag } from "./reactivity";
+import { flag } from "reactivity";
 
 export const isBookmarked = flag(false);
 

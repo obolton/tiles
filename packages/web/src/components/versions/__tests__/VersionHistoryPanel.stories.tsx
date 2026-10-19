@@ -1,7 +1,7 @@
 import VersionHistoryPanel from "../VersionHistoryPanel";
 import VersionHistory from "../VersionHistory";
 import { AUTO_VERSION, VERSIONS } from "@/test/fixtures/PageVersion";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 import type { VersionEntry } from "../VersionHistory";
 import type { Meta, Story } from "@/test/storybook";
 

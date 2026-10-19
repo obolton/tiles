@@ -11,8 +11,8 @@ import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
 import type { Fill } from "@/components/fills/types";
-import { applyListChange } from "@/utils/reactivity";
-import type { Reactive, ReactiveList, ListChange } from "@/utils/reactivity";
+import { applyListChange } from "reactivity";
+import type { Reactive, ReactiveList, ListChange } from "reactivity";
 import type { StyleDeclaration, GlobalHTMLAttributes } from "@/jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();

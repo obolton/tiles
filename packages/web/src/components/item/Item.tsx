@@ -1,4 +1,4 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { getThemeStyles } from "@/utils/themes";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import PeerIndicator from "@/components/collaboration/PeerIndicator";
@@ -10,7 +10,7 @@ import type { Animation, Sizing } from "@/models/Tile";
 import type PageItem from "@/elements/item/PageItem";
 import { getResizeHandleDirections } from "@/elements/item/resize";
 import type { DragDropEvent } from "@/utils/drag";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { StyleDeclaration } from "@/jsx/html-attributes";
 import type { JSX } from "@/jsx/jsx";
 

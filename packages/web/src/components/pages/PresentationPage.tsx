@@ -10,7 +10,7 @@ import Section from "@/models/Section";
 import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface PresentationPageProps {

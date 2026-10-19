@@ -5,7 +5,7 @@ import Series from "@/models/Series";
 import SharedList from "@/collaboration/SharedList";
 import { createId } from "doc/id";
 import { orderBetween, orderedEntries } from "doc/placement/ordering";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type Page from "@/models/Page";
 import type { Property } from "doc/types/chart";
 

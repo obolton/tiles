@@ -1,5 +1,5 @@
 import ProfileImageStack from "../ProfileImageStack";
-import { array } from "@/utils/reactivity";
+import { array } from "reactivity";
 import { getUserColor } from "@/collaboration/userColor";
 import { action } from "storybook/actions";
 import type { Meta, Story } from "@/test/storybook";

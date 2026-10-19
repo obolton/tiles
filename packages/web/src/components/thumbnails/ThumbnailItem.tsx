@@ -1,9 +1,9 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { getSizeStyle } from "@/components/item/Item";
 import { getThemeStyles } from "@/utils/themes";
 import styles from "./ThumbnailItem.module.css";
 import type Tile from "@/models/Tile";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type { JSX } from "@/jsx/jsx";
 
 export interface ThumbnailItemProps {

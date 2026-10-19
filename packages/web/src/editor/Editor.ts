@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { set, flag, combine } from "@/utils/reactivity";
+import { set, flag, combine } from "reactivity";
 import { last } from "@/utils/iterables";
 import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
 import { pulse } from "@/utils/animation/effects";
@@ -23,7 +23,7 @@ import Share from "@/components/collaboration/Share";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
-import type { Reactive, ReactiveSet } from "@/utils/reactivity";
+import type { Reactive, ReactiveSet } from "reactivity";
 
 export type { PageData } from "@/models/Page";
 

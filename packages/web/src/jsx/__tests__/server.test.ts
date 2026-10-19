@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { jsx } from "../jsx";
 import { renderToString } from "../server";
-import { ReactiveValue } from "@/utils/reactivity";
+import { ReactiveValue } from "reactivity";
 import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
 import type { JSX } from "../jsx";
 

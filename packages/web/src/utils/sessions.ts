@@ -2,7 +2,7 @@ import { SIGNED_IN_FLAG_COOKIE_NAME, SESSION_COOKIE_NAME } from "api/constants/c
 import client from "@/api/client";
 import { getCookie } from "./cookies";
 import { navigate } from "./navigation";
-import { reactive } from "./reactivity";
+import { reactive } from "reactivity";
 import type { AppRouterOutputs } from "@/api/client";
 
 const SESSION_COOKIE_DOMAIN = import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN;

@@ -3,7 +3,7 @@ import { jsx } from "../jsx";
 import type { JSX } from "../jsx";
 import { render, hydrate } from "../dom";
 import { BOOLEAN_STRING_ATTRIBUTES } from "../attributes";
-import { reactive } from "@/utils/reactivity";
+import { reactive } from "reactivity";
 
 class TestWidget extends HTMLElement {
   data: { id: string } | null = null;

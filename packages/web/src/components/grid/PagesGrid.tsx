@@ -6,11 +6,11 @@ import Search from "@/components/search/Search";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
 import { handleError } from "@/utils/errors";
-import { set } from "@/utils/reactivity";
+import { set } from "reactivity";
 import styles from "./PagesGrid.module.css";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { JSX } from "@/jsx/jsx";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 
 interface PagesSearchResults {
   pages: LibraryPage[];

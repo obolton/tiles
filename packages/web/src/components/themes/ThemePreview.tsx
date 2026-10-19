@@ -1,4 +1,4 @@
-import { combine } from "@/utils/reactivity";
+import { combine } from "reactivity";
 import { resolveThemeStyles, toCSSProperties } from "@/utils/themes";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import styles from "./ThemePreview.module.css";

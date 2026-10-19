@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { HocuspocusProvider, WebSocketStatus } from "@hocuspocus/provider";
 import { IndexeddbPersistence } from "y-indexeddb";
-import { reactive, flag, type Reactive, type ReactiveFlag } from "@/utils/reactivity";
+import { reactive, flag, type Reactive, type ReactiveFlag } from "reactivity";
 import { Awareness } from "y-protocols/awareness";
 import { user } from "@/utils/sessions";
 import { getUserColor } from "./userColor";

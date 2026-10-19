@@ -5,7 +5,7 @@ import FontIcon from "@/icons/font.svg?jsx";
 import { loadFontPreviews } from "@/utils/fonts";
 import { handleError } from "@/utils/errors";
 import styles from "./FontPicker.module.css";
-import type { Reactive } from "@/utils/reactivity";
+import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "@/jsx/jsx";
 

@@ -1,4 +1,4 @@
-import { flag } from "@/utils/reactivity";
+import { flag } from "reactivity";
 import { focusInside, getFocusedDescendant } from "@/utils/focus";
 
 /** Open state for a panel in the editor's end slot, moving focus into the panel on open and back to its button on close. */

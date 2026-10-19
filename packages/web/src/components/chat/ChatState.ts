@@ -1,4 +1,4 @@
-import { ReactiveArray, reactive, array } from "@/utils/reactivity";
+import { ReactiveArray, reactive, array } from "reactivity";
 import type { ChatReference, ChatMessage, MessageEvent } from "./types";
 
 const MAX_HISTORY = 40;

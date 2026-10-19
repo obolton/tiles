@@ -1,5 +1,5 @@
 import RichText from "@/components/text/RichText";
-import { flag } from "@/utils/reactivity";
+import { flag } from "reactivity";
 import { getImageSrcSet, getImageStyle } from "./imageStyle";
 import styles from "./ImageView.module.css";
 import type Image from "@/models/Image";
