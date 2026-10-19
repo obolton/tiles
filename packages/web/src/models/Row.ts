@@ -5,7 +5,7 @@ import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "reactivity";
 import type { StyleDeclaration } from "jsx/html-attributes";
 import type { Fill } from "@/components/fills/types";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 
 export type CellValue = RichText | string | null;
 

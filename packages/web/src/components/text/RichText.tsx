@@ -1,5 +1,4 @@
-import { TextFormat, TextAlignment } from "@/utils/richText/types";
-import { ListType } from "@/utils/richText/types";
+import { TextFormat, TextAlignment, ListType } from "doc/types/richText";
 import { toCSSColor } from "@/utils/color";
 import ThemeVariant from "@/components/themes/ThemeVariant";
 import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
@@ -19,7 +18,7 @@ import type {
   Node,
   LinkNode,
   MentionNode,
-} from "@/utils/richText/types";
+} from "doc/types/richText";
 import type { JSX } from "jsx/jsx";
 
 interface RichTextProps {

@@ -3,7 +3,7 @@ import Editor from "@/editor/Editor";
 import Table from "@/models/Table";
 import { toPlainText } from "@/utils/richText/plainText";
 import type Chart from "@/models/Chart";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 
 function toNumber(input: number | string | RichText | null | undefined) {
   if (typeof input === "number") {

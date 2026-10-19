@@ -10,8 +10,8 @@ import type {
   BlockStyle,
   InlineNode,
   Node as SerializedNode,
-} from "./types";
-import { TextFormat, ListType, TextAlignment } from "./types";
+} from "doc/types/richText";
+import { TextFormat, ListType, TextAlignment } from "doc/types/richText";
 import { schema } from "./schema";
 
 const { nodes, marks } = schema;

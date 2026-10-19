@@ -15,8 +15,8 @@ import type {
   DropdownNode,
   MentionNode,
   Node as SerializedNode,
-} from "./types";
-import { TextFormat, ListType, TextAlignment, type BlockStyle } from "./types";
+} from "doc/types/richText";
+import { TextFormat, ListType, TextAlignment, type BlockStyle } from "doc/types/richText";
 import { schema } from "./schema";
 
 function getMarks(node: TextNode | DateNode | DropdownNode | MentionNode) {

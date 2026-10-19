@@ -6,7 +6,7 @@ import { type Reactive } from "reactivity";
 import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
 import type { TextTile } from "doc/types/tiles";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 
 export interface CreateTextInput extends TextMapInput {
   content?: RichText;

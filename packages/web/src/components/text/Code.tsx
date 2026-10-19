@@ -2,7 +2,7 @@ import Each from "jsx/each";
 import { reactive } from "reactivity";
 import { highlight } from "@/utils/richText/code/highlight";
 import styles from "./Code.module.css";
-import type { CodeNode } from "@/utils/richText/types";
+import type { CodeNode } from "doc/types/richText";
 
 export interface CodeProps {
   node: CodeNode;

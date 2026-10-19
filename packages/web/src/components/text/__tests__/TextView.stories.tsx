@@ -2,10 +2,10 @@ import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import TextView from "../TextView";
-import { TextFormat } from "@/utils/richText/types";
+import { TextFormat } from "doc/types/richText";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
-import type { RichText } from "@/utils/richText/types";
+import type { RichText } from "doc/types/richText";
 import type { TextTile } from "doc/types/tiles";
 
 const editor = Editor.init(PAGE, new Y.Doc());
