@@ -60,14 +60,14 @@ beforeEach(() => {
 });
 
 describe("storeProfileImage", () => {
-  test("should upload the image to the profile bucket and return its key", async () => {
+  test("uploads the image to the profile bucket and returns its key", async () => {
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar.png");
 
     expect(imageKey).toMatch(new RegExp(`^user-1/${UUID_PATTERN}\\.png$`));
     expect(upload).toHaveBeenCalledWith("test", imageKey, MOCK_STREAM, "image/png");
   });
 
-  test("should only accept image content types", async () => {
+  test("only accepts image content types", async () => {
     await storeProfileImage("user-1", "https://example.com/avatar.png");
 
     expect(getStream).toHaveBeenCalledWith("https://example.com/avatar.png", [
@@ -77,7 +77,7 @@ describe("storeProfileImage", () => {
     ]);
   });
 
-  test("should use the file extension for the image's content type", async () => {
+  test("uses the file extension for the image's content type", async () => {
     vi.mocked(getStream).mockResolvedValueOnce({ stream: MOCK_STREAM, contentType: "image/jpeg" });
 
     const imageKey = await storeProfileImage("user-1", "https://example.com/avatar");
@@ -85,7 +85,7 @@ describe("storeProfileImage", () => {
     expect(imageKey).toMatch(/\.jpg$/);
   });
 
-  test("should not upload when the image cannot be fetched", async () => {
+  test("does not upload when the image cannot be fetched", async () => {
     vi.mocked(getStream).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(storeProfileImage("user-1", "https://example.com/missing.png")).rejects.toThrow(
@@ -100,7 +100,7 @@ describe("createUser", () => {
     vi.mocked(prisma.user.create<CreateQuery<{ id: true }>>).mockResolvedValue({ id: "user-1" });
   });
 
-  test("should return the new user's id", async () => {
+  test("returns the new user's id", async () => {
     const result = await createUser(prisma, {
       name: "Alice",
       email: "alice@test.com",
@@ -110,7 +110,7 @@ describe("createUser", () => {
     expect(result).toEqual({ id: "user-1" });
   });
 
-  test("should create the user without an image when no image url is given", async () => {
+  test("creates the user without an image when no image url is given", async () => {
     await createUser(prisma, { name: "Alice", email: "alice@test.com", emailVerified: true });
 
     expect(createdUserData()).toMatchObject({
@@ -122,7 +122,7 @@ describe("createUser", () => {
     expect(upload).not.toHaveBeenCalled();
   });
 
-  test("should store the profile image under the new user's id", async () => {
+  test("stores the profile image under the new user's id", async () => {
     await createUser(prisma, {
       name: "Alice",
       email: "alice@test.com",
@@ -135,7 +135,7 @@ describe("createUser", () => {
     expect(upload).toHaveBeenCalledWith("test", imageKey, MOCK_STREAM, "image/png");
   });
 
-  test("should not create the user when the profile image cannot be stored", async () => {
+  test("does not create the user when the profile image cannot be stored", async () => {
     vi.mocked(getStream).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(
@@ -152,7 +152,7 @@ describe("createUser", () => {
 });
 
 describe("getSessionContext", () => {
-  test("should return the user id of a live session", async () => {
+  test("returns the user id of a live session", async () => {
     vi.mocked(prisma.session.findUnique<FindUniqueQuery<{ userId: true }>>).mockResolvedValue({
       userId: "user-1",
     });
@@ -162,7 +162,7 @@ describe("getSessionContext", () => {
     expect(result).toEqual({ userId: "user-1" });
   });
 
-  test("should only look up sessions that have not expired", async () => {
+  test("only looks up sessions that have not expired", async () => {
     vi.mocked(prisma.session.findUnique).mockResolvedValue(null);
 
     await getSessionContext("session-1");
@@ -174,7 +174,7 @@ describe("getSessionContext", () => {
     );
   });
 
-  test("should return null when there is no live session", async () => {
+  test("returns null when there is no live session", async () => {
     vi.mocked(prisma.session.findUnique).mockResolvedValue(null);
 
     const result = await getSessionContext("session-1");
@@ -190,7 +190,7 @@ describe("getUserInfo", () => {
     );
   });
 
-  test("should return the current user's profile with their workspaces", async () => {
+  test("returns the current user's profile with their workspaces", async () => {
     const result = await getUserInfo(MOCK_CONTEXT);
 
     expect(result).toEqual({
@@ -213,7 +213,7 @@ describe("updateUser", () => {
     });
   });
 
-  test("should update the current user", async () => {
+  test("updates the current user", async () => {
     await updateUser({ name: "Alice Smith" }, MOCK_CONTEXT);
 
     expect(prisma.user.update).toHaveBeenCalledWith(
@@ -224,7 +224,7 @@ describe("updateUser", () => {
     );
   });
 
-  test("should return the updated profile with the user's workspaces", async () => {
+  test("returns the updated profile with the user's workspaces", async () => {
     const result = await updateUser({ name: "Alice Smith" }, MOCK_CONTEXT);
 
     expect(result).toEqual({
@@ -240,7 +240,7 @@ describe("updateUser", () => {
 });
 
 describe("isUsernameAvailable", () => {
-  test("should be available when no user has the username", async () => {
+  test("is available when no user has the username", async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
 
     const result = await isUsernameAvailable({ username: "alice" }, MOCK_CONTEXT);
@@ -248,7 +248,7 @@ describe("isUsernameAvailable", () => {
     expect(result).toBe(true);
   });
 
-  test("should be available when the current user already owns the username", async () => {
+  test("is available when the current user already owns the username", async () => {
     vi.mocked(prisma.user.findUnique<FindUniqueQuery<{ id: true }>>).mockResolvedValue({
       id: "user-1",
     });
@@ -258,7 +258,7 @@ describe("isUsernameAvailable", () => {
     expect(result).toBe(true);
   });
 
-  test("should be unavailable when another user owns the username", async () => {
+  test("is unavailable when another user owns the username", async () => {
     vi.mocked(prisma.user.findUnique<FindUniqueQuery<{ id: true }>>).mockResolvedValue({
       id: "user-2",
     });

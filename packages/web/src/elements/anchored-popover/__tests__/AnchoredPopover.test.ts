@@ -34,33 +34,33 @@ describe("AnchoredPopover", () => {
     document.body.innerHTML = "";
   });
 
-  test("should initialize the popover attribute", () => {
+  test("initializes the popover attribute", () => {
     expect(popover.popover).toBe("auto");
   });
 
   describe("anchorElement", () => {
-    test("should return null before the popover is opened", () => {
+    test("returns null before the popover is opened", () => {
       expect(popover.anchorElement).toBeNull();
     });
 
-    test("should return the trigger element after the popover is opened", () => {
+    test("returns the trigger element after the popover is opened", () => {
       popover.showPopover();
       expect(popover.anchorElement).toBe(button);
     });
 
-    test("should return the element specified by anchor attribute", () => {
+    test("returns the element specified by anchor attribute", () => {
       popover.setAttribute("anchor", "button");
       expect(popover.anchorElement).toBe(button);
     });
 
-    test("should return null if the anchor element does not exist", () => {
+    test("returns null if the anchor element does not exist", () => {
       popover.setAttribute("anchor", "non-existent");
       expect(popover.anchorElement).toBeNull();
     });
   });
 
   describe("toggle handling", () => {
-    test("should update the aria-expanded attribute of the trigger on toggle", () => {
+    test("updates the aria-expanded attribute of the trigger on toggle", () => {
       popover.showPopover();
       expect(button.getAttribute("aria-expanded")).toBe("true");
 
@@ -70,14 +70,14 @@ describe("AnchoredPopover", () => {
   });
 
   describe("trigger capture", () => {
-    test("should capture the focused trigger element", () => {
+    test("captures the focused trigger element", () => {
       button.focus();
       popover.showPopover();
 
       expect(popover.anchorElement).toBe(button);
     });
 
-    test("should support multiple triggers for one popover", () => {
+    test("supports multiple triggers for one popover", () => {
       const button2 = document.createElement("button");
       button2.setAttribute("popovertarget", popover.id);
       document.body.appendChild(button2);
@@ -99,7 +99,7 @@ describe("AnchoredPopover", () => {
       expect(button.getAttribute("aria-expanded")).toBeNull();
     });
 
-    test("should clear the trigger element on close", () => {
+    test("clears the trigger element on close", () => {
       button.focus();
       popover.showPopover();
 
@@ -112,7 +112,7 @@ describe("AnchoredPopover", () => {
   });
 
   describe("position", () => {
-    test("should appear below and left-aligned by default", async () => {
+    test("appears below and left-aligned by default", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 100,
         right: 200,
@@ -129,7 +129,7 @@ describe("AnchoredPopover", () => {
       expect(popover.style.transformOrigin).toBe("left top");
     });
 
-    test("should appear right-aligned when space is unavailable on the right", async () => {
+    test("appears right-aligned when space is unavailable on the right", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 100,
         right: 950,
@@ -146,7 +146,7 @@ describe("AnchoredPopover", () => {
       expect(popover.style.transformOrigin).toBe("right top");
     });
 
-    test("should appear above the anchor when space is unavailable below", async () => {
+    test("appears above the anchor when space is unavailable below", async () => {
       vi.spyOn(button, "getBoundingClientRect").mockReturnValue({
         top: 970,
         right: 200,

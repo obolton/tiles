@@ -23,7 +23,7 @@ beforeEach(() => {
 });
 
 describe("searchPlaces", () => {
-  test("should search around a point with the API key, query and result limit", async () => {
+  test("searches around a point with the API key, query and result limit", async () => {
     await searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 });
 
     const url = fetchedUrl();
@@ -36,7 +36,7 @@ describe("searchPlaces", () => {
     });
   });
 
-  test("should search within a bounding box when one is given", async () => {
+  test("searches within a bounding box when one is given", async () => {
     await searchPlaces({ query: "bridge", boundingBox: [-0.2, 51.4, 0.1, 51.6] });
 
     const params = Object.fromEntries(fetchedUrl().searchParams);
@@ -44,7 +44,7 @@ describe("searchPlaces", () => {
     expect(params).not.toHaveProperty("at");
   });
 
-  test("should request a JSON response", async () => {
+  test("requests a JSON response", async () => {
     await searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 });
 
     expect(fetch).toHaveBeenCalledWith(expect.any(URL), {
@@ -52,7 +52,7 @@ describe("searchPlaces", () => {
     });
   });
 
-  test("should throw when the search request fails", async () => {
+  test("throws when the search request fails", async () => {
     vi.mocked(fetch).mockResolvedValue(
       new Response("error", { status: 503, statusText: "Service Unavailable" }),
     );
@@ -62,7 +62,7 @@ describe("searchPlaces", () => {
     );
   });
 
-  test("should map results to places with a bounding box", async () => {
+  test("maps results to places with a bounding box", async () => {
     vi.mocked(fetch).mockResolvedValue(jsonResponse({ items: [MOCK_PLACE] }));
 
     const result = await searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 });
@@ -79,7 +79,7 @@ describe("searchPlaces", () => {
     ]);
   });
 
-  test("should return a null bounding box when the result has no map view", async () => {
+  test("returns a null bounding box when the result has no map view", async () => {
     const { mapView: _mapView, ...place } = MOCK_PLACE;
     vi.mocked(fetch).mockResolvedValue(jsonResponse({ items: [place] }));
 
@@ -88,7 +88,7 @@ describe("searchPlaces", () => {
     expect(result?.boundingBox).toBeNull();
   });
 
-  test("should drop results without a position", async () => {
+  test("drops results without a position", async () => {
     vi.mocked(fetch).mockResolvedValue(jsonResponse({ items: [MOCK_CATEGORY, MOCK_PLACE] }));
 
     const result = await searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 });
@@ -96,7 +96,7 @@ describe("searchPlaces", () => {
     expect(result.map((place) => place.providerId)).toEqual(["here:pds:place:1"]);
   });
 
-  test("should return an empty list when there are no results", async () => {
+  test("returns an empty list when there are no results", async () => {
     await expect(searchPlaces({ query: "bridge", lat: 51.5, long: -0.1 })).resolves.toEqual([]);
   });
 });

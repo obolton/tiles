@@ -40,13 +40,13 @@ describe("PopoverMenu", () => {
   });
 
   describe("keyboard navigation", () => {
-    test("should focus the first menu item on open", () => {
+    test("focuses the first menu item on open", () => {
       menu.showPopover();
 
       expect(document.activeElement).toBe(items[0]);
     });
 
-    test("should navigate down with ArrowDown", () => {
+    test("navigates down with ArrowDown", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -55,7 +55,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[1]);
     });
 
-    test("should navigate up with ArrowUp", () => {
+    test("navigates up with ArrowUp", () => {
       items[1]!.tabIndex = 0;
       items[1]!.focus();
 
@@ -64,7 +64,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    test("should wrap from last to first with ArrowDown", () => {
+    test("wraps from last to first with ArrowDown", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
@@ -73,7 +73,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    test("should wrap from first to last with ArrowUp", () => {
+    test("wraps from first to last with ArrowUp", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -82,7 +82,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[2]);
     });
 
-    test("should jump to the first item with Home", () => {
+    test("jumps to the first item with Home", () => {
       items[2]!.tabIndex = 0;
       items[2]!.focus();
 
@@ -91,7 +91,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[0]);
     });
 
-    test("should jump to the last item with End", () => {
+    test("jumps to the last item with End", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 
@@ -100,7 +100,7 @@ describe("PopoverMenu", () => {
       expect(document.activeElement).toBe(items[2]);
     });
 
-    test("should not navigate with ArrowLeft or ArrowRight", () => {
+    test("does not navigate with ArrowLeft or ArrowRight", () => {
       items[0]!.tabIndex = 0;
       items[0]!.focus();
 

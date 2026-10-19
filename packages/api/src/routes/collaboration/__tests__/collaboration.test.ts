@@ -46,7 +46,7 @@ describe("inviteToPage", () => {
     );
   });
 
-  test("should return the new invite", async () => {
+  test("returns the new invite", async () => {
     const result = await inviteToPage(
       { pageId: "page-1", email: "invitee@test.com" },
       MOCK_CONTEXT,
@@ -55,7 +55,7 @@ describe("inviteToPage", () => {
     expect(result).toEqual(MOCK_INVITE);
   });
 
-  test("should store a 32-byte key with the invite", async () => {
+  test("stores a 32-byte key with the invite", async () => {
     await inviteToPage({ pageId: "page-1", email: "invitee@test.com" }, MOCK_CONTEXT);
 
     expect(createKey).toHaveBeenCalledWith(32);
@@ -66,7 +66,7 @@ describe("inviteToPage", () => {
     );
   });
 
-  test("should email the invitee a link containing the invite key", async () => {
+  test("emails the invitee a link containing the invite key", async () => {
     await inviteToPage({ pageId: "page-1", email: "invitee@test.com" }, MOCK_CONTEXT);
 
     expect(sendEmail).toHaveBeenCalledWith("invitee@test.com", {
@@ -75,7 +75,7 @@ describe("inviteToPage", () => {
     });
   });
 
-  test("should return the invite even when the email cannot be sent", async () => {
+  test("returns the invite even when the email cannot be sent", async () => {
     const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
     const error = new Error("Email failed");
     vi.mocked(sendEmail).mockRejectedValueOnce(error);
@@ -91,7 +91,7 @@ describe("inviteToPage", () => {
     });
   });
 
-  test("should not send an email when the page does not exist", async () => {
+  test("does not send an email when the page does not exist", async () => {
     vi.mocked(prisma.page.findUniqueOrThrow).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(
@@ -117,13 +117,13 @@ describe("acceptPageInvite", () => {
     );
   });
 
-  test("should return the id of the invited page", async () => {
+  test("returns the id of the invited page", async () => {
     const result = await acceptPageInvite({ key: "mock-invite-key" }, MOCK_CONTEXT);
 
     expect(result).toEqual({ pageId: "page-1" });
   });
 
-  test("should grant the current user access to the page", async () => {
+  test("grants the current user access to the page", async () => {
     await acceptPageInvite({ key: "mock-invite-key" }, MOCK_CONTEXT);
 
     expect(prisma.pageAccess.create).toHaveBeenCalledWith(
@@ -133,13 +133,13 @@ describe("acceptPageInvite", () => {
     );
   });
 
-  test("should consume the invite", async () => {
+  test("consumes the invite", async () => {
     await acceptPageInvite({ key: "mock-invite-key" }, MOCK_CONTEXT);
 
     expect(prisma.pageInvite.delete).toHaveBeenCalledWith({ where: { key: "mock-invite-key" } });
   });
 
-  test("should reject the page author accepting their own invite", async () => {
+  test("rejects the page author accepting their own invite", async () => {
     await expect(
       acceptPageInvite({ key: "mock-invite-key" }, { ...MOCK_CONTEXT, userId: "user-2" }),
     ).rejects.toThrow("You already have access to this page.");
@@ -148,7 +148,7 @@ describe("acceptPageInvite", () => {
     expect(prisma.pageInvite.delete).not.toHaveBeenCalled();
   });
 
-  test("should not grant access for an unknown invite key", async () => {
+  test("does not grant access for an unknown invite key", async () => {
     vi.mocked(prisma.pageInvite.findUniqueOrThrow).mockRejectedValueOnce(new Error("Not found"));
 
     await expect(acceptPageInvite({ key: "unknown-key" }, MOCK_CONTEXT)).rejects.toThrow(
@@ -166,7 +166,7 @@ describe("deletePageInvite", () => {
     });
   });
 
-  test("should delete the invite scoped to the page", async () => {
+  test("deletes the invite scoped to the page", async () => {
     const result = await deletePageInvite({ pageId: "page-1", id: "invite-1" });
 
     expect(prisma.pageInvite.delete).toHaveBeenCalledWith({
@@ -184,7 +184,7 @@ describe("revokePageAccess", () => {
     });
   });
 
-  test("should revoke the user's access scoped to the page", async () => {
+  test("revokes the user's access scoped to the page", async () => {
     const result = await revokePageAccess({ pageId: "page-1", userId: "user-2" });
 
     expect(prisma.pageAccess.delete).toHaveBeenCalledWith({

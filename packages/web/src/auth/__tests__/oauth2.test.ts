@@ -17,7 +17,7 @@ describe("oauth2", () => {
       otherAttributes: {},
     };
 
-    test("should generate a valid authorization URL", () => {
+    test("generates a valid authorization URL", () => {
       const { url } = getOAuth2AuthorizationUrl(baseConfig);
       const parsedUrl = new URL(url);
 
@@ -29,7 +29,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("redirect_uri")).toBe("https://app.example.com/callback");
     });
 
-    test("should include PKCE parameters", () => {
+    test("includes PKCE parameters", () => {
       const { url, verifier } = getOAuth2AuthorizationUrl(baseConfig);
       const parsedUrl = new URL(url);
 
@@ -38,7 +38,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("code_challenge_method")).toBe("S256");
     });
 
-    test("should include state parameter", () => {
+    test("includes state parameter", () => {
       const { url, state } = getOAuth2AuthorizationUrl(baseConfig);
       const parsedUrl = new URL(url);
 
@@ -46,7 +46,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("state")).toBe(state);
     });
 
-    test("should include nonce parameter", () => {
+    test("includes nonce parameter", () => {
       const { url, nonce } = getOAuth2AuthorizationUrl(baseConfig);
       const parsedUrl = new URL(url);
 
@@ -54,7 +54,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("nonce")).toBe(nonce);
     });
 
-    test("should include custom attributes", () => {
+    test("includes custom attributes", () => {
       const { url } = getOAuth2AuthorizationUrl({
         ...baseConfig,
         otherAttributes: {
@@ -68,7 +68,7 @@ describe("oauth2", () => {
       expect(parsedUrl.searchParams.get("prompt")).toBe("consent");
     });
 
-    test("should generate unique values for each call", () => {
+    test("generates unique values for each call", () => {
       const first = getOAuth2AuthorizationUrl(baseConfig);
       const second = getOAuth2AuthorizationUrl(baseConfig);
 
@@ -79,19 +79,19 @@ describe("oauth2", () => {
   });
 
   describe("compareOAuth2State", () => {
-    test("should return true for matching states", () => {
+    test("returns true for matching states", () => {
       expect(compareOAuth2State("abc123", "abc123")).toBe(true);
     });
 
-    test("should return false for non-matching states", () => {
+    test("returns false for non-matching states", () => {
       expect(compareOAuth2State("abc123", "xyz789")).toBe(false);
     });
 
-    test("should return false for different lengths", () => {
+    test("returns false for different lengths", () => {
       expect(compareOAuth2State("abc", "abcd")).toBe(false);
     });
 
-    test("should handle empty strings", () => {
+    test("handles empty strings", () => {
       expect(compareOAuth2State("", "")).toBe(true);
       expect(compareOAuth2State("", "a")).toBe(false);
     });
@@ -99,7 +99,7 @@ describe("oauth2", () => {
 
   describe("cookie functions", () => {
     describe("setOAuth2Cookies", () => {
-      test("should set state, verifier, nonce, and destination cookies", () => {
+      test("sets state, verifier, nonce, and destination cookies", () => {
         const cookies = setOAuth2Cookies({
           state: "test-state",
           verifier: "test-verifier",
@@ -121,7 +121,7 @@ describe("oauth2", () => {
         );
       });
 
-      test("should set secure cookie options", () => {
+      test("sets secure cookie options", () => {
         const cookies = setOAuth2Cookies({
           state: "test-state",
           verifier: "test-verifier",
@@ -137,7 +137,7 @@ describe("oauth2", () => {
     });
 
     describe("clearOAuth2Cookies", () => {
-      test("should clear all OAuth cookies", () => {
+      test("clears all OAuth cookies", () => {
         const cookies = clearOAuth2Cookies();
 
         expect(cookies).toHaveLength(4);
@@ -147,7 +147,7 @@ describe("oauth2", () => {
     });
 
     describe("getOAuth2Cookies", () => {
-      test("should parse all OAuth2 cookies", () => {
+      test("parses all OAuth2 cookies", () => {
         const cookieString =
           "__Host-oauth_state=state-value; __Host-oauth_verifier=verifier-value; __Host-oauth_nonce=nonce-value; __Host-oauth_dest=dest-value";
 
@@ -159,7 +159,7 @@ describe("oauth2", () => {
         expect(cookies.destination).toBe("dest-value");
       });
 
-      test("should return null for missing cookies", () => {
+      test("returns null for missing cookies", () => {
         const cookies = getOAuth2Cookies("");
 
         expect(cookies.state).toBeNull();
@@ -168,7 +168,7 @@ describe("oauth2", () => {
         expect(cookies.destination).toBeNull();
       });
 
-      test("should handle partial cookie strings", () => {
+      test("handles partial cookie strings", () => {
         const cookies = getOAuth2Cookies("__Host-oauth_state=only-state");
 
         expect(cookies.state).toBe("only-state");

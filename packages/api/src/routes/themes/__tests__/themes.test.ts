@@ -40,7 +40,7 @@ describe("listThemes", () => {
     ]);
   });
 
-  test("should list the workspace's themes in creation order", async () => {
+  test("lists the workspace's themes in creation order", async () => {
     const result = await listThemes({ workspaceId: "workspace-1" }, MOCK_CONTEXT);
 
     expect(prisma.theme.findMany).toHaveBeenCalledWith({
@@ -59,7 +59,7 @@ describe("createTheme", () => {
     create.mockResolvedValue(MOCK_THEME);
   });
 
-  test("should encode colors and fonts for the workspace", async () => {
+  test("encodes colors and fonts for the workspace", async () => {
     const result = await createTheme(CREATE_INPUT, MOCK_CONTEXT);
 
     expect(create).toHaveBeenCalledWith({
@@ -80,7 +80,7 @@ describe("createTheme", () => {
     expect(result).toEqual(MOCK_THEME);
   });
 
-  test("should default to a white background when none is given", async () => {
+  test("defaults to a white background when none is given", async () => {
     await createTheme(CREATE_INPUT, MOCK_CONTEXT);
 
     expect(create).toHaveBeenCalledWith(
@@ -93,7 +93,7 @@ describe("createTheme", () => {
     );
   });
 
-  test("should use the given color background", async () => {
+  test("uses the given color background", async () => {
     await createTheme(
       { ...CREATE_INPUT, background: { type: "color", color: "1a1a1a1a1a1a" } },
       MOCK_CONTEXT,
@@ -109,7 +109,7 @@ describe("createTheme", () => {
     );
   });
 
-  test("should use the given gradient background", async () => {
+  test("uses the given gradient background", async () => {
     await createTheme(
       {
         ...CREATE_INPUT,
@@ -133,7 +133,7 @@ describe("createTheme", () => {
     );
   });
 
-  test("should encode the border color when given", async () => {
+  test("encodes the border color when given", async () => {
     await createTheme({ ...CREATE_INPUT, border: "e0e0e0e0e0e0" }, MOCK_CONTEXT);
 
     expect(create).toHaveBeenCalledWith(
@@ -143,7 +143,7 @@ describe("createTheme", () => {
     );
   });
 
-  test("should store no border color when the border is null", async () => {
+  test("stores no border color when the border is null", async () => {
     await createTheme({ ...CREATE_INPUT, border: null }, MOCK_CONTEXT);
 
     expect(create).toHaveBeenCalledWith(
@@ -161,7 +161,7 @@ describe("updateTheme", () => {
     update.mockResolvedValue(MOCK_THEME);
   });
 
-  test("should update the theme scoped to the current workspace", async () => {
+  test("updates the theme scoped to the current workspace", async () => {
     const result = await updateTheme({ id: "theme-1", name: "Dark" }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -173,7 +173,7 @@ describe("updateTheme", () => {
     expect(result).toEqual(MOCK_THEME);
   });
 
-  test("should leave omitted fields unchanged", async () => {
+  test("leaves omitted fields unchanged", async () => {
     await updateTheme({ id: "theme-1", name: "Dark" }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -191,7 +191,7 @@ describe("updateTheme", () => {
     );
   });
 
-  test("should encode the background when given", async () => {
+  test("encodes the background when given", async () => {
     await updateTheme(
       {
         id: "theme-1",
@@ -215,7 +215,7 @@ describe("updateTheme", () => {
     );
   });
 
-  test("should encode only the colors that are given", async () => {
+  test("encodes only the colors that are given", async () => {
     await updateTheme({ id: "theme-1", colors: { text: "ffffffffffff" } }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -228,7 +228,7 @@ describe("updateTheme", () => {
     );
   });
 
-  test("should update only the fonts that are given", async () => {
+  test("updates only the fonts that are given", async () => {
     await updateTheme({ id: "theme-1", fonts: { heading: "lora" } }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -242,7 +242,7 @@ describe("updateTheme", () => {
     );
   });
 
-  test("should encode the border color when given", async () => {
+  test("encodes the border color when given", async () => {
     await updateTheme({ id: "theme-1", border: "e0e0e0e0e0e0" }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -252,7 +252,7 @@ describe("updateTheme", () => {
     );
   });
 
-  test("should clear the border color when the border is null", async () => {
+  test("clears the border color when the border is null", async () => {
     await updateTheme({ id: "theme-1", border: null }, MOCK_CONTEXT);
 
     expect(update).toHaveBeenCalledWith(
@@ -270,7 +270,7 @@ describe("deleteTheme", () => {
     });
   });
 
-  test("should delete the theme scoped to the current workspace", async () => {
+  test("deletes the theme scoped to the current workspace", async () => {
     const result = await deleteTheme({ id: "theme-1" }, MOCK_CONTEXT);
 
     expect(prisma.theme.delete).toHaveBeenCalledWith({

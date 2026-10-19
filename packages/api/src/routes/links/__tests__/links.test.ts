@@ -49,7 +49,7 @@ describe("resolveLinkMetadata", () => {
       vi.mocked(getVideoInfo).mockReturnValue({ videoType: "YOUTUBE", videoId: "abc123" });
     });
 
-    test("should return the video details with its page metadata", async () => {
+    test("returns the video details with its page metadata", async () => {
       const result = await resolveLinkMetadata(VIDEO_INPUT, MOCK_CONTEXT);
 
       expect(result).toEqual({
@@ -62,13 +62,13 @@ describe("resolveLinkMetadata", () => {
       });
     });
 
-    test("should not fetch the image", async () => {
+    test("does not fetch the image", async () => {
       await resolveLinkMetadata(VIDEO_INPUT, MOCK_CONTEXT);
 
       expect(fetchImage).not.toHaveBeenCalled();
     });
 
-    test("should fall back to an empty title when no metadata is available", async () => {
+    test("falls back to an empty title when no metadata is available", async () => {
       vi.mocked(getLinkMetadata).mockResolvedValue(null);
 
       const result = await resolveLinkMetadata(VIDEO_INPUT, MOCK_CONTEXT);
@@ -85,7 +85,7 @@ describe("resolveLinkMetadata", () => {
   });
 
   describe("for a regular link", () => {
-    test("should return the link metadata with the fetched image", async () => {
+    test("returns the link metadata with the fetched image", async () => {
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
 
       expect(result).toEqual({
@@ -98,7 +98,7 @@ describe("resolveLinkMetadata", () => {
       });
     });
 
-    test("should fetch the image into the current workspace for the current user", async () => {
+    test("fetches the image into the current workspace for the current user", async () => {
       await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
 
       expect(fetchImage).toHaveBeenCalledWith(
@@ -108,7 +108,7 @@ describe("resolveLinkMetadata", () => {
       );
     });
 
-    test("should return a null image id when the image cannot be fetched", async () => {
+    test("returns a null image id when the image cannot be fetched", async () => {
       vi.mocked(fetchImage).mockResolvedValue(null);
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
@@ -116,7 +116,7 @@ describe("resolveLinkMetadata", () => {
       expect(result).toMatchObject({ type: "LINK", imageId: null });
     });
 
-    test("should not fetch an image when the metadata has no image URL", async () => {
+    test("does not fetch an image when the metadata has no image URL", async () => {
       vi.mocked(getLinkMetadata).mockResolvedValue({ ...MOCK_METADATA, imageUrl: null });
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
@@ -125,7 +125,7 @@ describe("resolveLinkMetadata", () => {
       expect(result).toMatchObject({ type: "LINK", imageId: null });
     });
 
-    test("should return null fields when no metadata is available", async () => {
+    test("returns null fields when no metadata is available", async () => {
       vi.mocked(getLinkMetadata).mockResolvedValue(null);
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);

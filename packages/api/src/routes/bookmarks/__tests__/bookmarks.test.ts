@@ -42,7 +42,7 @@ describe("createBookmark", () => {
     );
   });
 
-  test("should upsert the bookmark for the current user and page", async () => {
+  test("upserts the bookmark for the current user and page", async () => {
     const result = await createBookmark({ pageId: "page-1" }, MOCK_CONTEXT);
 
     expect(prisma.bookmark.upsert).toHaveBeenCalledWith({
@@ -60,7 +60,7 @@ describe("deleteBookmarks", () => {
     vi.mocked(prisma.bookmark.deleteMany).mockResolvedValue({ count: 2 });
   });
 
-  test("should delete the given bookmarks scoped to the current user", async () => {
+  test("deletes the given bookmarks scoped to the current user", async () => {
     const result = await deleteBookmarks({ pageIds: ["page-1", "page-2"] }, MOCK_CONTEXT);
 
     expect(prisma.bookmark.deleteMany).toHaveBeenCalledWith({
@@ -77,7 +77,7 @@ describe("listBookmarks", () => {
     findMany.mockResolvedValue([]);
   });
 
-  test("should list the current user's bookmarks, newest first", async () => {
+  test("lists the current user's bookmarks, newest first", async () => {
     await listBookmarks({}, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith({
@@ -88,7 +88,7 @@ describe("listBookmarks", () => {
     });
   });
 
-  test("should filter by page title when a query is given", async () => {
+  test("filters by page title when a query is given", async () => {
     await listBookmarks({ query: "plan" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -101,7 +101,7 @@ describe("listBookmarks", () => {
     );
   });
 
-  test("should resume from the composite cursor when one is given", async () => {
+  test("resumes from the composite cursor when one is given", async () => {
     await listBookmarks({ cursor: "page-5" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -112,7 +112,7 @@ describe("listBookmarks", () => {
     );
   });
 
-  test("should return the bookmarked pages with no cursor when there are no more results", async () => {
+  test("returns the bookmarked pages with no cursor when there are no more results", async () => {
     const bookmarks = createMockBookmarks(RESULTS_PER_PAGE);
     findMany.mockResolvedValue(bookmarks);
 
@@ -124,7 +124,7 @@ describe("listBookmarks", () => {
     });
   });
 
-  test("should trim the extra result and use the last page id as the next cursor", async () => {
+  test("trims the extra result and uses the last page id as the next cursor", async () => {
     const bookmarks = createMockBookmarks(RESULTS_PER_PAGE + 1);
     findMany.mockResolvedValue(bookmarks);
 
@@ -136,7 +136,7 @@ describe("listBookmarks", () => {
 });
 
 describe("isBookmarked", () => {
-  test("should count bookmarks for the current user and page", async () => {
+  test("counts bookmarks for the current user and page", async () => {
     await isBookmarked({ pageId: "page-1" }, MOCK_CONTEXT);
 
     expect(prisma.bookmark.count).toHaveBeenCalledWith({
@@ -144,13 +144,13 @@ describe("isBookmarked", () => {
     });
   });
 
-  test("should return true when a bookmark exists", async () => {
+  test("returns true when a bookmark exists", async () => {
     vi.mocked(prisma.bookmark.count).mockResolvedValueOnce(1);
 
     await expect(isBookmarked({ pageId: "page-1" }, MOCK_CONTEXT)).resolves.toBe(true);
   });
 
-  test("should return false when no bookmark exists", async () => {
+  test("returns false when no bookmark exists", async () => {
     vi.mocked(prisma.bookmark.count).mockResolvedValueOnce(0);
 
     await expect(isBookmarked({ pageId: "page-1" }, MOCK_CONTEXT)).resolves.toBe(false);
