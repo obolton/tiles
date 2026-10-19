@@ -8,6 +8,7 @@ services:
       - doc_node_modules:/projects/${WORKSPACE}/packages/doc/node_modules
       - fonts_node_modules:/projects/${WORKSPACE}/packages/fonts/node_modules
       - image-upload-worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
+      - reactivity_node_modules:/projects/${WORKSPACE}/packages/reactivity/node_modules
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
 volumes:
   node_modules:
@@ -16,4 +17,5 @@ volumes:
   doc_node_modules:
   fonts_node_modules:
   image-upload-worker_node_modules:
+  reactivity_node_modules:
   web_node_modules:

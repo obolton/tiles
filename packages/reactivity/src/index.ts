@@ -15,4 +15,3 @@ export { ReactiveSet, set, type SetChange } from "./set";
 export { Combined, combine } from "./combined";
 export { applyListChange, type ListChangeOperations } from "./list";
 export { isReactive, unwrap } from "./utils";
-export { persistent } from "./persistent";
