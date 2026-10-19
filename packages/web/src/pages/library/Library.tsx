@@ -1,23 +1,7 @@
 import client from "@/api/client";
-import PageLayout from "@/layouts/PageLayout";
-import SidebarLayout from "@/layouts/SidebarLayout";
-import Sidebar from "./Sidebar";
-import Placeholder from "@/components/placeholder/Placeholder";
-import PagesGrid, {
-  PageSortOptions,
-  parsePageSort,
-  type PageSort,
-} from "@/components/grid/PagesGrid";
-import SearchToolbar from "@/components/search/SearchToolbar";
-import { handleError } from "@/utils/errors";
-import { persistent } from "@/utils/persistent";
-import { reactive } from "reactivity";
+import LibraryPage from "./LibraryPage";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
-
-if (!import.meta.env.SSR) {
-  import("@/elements/editor").catch(handleError);
-}
 
 export interface LibraryProps {
   workspace: AppRouterOutputs["workspaces"]["get"];
@@ -26,59 +10,20 @@ export interface LibraryProps {
   user: User;
 }
 
-function renderPlaceholder(query: string) {
+export default function Library({ workspace, folders, pages, user }: LibraryProps) {
   return (
-    <Placeholder>
-      {query ? "There are no results." : "Get started by creating your first page."}
-    </Placeholder>
-  );
-}
-
-export default function Library({ workspace, folders, pages: initialPages, user }: LibraryProps) {
-  const query = reactive("");
-  const sort = persistent<PageSort>("library:sort", "updatedAt:desc");
-  const pages = reactive(initialPages.pages);
-  const cursor = reactive<string | null>(initialPages.nextCursor);
-
-  return (
-    <PageLayout
-      workspaceId={workspace.id}
+    <LibraryPage
+      workspace={workspace}
+      folders={folders}
+      selectedFolderId="RECENT"
+      pages={pages}
       user={user}
-      center={
-        <SearchToolbar
-          id="search-pages"
-          placeholder="Search pages"
-          query={query}
-          sortOptions={<PageSortOptions />}
-          sort={sort}
-        />
-      }
-    >
-      <SidebarLayout
-        sidebar={<Sidebar workspace={workspace} folders={folders} selectedFolderId="RECENT" />}
-      >
-        <PagesGrid
-          workspaceId={workspace.id}
-          query={query}
-          pages={pages}
-          cursor={cursor}
-          search={(query, searchCursor) => {
-            const { sortBy, sortDirection } = parsePageSort(sort.value);
-            return client.pages.list.query({
-              workspaceId: workspace.id,
-              query: query || undefined,
-              cursor: searchCursor ?? undefined,
-              sortBy,
-              sortDirection,
-            });
-          }}
-          renderPlaceholder={renderPlaceholder}
-          sort={sort}
-          draggable
-          move
-          trash
-        />
-      </SidebarLayout>
-    </PageLayout>
+      placeholder="Search pages"
+      emptyMessage="Get started by creating your first page."
+      search={(options) => client.pages.list.query({ workspaceId: workspace.id, ...options })}
+      draggable
+      move
+      trash
+    />
   );
 }
