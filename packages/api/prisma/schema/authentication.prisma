@@ -1,6 +1,5 @@
 enum AuthenticationProvider {
   GOOGLE
-  APPLE
 }
 
 model Key {
