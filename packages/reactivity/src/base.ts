@@ -39,8 +39,12 @@ export abstract class BaseReactive<Value, Change = void> implements Reactive<Val
 
   notify(...args: NotifyArgs<Change>) {
     const change = args[0] as Change;
-    for (const subscriber of this.subscribers) {
-      subscriber(this, change);
+    // Snapshot so subscribers added during this pass first fire on the next change,
+    // while subscribers removed during this pass are skipped.
+    for (const subscriber of Array.from(this.subscribers)) {
+      if (this.subscribers.has(subscriber)) {
+        subscriber(this, change);
+      }
     }
   }
 

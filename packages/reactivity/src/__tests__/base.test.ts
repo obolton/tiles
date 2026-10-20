@@ -49,6 +49,37 @@ describe("BaseReactive", () => {
       expect(inputSubscribe).not.toHaveBeenCalled();
     });
   });
+
+  describe("notify", () => {
+    test("subscriber added during notify is not called in that pass", () => {
+      const r = new ReactiveValue(1);
+      const added = vi.fn();
+      r.subscribe(() => r.subscribe(added));
+      r.value = 2;
+      expect(added).not.toHaveBeenCalled();
+      r.value = 3;
+      expect(added).toHaveBeenCalledTimes(1);
+      expect(added).toHaveBeenCalledWith(r, undefined);
+    });
+
+    test("subscriber removed during notify is not called", () => {
+      const r = new ReactiveValue(1);
+      const removed = vi.fn();
+      r.subscribe(() => r.unsubscribe(removed));
+      r.subscribe(removed);
+      r.value = 2;
+      expect(removed).not.toHaveBeenCalled();
+    });
+
+    test("subscribers cleared by disconnect during notify are not called", () => {
+      const r = new ReactiveValue(1);
+      const cleared = vi.fn();
+      r.subscribe(() => r.disconnect());
+      r.subscribe(cleared);
+      r.value = 2;
+      expect(cleared).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe("Computed", () => {
