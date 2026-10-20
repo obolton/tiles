@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import SharedList from "@/collaboration/SharedList";
 import { applyListChange, type ListChange } from "reactivity";
@@ -42,6 +42,10 @@ describe("SharedList", () => {
     seed(map, "b", "b");
     seed(map, "a", "a");
     collection = new SharedList(map, (id, data) => new Thing(id, data));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   test("returns entries sorted by their order field", () => {
@@ -362,17 +366,21 @@ describe("SharedList", () => {
   });
 
   test("clears pending changes when a subscriber throws, leaving the next change clean", () => {
+    const reportError = vi.fn();
+    vi.stubGlobal("reportError", reportError);
+    const error = new Error("subscriber failed");
     let failNext = true;
     const changes: ListChange<Thing>[] = [];
     collection.subscribe((_, change) => {
       if (failNext) {
         failNext = false;
-        throw new Error("subscriber failed");
+        throw error;
       }
       changes.push(change);
     });
 
-    expect(() => seed(map, "c", "c")).toThrow("subscriber failed");
+    seed(map, "c", "c");
+    expect(reportError).toHaveBeenCalledExactlyOnceWith(error);
 
     seed(map, "d", "d");
 

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { Computed } from "../base";
 import { ReactiveValue } from "../value";
 import { ReactiveArray } from "../array";
@@ -47,6 +47,48 @@ describe("BaseReactive", () => {
       controller.abort();
       computed.subscribe(vi.fn(), controller.signal);
       expect(inputSubscribe).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("notify", () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    test("a throwing subscriber does not prevent later subscribers from running", () => {
+      const reportError = vi.fn();
+      vi.stubGlobal("reportError", reportError);
+      const r = new ReactiveValue(1);
+      const error = new Error("subscriber failed");
+      const second = vi.fn();
+      r.subscribe(() => {
+        throw error;
+      });
+      r.subscribe(second);
+      expect(() => {
+        r.value = 2;
+      }).not.toThrow();
+      expect(second).toHaveBeenCalledWith(r, undefined);
+      expect(reportError).toHaveBeenCalledExactlyOnceWith(error);
+    });
+
+    test("rethrows a subscriber error from a microtask when reportError is unavailable", () => {
+      vi.stubGlobal("reportError", undefined);
+      const queueMicrotask = vi
+        .spyOn(globalThis, "queueMicrotask")
+        .mockImplementation(() => undefined);
+      const r = new ReactiveValue(1);
+      const error = new Error("subscriber failed");
+      const second = vi.fn();
+      r.subscribe(() => {
+        throw error;
+      });
+      r.subscribe(second);
+      r.value = 2;
+      expect(second).toHaveBeenCalledTimes(1);
+      expect(queueMicrotask).toHaveBeenCalledTimes(1);
+      const [callback] = queueMicrotask.mock.calls[0] ?? [];
+      expect(callback).toThrow(error);
     });
   });
 });

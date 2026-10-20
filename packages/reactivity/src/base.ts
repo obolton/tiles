@@ -10,6 +10,16 @@ type NotifyArgs<Change> = [Change] extends [void] ? [] : [change: Change];
 
 const noopUnsubscriber: UnsubscribeCallback = () => false;
 
+function reportSubscriberError(error: unknown) {
+  if (typeof reportError === "function") {
+    reportError(error);
+  } else {
+    queueMicrotask(() => {
+      throw error;
+    });
+  }
+}
+
 export abstract class BaseReactive<Value, Change = void> implements Reactive<Value, Change> {
   protected readonly subscribers = new Set<SubscribeCallback<Value, Change>>();
 
@@ -40,7 +50,11 @@ export abstract class BaseReactive<Value, Change = void> implements Reactive<Val
   notify(...args: NotifyArgs<Change>) {
     const change = args[0] as Change;
     for (const subscriber of this.subscribers) {
-      subscriber(this, change);
+      try {
+        subscriber(this, change);
+      } catch (error) {
+        reportSubscriberError(error);
+      }
     }
   }
 
