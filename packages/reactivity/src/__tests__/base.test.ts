@@ -3,6 +3,54 @@ import { Computed } from "../base";
 import { ReactiveValue } from "../value";
 import { ReactiveArray } from "../array";
 
+describe("BaseReactive", () => {
+  describe("subscribe", () => {
+    test("abort after subscribe unsubscribes", () => {
+      const r = new ReactiveValue(1);
+      const subscriber = vi.fn();
+      const controller = new AbortController();
+      r.subscribe(subscriber, controller.signal);
+      r.value = 2;
+      expect(subscriber).toHaveBeenCalledTimes(1);
+      controller.abort();
+      r.value = 3;
+      expect(subscriber).toHaveBeenCalledTimes(1);
+    });
+
+    test("subscribing with an aborted signal is a no-op", () => {
+      const r = new ReactiveValue(1);
+      const subscriber = vi.fn();
+      const controller = new AbortController();
+      controller.abort();
+      const addEventListener = vi.spyOn(controller.signal, "addEventListener");
+      const unsubscribe = r.subscribe(subscriber, controller.signal);
+      r.value = 2;
+      expect(subscriber).not.toHaveBeenCalled();
+      expect(addEventListener).not.toHaveBeenCalled();
+      expect(unsubscribe()).toBe(false);
+    });
+
+    test("manual unsubscribe removes the abort listener", () => {
+      const r = new ReactiveValue(1);
+      const controller = new AbortController();
+      const removeEventListener = vi.spyOn(controller.signal, "removeEventListener");
+      const unsubscribe = r.subscribe(vi.fn(), controller.signal);
+      expect(unsubscribe()).toBe(true);
+      expect(removeEventListener).toHaveBeenCalledWith("abort", unsubscribe);
+    });
+
+    test("subscribing a computed value with an aborted signal does not subscribe to its input", () => {
+      const r = new ReactiveValue(1);
+      const inputSubscribe = vi.spyOn(r, "subscribe");
+      const computed = new Computed(r, (input) => input + 1);
+      const controller = new AbortController();
+      controller.abort();
+      computed.subscribe(vi.fn(), controller.signal);
+      expect(inputSubscribe).not.toHaveBeenCalled();
+    });
+  });
+});
+
 describe("Computed", () => {
   test("computes a value from a single input", () => {
     const r = new ReactiveValue(1);

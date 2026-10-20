@@ -8,12 +8,20 @@ import type {
 
 type NotifyArgs<Change> = [Change] extends [void] ? [] : [change: Change];
 
+const noopUnsubscriber: UnsubscribeCallback = () => false;
+
 export abstract class BaseReactive<Value, Change = void> implements Reactive<Value, Change> {
   protected readonly subscribers = new Set<SubscribeCallback<Value, Change>>();
 
   subscribe(callback: SubscribeCallback<Value, Change>, signal?: AbortSignal) {
+    if (signal?.aborted) {
+      return noopUnsubscriber;
+    }
     this.subscribers.add(callback);
-    const unsubscriber = () => this.unsubscribe(callback);
+    const unsubscriber = () => {
+      signal?.removeEventListener("abort", unsubscriber);
+      return this.unsubscribe(callback);
+    };
     signal?.addEventListener("abort", unsubscriber, {
       passive: true,
       once: true,
