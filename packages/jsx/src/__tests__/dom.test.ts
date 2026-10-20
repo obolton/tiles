@@ -213,6 +213,46 @@ describe("render", () => {
     expect(element.tagName).toBe("SPAN");
     expect(element.textContent).toBe("Hello Test");
   });
+
+  describe("reactive nodes", () => {
+    test("re-renders when the reactive value changes", () => {
+      const value = reactive<JSX.Node>(jsx("span", { children: "a" }));
+      const container = document.createElement("div");
+      container.append(...render(value));
+      value.value = jsx("p", { children: "b" });
+      expect(container.innerHTML).toBe("<p>b</p>");
+    });
+
+    test("renders nested nodes derived from the same store once per change", () => {
+      const value = reactive(1);
+      const outerRenders = vi.fn();
+      const innerRenders = vi.fn();
+      const node = value.derive((): JSX.Node => {
+        outerRenders();
+        return jsx("div", {
+          children: value.derive((inner): JSX.Node => {
+            innerRenders();
+            return jsx("span", { children: String(inner) });
+          }),
+        });
+      });
+      const container = document.createElement("div");
+      container.append(...render(node));
+      expect(container.innerHTML).toBe("<div><span>1</span></div>");
+      expect(outerRenders).toHaveBeenCalledTimes(1);
+      expect(innerRenders).toHaveBeenCalledTimes(1);
+
+      value.value = 2;
+      expect(container.innerHTML).toBe("<div><span>2</span></div>");
+      expect(outerRenders).toHaveBeenCalledTimes(2);
+      expect(innerRenders).toHaveBeenCalledTimes(2);
+
+      value.value = 3;
+      expect(container.innerHTML).toBe("<div><span>3</span></div>");
+      expect(outerRenders).toHaveBeenCalledTimes(3);
+      expect(innerRenders).toHaveBeenCalledTimes(3);
+    });
+  });
 });
 
 describe("hydrate", () => {

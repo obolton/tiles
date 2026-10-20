@@ -263,8 +263,8 @@ function hydrateReactiveNode(
   index: number,
   context: RenderContext,
 ) {
-  const abort = new AbortController();
-  const childContext = combineSignal(context, abort.signal);
+  const range = subscribeRange(store, context);
+  const childContext = combineSignal(context, range.abort.signal);
   const hydrated = hydrateNode(store.value, container, index, childContext);
   let anchor = hydrated[0];
   if (!anchor) {
@@ -272,13 +272,8 @@ function hydrateReactiveNode(
     container.insertBefore(anchor, container.childNodes[index] ?? null);
     hydrated.push(anchor);
   }
-  const range: MutableRange = {
-    store,
-    anchor,
-    length: hydrated.length,
-    abort,
-  };
-  store.subscribe(() => updateRange(range, context), context.signal);
+  range.anchor = anchor;
+  range.length = hydrated.length;
   return hydrated;
 }
 
@@ -318,6 +313,19 @@ export function hydrateNode(
 
 export function createPlaceholderNode(): Comment {
   return document.createComment("");
+}
+
+// Subscribes before the initial content is rendered so that this node is notified
+// before any children that subscribe to the same store, which it would re-render anyway.
+function subscribeRange(store: Reactive<JSX.Node>, context: RenderContext): MutableRange {
+  const range: MutableRange = {
+    store,
+    anchor: createPlaceholderNode(),
+    length: 0,
+    abort: new AbortController(),
+  };
+  store.subscribe(() => updateRange(range, context), context.signal);
+  return range;
 }
 
 function updateRange(range: MutableRange, context: RenderContext) {
@@ -402,8 +410,8 @@ function renderFragment(nodes: JSX.Node[], context: RenderContext) {
 }
 
 function renderReactiveNode(store: Reactive<JSX.Node>, context: RenderContext) {
-  const abort = new AbortController();
-  const childContext = combineSignal(context, abort.signal);
+  const range = subscribeRange(store, context);
+  const childContext = combineSignal(context, range.abort.signal);
 
   const nodes = render(store.value, childContext);
 
@@ -411,13 +419,8 @@ function renderReactiveNode(store: Reactive<JSX.Node>, context: RenderContext) {
     nodes.push(createPlaceholderNode());
   }
 
-  const range: MutableRange = {
-    store,
-    anchor: nodes[0]!,
-    length: nodes.length,
-    abort,
-  };
-  store.subscribe(() => updateRange(range, context), context.signal);
+  range.anchor = nodes[0]!;
+  range.length = nodes.length;
   return nodes;
 }
 
