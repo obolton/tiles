@@ -3,7 +3,7 @@ import Tile from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import { type Reactive } from "reactivity";
 import type Page from "@/models/Page";
-import type { VideoType } from "doc/types/tiles/video";
+import type { VideoType } from "doc/types/enums";
 
 export type { VideoType };
 export type CreateVideoInput = VideoMapInput;

@@ -111,7 +111,11 @@ describe("getTileContent", () => {
 
   test("reads a page link's target title", () => {
     const { tiles: map } = tiles();
-    const tile = place(map, "p", buildPageLinkMap({ linkedPage: { title: "Linked Page" } }));
+    const tile = place(
+      map,
+      "p",
+      buildPageLinkMap({ linkedPage: { id: "linked-page", title: "Linked Page" } }),
+    );
     expect(getTileContent(tile)).toBe("Linked Page");
   });
 

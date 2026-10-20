@@ -1,14 +1,11 @@
 import * as Y from "yjs";
 import Tile, { type CreateTileInput } from "./Tile";
-import { buildPageLinkMap } from "doc/tiles/pageLink";
+import { buildPageLinkMap, type LinkedPage } from "doc/tiles/pageLink";
 import { type Reactive } from "reactivity";
 import type Page from "@/models/Page";
-import type { PageLinkTile } from "doc/types/tiles";
-
-type LinkedPage = PageLinkTile["linkedPage"];
 
 export interface CreatePageLinkInput extends Omit<CreateTileInput, "type"> {
-  linkedPage: NonNullable<LinkedPage>;
+  linkedPage: LinkedPage;
 }
 
 // TODO: this currently snapshots the linked page's metadata into the Y.Map at
@@ -18,7 +15,7 @@ export interface CreatePageLinkInput extends Omit<CreateTileInput, "type"> {
 export default class PageLink extends Tile {
   readonly type = "PAGE_LINK";
 
-  readonly linkedPage: Reactive<LinkedPage>;
+  readonly linkedPage: Reactive<LinkedPage | null>;
 
   static createMap(properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">): Y.Map<unknown> {
     return buildPageLinkMap(properties);

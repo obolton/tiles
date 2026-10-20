@@ -6,7 +6,7 @@ import { TextFormat } from "doc/types/richText";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
 import type { RichText } from "doc/types/richText";
-import type { TextTile } from "doc/types/tiles";
+import type { VerticalAlignment } from "doc/types/enums";
 
 const editor = Editor.init(PAGE, new Y.Doc());
 
@@ -25,7 +25,7 @@ function paragraph(text: string): RichText {
   ];
 }
 
-function createText(props: { align?: TextTile["align"]; content?: RichText }): Text {
+function createText(props: { align?: VerticalAlignment; content?: RichText }): Text {
   return editor.page.createTile(Text.createMap(props), {}) as Text;
 }
 

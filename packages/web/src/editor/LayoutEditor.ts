@@ -8,7 +8,7 @@ import type Page from "@/models/Page";
 import type { DragDropEvent } from "@/utils/drag";
 import type { PageItemEvent } from "@/elements/item/events";
 import type Tile from "@/models/Tile";
-import type { Layout } from "doc/types/tiles/section";
+import type { Layout } from "doc/types/enums";
 
 export type LayoutType = Layout;
 

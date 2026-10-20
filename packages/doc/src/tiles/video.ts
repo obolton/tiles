@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { buildBaseTileMap, type CreateTileInput } from "./base";
-import type { VideoType } from "../types/tiles/video";
+import type { VideoType } from "../types/enums";
 
 export interface VideoMapInput extends Omit<CreateTileInput, "type"> {
   videoType: VideoType;

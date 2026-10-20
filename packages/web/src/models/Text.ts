@@ -5,7 +5,7 @@ import { buildTextMap, type TextMapInput } from "doc/tiles/text";
 import { type Reactive } from "reactivity";
 import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
-import type { TextTile } from "doc/types/tiles";
+import type { VerticalAlignment } from "doc/types/enums";
 import type { RichText } from "doc/types/richText";
 
 export interface CreateTextInput extends TextMapInput {
@@ -15,7 +15,7 @@ export interface CreateTextInput extends TextMapInput {
 export default class Text extends Tile {
   readonly type = "TEXT";
 
-  readonly align: Reactive<TextTile["align"]>;
+  readonly align: Reactive<VerticalAlignment>;
   readonly contentFragment: Y.XmlFragment;
 
   static createMap(properties: Omit<CreateTextInput, "parentId" | "beforeId">): Y.Map<unknown> {

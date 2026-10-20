@@ -8,7 +8,7 @@ import AddPlaceIcon from "@/icons/add-place.svg?jsx";
 import { showModal } from "@/utils/modals";
 import type MapView from "@/elements/maps/MapView";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { MapStyle } from "doc/types/tiles/section";
+import type { MapStyle } from "doc/types/enums";
 import type Section from "@/models/Section";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
