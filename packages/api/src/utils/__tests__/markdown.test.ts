@@ -140,6 +140,18 @@ describe("transformMarkdown", () => {
       expect(output).toEqual(["hello", { type: "paragraph" }, "world"]);
     });
 
+    test("starts a new paragraph when formatting follows a paragraph break", async () => {
+      const output = await getEvents(["hello\n\n**world** again"]);
+      expect(output).toEqual([
+        "hello",
+        { type: "paragraph" },
+        { bold: true },
+        "world",
+        { bold: false },
+        " again",
+      ]);
+    });
+
     test.for([2, 3, 4])("treats %i spaces at the end of a line as a hard line break", async (i) => {
       const output = await getEvents([`hello${" ".repeat(i)}\nworld`]);
       expect(output).toEqual(["hello", "\nworld"]);
