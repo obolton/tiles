@@ -1,5 +1,3 @@
-import assert from "node:assert";
-
 const API_ORIGIN = import.meta.env.PUBLIC_API_ORIGIN;
 const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
 const COLLABORATION_URL = import.meta.env.PUBLIC_COLLABORATION_URL;
@@ -7,12 +5,24 @@ const FONTS_BASE_URL = import.meta.env.PUBLIC_FONTS_BASE_URL;
 const IMAGES_BASE_URL = import.meta.env.PUBLIC_IMAGES_BASE_URL;
 const PROFILE_IMAGES_BASE_URL = import.meta.env.PUBLIC_PROFILE_IMAGES_BASE_URL;
 
-assert(API_ORIGIN, "PUBLIC_API_ORIGIN is not set");
-assert(UPLOAD_ORIGIN, "PUBLIC_UPLOAD_ORIGIN is not set");
-assert(COLLABORATION_URL, "PUBLIC_COLLABORATION_URL is not set");
-assert(FONTS_BASE_URL, "PUBLIC_FONTS_BASE_URL is not set");
-assert(IMAGES_BASE_URL, "PUBLIC_IMAGES_BASE_URL is not set");
-assert(PROFILE_IMAGES_BASE_URL, "PUBLIC_PROFILE_IMAGES_BASE_URL is not set");
+if (!API_ORIGIN) {
+  throw new Error("PUBLIC_API_ORIGIN is not set");
+}
+if (!UPLOAD_ORIGIN) {
+  throw new Error("PUBLIC_UPLOAD_ORIGIN is not set");
+}
+if (!COLLABORATION_URL) {
+  throw new Error("PUBLIC_COLLABORATION_URL is not set");
+}
+if (!FONTS_BASE_URL) {
+  throw new Error("PUBLIC_FONTS_BASE_URL is not set");
+}
+if (!IMAGES_BASE_URL) {
+  throw new Error("PUBLIC_IMAGES_BASE_URL is not set");
+}
+if (!PROFILE_IMAGES_BASE_URL) {
+  throw new Error("PUBLIC_PROFILE_IMAGES_BASE_URL is not set");
+}
 
 type CSPDirective =
   | "default-src"
