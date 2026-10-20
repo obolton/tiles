@@ -12,7 +12,7 @@ describe("createKey", () => {
     });
   });
 
-  test("should create an authentication key", async () => {
+  test("creates an authentication key", async () => {
     await createKey(prisma, {
       provider: "GOOGLE",
       providerId: "google-123",
@@ -30,7 +30,7 @@ describe("createKey", () => {
 });
 
 describe("getUserIdByProviderId", () => {
-  test("should return userId when key exists", async () => {
+  test("returns userId when key exists", async () => {
     vi.mocked(prisma.key.findUnique).mockResolvedValue({
       createdAt: new Date(),
       provider: "GOOGLE",
@@ -57,7 +57,7 @@ describe("getUserIdByProviderId", () => {
     expect(result).toBe("user-456");
   });
 
-  test("should return null when key does not exist", async () => {
+  test("returns null when key does not exist", async () => {
     vi.mocked(prisma.key.findUnique).mockResolvedValue(null);
 
     const result = await getUserIdByProviderId(prisma, {

@@ -21,7 +21,7 @@ describe("createImage", () => {
     });
   });
 
-  test("should create the image in the current workspace for the current user", async () => {
+  test("creates the image in the current workspace for the current user", async () => {
     await createImage(
       {
         workspaceId: "workspace-1",
@@ -48,7 +48,7 @@ describe("createImage", () => {
     });
   });
 
-  test("should return the new image id with its owner and workspace", async () => {
+  test("returns the new image id with its owner and workspace", async () => {
     const result = await createImage(
       { workspaceId: "workspace-1", source: "GENERATED", purpose: "PROFILE", type: "JPEG" },
       MOCK_CONTEXT,
@@ -65,7 +65,7 @@ describe("updateImage", () => {
     });
   });
 
-  test("should update the image scoped to the current workspace", async () => {
+  test("updates the image scoped to the current workspace", async () => {
     const result = await updateImage(
       {
         id: "image-1",
@@ -86,7 +86,7 @@ describe("updateImage", () => {
     expect(result).toEqual({ id: "image-1" });
   });
 
-  test("should leave omitted fields unchanged", async () => {
+  test("leaves omitted fields unchanged", async () => {
     await updateImage({ id: "image-1", workspaceId: "workspace-1", pending: false }, MOCK_CONTEXT);
 
     expect(prisma.image.update).toHaveBeenCalledWith(
@@ -104,7 +104,7 @@ describe("deleteImage", () => {
     );
   });
 
-  test("should delete the image scoped to the current workspace", async () => {
+  test("deletes the image scoped to the current workspace", async () => {
     const result = await deleteImage({ id: "image-1", workspaceId: "workspace-1" }, MOCK_CONTEXT);
 
     expect(prisma.image.delete).toHaveBeenCalledWith({

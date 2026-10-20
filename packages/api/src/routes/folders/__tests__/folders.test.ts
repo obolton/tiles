@@ -58,7 +58,7 @@ describe("createFolder", () => {
     );
   });
 
-  test("should create the folder in the current workspace for the current user", async () => {
+  test("creates the folder in the current workspace for the current user", async () => {
     const result = await createFolder({ name: "Projects" }, MOCK_CONTEXT);
 
     expect(prisma.folder.create).toHaveBeenCalledWith({
@@ -76,7 +76,7 @@ describe("getFolder", () => {
     ).mockResolvedValue(MOCK_FOLDER);
   });
 
-  test("should look up the folder scoped to the current workspace", async () => {
+  test("looks up the folder scoped to the current workspace", async () => {
     const result = await getFolder({ id: "folder-1" }, MOCK_CONTEXT);
 
     expect(prisma.folder.findUniqueOrThrow).toHaveBeenCalledWith({
@@ -95,7 +95,7 @@ describe("updateFolder", () => {
     });
   });
 
-  test("should update the folder name scoped to the current workspace", async () => {
+  test("updates the folder name scoped to the current workspace", async () => {
     const result = await updateFolder({ id: "folder-1", name: "Archive" }, MOCK_CONTEXT);
 
     expect(prisma.folder.update).toHaveBeenCalledWith({
@@ -114,7 +114,7 @@ describe("deleteFolder", () => {
     });
   });
 
-  test("should delete the folder scoped to the current workspace", async () => {
+  test("deletes the folder scoped to the current workspace", async () => {
     const result = await deleteFolder({ id: "folder-1" }, MOCK_CONTEXT);
 
     expect(prisma.folder.delete).toHaveBeenCalledWith({
@@ -132,7 +132,7 @@ describe("listFolders", () => {
     findMany.mockResolvedValue([]);
   });
 
-  test("should list folders in the workspace sorted by name", async () => {
+  test("lists folders in the workspace sorted by name", async () => {
     await listFolders({}, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith({
@@ -143,7 +143,7 @@ describe("listFolders", () => {
     });
   });
 
-  test("should filter by name when a query is given", async () => {
+  test("filters by name when a query is given", async () => {
     await listFolders({ query: "proj" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -156,7 +156,7 @@ describe("listFolders", () => {
     );
   });
 
-  test("should resume from the cursor when one is given", async () => {
+  test("resumes from the cursor when one is given", async () => {
     await listFolders({ cursor: "folder-5" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -164,7 +164,7 @@ describe("listFolders", () => {
     );
   });
 
-  test("should return all folders with no cursor when there are no more results", async () => {
+  test("returns all folders with no cursor when there are no more results", async () => {
     const folders = createMockFolders(RESULTS_PER_PAGE);
     findMany.mockResolvedValue(folders);
 
@@ -173,7 +173,7 @@ describe("listFolders", () => {
     expect(result).toEqual({ folders, nextCursor: null });
   });
 
-  test("should trim the extra result and return the next cursor when there are more", async () => {
+  test("trims the extra result and returns the next cursor when there are more", async () => {
     const folders = createMockFolders(RESULTS_PER_PAGE + 1);
     findMany.mockResolvedValue(folders);
 
@@ -195,14 +195,14 @@ describe("listPages", () => {
     findMany.mockResolvedValue([]);
   });
 
-  test("should throw without listing pages when the folder is not in the workspace", async () => {
+  test("throws without listing pages when the folder is not in the workspace", async () => {
     findUniqueOrThrow.mockRejectedValue(new Error("Not found"));
 
     await expect(listPages({ id: "folder-1" }, MOCK_CONTEXT)).rejects.toThrow("Not found");
     expect(findMany).not.toHaveBeenCalled();
   });
 
-  test("should list pages in the folder sorted by updatedAt descending by default", async () => {
+  test("lists pages in the folder sorted by updatedAt descending by default", async () => {
     await listPages({ id: "folder-1" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith({
@@ -213,13 +213,13 @@ describe("listPages", () => {
     });
   });
 
-  test("should sort by the requested field and direction", async () => {
+  test("sorts by the requested field and direction", async () => {
     await listPages({ id: "folder-1", sortBy: "title", sortDirection: "asc" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(expect.objectContaining({ orderBy: { title: "asc" } }));
   });
 
-  test("should filter by title when a query is given", async () => {
+  test("filters by title when a query is given", async () => {
     await listPages({ id: "folder-1", query: "plan" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -233,7 +233,7 @@ describe("listPages", () => {
     );
   });
 
-  test("should resume from the cursor when one is given", async () => {
+  test("resumes from the cursor when one is given", async () => {
     await listPages({ id: "folder-1", cursor: "page-5" }, MOCK_CONTEXT);
 
     expect(findMany).toHaveBeenCalledWith(
@@ -241,7 +241,7 @@ describe("listPages", () => {
     );
   });
 
-  test("should return all pages with no cursor when there are no more results", async () => {
+  test("returns all pages with no cursor when there are no more results", async () => {
     const pages = createMockPages(RESULTS_PER_PAGE);
     findMany.mockResolvedValue(pages);
 
@@ -250,7 +250,7 @@ describe("listPages", () => {
     expect(result).toEqual({ pages, nextCursor: null });
   });
 
-  test("should trim the extra result and return the next cursor when there are more", async () => {
+  test("trims the extra result and returns the next cursor when there are more", async () => {
     const pages = createMockPages(RESULTS_PER_PAGE + 1);
     findMany.mockResolvedValue(pages);
 

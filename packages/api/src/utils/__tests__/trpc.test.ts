@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 describe("createContext", () => {
-  test("should return an unauthenticated context without credentials", async () => {
+  test("returns an unauthenticated context without credentials", async () => {
     const opts = createContextOptions();
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -34,7 +34,7 @@ describe("createContext", () => {
     expect(opts.res.getHeader("Set-Cookie")).toBeUndefined();
   });
 
-  test("should authenticate with a bearer token", async () => {
+  test("authenticates with a bearer token", async () => {
     const opts = createContextOptions({ authorization: "Bearer valid-header" });
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -46,7 +46,7 @@ describe("createContext", () => {
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-header");
   });
 
-  test("should prefer the Authorization header over the session cookie", async () => {
+  test("prefers the Authorization header over the session cookie", async () => {
     const opts = createContextOptions({
       authorization: "Bearer valid-header",
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
@@ -60,7 +60,7 @@ describe("createContext", () => {
     ["a non-Bearer scheme", "Basic valid-header"],
     ["a missing token", "Bearer"],
     ["an empty token", "Bearer "],
-  ])("should reject an Authorization header with %s", async (_, authorization) => {
+  ])("rejects an Authorization header with %s", async (_, authorization) => {
     const opts = createContextOptions({
       authorization,
       cookie: `${SESSION_COOKIE_NAME}=valid-cookie`,
@@ -73,7 +73,7 @@ describe("createContext", () => {
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  test("should authenticate with the session cookie", async () => {
+  test("authenticates with the session cookie", async () => {
     const opts = createContextOptions({
       cookie: `other=value; ${SESSION_COOKIE_NAME}=valid-cookie`,
     });
@@ -87,21 +87,21 @@ describe("createContext", () => {
     expect(getSessionContext).toHaveBeenCalledExactlyOnceWith("valid-cookie");
   });
 
-  test("should ignore cookies other than the session cookie", async () => {
+  test("ignores cookies other than the session cookie", async () => {
     const opts = createContextOptions({ cookie: "session=valid-cookie" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  test("should ignore an empty session cookie", async () => {
+  test("ignores an empty session cookie", async () => {
     const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=` });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 
-  test("should clear the session cookie for an unknown or expired session", async () => {
+  test("clears the session cookie for an unknown or expired session", async () => {
     const opts = createContextOptions({ cookie: `${SESSION_COOKIE_NAME}=expired-cookie` });
 
     await expect(createContext(opts)).resolves.toEqual({
@@ -116,7 +116,7 @@ describe("createContext", () => {
     );
   });
 
-  test("should not authenticate with an unknown bearer token", async () => {
+  test("does not authenticate with an unknown bearer token", async () => {
     const opts = createContextOptions({ authorization: "Bearer expired-header" });
 
     await expect(createContext(opts)).resolves.toMatchObject({ sessionId: null, userId: null });
@@ -172,7 +172,7 @@ describe("createContext with a service token", () => {
 });
 
 describe("SERVICE_API_TOKEN", () => {
-  test("should be required when the module loads", async () => {
+  test("is required when the module loads", async () => {
     vi.resetModules();
     vi.stubEnv("SERVICE_API_TOKEN", "");
 

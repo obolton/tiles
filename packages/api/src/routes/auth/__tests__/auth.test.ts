@@ -33,7 +33,7 @@ describe("signIn", () => {
       });
     });
 
-    test("should create a session for existing user", async () => {
+    test("creates a session for existing user", async () => {
       const result = await signIn(validInput);
 
       expect(prisma.key.findUnique).toHaveBeenCalledWith({
@@ -52,13 +52,13 @@ describe("signIn", () => {
       });
     });
 
-    test("should not create a new user for existing user", async () => {
+    test("does not create a new user for existing user", async () => {
       await signIn(validInput);
 
       expect(createUser).not.toHaveBeenCalled();
     });
 
-    test("should not send welcome email for existing user", async () => {
+    test("does not send welcome email for existing user", async () => {
       await signIn(validInput);
 
       expect(sendEmail).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("signIn", () => {
       vi.mocked(sendEmail).mockResolvedValue();
     });
 
-    test("should create a new user", async () => {
+    test("creates a new user", async () => {
       await signIn(validInput);
 
       expect(createUser).toHaveBeenCalledWith(expect.anything(), {
@@ -103,7 +103,7 @@ describe("signIn", () => {
       });
     });
 
-    test("should create a workspace for new user", async () => {
+    test("creates a workspace for new user", async () => {
       await signIn(validInput);
 
       expect(prisma.workspace.create).toHaveBeenCalledWith(
@@ -115,7 +115,7 @@ describe("signIn", () => {
       );
     });
 
-    test("should make the new user an admin of their workspace", async () => {
+    test("makes the new user an admin of their workspace", async () => {
       await signIn(validInput);
 
       expect(prisma.workspace.create).toHaveBeenCalledWith(
@@ -132,7 +132,7 @@ describe("signIn", () => {
       );
     });
 
-    test("should create an authentication key for new user", async () => {
+    test("creates an authentication key for new user", async () => {
       await signIn(validInput);
 
       expect(prisma.key.create).toHaveBeenCalledWith({
@@ -144,13 +144,13 @@ describe("signIn", () => {
       });
     });
 
-    test("should send welcome email for new user", async () => {
+    test("sends welcome email for new user", async () => {
       await signIn(validInput);
 
       expect(sendEmail).toHaveBeenCalledWith("test@example.com", expect.anything());
     });
 
-    test("should return a session for new user", async () => {
+    test("returns a session for new user", async () => {
       const result = await signIn(validInput);
 
       expect(result).toMatchObject({
@@ -158,7 +158,7 @@ describe("signIn", () => {
       });
     });
 
-    test("should handle welcome email failure gracefully", async () => {
+    test("handles welcome email failure gracefully", async () => {
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       vi.mocked(sendEmail).mockRejectedValue(new Error("Email failed"));
 
@@ -183,7 +183,7 @@ describe("signOut", () => {
     });
   });
 
-  test("should delete the session", async () => {
+  test("deletes the session", async () => {
     await signOut("session-id");
 
     expect(prisma.session.delete).toHaveBeenCalledWith({
