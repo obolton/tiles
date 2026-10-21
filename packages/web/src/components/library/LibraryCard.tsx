@@ -2,7 +2,6 @@ import ProfileImage from "@/components/profile-image/ProfileImage";
 import PublicIcon from "@/icons/public.svg?jsx";
 import DocumentIcon from "@/icons/document.svg?jsx";
 import PresentationIcon from "@/icons/presentation.svg?jsx";
-import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import { makeDraggable } from "@/utils/drag";
 import { formatRelativeDate } from "@/utils/dates";
@@ -18,7 +17,6 @@ const PAGE_TYPES: Record<PageType, { Icon: JSX.Component<JSX.Attributes<"svg">>;
   {
     DOCUMENT: { Icon: DocumentIcon, label: "Document" },
     PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
-    COLLECTION: { Icon: GridLayoutIcon, label: "Collection" },
     FREE: { Icon: EmptyIcon, label: "Blank page" },
   };
 

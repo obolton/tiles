@@ -165,7 +165,7 @@ export function createInitialDoc(pageType: PageType): Y.Doc {
       return createDocumentDoc();
     case "PRESENTATION":
       return createPresentationDoc();
-    default:
+    case "FREE":
       return createEmptyDoc();
   }
 }
