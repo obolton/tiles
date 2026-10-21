@@ -5,6 +5,8 @@ import { sendEmail } from "@/utils/email";
 import { inviteToWorkspaceEmail } from "@/emails/inviteToWorkspace";
 import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import { getDefaultThemesData } from "@/utils/themes";
+import { invalidateCachedPages } from "@/utils/cdn";
+import { closePageConnections } from "@/collaboration/documents";
 import type { Prisma } from "@/generated/prisma/client";
 import type {
   GetWorkspaceSchema,
@@ -76,12 +78,29 @@ export async function updateWorkspace(
 }
 
 export async function deleteWorkspace({ workspaceId }: AuthenticatedWorkspaceProcedureContext) {
-  return prisma.workspace.delete({
-    where: {
-      id: workspaceId,
-    },
-    select: WORKSPACE_FIELDS,
+  const { pages, workspace } = await prisma.$transaction(async (transaction) => {
+    const pages = await transaction.page.findMany({
+      where: { workspaceId },
+      select: { id: true, published: true },
+    });
+
+    // Page documents are not cascaded from pages, but deleting a document cascades its page
+    await transaction.pageDocument.deleteMany({
+      where: { page: { workspaceId } },
+    });
+
+    const workspace = await transaction.workspace.delete({
+      where: { id: workspaceId },
+      select: WORKSPACE_FIELDS,
+    });
+
+    return { pages, workspace };
   });
+
+  closePageConnections(pages.map((page) => page.id));
+  invalidateCachedPages(pages.filter((page) => page.published).map((page) => page.id));
+
+  return workspace;
 }
 
 export async function inviteToWorkspace(

@@ -1,8 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "@/database/prisma";
+import { invalidateCachedPages } from "@/utils/cdn";
+import { closePageConnections } from "@/collaboration/documents";
 import {
   getWorkspace,
   createWorkspace,
+  deleteWorkspace,
   acceptWorkspaceInvite,
   leaveWorkspace,
   removeFromWorkspace,
@@ -31,6 +34,10 @@ vi.mock("@/utils/email", () => ({
 vi.mock("@/utils/themes", () => ({
   getDefaultThemesData: () => [],
 }));
+
+vi.mock("@/utils/cdn", () => ({ invalidateCachedPages: vi.fn() }));
+
+vi.mock("@/collaboration/documents", () => ({ closePageConnections: vi.fn() }));
 
 const MOCK_WORKSPACE = { id: "workspace-1", name: "Test Workspace" };
 
@@ -92,6 +99,51 @@ describe("createWorkspace", () => {
         }),
       }),
     );
+  });
+});
+
+describe("deleteWorkspace", () => {
+  const PAGES = [
+    { id: "page-1", published: true },
+    { id: "page-2", published: false },
+  ];
+
+  beforeEach(() => {
+    vi.mocked(prisma.page.findMany<FindManyQuery<{ id: true; published: true }>>).mockResolvedValue(
+      PAGES,
+    );
+    vi.mocked(prisma.workspace.delete<DeleteQuery<typeof WORKSPACE_FIELDS>>).mockResolvedValue(
+      MOCK_WORKSPACE,
+    );
+  });
+
+  test("returns the deleted workspace", async () => {
+    await expect(deleteWorkspace(MOCK_WORKSPACE_CONTEXT)).resolves.toEqual(MOCK_WORKSPACE);
+
+    expect(prisma.workspace.delete).toHaveBeenCalledWith({
+      where: { id: "workspace-1" },
+      select: WORKSPACE_FIELDS,
+    });
+  });
+
+  test("deletes the page documents of the workspace", async () => {
+    await deleteWorkspace(MOCK_WORKSPACE_CONTEXT);
+
+    expect(prisma.pageDocument.deleteMany).toHaveBeenCalledWith({
+      where: { page: { workspaceId: "workspace-1" } },
+    });
+  });
+
+  test("closes collaboration connections for all pages", async () => {
+    await deleteWorkspace(MOCK_WORKSPACE_CONTEXT);
+
+    expect(closePageConnections).toHaveBeenCalledWith(["page-1", "page-2"]);
+  });
+
+  test("invalidates cached published pages", async () => {
+    await deleteWorkspace(MOCK_WORKSPACE_CONTEXT);
+
+    expect(invalidateCachedPages).toHaveBeenCalledWith(["page-1"]);
   });
 });
 

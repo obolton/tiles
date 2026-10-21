@@ -31,3 +31,12 @@ export async function withDocument<T>(
     await connection.disconnect();
   }
 }
+
+/**
+ * Disconnect every client connected to the given pages.
+ */
+export function closePageConnections(pageIds: string[]) {
+  for (const pageId of pageIds) {
+    hocuspocus.closeConnections(docName(pageId));
+  }
+}

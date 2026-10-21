@@ -5,9 +5,11 @@ import { flag } from "reactivity";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 
-export type DeleteWorkspaceModalProps = ModalProps<void>;
+export interface DeleteWorkspaceModalProps extends ModalProps<void> {
+  name: string;
+}
 
-export default function DeleteWorkspaceModal({ cancel, confirm }: DeleteWorkspaceModalProps) {
+export default function DeleteWorkspaceModal({ name, cancel, confirm }: DeleteWorkspaceModalProps) {
   const pending = flag(false);
 
   async function onSubmit(event: Event) {
@@ -35,8 +37,8 @@ export default function DeleteWorkspaceModal({ cancel, confirm }: DeleteWorkspac
 
       <ModalBody>
         <p>
-          This will permanently delete this workspace and all of its data, including all pages,
-          folders, images and themes. This action cannot be undone.
+          This will permanently delete <strong>{name}</strong> and all of its data, including all
+          pages, folders, images and themes for every member. This action cannot be undone.
         </p>
       </ModalBody>
 
