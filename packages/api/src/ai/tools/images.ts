@@ -1,24 +1,27 @@
 import { Buffer } from "node:buffer";
+import { generateImage } from "ai";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
-import { openai } from "../openai";
-import { IMAGE_GENERATION_OPTIONS, IMAGE_CONTENT_TYPE, IMAGE_TYPE } from "../constants";
+import { IMAGE_MODEL } from "../models";
+import {
+  IMAGE_GENERATION_OPTIONS,
+  IMAGE_GENERATION_SIZE,
+  IMAGE_CONTENT_TYPE,
+  IMAGE_TYPE,
+} from "../constants";
 import type { ToolContext } from "./types";
 
 export async function generateImageFromPrompt(prompt: string) {
-  const response = await openai.images.generate({
-    ...IMAGE_GENERATION_OPTIONS,
+  const { image } = await generateImage({
+    model: IMAGE_MODEL,
     prompt,
+    size: IMAGE_GENERATION_SIZE,
+    providerOptions: { openai: IMAGE_GENERATION_OPTIONS },
   });
-
-  const data = response.data?.[0]?.b64_json;
-  if (!data) {
-    throw new Error("Image generation returned no data");
-  }
 
   return {
     type: IMAGE_CONTENT_TYPE,
-    data,
+    data: image.base64,
   };
 }
 

@@ -5,7 +5,6 @@ import type { DocWriter } from "@/collaboration/DocWriter";
 
 export interface ToolContext extends AuthenticatedPageProcedureContext {
   sectionId: string | null;
-  model: string;
   resolveArtifactId: (id: number) => string;
   session: DocWriter;
 }
@@ -16,6 +15,8 @@ export interface TileResult {
 }
 
 export type ToolResult = TileResult | void;
+
+export type ToolOutput = { id: string } | { status: "ok" };
 
 export interface FunctionToolOptions<T extends z.ZodType = z.ZodType> {
   name: string;

@@ -1,9 +1,4 @@
-import { z } from "zod";
-import type {
-  FunctionTool,
-  Tool,
-  ResponseFunctionToolCall,
-} from "openai/resources/responses/responses";
+import { tool, type ToolSet } from "ai";
 import { CREATE_IMAGE_TOOL } from "./createImage";
 import { CREATE_LINK_TOOL } from "./createLink";
 import { CREATE_MAP_TOOL } from "./createMap";
@@ -11,7 +6,7 @@ import { CREATE_SECTION_TOOL } from "./createSection";
 import { CREATE_TEXT_TOOL } from "./createText";
 import { DELETE_TILES_TOOL } from "./deleteTile";
 import { EDIT_STYLE_TOOL } from "./editStyle";
-import type { FunctionToolOptions, ToolContext } from "./types";
+import type { FunctionToolOptions, TileResult, ToolContext, ToolOutput } from "./types";
 
 export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_TEXT_TOOL,
@@ -23,30 +18,21 @@ export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   EDIT_STYLE_TOOL,
 ];
 
-function functionTool<T extends z.ZodType>({
-  name,
-  description,
-  schema,
-}: FunctionToolOptions<T>): FunctionTool {
-  return {
-    type: "function",
-    name,
-    description,
-    parameters: z.toJSONSchema(schema),
-    strict: true,
-  };
-}
+/** Registers a created tile and returns the id the model should use to refer to it. */
+export type RegisterTile = (tile: TileResult) => string;
 
-export const TOOLS: Tool[] = FUNCTION_TOOLS.map(functionTool);
-
-export async function useFunctionTool(call: ResponseFunctionToolCall, context: ToolContext) {
-  for (const tool of FUNCTION_TOOLS) {
-    if (tool.name === call.name) {
-      const args = JSON.parse(call.arguments) as unknown;
-      const parsedArgs = tool.schema.parse(args);
-      const result = await tool.function(parsedArgs, context);
-      return result;
-    }
+export function createTools(context: ToolContext, registerTile: RegisterTile): ToolSet {
+  const tools: ToolSet = {};
+  for (const options of FUNCTION_TOOLS) {
+    tools[options.name] = tool({
+      description: options.description,
+      inputSchema: options.schema,
+      strict: true,
+      execute: async (args): Promise<ToolOutput> => {
+        const result = await options.function(args, context);
+        return result ? { id: registerTile(result) } : { status: "ok" };
+      },
+    });
   }
-  throw new Error(`Unknown tool: ${call.name}`);
+  return tools;
 }

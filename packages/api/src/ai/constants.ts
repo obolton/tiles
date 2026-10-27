@@ -1,18 +1,29 @@
-import type { ResponsesModel, ImageGenerateParams } from "openai/resources";
+import type {
+  OpenAIImageModelGenerationOptions,
+  OpenAILanguageModelResponsesOptions,
+} from "@ai-sdk/openai";
 import type { ImageType } from "@/generated/prisma/enums";
 
-export const TEXT_MODEL: ResponsesModel = "gpt-5.2";
+export const DEFAULT_TEXT_MODEL = "openai:gpt-5.2";
+
+export const TEXT_PROVIDER_OPTIONS = {
+  // Reasoning summaries are unused; they would otherwise default on once an effort is set.
+  openai: { reasoningSummary: null } satisfies OpenAILanguageModelResponsesOptions,
+};
+
+export const IMAGE_MODEL_ID = "gpt-image-1.5";
 
 export const IMAGE_GENERATION_DIMENSIONS = {
   width: 1024,
   height: 1024,
 } as const;
 
+export const IMAGE_GENERATION_SIZE =
+  `${IMAGE_GENERATION_DIMENSIONS.width}x${IMAGE_GENERATION_DIMENSIONS.height}` as const;
+
 export const IMAGE_GENERATION_OPTIONS = {
-  model: "gpt-image-1.5",
-  output_format: "webp",
   quality: "low",
-  size: `${IMAGE_GENERATION_DIMENSIONS.width}x${IMAGE_GENERATION_DIMENSIONS.height}`,
-} satisfies Omit<ImageGenerateParams, "prompt">;
+  outputFormat: "webp",
+} satisfies OpenAIImageModelGenerationOptions;
 export const IMAGE_CONTENT_TYPE = "image/webp";
 export const IMAGE_TYPE: ImageType = "WEBP";

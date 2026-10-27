@@ -1,17 +1,8 @@
 import { describe, test, expect, vi } from "vitest";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
-import { FUNCTION_TOOLS, useFunctionTool } from "../tools";
+import { FUNCTION_TOOLS, createTools } from "../tools";
 
-vi.mock("@/routes/links/links", () => ({
-  resolveLinkMetadata: vi.fn().mockResolvedValue({
-    type: "LINK",
-    url: "https://example.com",
-    title: null,
-    description: null,
-    siteName: null,
-    imageId: null,
-  }),
-}));
+const EXECUTION_OPTIONS = { toolCallId: "call-1", messages: [], context: {} };
 
 describe("FUNCTION_TOOLS", () => {
   test("contains all expected tools", () => {
@@ -39,97 +30,33 @@ describe("FUNCTION_TOOLS", () => {
   });
 });
 
-describe("useFunctionTool", () => {
-  test("finds and executes create_text tool", async () => {
-    const result = await useFunctionTool(
-      {
-        type: "function_call",
-        id: "call-1",
-        call_id: "call-1",
-        name: "create_text",
-        arguments: JSON.stringify({
-          parentId: null,
-          align: null,
-          size: "medium",
-          coordinates: null,
-        }),
-        status: "completed",
-      },
-      MOCK_TOOL_CONTEXT,
+describe("createTools", () => {
+  test("builds a tool set keyed by tool name", () => {
+    const tools = createTools(MOCK_TOOL_CONTEXT, vi.fn());
+
+    expect(Object.keys(tools)).toEqual(FUNCTION_TOOLS.map((tool) => tool.name));
+  });
+
+  test("registers a created tile and returns its id to the model", async () => {
+    const registerTile = vi.fn(() => "3");
+    const tools = createTools(MOCK_TOOL_CONTEXT, registerTile);
+
+    const output = await tools.create_text?.execute?.(
+      { parentId: null, align: null, size: "medium", coordinates: null },
+      EXECUTION_OPTIONS,
     );
 
-    expect(result).toEqual({ tileId: expect.any(String), type: "TEXT" });
+    expect(registerTile).toHaveBeenCalledWith({ tileId: expect.any(String), type: "TEXT" });
+    expect(output).toEqual({ id: "3" });
   });
 
-  test("finds and executes create_link tool", async () => {
-    const result = await useFunctionTool(
-      {
-        type: "function_call",
-        id: "call-1",
-        call_id: "call-1",
-        name: "create_link",
-        arguments: JSON.stringify({
-          parentId: null,
-          size: "medium",
-          url: "https://example.com",
-          coordinates: null,
-        }),
-        status: "completed",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
+  test("returns an ok status for tools that do not create a tile", async () => {
+    const registerTile = vi.fn();
+    const tools = createTools(MOCK_TOOL_CONTEXT, registerTile);
 
-    expect(result).toEqual({ tileId: expect.any(String), type: "LINK" });
-  });
+    const output = await tools.delete_tiles?.execute?.({ ids: [0] }, EXECUTION_OPTIONS);
 
-  test("finds and executes create_section tool", async () => {
-    const result = await useFunctionTool(
-      {
-        type: "function_call",
-        id: "call-1",
-        call_id: "call-1",
-        name: "create_section",
-        arguments: JSON.stringify({
-          size: "medium",
-          layout: "GRID",
-        }),
-        status: "completed",
-      },
-      MOCK_TOOL_CONTEXT,
-    );
-
-    expect(result).toEqual({ tileId: expect.any(String), type: "SECTION" });
-  });
-
-  test("throws error for unknown tool name", async () => {
-    await expect(
-      useFunctionTool(
-        {
-          type: "function_call",
-          id: "call-1",
-          call_id: "call-1",
-          name: "unknown_tool",
-          arguments: "{}",
-          status: "completed",
-        },
-        MOCK_TOOL_CONTEXT,
-      ),
-    ).rejects.toThrow("Unknown tool: unknown_tool");
-  });
-
-  test("throws error for invalid JSON arguments", async () => {
-    await expect(
-      useFunctionTool(
-        {
-          type: "function_call",
-          id: "call-1",
-          call_id: "call-1",
-          name: "create_text",
-          arguments: "invalid json",
-          status: "completed",
-        },
-        MOCK_TOOL_CONTEXT,
-      ),
-    ).rejects.toThrow(SyntaxError);
+    expect(registerTile).not.toHaveBeenCalled();
+    expect(output).toEqual({ status: "ok" });
   });
 });

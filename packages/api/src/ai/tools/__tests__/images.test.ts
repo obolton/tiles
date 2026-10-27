@@ -1,14 +1,17 @@
 import { Buffer } from "node:buffer";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { NoImageGeneratedError } from "ai";
 import prisma from "@/database/prisma";
 import { upload } from "@/utils/storage";
-import { openai } from "@/ai/openai";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { generateAndUploadImage, generateImageFromPrompt } from "../images";
 
-vi.mock("@/ai/openai", () => ({
-  openai: { images: { generate: vi.fn() } },
-}));
+const { doGenerate } = vi.hoisted(() => ({ doGenerate: vi.fn() }));
+
+vi.mock("@/ai/models", async () => {
+  const { MockImageModelV4 } = await import("ai/test");
+  return { IMAGE_MODEL: new MockImageModelV4({ doGenerate }) };
+});
 
 vi.mock("@/utils/storage", () => ({
   upload: vi.fn(),
@@ -16,33 +19,35 @@ vi.mock("@/utils/storage", () => ({
 }));
 
 const IMAGE_DATA = Buffer.from("image-bytes").toString("base64");
+const RESPONSE = { timestamp: new Date(0), modelId: "test-image-model", headers: undefined };
 
 beforeEach(() => {
-  vi.mocked(openai.images.generate).mockResolvedValue({
-    created: 0,
-    data: [{ b64_json: IMAGE_DATA }],
-  });
+  doGenerate.mockResolvedValue({ images: [IMAGE_DATA], warnings: [], response: RESPONSE });
 });
 
 describe("generateImageFromPrompt", () => {
   test("returns the generated image data for the prompt", async () => {
     const result = await generateImageFromPrompt("a red circle");
 
-    expect(openai.images.generate).toHaveBeenCalledWith(
-      expect.objectContaining({ prompt: "a red circle" }),
+    expect(doGenerate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prompt: "a red circle",
+        size: "1024x1024",
+        providerOptions: { openai: { quality: "low", outputFormat: "webp" } },
+      }),
     );
     expect(result).toEqual({ type: "image/webp", data: IMAGE_DATA });
   });
 
   test("throws when no image is returned", async () => {
-    vi.mocked(openai.images.generate).mockResolvedValue({
-      created: 0,
-      data: [],
+    doGenerate.mockResolvedValue({
+      images: [],
+      isRetryable: false,
+      warnings: [],
+      response: RESPONSE,
     });
 
-    await expect(generateImageFromPrompt("a red circle")).rejects.toThrow(
-      "Image generation returned no data",
-    );
+    await expect(generateImageFromPrompt("a red circle")).rejects.toThrow(NoImageGeneratedError);
   });
 });
 
