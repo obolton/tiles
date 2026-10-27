@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { buildCSPHeader, buildCSPPolicy, securityHeaders, type CSPPolicy } from "../security";
+import {
+  buildCSPHeader,
+  buildCSPPolicy,
+  buildCSPSources,
+  securityHeaders,
+  type CSPPolicy,
+} from "../security";
 
 describe("buildCSPHeader", () => {
   test("formats a single directive with sources", () => {
@@ -154,5 +160,33 @@ describe("securityHeaders", () => {
 
   test("includes Referrer-Policy header", () => {
     expect(securityHeaders["Referrer-Policy"]).toBe("strict-origin-when-cross-origin");
+  });
+});
+
+describe("buildCSPSources", () => {
+  test("reduces base URLs to their origins", () => {
+    const sources = buildCSPSources();
+    expect(sources.fontSrc).toEqual(["https://test-fonts.example.com"]);
+    expect(sources.imgSrc).toEqual(["https://images.test", "https://profile-images.test"]);
+  });
+
+  test("includes the collaboration WebSocket origin in connect-src", () => {
+    const sources = buildCSPSources();
+    expect(sources.connectSrc).toEqual([
+      "https://api.test",
+      "https://uploads.test",
+      "wss://api.test",
+    ]);
+  });
+
+  test("renders a CSP header without undefined sources", () => {
+    const header = buildCSPHeader(buildCSPPolicy(buildCSPSources()));
+    expect(header).not.toContain("undefined");
+    expect(header).not.toMatch(/  /);
+    expect(header).toContain(
+      "img-src 'self' data: blob: https://images.test https://profile-images.test",
+    );
+    expect(header).toContain("font-src 'self' https://test-fonts.example.com");
+    expect(header).toContain("wss://api.test");
   });
 });

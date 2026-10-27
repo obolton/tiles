@@ -1,3 +1,19 @@
+import assert from "node:assert";
+
+const API_ORIGIN = import.meta.env.PUBLIC_API_ORIGIN;
+const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
+const COLLABORATION_URL = import.meta.env.PUBLIC_COLLABORATION_URL;
+const FONTS_BASE_URL = import.meta.env.PUBLIC_FONTS_BASE_URL;
+const IMAGES_BASE_URL = import.meta.env.PUBLIC_IMAGES_BASE_URL;
+const PROFILE_IMAGES_BASE_URL = import.meta.env.PUBLIC_PROFILE_IMAGES_BASE_URL;
+
+assert(API_ORIGIN, "PUBLIC_API_ORIGIN is not set");
+assert(UPLOAD_ORIGIN, "PUBLIC_UPLOAD_ORIGIN is not set");
+assert(COLLABORATION_URL, "PUBLIC_COLLABORATION_URL is not set");
+assert(FONTS_BASE_URL, "PUBLIC_FONTS_BASE_URL is not set");
+assert(IMAGES_BASE_URL, "PUBLIC_IMAGES_BASE_URL is not set");
+assert(PROFILE_IMAGES_BASE_URL, "PUBLIC_PROFILE_IMAGES_BASE_URL is not set");
+
 type CSPDirective =
   | "default-src"
   | "script-src"
@@ -51,6 +67,19 @@ export function buildCSPPolicy(sources: CSPSources): CSPPolicy {
   };
 }
 
+// A CSP source with a path only matches that exact path, so use the origin.
+function getOrigin(url: string): string {
+  return new URL(url).origin;
+}
+
+export function buildCSPSources(): CSPSources {
+  return {
+    fontSrc: [getOrigin(FONTS_BASE_URL)],
+    imgSrc: [getOrigin(IMAGES_BASE_URL), getOrigin(PROFILE_IMAGES_BASE_URL)],
+    connectSrc: [getOrigin(API_ORIGIN), getOrigin(UPLOAD_ORIGIN), getOrigin(COLLABORATION_URL)],
+  };
+}
+
 function buildSecurityHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
@@ -58,20 +87,7 @@ function buildSecurityHeaders(): Record<string, string> {
   };
 
   if (import.meta.env.PROD) {
-    const cspPolicy = buildCSPPolicy({
-      fontSrc: [import.meta.env.PUBLIC_FONTS_BASE_URL as string],
-      imgSrc: [
-        import.meta.env.PROFILE_IMAGES_BASE_URL as string,
-        import.meta.env.IMAGES_BASE_URL as string,
-        import.meta.env.RESOURCES_BASE_URL as string,
-      ],
-      connectSrc: [
-        import.meta.env.PUBLIC_API_ORIGIN as string,
-        import.meta.env.PUBLIC_UPLOAD_ORIGIN as string,
-      ],
-    });
-
-    headers["Content-Security-Policy"] = buildCSPHeader(cspPolicy);
+    headers["Content-Security-Policy"] = buildCSPHeader(buildCSPPolicy(buildCSPSources()));
   }
 
   return headers;
