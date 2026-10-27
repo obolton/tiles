@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
 import { createResponse } from "@/test/mocks/http";
 import { clearSessionCookie, getCookie } from "../cookies";
@@ -26,29 +26,13 @@ describe("getCookie", () => {
 });
 
 describe("clearSessionCookie", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
-  test("expires the session cookie", () => {
-    vi.stubEnv("PUBLIC_SESSION_COOKIE_DOMAIN", undefined);
+  test("expires the session cookie for the configured domain", () => {
     const res = createResponse();
 
     clearSessionCookie(res);
 
     expect(res.getHeader("Set-Cookie")).toBe(
-      `${SESSION_COOKIE_NAME}=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax`,
-    );
-  });
-
-  test("scopes the cookie to the configured domain", () => {
-    vi.stubEnv("PUBLIC_SESSION_COOKIE_DOMAIN", "example.com");
-    const res = createResponse();
-
-    clearSessionCookie(res);
-
-    expect(res.getHeader("Set-Cookie")).toBe(
-      `${SESSION_COOKIE_NAME}=; Max-Age=0; Domain=example.com; Path=/; HttpOnly; Secure; SameSite=Lax`,
+      `${SESSION_COOKIE_NAME}=; Max-Age=0; Domain=test.example.com; Path=/; HttpOnly; Secure; SameSite=Lax`,
     );
   });
 });

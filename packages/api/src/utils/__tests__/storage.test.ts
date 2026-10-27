@@ -3,21 +3,21 @@ import { AssertionError } from "node:assert";
 import { Buffer } from "node:buffer";
 import { IMAGES_BUCKET, PROFILE_IMAGES_BUCKET, objectExists, upload } from "../storage";
 
-const { send, done, createClient, createUpload, S3Client, HeadObjectCommand, Upload } = vi.hoisted(
+const { send, done, clients, createUpload, S3Client, HeadObjectCommand, Upload } = vi.hoisted(
   () => {
     const send = vi.fn();
     const done = vi.fn();
-    const createClient = vi.fn();
+    const clients: unknown[] = [];
     const createUpload = vi.fn();
     return {
       send,
       done,
-      createClient,
+      clients,
       createUpload,
       S3Client: class {
         send = send;
         constructor(config: unknown) {
-          createClient(config);
+          clients.push(config);
         }
       },
       HeadObjectCommand: class {
@@ -126,16 +126,14 @@ describe("module initialization", () => {
     vi.unstubAllEnvs();
   });
 
-  test("creates an S3 client for the R2 endpoint", async () => {
-    vi.resetModules();
-
-    await import("@/utils/storage");
-
-    expect(createClient).toHaveBeenCalledExactlyOnceWith({
-      region: "auto",
-      endpoint: "https://test.r2.cloudflarestorage.com",
-      credentials: { accessKeyId: "test", secretAccessKey: "test" },
-    });
+  test("creates a single S3 client for the R2 endpoint", () => {
+    expect(clients).toEqual([
+      {
+        region: "auto",
+        endpoint: "https://test.r2.cloudflarestorage.com",
+        credentials: { accessKeyId: "test", secretAccessKey: "test" },
+      },
+    ]);
   });
 
   test.each([

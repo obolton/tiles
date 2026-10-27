@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { purgeCache } from "@/utils/cloudflare";
 import {
   getHomePageUrl,
   getPageUrl,
@@ -7,20 +8,7 @@ import {
   invalidateCachedUrls,
 } from "../cdn";
 
-const purgeCache = vi.hoisted(() => vi.fn(async () => {}));
-
-vi.mock("@/utils/cloudflare", () => ({ purgeCache }));
-
-async function loadWithHomePage(homePageId: string) {
-  vi.resetModules();
-  vi.stubEnv("PAGE_ID", homePageId);
-  vi.stubEnv("NODE_ENV", "production");
-  return import("@/utils/cdn");
-}
-
-afterEach(() => {
-  vi.unstubAllEnvs();
-});
+vi.mock("@/utils/cloudflare", () => ({ purgeCache: vi.fn(async () => {}) }));
 
 describe("getProfileImageUrl", () => {
   test("returns the profile image URL", () => {
@@ -48,46 +36,61 @@ describe("invalidateCachedUrls", () => {
     expect(purgeCache).not.toHaveBeenCalled();
   });
 
-  test("does nothing when there are no URLs", () => {
-    vi.stubEnv("NODE_ENV", "production");
+  describe("in production", () => {
+    beforeEach(() => {
+      vi.stubEnv("NODE_ENV", "production");
+    });
 
-    invalidateCachedUrls([]);
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
 
-    expect(purgeCache).not.toHaveBeenCalled();
-  });
+    test("does nothing when there are no URLs", () => {
+      invalidateCachedUrls([]);
 
-  test("purges the URLs in production", () => {
-    vi.stubEnv("NODE_ENV", "production");
-    const urls = ["https://test.example.com/pages/page-1", "https://test.example.com/pages/page-2"];
+      expect(purgeCache).not.toHaveBeenCalled();
+    });
 
-    invalidateCachedUrls(urls);
+    test("purges the URLs", () => {
+      const urls = [
+        "https://test.example.com/pages/page-1",
+        "https://test.example.com/pages/page-2",
+      ];
 
-    expect(purgeCache).toHaveBeenCalledExactlyOnceWith({ files: urls });
-  });
+      invalidateCachedUrls(urls);
 
-  test("logs purge failures without throwing", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    const error = new Error("Cloudflare cache purge failed");
-    purgeCache.mockRejectedValueOnce(error);
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const urls = ["https://test.example.com/pages/page-1"];
+      expect(purgeCache).toHaveBeenCalledExactlyOnceWith({ files: urls });
+    });
 
-    expect(() => invalidateCachedUrls(urls)).not.toThrow();
+    test("logs purge failures without throwing", async () => {
+      const error = new Error("Cloudflare cache purge failed");
+      vi.mocked(purgeCache).mockRejectedValueOnce(error);
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const urls = ["https://test.example.com/pages/page-1"];
 
-    await vi.waitFor(() => {
-      expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
-        "Failed to invalidate cached URLs:",
-        urls,
-        error,
-      );
+      expect(() => invalidateCachedUrls(urls)).not.toThrow();
+
+      await vi.waitFor(() => {
+        expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
+          "Failed to invalidate cached URLs:",
+          urls,
+          error,
+        );
+      });
     });
   });
 });
 
 describe("invalidateCachedPages", () => {
-  test("purges the URL of each page", () => {
+  beforeEach(() => {
     vi.stubEnv("NODE_ENV", "production");
+  });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test("purges the URL of each page", () => {
     invalidateCachedPages(["page-1", "page-2"]);
 
     expect(purgeCache).toHaveBeenCalledExactlyOnceWith({
@@ -96,36 +99,28 @@ describe("invalidateCachedPages", () => {
   });
 
   test("does nothing when there are no pages", () => {
-    vi.stubEnv("NODE_ENV", "production");
-
     invalidateCachedPages([]);
 
     expect(purgeCache).not.toHaveBeenCalled();
   });
 
-  describe("with a configured home page", () => {
-    test("also purges the home page URL when the home page changes", async () => {
-      const cdn = await loadWithHomePage("home-page");
+  test("also purges the home page URL when the home page changes", () => {
+    invalidateCachedPages(["page-1", "home-page"]);
 
-      cdn.invalidateCachedPages(["page-1", "home-page"]);
-
-      expect(purgeCache).toHaveBeenCalledExactlyOnceWith({
-        files: [
-          "https://test.example.com/pages/page-1",
-          "https://test.example.com/pages/home-page",
-          "https://test.example.com/",
-        ],
-      });
+    expect(purgeCache).toHaveBeenCalledExactlyOnceWith({
+      files: [
+        "https://test.example.com/pages/page-1",
+        "https://test.example.com/pages/home-page",
+        "https://test.example.com/",
+      ],
     });
+  });
 
-    test("does not purge the home page URL when other pages change", async () => {
-      const cdn = await loadWithHomePage("home-page");
+  test("does not purge the home page URL when other pages change", () => {
+    invalidateCachedPages(["page-1"]);
 
-      cdn.invalidateCachedPages(["page-1"]);
-
-      expect(purgeCache).toHaveBeenCalledExactlyOnceWith({
-        files: ["https://test.example.com/pages/page-1"],
-      });
+    expect(purgeCache).toHaveBeenCalledExactlyOnceWith({
+      files: ["https://test.example.com/pages/page-1"],
     });
   });
 });

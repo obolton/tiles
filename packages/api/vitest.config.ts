@@ -26,6 +26,8 @@ export default mergeConfig(
         OPENAI_API_KEY: "test",
         HERE_API_KEY: "test",
         CLIENT_ORIGIN: "https://test.example.com",
+        PUBLIC_SESSION_COOKIE_DOMAIN: "test.example.com",
+        PAGE_ID: "home-page",
         SERVICE_API_TOKEN: "test",
       },
     },
