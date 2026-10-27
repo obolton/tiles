@@ -200,3 +200,108 @@ describe("getLinkMetadata", () => {
     expect(metadata?.imageUrl).toBeNull();
   });
 });
+
+describe("getLinkMetadata (document parsing)", () => {
+  test("returns null and logs when the response has no body", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(null, { status: 200, headers: { "Content-Type": "text/html" } }),
+    );
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const metadata = await getLinkMetadata("https://example.com/empty");
+
+    expect(metadata).toBeNull();
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("No content returned"));
+  });
+
+  test("returns null and logs when the fetch rejects", async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new Error("Network error"));
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const metadata = await getLinkMetadata("https://example.com/offline");
+
+    expect(metadata).toBeNull();
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Network error"));
+  });
+
+  test("accepts HTML content types with parameters", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      htmlResponse("<html><head><title>Charset</title></head></html>", "text/html; charset=utf-8"),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/charset");
+
+    expect(metadata?.title).toBe("Charset");
+  });
+
+  test("ignores metadata with blank content", async () => {
+    const html = `<!doctype html>
+    <html>
+    <head>
+      <title>  Spaced Title  </title>
+      <meta name="description" content="   ">
+      <meta property="og:title" content=" ">
+      <meta property="og:description" content="">
+    </head>
+    <body></body>
+    </html>`;
+    vi.mocked(fetch).mockResolvedValue(htmlResponse(html));
+
+    const metadata = await getLinkMetadata("https://example.com/blank");
+
+    expect(metadata).toEqual({
+      title: "Spaced Title",
+      description: null,
+      siteName: null,
+      imageUrl: null,
+    });
+  });
+
+  test("returns null fields when the head contains no metadata", async () => {
+    vi.mocked(fetch).mockResolvedValue(htmlResponse("<html><head></head><body></body></html>"));
+
+    const metadata = await getLinkMetadata("https://example.com/bare");
+
+    expect(metadata).toEqual({ title: null, description: null, siteName: null, imageUrl: null });
+  });
+
+  test("parses a document streamed in multiple chunks", async () => {
+    const chunks = [
+      "<html><head><title>Multi",
+      'part</title><meta property="og:site_name" con',
+      'tent="Site"></head><body>',
+      '<meta property="og:title" content="Ignored"></body></html>',
+    ];
+    const body = new ReadableStream({
+      async start(controller) {
+        for (const chunk of chunks) {
+          controller.enqueue(new TextEncoder().encode(chunk));
+          await new Promise((resolve) => setTimeout(resolve, 1));
+        }
+        controller.close();
+      },
+    });
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(body, { status: 200, headers: { "Content-Type": "text/html" } }),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/chunked");
+
+    expect(metadata).toEqual({
+      title: "Multipart",
+      description: null,
+      siteName: "Site",
+      imageUrl: null,
+    });
+  });
+
+  test("parses an implicitly closed head", async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      htmlResponse("<html><head><title>Implicit</title><body><p>Body</p></body></html>"),
+    );
+
+    const metadata = await getLinkMetadata("https://example.com/implicit");
+
+    expect(metadata?.title).toBe("Implicit");
+  });
+});
