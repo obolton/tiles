@@ -29,6 +29,11 @@ export interface Reference {
 
 export type WriteEvent = Message | { reference: Reference };
 
+interface Turn {
+  events: () => AsyncGenerator<WriteEvent>;
+  result: ReturnType<typeof streamText<ToolSet>>;
+}
+
 interface SelectionAnchor {
   tileId: string;
   range: SelectionRange;
@@ -236,19 +241,13 @@ export async function* write(
 
     // oxlint-disable-next-line no-unmodified-loop-condition
     while (turn < MAX_TURNS && !signal?.aborted) {
-      const { events, responseMessages, hasToolCalls } = streamTurn(
-        input,
-        toolContext,
-        artifactIds,
-        anchor,
-        signal,
-      );
+      const { events, result } = streamTurn(input, toolContext, artifactIds, anchor, signal);
       yield* events();
-      // The result promise rejects once the signal has aborted, so only read it when continuing.
-      if (!hasToolCalls() || signal?.aborted) {
+      // Result promises reject once the signal has aborted, so check it first.
+      if (signal?.aborted || (await result.finishReason) !== "tool-calls") {
         break;
       }
-      input.messages.push(...(await responseMessages()));
+      input.messages.push(...(await result.responseMessages));
       turn++;
     }
   } finally {
@@ -262,9 +261,8 @@ export function streamTurn(
   artifactIds: string[],
   anchor: SelectionAnchor | null,
   signal?: AbortSignal,
-) {
+): Turn {
   const references: Reference[] = [];
-  let toolCalls = 0;
 
   const tools = createTools(toolContext, ({ tileId, type }) => {
     const id = String(artifactIds.length);
@@ -282,6 +280,8 @@ export function streamTurn(
     reasoning: "medium",
     providerOptions: TEXT_PROVIDER_OPTIONS,
     abortSignal: signal,
+    // Errors surface as `error` stream parts and are rethrown below.
+    onError: () => {},
   });
 
   const text = result.stream
@@ -292,11 +292,7 @@ export function streamTurn(
             case "text-delta":
               controller.enqueue(part.text);
               break;
-            case "tool-call":
-              toolCalls++;
-              break;
             case "error":
-            case "tool-error":
               controller.error(part.error);
               break;
           }
@@ -330,9 +326,5 @@ export function streamTurn(
     }
   }
 
-  return {
-    events,
-    responseMessages: () => result.responseMessages,
-    hasToolCalls: () => toolCalls > 0,
-  };
+  return { events, result };
 }

@@ -16,8 +16,6 @@ export interface TileResult {
 
 export type ToolResult = TileResult | void;
 
-export type ToolOutput = { id: string } | { status: "ok" };
-
 export interface FunctionToolOptions<T extends z.ZodType = z.ZodType> {
   name: string;
   description: string;

@@ -6,7 +6,7 @@ import { CREATE_SECTION_TOOL } from "./createSection";
 import { CREATE_TEXT_TOOL } from "./createText";
 import { DELETE_TILES_TOOL } from "./deleteTile";
 import { EDIT_STYLE_TOOL } from "./editStyle";
-import type { FunctionToolOptions, TileResult, ToolContext, ToolOutput } from "./types";
+import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 export const FUNCTION_TOOLS: FunctionToolOptions[] = [
   CREATE_TEXT_TOOL,
@@ -28,7 +28,7 @@ export function createTools(context: ToolContext, registerTile: RegisterTile): T
       description: options.description,
       inputSchema: options.schema,
       strict: true,
-      execute: async (args): Promise<ToolOutput> => {
+      execute: async (args) => {
         const result = await options.function(args, context);
         return result ? { id: registerTile(result) } : { status: "ok" };
       },

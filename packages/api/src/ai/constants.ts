@@ -18,9 +18,6 @@ export const IMAGE_GENERATION_DIMENSIONS = {
   height: 1024,
 } as const;
 
-export const IMAGE_GENERATION_SIZE =
-  `${IMAGE_GENERATION_DIMENSIONS.width}x${IMAGE_GENERATION_DIMENSIONS.height}` as const;
-
 export const IMAGE_GENERATION_OPTIONS = {
   quality: "low",
   outputFormat: "webp",

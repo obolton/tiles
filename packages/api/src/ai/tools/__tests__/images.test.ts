@@ -19,10 +19,18 @@ vi.mock("@/utils/storage", () => ({
 }));
 
 const IMAGE_DATA = Buffer.from("image-bytes").toString("base64");
-const RESPONSE = { timestamp: new Date(0), modelId: "test-image-model", headers: undefined };
+
+function imageResult(images: string[]) {
+  return {
+    images,
+    isRetryable: false,
+    warnings: [],
+    response: { timestamp: new Date(0), modelId: "test-image-model", headers: undefined },
+  };
+}
 
 beforeEach(() => {
-  doGenerate.mockResolvedValue({ images: [IMAGE_DATA], warnings: [], response: RESPONSE });
+  doGenerate.mockResolvedValue(imageResult([IMAGE_DATA]));
 });
 
 describe("generateImageFromPrompt", () => {
@@ -40,12 +48,7 @@ describe("generateImageFromPrompt", () => {
   });
 
   test("throws when no image is returned", async () => {
-    doGenerate.mockResolvedValue({
-      images: [],
-      isRetryable: false,
-      warnings: [],
-      response: RESPONSE,
-    });
+    doGenerate.mockResolvedValue(imageResult([]));
 
     await expect(generateImageFromPrompt("a red circle")).rejects.toThrow(NoImageGeneratedError);
   });

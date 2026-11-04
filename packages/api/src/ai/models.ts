@@ -13,10 +13,11 @@ function requireEnv(name: string): string {
 
 const openai = createOpenAI({ apiKey: requireEnv("OPENAI_API_KEY") });
 
-// `AI_TEXT_MODEL` is "<provider>:<model id>", e.g. "openai:gpt-5.2" or "anthropic:claude-sonnet-4-5".
-function createLanguageModel(spec: string): LanguageModel {
+// `spec` is "<provider>:<model id>", e.g. "openai:gpt-5.2" or "anthropic:claude-sonnet-4-5".
+export function createLanguageModel(spec: string): LanguageModel {
   const [provider, ...rest] = spec.split(":");
   const modelId = rest.join(":");
+  assert(modelId, `Invalid AI_TEXT_MODEL: ${spec}`);
   switch (provider) {
     case "openai":
       return openai(modelId);
@@ -25,7 +26,7 @@ function createLanguageModel(spec: string): LanguageModel {
     case "google":
       return createGoogle({ apiKey: requireEnv("GOOGLE_GENERATIVE_AI_API_KEY") })(modelId);
     default:
-      throw new Error(`Unsupported AI_TEXT_MODEL: ${spec}`);
+      throw new Error(`Unsupported AI_TEXT_MODEL provider: ${spec}`);
   }
 }
 

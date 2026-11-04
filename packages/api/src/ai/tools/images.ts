@@ -4,8 +4,8 @@ import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
 import { IMAGE_MODEL } from "../models";
 import {
+  IMAGE_GENERATION_DIMENSIONS,
   IMAGE_GENERATION_OPTIONS,
-  IMAGE_GENERATION_SIZE,
   IMAGE_CONTENT_TYPE,
   IMAGE_TYPE,
 } from "../constants";
@@ -15,7 +15,7 @@ export async function generateImageFromPrompt(prompt: string) {
   const { image } = await generateImage({
     model: IMAGE_MODEL,
     prompt,
-    size: IMAGE_GENERATION_SIZE,
+    size: `${IMAGE_GENERATION_DIMENSIONS.width}x${IMAGE_GENERATION_DIMENSIONS.height}`,
     providerOptions: { openai: IMAGE_GENERATION_OPTIONS },
   });
 

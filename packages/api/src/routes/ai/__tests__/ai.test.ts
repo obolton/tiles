@@ -2,15 +2,24 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { simulateReadableStream } from "ai";
 import * as Y from "yjs";
 import { buildTextMap } from "doc/tiles/text";
-import { createToolContext, getTile } from "@/test/fixtures/ai";
-import { streamTurn, type ModelInput, type WriteEvent } from "../ai";
+import { createToolContext, getTile, MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
+import { streamTurn, write, type ModelInput, type WriteEvent } from "../ai";
 import type { ToolContext } from "@/ai/tools/types";
 
-const { doStream } = vi.hoisted(() => ({ doStream: vi.fn() }));
+const { doStream, disconnect } = vi.hoisted(() => ({ doStream: vi.fn(), disconnect: vi.fn() }));
 
 vi.mock("@/ai/models", async () => {
   const { MockLanguageModelV4 } = await import("ai/test");
   return { TEXT_MODEL: new MockLanguageModelV4({ doStream }) };
+});
+
+vi.mock("@/collaboration/instance", async () => {
+  const Y = await import("yjs");
+  return {
+    hocuspocus: {
+      openDirectConnection: vi.fn(async () => ({ document: new Y.Doc(), disconnect })),
+    },
+  };
 });
 
 const USAGE = {
@@ -24,6 +33,17 @@ const INPUT: ModelInput = {
 };
 
 const CREATE_TEXT_ARGS = { parentId: null, align: null, size: "medium", coordinates: null };
+const EDIT_STYLE_ARGS = {
+  id: 5,
+  background: null,
+  textColor: null,
+  animation: null,
+  frame: null,
+  hide: null,
+  x: null,
+  y: null,
+  coordinates: null,
+};
 
 function textChunks(text: string) {
   return [
@@ -33,12 +53,20 @@ function textChunks(text: string) {
   ];
 }
 
-function finishChunk(finishReason: "stop" | "tool-calls") {
+function toolCallChunk(toolName: string, args: unknown) {
+  return { type: "tool-call", toolCallId: "call-1", toolName, input: JSON.stringify(args) };
+}
+
+function finishChunk(finishReason: "stop" | "tool-calls" | "length") {
   return { type: "finish", finishReason: { unified: finishReason, raw: undefined }, usage: USAGE };
 }
 
-function mockStream(chunks: unknown[]) {
-  doStream.mockResolvedValue({ stream: simulateReadableStream({ chunks }) });
+function throwUnknownArtifact(): never {
+  throw new Error("Unknown artifact: 5");
+}
+
+function streamOf(chunks: unknown[], chunkDelayInMs?: number) {
+  return { stream: simulateReadableStream({ chunks, chunkDelayInMs }) };
 }
 
 async function collect(events: AsyncIterable<WriteEvent>) {
@@ -58,16 +86,16 @@ describe("streamTurn", () => {
   });
 
   test("streams model text as message events", async () => {
-    mockStream([...textChunks("Hello world"), finishChunk("stop")]);
+    doStream.mockResolvedValue(streamOf([...textChunks("Hello world"), finishChunk("stop")]));
 
-    const { events, hasToolCalls } = streamTurn(INPUT, context, [], null);
+    const { events, result } = streamTurn(INPUT, context, [], null);
 
     expect(await collect(events())).toEqual([{ message: "Hello world" }]);
-    expect(hasToolCalls()).toBe(false);
+    expect(await result.finishReason).toBe("stop");
   });
 
   test("sends the instructions and messages to the model", async () => {
-    mockStream([...textChunks("Hi"), finishChunk("stop")]);
+    doStream.mockResolvedValue(streamOf([...textChunks("Hi"), finishChunk("stop")]));
 
     const { events } = streamTurn(INPUT, context, [], null);
     await collect(events());
@@ -86,7 +114,9 @@ describe("streamTurn", () => {
     const tileId = context.session.createTile(
       buildTextMap({ width: 12, height: 10, coordinates: null }),
     );
-    mockStream([...textChunks(">>> 0\nBlock text\n<<<\nDone"), finishChunk("stop")]);
+    doStream.mockResolvedValue(
+      streamOf([...textChunks(">>> 0\nBlock text\n<<<\nDone"), finishChunk("stop")]),
+    );
 
     const { events } = streamTurn(
       INPUT,
@@ -101,23 +131,15 @@ describe("streamTurn", () => {
 
   test("executes tool calls and yields references after the message", async () => {
     const artifactIds: string[] = [];
-    mockStream([
-      ...textChunks("Creating a block"),
-      {
-        type: "tool-call",
-        toolCallId: "call-1",
-        toolName: "create_text",
-        input: JSON.stringify(CREATE_TEXT_ARGS),
-      },
-      finishChunk("tool-calls"),
-    ]);
-
-    const { events, hasToolCalls, responseMessages } = streamTurn(
-      INPUT,
-      context,
-      artifactIds,
-      null,
+    doStream.mockResolvedValue(
+      streamOf([
+        ...textChunks("Creating a block"),
+        toolCallChunk("create_text", CREATE_TEXT_ARGS),
+        finishChunk("tool-calls"),
+      ]),
     );
+
+    const { events, result } = streamTurn(INPUT, context, artifactIds, null);
     const collected = await collect(events());
 
     expect(artifactIds).toEqual([expect.any(String)]);
@@ -125,8 +147,8 @@ describe("streamTurn", () => {
       { message: "Creating a block" },
       { reference: { id: artifactIds[0], type: "TEXT" } },
     ]);
-    expect(hasToolCalls()).toBe(true);
-    expect(await responseMessages()).toEqual([
+    expect(await result.finishReason).toBe("tool-calls");
+    expect(await result.responseMessages).toEqual([
       expect.objectContaining({ role: "assistant" }),
       {
         role: "tool",
@@ -142,16 +164,74 @@ describe("streamTurn", () => {
     ]);
   });
 
+  test("returns a failed tool call to the model instead of failing the turn", async () => {
+    doStream.mockResolvedValue(
+      streamOf([
+        ...textChunks("Styling"),
+        toolCallChunk("edit_style", EDIT_STYLE_ARGS),
+        finishChunk("tool-calls"),
+      ]),
+    );
+    const { events, result } = streamTurn(
+      INPUT,
+      { ...context, resolveArtifactId: throwUnknownArtifact },
+      [],
+      null,
+    );
+
+    expect(await collect(events())).toEqual([{ message: "Styling" }]);
+    const messages = await result.responseMessages;
+    expect(messages).toEqual([
+      expect.objectContaining({ role: "assistant" }),
+      {
+        role: "tool",
+        content: [
+          expect.objectContaining({
+            toolCallId: "call-1",
+            output: expect.objectContaining({ type: expect.stringMatching(/^error-/) }),
+          }),
+        ],
+      },
+    ]);
+    expect(JSON.stringify(messages)).toContain("Unknown artifact: 5");
+  });
+
+  test("returns invalid tool input to the model instead of failing the turn", async () => {
+    const artifactIds: string[] = [];
+    doStream.mockResolvedValue(
+      streamOf([
+        toolCallChunk("create_text", { ...CREATE_TEXT_ARGS, size: "huge" }),
+        finishChunk("tool-calls"),
+      ]),
+    );
+
+    const { events, result } = streamTurn(INPUT, context, artifactIds, null);
+
+    expect(await collect(events())).toEqual([]);
+    expect(artifactIds).toEqual([]);
+    expect(JSON.stringify(await result.responseMessages)).toContain(
+      "Invalid input for tool create_text",
+    );
+  });
+
+  test("does not run tools when the step is cut off", async () => {
+    const artifactIds: string[] = [];
+    doStream.mockResolvedValue(
+      streamOf([toolCallChunk("create_text", CREATE_TEXT_ARGS), finishChunk("length")]),
+    );
+
+    const { events, result } = streamTurn(INPUT, context, artifactIds, null);
+
+    expect(await collect(events())).toEqual([]);
+    expect(artifactIds).toEqual([]);
+    expect(await result.finishReason).toBe("length");
+  });
+
   test("ends the turn cleanly when aborted mid-stream", async () => {
     const controller = new AbortController();
-    doStream.mockResolvedValue({
-      stream: simulateReadableStream({
-        chunks: [...textChunks("Hello"), finishChunk("stop")],
-        chunkDelayInMs: 20,
-      }),
-    });
+    doStream.mockResolvedValue(streamOf([...textChunks("Hello"), finishChunk("stop")], 20));
 
-    const { events, hasToolCalls } = streamTurn(INPUT, context, [], null, controller.signal);
+    const { events } = streamTurn(INPUT, context, [], null, controller.signal);
     const collected: WriteEvent[] = [];
     for await (const event of events()) {
       collected.push(event);
@@ -159,14 +239,60 @@ describe("streamTurn", () => {
     }
 
     expect(collected).toEqual([{ message: "Hello" }]);
-    expect(hasToolCalls()).toBe(false);
   });
 
   test("rejects when the stream reports an error", async () => {
-    mockStream([{ type: "error", error: new Error("boom") }]);
+    doStream.mockResolvedValue(streamOf([{ type: "error", error: new Error("boom") }]));
 
     const { events } = streamTurn(INPUT, context, [], null);
 
     await expect(collect(events())).rejects.toThrow("boom");
+  });
+});
+
+describe("write", () => {
+  test("replays tool results into the next turn", async () => {
+    doStream
+      .mockResolvedValueOnce(
+        streamOf([
+          ...textChunks("Creating a block"),
+          toolCallChunk("create_text", CREATE_TEXT_ARGS),
+          finishChunk("tool-calls"),
+        ]),
+      )
+      .mockResolvedValueOnce(streamOf([...textChunks("Done"), finishChunk("stop")]));
+
+    const collected = await collect(
+      write({ pageId: "page-1", sectionId: null, prompt: "Create a block" }, MOCK_TOOL_CONTEXT),
+    );
+
+    expect(collected).toEqual([
+      { message: "Creating a block" },
+      { reference: { id: expect.any(String), type: "TEXT" } },
+      { message: "Done" },
+    ]);
+    expect(doStream).toHaveBeenCalledTimes(2);
+    expect(doStream).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        prompt: [
+          expect.objectContaining({ role: "system" }),
+          expect.objectContaining({ role: "user" }),
+          expect.objectContaining({ role: "assistant" }),
+          expect.objectContaining({ role: "tool" }),
+        ],
+      }),
+    );
+    expect(disconnect).toHaveBeenCalledTimes(1);
+  });
+
+  test("stops after a turn without tool calls", async () => {
+    doStream.mockResolvedValue(streamOf([...textChunks("Hi there"), finishChunk("stop")]));
+
+    const collected = await collect(
+      write({ pageId: "page-1", sectionId: null, prompt: "Say hi" }, MOCK_TOOL_CONTEXT),
+    );
+
+    expect(collected).toEqual([{ message: "Hi there" }]);
+    expect(doStream).toHaveBeenCalledTimes(1);
   });
 });
