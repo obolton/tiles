@@ -13,7 +13,9 @@ import { redirectWithToast } from "@/utils/toasts";
 import styles from "./Folders.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 
-export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
+export const SYSTEM_FOLDERS = ["RECENT", "SHARED", "BOOKMARKS", "TRASH"] as const;
+
+export type SYSTEM_FOLDER = (typeof SYSTEM_FOLDERS)[number];
 
 export interface Folder {
   id: string;
@@ -30,6 +32,22 @@ export interface FoldersProps {
 }
 
 const FolderModalLoader = () => import("@/components/modals/folders/FolderModal");
+
+// Centers the current item when the menu is a horizontally scrolling row
+function revealCurrent(list: HTMLElement) {
+  if (import.meta.env.SSR) {
+    return;
+  }
+  requestAnimationFrame(() => {
+    const current = list.querySelector('[aria-current="page"]');
+    if (!current || list.scrollWidth <= list.clientWidth) {
+      return;
+    }
+    const listRect = list.getBoundingClientRect();
+    const rect = current.getBoundingClientRect();
+    list.scrollLeft += rect.left - listRect.left - (listRect.width - rect.width) / 2;
+  });
+}
 
 export default function Folders({
   workspaceId,
@@ -110,8 +128,8 @@ export default function Folders({
   const basePath = `/workspaces/${workspaceId}`;
 
   return (
-    <nav>
-      <ul className="navigation-menu" on:dnd-drop={onDrop}>
+    <nav className={styles.nav}>
+      <ul className="navigation-menu" ref={revealCurrent} on:dnd-drop={onDrop}>
         <li aria-current={selectedId === "RECENT" ? "page" : "false"}>
           <a href={basePath}>
             <LibraryIcon aria-hidden="true" />

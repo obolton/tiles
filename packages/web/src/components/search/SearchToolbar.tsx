@@ -4,13 +4,23 @@ import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
-export interface SearchToolbarProps<S extends string = string> extends JSX.Attributes<"div"> {
+export interface SearchToolbarProps<S extends string = string> extends Omit<
+  JSX.Attributes<"div">,
+  "autofocus"
+> {
   id: string;
   placeholder?: string;
-  autofocus?: boolean;
+  /** `"pointer"` only focuses on devices with a fine pointer, so phones don't open the keyboard on load. */
+  autofocus?: boolean | "pointer";
   query: Reactive<string>;
   sortOptions?: JSX.Node;
   sort?: Reactive<S>;
+}
+
+function focusWithPointer(input: HTMLInputElement) {
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    input.focus({ preventScroll: true });
+  }
 }
 
 export default function SearchToolbar<S extends string = string>({
@@ -45,7 +55,8 @@ export default function SearchToolbar<S extends string = string>({
         id={id}
         type="search"
         className={styles.search}
-        autofocus={autofocus}
+        autofocus={autofocus === true}
+        ref={autofocus === "pointer" && !import.meta.env.SSR ? focusWithPointer : undefined}
         placeholder={placeholder}
         on:input={onInput}
       />

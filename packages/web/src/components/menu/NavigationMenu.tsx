@@ -11,6 +11,7 @@ import SignOutIcon from "@/icons/sign-out.svg?jsx";
 import { getUserInfo, signOut } from "@/utils/sessions";
 import { showModal } from "@/utils/modals";
 import client from "@/api/client";
+import styles from "./NavigationMenu.module.css";
 import type { User } from "@/utils/sessions";
 
 const CreateWorkspaceModalLoader = () =>
@@ -37,9 +38,13 @@ export default function NavigationMenu({ user, workspaceId }: NavigationMenuProp
 
   return (
     <>
-      <ToolbarButton popovertarget="navigation-menu" aria-haspopup="menu">
+      <ToolbarButton
+        classList={{ [styles.button]: true }}
+        popovertarget="navigation-menu"
+        aria-haspopup="menu"
+      >
         <ProfileImage imageUrl={user.imageUrl} name={user.name} />
-        {workspace?.name}
+        <span className={styles.name}>{workspace?.name}</span>
       </ToolbarButton>
       <popover-menu id="navigation-menu">
         <MenuItemGroup>
