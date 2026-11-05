@@ -10,12 +10,23 @@ const KEY = "abc123_-XYZ";
 
 describe("signUpEmail", () => {
   test("escapes the user's name", () => {
-    const { subject, body } = signUpEmail({ id: "user-1", name: UNSAFE_NAME });
+    const { subject, body } = signUpEmail({
+      id: "user-1",
+      name: UNSAFE_NAME,
+      workspaceId: "workspace-1",
+    });
 
     expect(subject).toBe("Welcome to Tiles");
     expect(body).toContain(`<p>Hi ${ESCAPED_NAME},</p>`);
     expect(body).not.toContain("<script>");
     expect(body).toContain('href="https://test.example.com"');
+  });
+
+  test("links to the user's workspace", () => {
+    const { body } = signUpEmail({ id: "user-1", name: "Ada", workspaceId: "workspace-1" });
+
+    expect(body).toContain('href="https://test.example.com/workspaces/workspace-1"');
+    expect(body).not.toContain("/library");
   });
 });
 
