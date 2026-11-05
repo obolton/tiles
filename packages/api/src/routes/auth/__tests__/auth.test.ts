@@ -150,6 +150,17 @@ describe("signIn", () => {
       expect(sendEmail).toHaveBeenCalledWith("test@example.com", expect.anything());
     });
 
+    test("links the welcome email to the new user's workspace", async () => {
+      await signIn(validInput);
+
+      expect(sendEmail).toHaveBeenCalledWith(
+        "test@example.com",
+        expect.objectContaining({
+          body: expect.stringContaining('href="https://test.example.com/workspaces/workspace-id"'),
+        }),
+      );
+    });
+
     test("returns a session for new user", async () => {
       const result = await signIn(validInput);
 
