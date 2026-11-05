@@ -97,7 +97,9 @@ export async function deleteWorkspace({ workspaceId }: AuthenticatedWorkspacePro
     return { pages, workspace };
   });
 
-  closePageConnections(pages.map((page) => page.id));
+  for (const page of pages) {
+    closePageConnections(page.id);
+  }
   invalidateCachedPages(pages.filter((page) => page.published).map((page) => page.id));
 
   return workspace;

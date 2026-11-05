@@ -33,10 +33,8 @@ export async function withDocument<T>(
 }
 
 /**
- * Disconnect every client connected to the given pages.
+ * Disconnect every client connected to the given page.
  */
-export function closePageConnections(pageIds: string[]) {
-  for (const pageId of pageIds) {
-    hocuspocus.closeConnections(docName(pageId));
-  }
+export function closePageConnections(pageId: string) {
+  hocuspocus.closeConnections(docName(pageId));
 }

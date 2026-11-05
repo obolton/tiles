@@ -137,7 +137,9 @@ describe("deleteWorkspace", () => {
   test("closes collaboration connections for all pages", async () => {
     await deleteWorkspace(MOCK_WORKSPACE_CONTEXT);
 
-    expect(closePageConnections).toHaveBeenCalledWith(["page-1", "page-2"]);
+    expect(closePageConnections).toHaveBeenCalledTimes(2);
+    expect(closePageConnections).toHaveBeenCalledWith("page-1");
+    expect(closePageConnections).toHaveBeenCalledWith("page-2");
   });
 
   test("invalidates cached published pages", async () => {
