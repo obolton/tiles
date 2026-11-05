@@ -5,6 +5,14 @@ import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
+function getSignInErrorUrl(error: "cancelled" | "failed", destination: string | null) {
+  const params = new URLSearchParams({ error });
+  if (destination) {
+    params.set("destination", destination);
+  }
+  return `/sign-in?${params}`;
+}
+
 export const GET: APIRequestHandler = async ({ url, headers }) => {
   const cookies = getOAuth2Cookies(headers.get("cookie") ?? "");
   const cookiesToSet = clearOAuth2Cookies();
@@ -22,7 +30,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   if (error) {
     console.error("OAuth error from Google:", error);
     const errorCode = error === "access_denied" ? "cancelled" : "failed";
-    return redirect(`/sign-in?error=${errorCode}`, 302, cookiesToSet);
+    return redirect(getSignInErrorUrl(errorCode, cookies.destination), 302, cookiesToSet);
   }
 
   if (
@@ -56,7 +64,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     });
   } catch (error) {
     console.error("Sign-in failed:", error);
-    return redirect("/sign-in?error=failed", 302, cookiesToSet);
+    return redirect(getSignInErrorUrl("failed", cookies.destination), 302, cookiesToSet);
   }
 
   const authenticationCookies = setAuthenticationCookies(session.id, new Date(session.expiresAt));
