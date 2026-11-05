@@ -1,21 +1,24 @@
+import { env } from "@/env";
 import { purgeCache } from "./cloudflare";
 
+// Optional, so read directly until the env registry supports optional values.
+// oxlint-disable-next-line node/no-process-env
 const HOME_PAGE_ID = process.env.PAGE_ID;
 
 export function getProfileImageUrl(imageKey: string) {
-  return `${process.env.PROFILE_IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=small`;
+  return `${env.PROFILE_IMAGES_BASE_URL}/${imageKey}?optimizer=image&class=small`;
 }
 
 export function getHomePageUrl() {
-  return `${process.env.CLIENT_ORIGIN}/`;
+  return `${env.CLIENT_ORIGIN}/`;
 }
 
 export function getPageUrl(pageId: string) {
-  return `${process.env.CLIENT_ORIGIN}/pages/${pageId}`;
+  return `${env.CLIENT_ORIGIN}/pages/${pageId}`;
 }
 
 export function invalidateCachedUrls(urls: string[]) {
-  if (process.env.NODE_ENV !== "production" || urls.length === 0) {
+  if (env.NODE_ENV !== "production" || urls.length === 0) {
     return;
   }
 

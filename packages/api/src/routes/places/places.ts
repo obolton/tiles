@@ -1,4 +1,4 @@
-import assert from "node:assert";
+import { env } from "@/env";
 import { HereAutosuggestQueryResults } from "./schema";
 import type { SearchPlacesSchema } from "./schema";
 
@@ -11,16 +11,13 @@ type SearchPlacesResult = {
   boundingBox: number[] | null;
 };
 
-assert(process.env.HERE_API_KEY);
-
-const API_KEY = process.env.HERE_API_KEY;
 const AUTOSUGGEST_ENDPOINT = "https://autosuggest.search.hereapi.com/v1/autosuggest";
 
 export async function searchPlaces(input: SearchPlacesSchema): Promise<SearchPlacesResult[]> {
   const query = input.query;
 
   const url = new URL(AUTOSUGGEST_ENDPOINT);
-  url.searchParams.set("apiKey", API_KEY);
+  url.searchParams.set("apiKey", env.HERE_API_KEY);
   url.searchParams.set("q", query);
   url.searchParams.set("limit", "10");
 

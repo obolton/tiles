@@ -1,8 +1,11 @@
 import { createClient } from "./client";
+import { env } from "./env";
 import { HttpError } from "./errors";
 import { parseUploadRequest } from "./requests";
 import { createPreflightResponse, createJsonResponse } from "./responses";
 import { uploadImage } from "./upload";
+
+env.validate();
 
 export default {
   async fetch(request, env): Promise<Response> {

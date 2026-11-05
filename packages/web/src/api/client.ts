@@ -1,14 +1,12 @@
 import { createTRPCClient, httpBatchLink, httpBatchStreamLink, splitLink } from "@trpc/client";
+import { publicEnv } from "@/env/public";
+import { serverEnv } from "@/env/server";
 import type { AppRouter, AppRouterInputs, AppRouterOutputs } from "api/routes/index";
 import type { Operation } from "@trpc/client";
 
-if (import.meta.env.SSR && !process.env.INTERNAL_API_ORIGIN) {
-  throw new Error("INTERNAL_API_ORIGIN environment variable is required");
-}
-
 const API_ORIGIN = import.meta.env.SSR
-  ? process.env.INTERNAL_API_ORIGIN
-  : import.meta.env.PUBLIC_API_ORIGIN;
+  ? serverEnv.INTERNAL_API_ORIGIN
+  : publicEnv.PUBLIC_API_ORIGIN;
 
 function fetchWithCredentials(url: RequestInfo | URL, options?: RequestInit) {
   return fetch(url, {

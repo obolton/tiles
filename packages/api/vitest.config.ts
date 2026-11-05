@@ -10,7 +10,6 @@ export default mergeConfig(
       setupFiles: ["src/test/setup.ts"],
       env: {
         PROFILE_IMAGES_BASE_URL: "https://example.com/profile-images",
-        RESOURCES_BASE_URL: "https://example.com/resources",
         EMAIL_FROM: "from@test.com",
         AWS_ACCESS_KEY_ID: "test",
         AWS_SECRET_ACCESS_KEY: "test",
@@ -20,7 +19,6 @@ export default mergeConfig(
         CLOUDFLARE_ACCOUNT_ID: "test",
         CLOUDFLARE_R2_ACCESS_KEY_ID: "test",
         CLOUDFLARE_R2_SECRET_ACCESS_KEY: "test",
-        CLOUDFLARE_R2_BUCKET_RESOURCES: "test",
         CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES: "test",
         CLOUDFLARE_R2_BUCKET_IMAGES: "test",
         OPENAI_API_KEY: "test",

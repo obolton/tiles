@@ -17,6 +17,7 @@
     "@trpc/client": "^11.19.0",
     "api": "workspace:*",
     "cookie": "^2.0.1",
+    "env": "workspace:*",
     "image-dimensions": "^2.6.0"
   },
   "devDependencies": {

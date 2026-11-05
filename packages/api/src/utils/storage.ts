@@ -1,25 +1,16 @@
-import assert from "node:assert";
 import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { env } from "@/env";
 
-const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
-const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
-const CLOUDFLARE_R2_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
-export const IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_IMAGES ?? "";
-export const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES ?? "";
-
-assert(CLOUDFLARE_ACCOUNT_ID);
-assert(CLOUDFLARE_R2_ACCESS_KEY_ID);
-assert(CLOUDFLARE_R2_SECRET_ACCESS_KEY);
-assert(IMAGES_BUCKET);
-assert(PROFILE_IMAGES_BUCKET);
+export const IMAGES_BUCKET = env.CLOUDFLARE_R2_BUCKET_IMAGES;
+export const PROFILE_IMAGES_BUCKET = env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
 const S3 = new S3Client({
   region: "auto",
-  endpoint: `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint: `https://${env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID,
-    secretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    accessKeyId: env.CLOUDFLARE_R2_ACCESS_KEY_ID,
+    secretAccessKey: env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
   },
 });
 

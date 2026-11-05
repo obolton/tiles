@@ -1,7 +1,4 @@
-import assert from "node:assert";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { anthropicEnv } from "@/env";
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-assert(ANTHROPIC_API_KEY, "ANTHROPIC_API_KEY is not defined");
-
-export const anthropic = createAnthropic({ apiKey: ANTHROPIC_API_KEY });
+export const anthropic = createAnthropic({ apiKey: anthropicEnv.ANTHROPIC_API_KEY });

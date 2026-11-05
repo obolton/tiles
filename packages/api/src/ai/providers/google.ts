@@ -1,7 +1,4 @@
-import assert from "node:assert";
 import { createGoogle } from "@ai-sdk/google";
+import { googleEnv } from "@/env";
 
-const GOOGLE_GENERATIVE_AI_API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-assert(GOOGLE_GENERATIVE_AI_API_KEY, "GOOGLE_GENERATIVE_AI_API_KEY is not defined");
-
-export const google = createGoogle({ apiKey: GOOGLE_GENERATIVE_AI_API_KEY });
+export const google = createGoogle({ apiKey: googleEnv.GOOGLE_GENERATIVE_AI_API_KEY });

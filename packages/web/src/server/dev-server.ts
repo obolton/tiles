@@ -13,6 +13,7 @@ import type { Respond } from "@/server/server";
 export interface DevServerOptions {
   hostname: string;
   port: number;
+  origin: string;
 }
 
 function toWebHeaders(headers: IncomingHttpHeaders) {
@@ -38,7 +39,7 @@ function fromWebHeaders(webHeaders: Headers) {
 }
 
 export default async function createDevServer(options: DevServerOptions) {
-  const { hostname, port } = options;
+  const { hostname, port, origin } = options;
 
   const server = createServer(handleRequest);
   server.on("error", console.error);
@@ -51,9 +52,10 @@ export default async function createDevServer(options: DevServerOptions) {
     appType: "custom",
   });
 
-  server.listen(port, hostname, () =>
-    console.log(`Development server: ${process.env.PUBLIC_WEB_ORIGIN}`),
-  );
+  // Load the SSR entry up front so configuration errors surface at startup.
+  await vite.ssrLoadModule("@/server/server");
+
+  server.listen(port, hostname, () => console.log(`Development server: ${origin}`));
 
   async function handleRequest(request: IncomingMessage, response: ServerResponse) {
     vite.middlewares(request, response, async () => {
@@ -68,7 +70,7 @@ export default async function createDevServer(options: DevServerOptions) {
         const proto =
           (Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto) ?? "http";
         const host = request.headers.host;
-        const baseUrl = host ? `${proto}://${host}` : process.env.PUBLIC_WEB_ORIGIN;
+        const baseUrl = host ? `${proto}://${host}` : origin;
         const webRequest = new Request(new URL(request.url ?? "", baseUrl), {
           method,
           headers: toWebHeaders(request.headers),

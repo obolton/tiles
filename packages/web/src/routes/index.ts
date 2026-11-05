@@ -11,6 +11,7 @@ import { SITE_DESCRIPTION } from "@/constants/site";
 import { initializeDoc } from "@/collaboration/doc";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
+// Optional, so read directly until the env registry supports optional values.
 const PAGE_ID = import.meta.env.PUBLIC_PAGE_ID;
 
 export async function indexRoute(request: Request) {

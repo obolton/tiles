@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "oxc", "import", "unicorn", "vitest"],
+  "plugins": ["typescript", "oxc", "import", "unicorn", "vitest", "node"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
@@ -15,6 +15,7 @@
     "no-array-reverse": "off",
     "no-array-sort": "off",
     "no-shadow": "off",
+    "node/no-process-env": "error",
     "vitest/consistent-test-it": ["error", { "fn": "test", "withinDescribe": "test" }],
     "vitest/consistent-vitest-vi": ["error", { "fn": "vi" }],
     "vitest/prefer-importing-vitest-globals": "error",
@@ -32,6 +33,19 @@
     "typescript/unbound-method": "off"
   },
   "overrides": [
+    {
+      "files": [
+        "**/src/env.ts",
+        "**/src/env/*.ts",
+        "**/*.config.ts",
+        "**/vitest.*.ts",
+        "**/scripts/**",
+        "**/prisma/**"
+      ],
+      "rules": {
+        "node/no-process-env": "off"
+      }
+    },
     {
       "files": ["**/*.d.ts"],
       "rules": {

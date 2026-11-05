@@ -66,17 +66,5 @@ describe("serviceClient", () => {
       expect(headers.get(SERVICE_TOKEN_HEADER)).toBe("secret");
       expect(headers.get("Authorization")).toBeNull();
     });
-
-    test("requires the service token", async () => {
-      vi.stubEnv("SERVICE_API_TOKEN", "");
-
-      await expect(loadServiceClient()).rejects.toThrow("SERVICE_API_TOKEN is not defined");
-    });
-
-    test("requires the internal API origin", async () => {
-      vi.stubEnv("INTERNAL_API_ORIGIN", "");
-
-      await expect(loadServiceClient()).rejects.toThrow("INTERNAL_API_ORIGIN is not defined");
-    });
   });
 });

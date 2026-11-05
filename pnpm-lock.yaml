@@ -266,6 +266,9 @@ importers:
       entities:
         specifier: ^8.1.0
         version: 8.1.0
+      env:
+        specifier: workspace:*
+        version: link:../env
       fonts:
         specifier: workspace:*
         version: link:../fonts
@@ -313,6 +316,8 @@ importers:
         specifier: ^13.6.33
         version: 13.6.33
 
+  packages/env: {}
+
   packages/fonts:
     dependencies:
       zod:
@@ -346,6 +351,9 @@ importers:
       cookie:
         specifier: ^2.0.1
         version: 2.0.1
+      env:
+        specifier: workspace:*
+        version: link:../env
       image-dimensions:
         specifier: ^2.6.0
         version: 2.6.0
@@ -464,6 +472,9 @@ importers:
       entities:
         specifier: ^8.1.0
         version: 8.1.0
+      env:
+        specifier: workspace:*
+        version: link:../env
       fonts:
         specifier: workspace:*
         version: link:../fonts

@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getGoogleAuthorizationUrl, exchangeCode, verifyIdToken } from "../google";
 import { jwtVerify } from "jose";
 import * as oauth2 from "../oauth2";
+import { serverEnv } from "@/env/server";
 
 vi.mock("jose");
 
@@ -14,8 +15,8 @@ describe("google", () => {
       expect(parsedUrl.origin).toBe("https://localhost");
       expect(parsedUrl.pathname).toBe("/sign-in/google");
       expect(parsedUrl.searchParams.get("response_type")).toBe("code");
-      expect(parsedUrl.searchParams.get("client_id")).toBe(process.env.GOOGLE_CLIENT_ID);
-      expect(parsedUrl.searchParams.get("redirect_uri")).toBe(process.env.GOOGLE_REDIRECT_URI);
+      expect(parsedUrl.searchParams.get("client_id")).toBe(serverEnv.GOOGLE_CLIENT_ID);
+      expect(parsedUrl.searchParams.get("redirect_uri")).toBe(serverEnv.GOOGLE_REDIRECT_URI);
       expect(parsedUrl.searchParams.get("scope")).toBe("openid profile email");
       expect(parsedUrl.searchParams.get("access_type")).toBe("online");
       expect(parsedUrl.searchParams.get("code_challenge_method")).toBe("S256");
@@ -71,9 +72,9 @@ describe("google", () => {
 
       expect(oauth2.getOAuth2AccessToken).toHaveBeenCalledWith({
         endpoint: "https://oauth2.googleapis.com/token",
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        redirectUri: process.env.GOOGLE_REDIRECT_URI,
+        clientId: serverEnv.GOOGLE_CLIENT_ID,
+        clientSecret: serverEnv.GOOGLE_CLIENT_SECRET,
+        redirectUri: serverEnv.GOOGLE_REDIRECT_URI,
         code: "auth-code",
         codeVerifier: "code-verifier",
       });

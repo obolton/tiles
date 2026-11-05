@@ -14,6 +14,7 @@
   "references": [
     { "path": "../api" },
     { "path": "../doc" },
+    { "path": "../env" },
     { "path": "../fonts" },
     { "path": "../jsx" },
     { "path": "../reactivity" }

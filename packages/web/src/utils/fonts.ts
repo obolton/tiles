@@ -1,10 +1,10 @@
 import manifestJson from "fonts/manifest.json" with { type: "json" };
 import { FontsManifestSchema, type ManifestWeight } from "fonts/manifest";
 import { getFontConfig, type FontId } from "fonts/config";
+import { publicEnv } from "@/env/public";
 import type { Link, Style } from "@/router/router";
 
 const MANIFEST = FontsManifestSchema.parse(manifestJson);
-const FONTS_BASE_URL = import.meta.env.PUBLIC_FONTS_BASE_URL as string;
 
 function formatWeight(weight: ManifestWeight): string {
   return typeof weight === "number" ? String(weight) : `${weight.min} ${weight.max}`;
@@ -25,7 +25,7 @@ export function generateFontFaceCSS(fontIds: Iterable<FontId>): Style {
     }
 
     for (const file of font.files) {
-      const url = `${FONTS_BASE_URL}/${file.path}`;
+      const url = `${publicEnv.PUBLIC_FONTS_BASE_URL}/${file.path}`;
       declarations.push(
         `@font-face{` +
           `font-family:"${font.family}";` +
@@ -55,7 +55,7 @@ export function getFontPreload(fontId: FontId, weight = 400, style = "normal"): 
 
   return {
     rel: "preload",
-    href: `${FONTS_BASE_URL}/${file.path}`,
+    href: `${publicEnv.PUBLIC_FONTS_BASE_URL}/${file.path}`,
     as: "font",
     type: "font/woff2",
     crossorigin: true,
@@ -84,7 +84,7 @@ export async function loadFonts(...ids: FontId[]): Promise<void> {
     for (const file of font.files) {
       const face = new FontFace(
         font.family,
-        `url("${FONTS_BASE_URL}/${file.path}") format("woff2")`,
+        `url("${publicEnv.PUBLIC_FONTS_BASE_URL}/${file.path}") format("woff2")`,
         {
           weight: formatWeight(file.weight),
           style: file.style,
@@ -124,7 +124,7 @@ export async function loadFontPreviews(...ids: FontId[]): Promise<void> {
 
     const face = new FontFace(
       getFontConfig(id).previewFamily,
-      `url("${FONTS_BASE_URL}/${font.previewPath}") format("woff2")`,
+      `url("${publicEnv.PUBLIC_FONTS_BASE_URL}/${font.previewPath}") format("woff2")`,
       { display: "swap" },
     );
     document.fonts.add(face);

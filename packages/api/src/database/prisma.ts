@@ -1,10 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { env } from "@/env";
 import images from "./extensions/images";
 import backgrounds from "./extensions/backgrounds";
 import themes from "./extensions/themes";
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg({ connectionString: env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter })
   .$extends(images)
   .$extends(backgrounds)
