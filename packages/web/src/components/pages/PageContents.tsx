@@ -1,6 +1,5 @@
 import DocumentPage from "./DocumentPage";
 import PresentationPage from "./PresentationPage";
-import CollectionPage from "./CollectionPage";
 import FreePage from "./FreePage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -22,8 +21,6 @@ export default function PageContents(props: PageContentsProps) {
       return <DocumentPage {...props} />;
     case "PRESENTATION":
       return <PresentationPage {...props} />;
-    case "COLLECTION":
-      return <CollectionPage {...props} />;
     case "FREE":
       return <FreePage {...props} />;
   }
