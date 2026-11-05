@@ -1,8 +1,9 @@
-import { TEXT_MODEL } from "@/ai/constants";
+import { streamText, type ModelMessage, type TextStreamPart, type ToolSet } from "ai";
+import { TEXT_PROVIDER_OPTIONS } from "@/ai/constants";
+import { TEXT_MODEL } from "@/ai/models";
 import { transformMarkdown, type RichTextFormat, type RichTextNode } from "@/utils/markdown";
-import { openai } from "@/ai/openai";
 import { generateImageFromPrompt } from "@/ai/tools/images";
-import { TOOLS, useFunctionTool } from "@/ai/tools/tools";
+import { createTools } from "@/ai/tools/tools";
 import { resolveTileContents, type TileContent } from "@/ai/tileContent";
 import { buildContextIds, formatTileContext } from "@/ai/context/format";
 import { hocuspocus } from "@/collaboration/instance";
@@ -13,11 +14,6 @@ import { decodeSelection, type SelectionRange } from "doc/richText/selection";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
 import type { ToolContext } from "@/ai/tools/types";
 import type { TileType } from "doc/types/enums";
-import type {
-  ResponseInput,
-  ResponseInputItem,
-  ResponseStreamEvent,
-} from "openai/resources/responses/responses";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
 export type MessageEvent = string | RichTextFormat | RichTextNode;
@@ -32,6 +28,11 @@ export interface Reference {
 }
 
 export type WriteEvent = Message | { reference: Reference };
+
+interface Turn {
+  events: () => AsyncGenerator<WriteEvent>;
+  result: ReturnType<typeof streamText<ToolSet>>;
+}
 
 interface SelectionAnchor {
   tileId: string;
@@ -135,9 +136,15 @@ interface InputOptions {
   selectionRef: number | null;
 }
 
+export interface ModelInput {
+  instructions: string;
+  messages: ModelMessage[];
+}
+
 /**
- * Assembles the model input: system prompt, referenced tile content, chat
- * history, an optional selection-insert instruction, and the user's prompt.
+ * Assembles the model input: system instructions (with an optional
+ * selection-insert instruction), referenced tile content, chat history and the
+ * user's prompt.
  */
 function buildInput({
   prompt,
@@ -145,31 +152,27 @@ function buildInput({
   contextTiles,
   history,
   selectionRef,
-}: InputOptions): ResponseInput {
-  const input: ResponseInput = [{ role: "developer", content: PROMPT }];
+}: InputOptions): ModelInput {
+  const instructions =
+    selectionRef === null
+      ? PROMPT
+      : `${PROMPT}\nThe user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`;
+
+  const messages: ModelMessage[] = [];
 
   if (contextText) {
-    input.push({ role: "user", content: contextText });
+    messages.push({ role: "user", content: contextText });
   }
 
   const tileContext = formatTileContext(contextTiles);
   if (tileContext) {
-    input.push({ role: "user", content: tileContext });
+    messages.push({ role: "user", content: tileContext });
   }
 
-  for (const message of history ?? []) {
-    input.push({ role: message.role, content: message.content });
-  }
+  messages.push(...(history ?? []));
+  messages.push({ role: "user", content: prompt });
 
-  if (selectionRef !== null) {
-    input.push({
-      role: "developer",
-      content: `The user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`,
-    });
-  }
-
-  input.push({ role: "user", content: prompt });
-  return input;
+  return { instructions, messages };
 }
 
 /**
@@ -224,7 +227,6 @@ export async function* write(
       ...ctx,
       pageId,
       sectionId,
-      model: TEXT_MODEL,
       session: new DocWriter(document),
       resolveArtifactId: (id: number) => {
         const artifactId = artifactIds[id];
@@ -236,94 +238,63 @@ export async function* write(
     };
 
     let turn = 0;
-    let continueTurns = true;
 
     // oxlint-disable-next-line no-unmodified-loop-condition
-    while (continueTurns && turn < MAX_TURNS && !signal?.aborted) {
-      const { events, output, toolCalls } = await streamTurn(
-        input,
-        toolContext,
-        artifactIds,
-        anchor,
-        signal,
-      );
+    while (turn < MAX_TURNS && !signal?.aborted) {
+      const { events, result } = streamTurn(input, toolContext, artifactIds, anchor, signal);
       yield* events();
-      input.push(...output, ...toolCalls);
+      // Result promises reject once the signal has aborted, so check it first.
+      if (signal?.aborted || (await result.finishReason) !== "tool-calls") {
+        break;
+      }
+      input.messages.push(...(await result.responseMessages));
       turn++;
-      continueTurns = toolCalls.length > 0;
     }
   } finally {
     await connection.disconnect();
   }
 }
 
-export async function streamTurn(
-  input: ResponseInput,
+export function streamTurn(
+  { instructions, messages }: ModelInput,
   toolContext: ToolContext,
   artifactIds: string[],
   anchor: SelectionAnchor | null,
   signal?: AbortSignal,
-) {
-  const response = await openai.responses.create(
-    {
-      model: TEXT_MODEL,
-      input,
-      reasoning: { effort: "medium" },
-      tools: TOOLS,
-      stream: true,
-    },
-    { signal },
-  );
-
-  const output: ResponseInputItem[] = [];
-  const toolCalls: ResponseInputItem.FunctionCallOutput[] = [];
+): Turn {
   const references: Reference[] = [];
 
-  const text = ReadableStream.from(response)
+  const tools = createTools(toolContext, ({ tileId, type }) => {
+    const id = String(artifactIds.length);
+    artifactIds.push(tileId);
+    references.push({ id: tileId, type });
+    return id;
+  });
+
+  const result = streamText({
+    model: TEXT_MODEL,
+    instructions,
+    messages,
+    tools,
+    toolCallConcurrency: 1,
+    reasoning: "medium",
+    providerOptions: TEXT_PROVIDER_OPTIONS,
+    abortSignal: signal,
+    // Errors surface as `error` stream parts and are rethrown below.
+    onError: () => {},
+  });
+
+  const text = result.stream
     .pipeThrough(
-      new TransformStream<ResponseStreamEvent, string>({
-        async transform(event, controller) {
-          if (event.type === "response.output_text.delta") {
-            controller.enqueue(event.delta);
-            return;
-          }
-
-          if (event.type === "response.output_item.done") {
-            const { item } = event;
-            if (
-              item.type === "message" ||
-              item.type === "function_call" ||
-              item.type === "reasoning"
-            ) {
-              output.push(item);
-            }
-
-            if (item.type === "function_call" && item.status === "completed") {
-              const result = await useFunctionTool(item, toolContext);
-
-              if (!result) {
-                toolCalls.push({
-                  type: "function_call_output",
-                  call_id: item.call_id,
-                  output: JSON.stringify({ status: "ok" }),
-                });
-                return;
-              }
-
-              if (!("tileId" in result)) {
-                throw new Error(`Unexpected tool result from ${item.name}`);
-              }
-
-              const id = String(artifactIds.length);
-              artifactIds.push(result.tileId);
-              toolCalls.push({
-                type: "function_call_output",
-                call_id: item.call_id,
-                output: JSON.stringify({ id }),
-              });
-              references.push({ id: result.tileId, type: result.type });
-              return;
-            }
+      new TransformStream<TextStreamPart<ToolSet>, string>({
+        transform(part, controller) {
+          switch (part.type) {
+            case "text-delta":
+              controller.enqueue(part.text);
+              break;
+            case "error":
+              controller.error(part.error);
+              break;
           }
         },
       }),
@@ -355,9 +326,5 @@ export async function streamTurn(
     }
   }
 
-  return {
-    events,
-    output,
-    toolCalls,
-  };
+  return { events, result };
 }

@@ -12,7 +12,6 @@ export const MOCK_TOOL_CONTEXT: ToolContext = {
   workspaceId: "test-workspace",
   pageId: "test-page",
   sectionId: null,
-  model: "test-model",
   session: new DocWriter(new Y.Doc()),
   resolveArtifactId: vi.fn((id: number) => `resolved-${id}`),
 };

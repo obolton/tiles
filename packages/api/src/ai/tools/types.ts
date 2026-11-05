@@ -5,7 +5,6 @@ import type { DocWriter } from "@/collaboration/DocWriter";
 
 export interface ToolContext extends AuthenticatedPageProcedureContext {
   sectionId: string | null;
-  model: string;
   resolveArtifactId: (id: number) => string;
   session: DocWriter;
 }

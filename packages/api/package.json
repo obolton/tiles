@@ -22,6 +22,9 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.88",
+    "@ai-sdk/google": "^4.0.105",
+    "@ai-sdk/openai": "^4.0.102",
     "@aws-sdk/client-s3": "^3.1148.0",
     "@aws-sdk/client-sesv2": "^3.1148.0",
     "@aws-sdk/lib-storage": "^3.1148.0",
@@ -29,6 +32,7 @@
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "@trpc/server": "^11.19.0",
+    "ai": "^7.0.153",
     "cookie": "^2.0.1",
     "cors": "^2.8.6",
     "crossws": "^0.4.15",
@@ -36,7 +40,6 @@
     "entities": "^8.1.0",
     "fonts": "workspace:*",
     "htmlparser2": "^12.0.0",
-    "openai": "7.31.0",
     "y-protocols": "^1.0.7",
     "yjs": "^13.6.33",
     "zod": "^4.6.5"
