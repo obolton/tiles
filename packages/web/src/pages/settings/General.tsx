@@ -24,7 +24,7 @@ export default function General({ workspace, user }: GeneralProps) {
 
   function deleteWorkspace() {
     void showModal(DeleteWorkspaceModalLoader, {
-      props: {},
+      props: { name: workspace.name },
       async onConfirm() {
         await client.workspaces.delete.mutate({ workspaceId: workspace.id });
         redirectWithToast("/", "Workspace deleted.", "success");
