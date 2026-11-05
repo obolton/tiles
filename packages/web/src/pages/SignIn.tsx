@@ -1,7 +1,6 @@
 import PageLayout from "@/layouts/PageLayout";
 import { withDestination } from "@/auth/destinations";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/constants/site";
-import TilesIcon from "@/icons/tiles.svg?jsx";
+import { SITE_NAME } from "@/constants/site";
 import GoogleIcon from "@/icons/google.svg?jsx";
 import ErrorIcon from "@/icons/error.svg?jsx";
 import styles from "./SignIn.module.css";
@@ -28,16 +27,12 @@ export default function SignIn({ destination, error }: SignInProps) {
           <span />
         </div>
 
-        <header className={styles.brand}>
-          <a className={styles.logo} href="/">
-            <TilesIcon aria-hidden="true" />
-            {SITE_NAME}
-          </a>
-          <p className={styles.tagline}>{SITE_DESCRIPTION}</p>
-        </header>
+        <a className={styles.wordmark} href="/">
+          {SITE_NAME}
+        </a>
 
         <section className={styles.card} aria-labelledby="sign-in-heading">
-          <h1 id="sign-in-heading">Sign in to {SITE_NAME}</h1>
+          <h1 id="sign-in-heading">Sign in</h1>
           <p className={styles.description}>Use your Google account to continue.</p>
 
           {error ? (

@@ -4,7 +4,7 @@ test.describe("sign-in page", () => {
   test("renders the sign-in page", async ({ page }) => {
     await page.goto("/sign-in");
     await expect(page).toHaveTitle("Sign in - Tiles");
-    await expect(page.getByRole("heading", { level: 1, name: "Sign in to Tiles" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Continue with Google" })).toHaveAttribute(
       "href",
       "/sign-in/google",
