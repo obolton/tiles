@@ -42,7 +42,7 @@ export default function SignIn({ destination, error }: SignInProps) {
             </div>
           ) : null}
 
-          <a className="primary" href={withDestination("/sign-in/google", destination)}>
+          <a className="secondary" href={withDestination("/sign-in/google", destination)}>
             <GoogleIcon aria-hidden="true" />
             Continue with Google
           </a>
