@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { fetchImage } from "@/utils/fetchImage";
-import { getVideoInfo } from "@/utils/videos";
+import { parseVideoUrl } from "doc/videos";
 import { resolveLinkMetadata } from "../links";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
@@ -13,8 +13,8 @@ vi.mock("@/utils/fetchImage", () => ({
   fetchImage: vi.fn(),
 }));
 
-vi.mock("@/utils/videos", () => ({
-  getVideoInfo: vi.fn(),
+vi.mock("doc/videos", () => ({
+  parseVideoUrl: vi.fn(),
 }));
 
 const MOCK_CONTEXT: AuthenticatedPageProcedureContext = {
@@ -36,7 +36,7 @@ const MOCK_METADATA = {
 const INPUT = { pageId: "page-1", url: "https://example.com/" };
 
 beforeEach(() => {
-  vi.mocked(getVideoInfo).mockReturnValue(null);
+  vi.mocked(parseVideoUrl).mockReturnValue(null);
   vi.mocked(getLinkMetadata).mockResolvedValue(MOCK_METADATA);
   vi.mocked(fetchImage).mockResolvedValue("image-1");
 });
@@ -46,7 +46,7 @@ describe("resolveLinkMetadata", () => {
     const VIDEO_INPUT = { pageId: "page-1", url: "https://www.youtube.com/watch?v=abc123" };
 
     beforeEach(() => {
-      vi.mocked(getVideoInfo).mockReturnValue({ videoType: "YOUTUBE", videoId: "abc123" });
+      vi.mocked(parseVideoUrl).mockReturnValue({ videoType: "YOUTUBE", videoId: "abc123" });
     });
 
     test("returns the video details with its page metadata", async () => {

@@ -1,13 +1,14 @@
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { fetchImage } from "@/utils/fetchImage";
-import { getVideoInfo } from "@/utils/videos";
+import { parseVideoUrl } from "doc/videos";
 import type { GetLinkMetadataSchema } from "./schema";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
+import type { VideoType } from "doc/types/enums";
 
 export type LinkMetadataResult =
   | {
       type: "VIDEO";
-      videoType: "YOUTUBE";
+      videoType: VideoType;
       videoId: string;
       title: string;
       description: string | null;
@@ -26,7 +27,7 @@ export async function resolveLinkMetadata(
   { url }: GetLinkMetadataSchema,
   ctx: AuthenticatedPageProcedureContext,
 ): Promise<LinkMetadataResult> {
-  const videoInfo = getVideoInfo(url);
+  const videoInfo = parseVideoUrl(url);
   const linkMetadata = await getLinkMetadata(url);
   const { title = null, description = null, siteName = null, imageUrl = null } = linkMetadata ?? {};
 
