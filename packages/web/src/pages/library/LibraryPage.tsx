@@ -1,6 +1,6 @@
 import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
-import Folders from "@/components/folders/Folders";
+import Folders, { SYSTEM_FOLDERS } from "@/components/folders/Folders";
 import Placeholder from "@/components/placeholder/Placeholder";
 import PagesGrid, {
   PageSortOptions,
@@ -75,6 +75,8 @@ export default function LibraryPage({
   const pages = reactive(initialPages.pages);
   const cursor = reactive<string | null>(initialPages.nextCursor);
   const state: LibraryPageState = { pages, cursor };
+  const inFolder =
+    selectedFolderId !== undefined && !SYSTEM_FOLDERS.some((id) => id === selectedFolderId);
 
   return (
     <PageLayout
@@ -90,6 +92,7 @@ export default function LibraryPage({
         />
       }
       actions={renderActions?.(state)}
+      stacked
     >
       <SidebarLayout
         sidebar={
@@ -116,6 +119,7 @@ export default function LibraryPage({
           sort={sort}
           draggable={draggable}
           link={link}
+          showFolder={!inFolder}
           move={move}
           trash={trash}
           restore={restore}

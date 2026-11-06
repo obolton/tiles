@@ -8,7 +8,6 @@ enum GradientDirection {
 enum PageType {
   DOCUMENT
   PRESENTATION
-  COLLECTION
   FREE
 }
 

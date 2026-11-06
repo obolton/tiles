@@ -4,7 +4,6 @@ import type { PageData } from "@/models/Page";
 const PAGE_TYPE_LABELS: Record<PageData["type"], string> = {
   DOCUMENT: "document",
   PRESENTATION: "presentation",
-  COLLECTION: "collection",
   FREE: "page",
 };
 
