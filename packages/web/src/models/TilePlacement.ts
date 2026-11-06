@@ -101,15 +101,11 @@ export default class TilePlacement implements TileContainer {
   }
 
   previous(tile: Tile): Tile | null {
-    const siblings = tile.parent?.value;
-    const index = siblings?.indexOf(tile) ?? -1;
-    return index > 0 ? (siblings?.[index - 1] ?? null) : null;
+    return this.sibling(tile, -1);
   }
 
   next(tile: Tile): Tile | null {
-    const siblings = tile.parent?.value;
-    const index = siblings?.indexOf(tile) ?? -1;
-    return index >= 0 ? (siblings?.[index + 1] ?? null) : null;
+    return this.sibling(tile, 1);
   }
 
   moveUp(tile: Tile) {
@@ -128,6 +124,12 @@ export default class TilePlacement implements TileContainer {
 
   duplicate(tile: Tile): Tile {
     return tile.clone({ parentId: tile.parentId.value, beforeId: this.next(tile)?.id ?? null });
+  }
+
+  private sibling(tile: Tile, offset: number): Tile | null {
+    const siblings = tile.parent?.value ?? [];
+    const index = siblings.indexOf(tile);
+    return index === -1 ? null : (siblings[index + offset] ?? null);
   }
 
   /**

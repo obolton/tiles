@@ -76,11 +76,11 @@ export default class Body implements TileContainer {
   }
 
   moveUp(tile: Tile) {
-    moveTile(this.fragment, tile.id, -1);
+    this.page.doc.transact(() => moveTile(this.fragment, tile.id, -1));
   }
 
   moveDown(tile: Tile) {
-    moveTile(this.fragment, tile.id, 1);
+    this.page.doc.transact(() => moveTile(this.fragment, tile.id, 1));
   }
 
   duplicate(tile: Tile): Tile {

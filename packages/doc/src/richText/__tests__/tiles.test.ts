@@ -236,14 +236,4 @@ describe("moveTile", () => {
       { unordered_list: [{ list_item: ["paragraph", "tile:a"] }] },
     ]);
   });
-
-  test("keeps the id set unchanged within one transaction", () => {
-    const content = fragment(paragraph("p"), createTileElement("a"));
-    const seen: string[][] = [];
-    content.observe(() => seen.push(getTileIds(content)));
-
-    moveTile(content, "a", -1);
-
-    expect(seen).toEqual([["a"]]);
-  });
 });

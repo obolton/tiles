@@ -1,8 +1,6 @@
-import { exitNode, insertParagraphAfter, type Direction } from "../navigation";
+import { exitNode, type Direction } from "../navigation";
 import type { EditorView as CMEditorView } from "@codemirror/view";
 import type { EditorView as PMEditorView } from "prosemirror-view";
-
-export { insertParagraphAfter };
 
 /**
  * Check if the CodeMirror cursor is at the boundary of the document.

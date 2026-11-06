@@ -116,6 +116,17 @@ describe("Body", () => {
       image.moveDown();
       expect(outline()).toEqual(["paragraph", `tile:${image.id}`, "paragraph"]);
     });
+
+    test("re-creates the node in one transaction", () => {
+      body.fragment.insert(0, [paragraph("Intro")]);
+      const image = editor.page.createTile(Image.createMap(IMAGE));
+      const seen: string[][] = [];
+      body.fragment.observe(() => seen.push(getTileIds(body.fragment)));
+
+      image.moveUp();
+
+      expect(seen).toEqual([[image.id]]);
+    });
   });
 
   describe("duplicate", () => {

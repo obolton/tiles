@@ -10,10 +10,13 @@ import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
-import Section from "@/models/Section";
+import Section, { type CreateSectionInput } from "@/models/Section";
+import type { PlacementInput } from "doc/tiles/base";
 import type { TilePlacementInput } from "@/models/TileContainer";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
+
+type SectionProperties = Omit<CreateSectionInput, keyof PlacementInput>;
 
 export interface SectionItemsProps {
   /** Resolves where inserted sections go. */
@@ -21,55 +24,19 @@ export interface SectionItemsProps {
 }
 
 export default function SectionItems({ getPlacement }: SectionItemsProps) {
-  function createGrid() {
-    Section.create(Editor.current.page, {
-      ...getPlacement(),
-      layout: "GRID",
-      height: 15,
-    }).catch(handleError);
+  function createSection(properties: SectionProperties): Promise<Section> {
+    return Section.create(Editor.current.page, { ...getPlacement(), ...properties });
   }
 
-  function createHorizontal() {
-    Section.create(Editor.current.page, {
-      ...getPlacement(),
-      layout: "HORIZONTAL",
-      height: 15,
-    }).catch(handleError);
+  function insertSection(properties: SectionProperties) {
+    createSection(properties).catch(handleError);
   }
 
-  function createVertical() {
-    Section.create(Editor.current.page, {
-      ...getPlacement(),
-      layout: "VERTICAL",
-      height: 15,
-    }).catch(handleError);
-  }
-
-  function createFreeform() {
-    Section.create(Editor.current.page, {
-      ...getPlacement(),
-      layout: "FREEFORM",
-      sizing: "FOUR_THREE",
-    }).catch(handleError);
-  }
-
-  function createCalendar() {
-    Section.create(Editor.current.page, {
-      ...getPlacement(),
-      layout: "CALENDAR",
-      sizing: "FOUR_THREE",
-    }).catch(handleError);
-  }
-
-  function createMap() {
+  function insertMap() {
     void showModal(PlaceModalLoader, {
       props: {},
       async onConfirm({ place }) {
-        const section = await Section.create(Editor.current.page, {
-          ...getPlacement(),
-          layout: "MAP",
-          sizing: "FOUR_THREE",
-        });
+        const section = await createSection({ layout: "MAP", sizing: "FOUR_THREE" });
         await Text.create(Editor.current.page, {
           parentId: section.id,
           sizing: "AUTO",
@@ -88,27 +55,42 @@ export default function SectionItems({ getPlacement }: SectionItemsProps) {
 
   return (
     <MenuItemGroup>
-      <MenuItem icon={<GridLayoutIcon aria-hidden="true" />} on:click={createGrid}>
+      <MenuItem
+        icon={<GridLayoutIcon aria-hidden="true" />}
+        on:click={() => insertSection({ layout: "GRID", height: 15 })}
+      >
         Grid
       </MenuItem>
 
-      <MenuItem icon={<HorizontalLayoutIcon aria-hidden="true" />} on:click={createHorizontal}>
+      <MenuItem
+        icon={<HorizontalLayoutIcon aria-hidden="true" />}
+        on:click={() => insertSection({ layout: "HORIZONTAL", height: 15 })}
+      >
         Horizontal
       </MenuItem>
 
-      <MenuItem icon={<VerticalLayoutIcon aria-hidden="true" />} on:click={createVertical}>
+      <MenuItem
+        icon={<VerticalLayoutIcon aria-hidden="true" />}
+        on:click={() => insertSection({ layout: "VERTICAL", height: 15 })}
+      >
         Vertical
       </MenuItem>
 
-      <MenuItem icon={<FreeformLayoutIcon aria-hidden="true" />} on:click={createFreeform}>
+      <MenuItem
+        icon={<FreeformLayoutIcon aria-hidden="true" />}
+        on:click={() => insertSection({ layout: "FREEFORM", sizing: "FOUR_THREE" })}
+      >
         Freeform
       </MenuItem>
 
-      <MenuItem icon={<CalendarLayoutIcon aria-hidden="true" />} on:click={createCalendar}>
+      <MenuItem
+        icon={<CalendarLayoutIcon aria-hidden="true" />}
+        on:click={() => insertSection({ layout: "CALENDAR", sizing: "FOUR_THREE" })}
+      >
         Calendar
       </MenuItem>
 
-      <MenuItem icon={<PlaceIcon aria-hidden="true" />} on:click={createMap}>
+      <MenuItem icon={<PlaceIcon aria-hidden="true" />} on:click={insertMap}>
         Map
       </MenuItem>
     </MenuItemGroup>

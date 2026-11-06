@@ -144,7 +144,7 @@ export function removeTiles(fragment: Y.XmlFragment, ids: Iterable<string>): voi
 
 /**
  * Moves an embedded tile by `offset` positions among its siblings. The element is re-created at
- * the new index since Yjs cannot move items.
+ * the new index since Yjs cannot move items, so callers transact to keep the two steps together.
  */
 export function moveTile(fragment: Y.XmlFragment, id: string, offset: number): void {
   const element = findTile(fragment, id);
@@ -157,13 +157,6 @@ export function moveTile(fragment: Y.XmlFragment, id: string, offset: number): v
   if (target < minIndex(parent) || target >= parent.length) {
     return;
   }
-  const move = () => {
-    parent.delete(index, 1);
-    parent.insert(target, [createTileElement(id)]);
-  };
-  if (fragment.doc) {
-    fragment.doc.transact(move);
-  } else {
-    move();
-  }
+  parent.delete(index, 1);
+  parent.insert(target, [createTileElement(id)]);
 }

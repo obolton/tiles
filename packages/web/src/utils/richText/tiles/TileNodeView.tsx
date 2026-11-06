@@ -73,13 +73,7 @@ export default class TileNodeView implements NodeView, EventListenerObject {
   }
 
   update(node: Node): boolean {
-    if (node.type.name !== TILE_NODE || node.attrs.id !== this.id) {
-      return false;
-    }
-    if (!this.tile) {
-      this.mount();
-    }
-    return true;
+    return node.type.name === TILE_NODE && node.attrs.id === this.id;
   }
 
   // Selection is shown through the item's aria-selected state, and ProseMirror's default would
