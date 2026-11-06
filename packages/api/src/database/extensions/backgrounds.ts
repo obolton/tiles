@@ -1,31 +1,21 @@
 import { Buffer } from "node:buffer";
 import { Prisma, type GradientDirection } from "@/generated/prisma/client";
 
-export type Background =
-  | { type: "image"; imageId: string }
+export type Fill =
   | { type: "color"; color: string }
   | {
       type: "gradient";
       colorA: string;
       colorB: string;
       direction: GradientDirection;
-    }
-  | null;
-
-export type Fill = Exclude<Background, { type: "image" }>;
+    };
 
 function toHex(bytes: Uint8Array, start: number, end: number): string {
   return Buffer.from(bytes.subarray(start, end)).toString("hex");
 }
 
-function computeFill({
-  color,
-  gradient,
-}: {
-  color: Uint8Array | null;
-  gradient?: GradientDirection | null;
-}): Fill {
-  if (gradient && color?.length === 12) {
+function computeFill(color: Uint8Array, gradient: GradientDirection | null): Fill {
+  if (gradient && color.length === 12) {
     return {
       type: "gradient",
       colorA: toHex(color, 0, 6),
@@ -34,14 +24,10 @@ function computeFill({
     };
   }
 
-  if (color) {
-    return {
-      type: "color",
-      color: toHex(color, 0, 6),
-    };
-  }
-
-  return null;
+  return {
+    type: "color",
+    color: toHex(color, 0, 6),
+  };
 }
 
 export default Prisma.defineExtension({
@@ -51,10 +37,7 @@ export default Prisma.defineExtension({
       background: {
         needs: { backgroundColor: true, backgroundGradient: true },
         compute: ({ backgroundColor, backgroundGradient }) =>
-          computeFill({
-            color: backgroundColor,
-            gradient: backgroundGradient,
-          }),
+          computeFill(backgroundColor, backgroundGradient),
       },
     },
   },

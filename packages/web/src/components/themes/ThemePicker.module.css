@@ -1,0 +1,9 @@
+.footer {
+  display: flex;
+  gap: 4px;
+  padding: 4px 8px 8px;
+
+  & > button {
+    flex: 1;
+  }
+}

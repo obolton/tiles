@@ -1,0 +1,51 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 20px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 16px 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  & > input {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ui-secondary-color);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+
+  & > button,
+  & > list-select {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+
+  & > button {
+    width: 100%;
+    min-width: 0;
+  }
+}

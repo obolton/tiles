@@ -49,7 +49,7 @@
 
   &::backdrop {
     transition: opacity var(--animation-duration) var(--easing);
-    background-color: oklch(from var(--background-color) 7% c h / 95%);
+    background-color: oklch(7% 0 0deg / 95%);
   }
 
   &[open] {

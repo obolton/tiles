@@ -20,10 +20,12 @@ import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
 import VersionHistory from "@/components/versions/VersionHistory";
 import Share from "@/components/collaboration/Share";
+import ThemeEditor from "@/components/themes/ThemeEditor";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
+import { applyThemeStyles, getThemeStyles } from "@/utils/themes";
 import type Tile from "@/models/Tile";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
-import type { Reactive, ReactiveSet } from "reactivity";
+import type { Reactive, ReactiveSet, UnsubscribeCallback } from "reactivity";
 
 export type { PageData } from "@/models/Page";
 
@@ -46,12 +48,14 @@ export default class Editor {
   readonly chat: ChatState;
   readonly versionHistory: VersionHistory;
   readonly share = new Share();
+  readonly themeEditor: ThemeEditor;
 
   readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
   readonly canRedo: Reactive<boolean>;
 
   #abort = new AbortController();
+  #unsubscribeTheme: UnsubscribeCallback | null = null;
 
   get pageId() {
     return this.page.id;
@@ -129,9 +133,16 @@ export default class Editor {
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
     this.versionHistory = new VersionHistory(this.page.id, version ?? null);
+    this.themeEditor = new ThemeEditor(this.page);
     // Only one end-slot panel at a time
-    this.versionHistory.isOpen.subscribe(({ value }) => value && this.share.close());
-    this.share.isOpen.subscribe(({ value }) => value && this.versionHistory.close());
+    const panels = [this.versionHistory, this.share, this.themeEditor];
+    for (const panel of panels) {
+      panel.isOpen.subscribe(({ value }) => {
+        if (value) {
+          panels.filter((other) => other !== panel).forEach((other) => other.close());
+        }
+      });
+    }
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -147,6 +158,11 @@ export default class Editor {
       this.enablePointerEvents();
 
       this.selection.subscribe(() => this.publishSelection());
+
+      // The server renders the page theme onto body; keep it in sync with the doc
+      this.#unsubscribeTheme = this.page.theme.subscribe(({ value }) =>
+        applyThemeStyles(document.body, getThemeStyles(value)),
+      );
 
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
@@ -193,6 +209,7 @@ export default class Editor {
       this.clearSelection();
       this.versionHistory.close();
       this.share.close();
+      this.themeEditor.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();
@@ -582,6 +599,7 @@ export default class Editor {
 
   dispose(): void {
     this.#abort.abort();
+    this.#unsubscribeTheme?.();
     this.stopCollaboration();
     this.undoManager?.dispose();
     if (Editor.#current === this) {

@@ -8,7 +8,6 @@ export const THEME_FIELDS = {
   background: true,
   colors: true,
   fonts: true,
-  border: true,
 } as const satisfies Prisma.ThemeSelect<ExtensionArgs>;
 
 export type Theme = Prisma.Result<

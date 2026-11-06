@@ -1,5 +1,8 @@
 .picker > svg {
   color: var(--icon-color);
+
+  /* Keeps a light colour visible against the chrome */
+  filter: drop-shadow(0 0 1px rgb(0 0 0 / 40%));
 }
 
 .clear {

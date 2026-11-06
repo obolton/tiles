@@ -16,8 +16,6 @@ import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "reactivity";
 import type Theme from "@/models/Theme";
 import type { ThemeData } from "@/models/Theme";
-import type { Color } from "@/utils/color";
-import type { FontId } from "fonts/config";
 import type { PageAccess } from "@/types/collaboration";
 import type { Awareness } from "@/collaboration/types";
 import type { DockEdge, HorizontalAlignment } from "doc/types/enums";
@@ -49,8 +47,6 @@ export default class Page {
   readonly author: PageData["author"];
   readonly type: PageType;
   readonly title: Reactive<string>;
-  readonly backgroundColor: Reactive<Color | null>;
-  readonly font: Reactive<FontId | null>;
   readonly isPublished: Reactive<boolean>;
   readonly folderId: Reactive<string | null>;
   readonly themes: PageThemes;
@@ -95,8 +91,6 @@ export default class Page {
     this.themes = new PageThemes(doc);
     this.metadataBinding = new YMapBinding(doc.getMap("metadata"));
     this.themeId = this.metadataBinding.field("themeId", null);
-    this.backgroundColor = this.metadataBinding.field("backgroundColor", null);
-    this.font = this.metadataBinding.field("font", null);
     this.width = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
     this.alignment = this.metadataBinding.field("alignment", "CENTER");
     this.theme = combine({ id: this.themeId, themes: this.themes }, ({ id, themes }) =>
@@ -238,12 +232,29 @@ export default class Page {
   }
 
   setTheme(theme: Theme | null) {
+    const previousId = this.themeId.value;
     this.doc.transact(() => {
       if (theme) {
         this.themes.apply(theme);
       }
       this.themeId.value = theme?.id ?? null;
+      if (previousId) {
+        this.releaseTheme(previousId);
+      }
     });
+  }
+
+  /** Drops a theme snapshot once neither the page nor any tile references it. */
+  releaseTheme(id: string) {
+    if (this.themeId.value === id) {
+      return;
+    }
+    for (const tile of this.index.values()) {
+      if (tile.themeId.value === id) {
+        return;
+      }
+    }
+    this.themes.delete(id);
   }
 
   delete() {

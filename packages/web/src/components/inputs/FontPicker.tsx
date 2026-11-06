@@ -1,6 +1,6 @@
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
-import { FONTS, FONT_IDS, type FontId } from "fonts/config";
+import { FONTS, FONT_IDS, getFontConfig, type FontId } from "fonts/config";
 import FontIcon from "@/icons/font.svg?jsx";
 import { loadFontPreviews } from "@/utils/fonts";
 import { handleError } from "@/utils/errors";
@@ -10,22 +10,29 @@ import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "jsx/jsx";
 
 export interface FontPickerProps extends JSX.Attributes<"list-select"> {
+  label?: string;
   value?: Reactive<FontId | null>;
   onChange: (value: FontId) => void;
 }
 
-export default function FontPicker({ value, onChange, ...props }: FontPickerProps) {
+export default function FontPicker({ label = "Font", value, onChange, ...props }: FontPickerProps) {
   if (!import.meta.env.SSR) {
     loadFontPreviews(...FONT_IDS).catch(handleError);
   }
 
   const setFont = (event: Event) => onChange((event.target as ListSelect).value as FontId);
 
+  // Previews the selected font on the trigger
+  const style = value?.derive((font) => ({
+    "--preview-font": font ? `"${getFontConfig(font).family}"` : undefined,
+  }));
+
   return (
     <list-select
       {...props}
       className={styles.font}
-      label="Font"
+      style={style}
+      label={label}
       aria-orientation="vertical"
       orientation="vertical"
       align="center"

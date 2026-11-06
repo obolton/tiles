@@ -16,9 +16,6 @@ model Theme {
   bodyFont    String @default("inter") @map("body_font")
   codeFont    String @default("jetbrains-mono") @map("code_font")
 
-  // Borders
-  borderColor Bytes? @map("border_color") @db.ByteA
-
   // Relations
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
