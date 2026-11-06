@@ -59,13 +59,13 @@
 }
 
 .wordmark {
-  padding: 4px 8px;
-  margin: -4px -8px;
-  border-radius: 12px;
-  font-size: 1.75rem;
-  font-weight: 700;
+  padding: 4px 12px;
+  margin: -4px -12px;
+  border-radius: 16px;
+  font-size: 2.5rem;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   animation: rise var(--animation-duration) var(--spring) backwards;
 }
 
@@ -112,47 +112,6 @@
   }
 }
 
-/* Follows Google's branding guidelines for the light "Continue with Google" button */
-.google {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  height: 44px;
-  margin-top: 8px;
-  padding: 0 16px;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #1f1f1f;
-  background: #fff;
-  border: 1px solid #747775;
-  border-radius: var(--border-radius);
-  transition:
-    background-color var(--animation-duration-short) var(--easing),
-    box-shadow var(--animation-duration-short) var(--easing);
-
-  & > svg {
-    flex: none;
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover {
-    background-color: color-mix(in srgb, #fff 92%, #303030);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 15%);
-  }
-
-  &:active {
-    background-color: color-mix(in srgb, #fff 88%, #303030);
-    box-shadow: none;
-  }
-
-  &:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: 2px;
-  }
-}
-
 .test-user {
   justify-self: center;
   border-radius: 4px;
@@ -187,7 +146,7 @@
 
 @media (width < 480px) {
   .wordmark {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   .card {
