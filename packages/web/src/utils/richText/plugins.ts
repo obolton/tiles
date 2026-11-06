@@ -12,9 +12,12 @@ import { prompt } from "./prompt";
 import { dropdowns } from "./dropdowns";
 import { mentions } from "./mentions";
 import { code } from "./code/code";
+import { tiles, type TilesOptions } from "./tiles/tiles";
 import type { Plugin } from "prosemirror-state";
 
-export function getPlugins(): Plugin[] {
+export type PluginOptions = TilesOptions;
+
+export function getPlugins(options: PluginOptions = {}): Plugin[] {
   return [
     keymap(keys),
     keymap(baseKeymap),
@@ -29,5 +32,6 @@ export function getPlugins(): Plugin[] {
     dropdowns(),
     mentions(),
     code(),
+    tiles(options),
   ];
 }

@@ -1,0 +1,33 @@
+.body {
+  width: calc(var(--page-width) * 24px);
+  max-width: 100%;
+  padding: clamp(8px, 2cqi, 16px);
+  color: var(--text-color);
+  font-family: var(--font);
+}
+
+.editor {
+  outline: none;
+
+  & li[role="checkbox"]::after {
+    cursor: pointer;
+  }
+
+  & time {
+    cursor: pointer;
+  }
+
+  &:focus {
+    & [data-placeholder] {
+      position: relative;
+
+      &::before {
+        content: attr(data-placeholder);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        color: var(--placeholder-color);
+      }
+    }
+  }
+}

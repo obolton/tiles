@@ -11,75 +11,81 @@ import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import Section from "@/models/Section";
+import type { TilePlacementInput } from "@/models/TileContainer";
 
 const PlaceModalLoader = () => import("@/components/modals/PlaceModal");
 
-function createGrid() {
-  Section.create(Editor.current.page, {
-    beforeId: null,
-    layout: "GRID",
-    height: 15,
-  }).catch(handleError);
+export interface SectionItemsProps {
+  /** Resolves where inserted sections go. */
+  getPlacement: () => TilePlacementInput;
 }
 
-function createHorizontal() {
-  Section.create(Editor.current.page, {
-    beforeId: null,
-    layout: "HORIZONTAL",
-    height: 15,
-  }).catch(handleError);
-}
+export default function SectionItems({ getPlacement }: SectionItemsProps) {
+  function createGrid() {
+    Section.create(Editor.current.page, {
+      ...getPlacement(),
+      layout: "GRID",
+      height: 15,
+    }).catch(handleError);
+  }
 
-function createVertical() {
-  Section.create(Editor.current.page, {
-    beforeId: null,
-    layout: "VERTICAL",
-    height: 15,
-  }).catch(handleError);
-}
+  function createHorizontal() {
+    Section.create(Editor.current.page, {
+      ...getPlacement(),
+      layout: "HORIZONTAL",
+      height: 15,
+    }).catch(handleError);
+  }
 
-function createFreeform() {
-  Section.create(Editor.current.page, {
-    beforeId: null,
-    layout: "FREEFORM",
-    sizing: "FOUR_THREE",
-  }).catch(handleError);
-}
+  function createVertical() {
+    Section.create(Editor.current.page, {
+      ...getPlacement(),
+      layout: "VERTICAL",
+      height: 15,
+    }).catch(handleError);
+  }
 
-function createCalendar() {
-  Section.create(Editor.current.page, {
-    beforeId: null,
-    layout: "CALENDAR",
-    sizing: "FOUR_THREE",
-  }).catch(handleError);
-}
+  function createFreeform() {
+    Section.create(Editor.current.page, {
+      ...getPlacement(),
+      layout: "FREEFORM",
+      sizing: "FOUR_THREE",
+    }).catch(handleError);
+  }
 
-function createMap() {
-  void showModal(PlaceModalLoader, {
-    props: {},
-    async onConfirm({ place }) {
-      const section = await Section.create(Editor.current.page, {
-        beforeId: null,
-        layout: "MAP",
-        sizing: "FOUR_THREE",
-      });
-      await Text.create(Editor.current.page, {
-        parentId: section.id,
-        sizing: "AUTO",
-        width: 8,
-        coordinates: { lat: place.lat, long: place.long },
-        content: [
-          {
-            type: "paragraph",
-            children: [{ type: "text", format: 0, text: place.name }],
-          },
-        ],
-      });
-    },
-  });
-}
+  function createCalendar() {
+    Section.create(Editor.current.page, {
+      ...getPlacement(),
+      layout: "CALENDAR",
+      sizing: "FOUR_THREE",
+    }).catch(handleError);
+  }
 
-export default function SectionItems() {
+  function createMap() {
+    void showModal(PlaceModalLoader, {
+      props: {},
+      async onConfirm({ place }) {
+        const section = await Section.create(Editor.current.page, {
+          ...getPlacement(),
+          layout: "MAP",
+          sizing: "FOUR_THREE",
+        });
+        await Text.create(Editor.current.page, {
+          parentId: section.id,
+          sizing: "AUTO",
+          width: 8,
+          coordinates: { lat: place.lat, long: place.long },
+          content: [
+            {
+              type: "paragraph",
+              children: [{ type: "text", format: 0, text: place.name }],
+            },
+          ],
+        });
+      },
+    });
+  }
+
   return (
     <MenuItemGroup>
       <MenuItem icon={<GridLayoutIcon aria-hidden="true" />} on:click={createGrid}>

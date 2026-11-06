@@ -4,6 +4,7 @@ import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
+import If from "jsx/if";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
@@ -14,7 +15,9 @@ import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
 import type { TileType } from "doc/types/enums";
+import type { TilePlacementInput } from "@/models/TileContainer";
 import type { JSX } from "jsx/jsx";
+import type { Reactive } from "reactivity";
 
 type InsertTileButton = {
   label: string;
@@ -33,21 +36,22 @@ const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 export interface InsertTileItemsProps {
-  /** Resolves the parent for inserted tiles. May throw if there is no valid target. */
-  getParentId: () => string | undefined;
+  /** Resolves where inserted tiles go. May throw if there is no valid target. */
+  getPlacement: () => TilePlacementInput;
+  /** Whether a text tile can be inserted; text is typed directly into a document body. */
+  showText?: Reactive<boolean>;
 }
 
 /** Menu items for inserting content tiles, shared by the insert menu variants. */
-export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
+export default function InsertTileItems({ getPlacement, showText }: InsertTileItemsProps) {
   async function insertTile(tileType: TileType) {
     try {
-      const sectionId = getParentId();
+      const placement = getPlacement();
 
       switch (tileType) {
         case "TEXT":
           await Text.create(Editor.current.page, {
-            parentId: sectionId,
-            beforeId: null,
+            ...placement,
             sizing: "AUTO",
           });
           break;
@@ -62,8 +66,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
                 workspaceId: Editor.current.workspaceId,
               });
               await Image.create(Editor.current.page, {
-                parentId: sectionId,
-                beforeId: null,
+                ...placement,
                 imageId: id,
                 size: { width, height },
                 sizing: "AUTO",
@@ -81,16 +84,14 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
             async onConfirm(result) {
               if ("linkedPage" in result) {
                 await PageLink.create(Editor.current.page, {
-                  parentId: sectionId,
-                  beforeId: null,
+                  ...placement,
                   linkedPage: result.linkedPage,
                   width: 5,
                   height: 5,
                 });
               } else if (result.url) {
                 await Link.create(Editor.current.page, {
-                  parentId: sectionId,
-                  beforeId: null,
+                  ...placement,
                   url: result.url,
                   width: 5,
                   height: 5,
@@ -102,8 +103,7 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
 
         case "TABLE":
           await Table.create(Editor.current.page, {
-            parentId: sectionId,
-            beforeId: null,
+            ...placement,
             height: 15,
             columns: 3,
             rows: 5,
@@ -117,11 +117,14 @@ export default function InsertTileItems({ getParentId }: InsertTileItemsProps) {
 
   return (
     <MenuItemGroup>
-      {BUTTONS.map(({ label, type, Icon }) => (
-        <MenuItem icon={<Icon aria-hidden="true" />} on:click={() => insertTile(type)}>
-          {label}
-        </MenuItem>
-      ))}
+      {BUTTONS.map(({ label, type, Icon }) => {
+        const item = (
+          <MenuItem icon={<Icon aria-hidden="true" />} on:click={() => insertTile(type)}>
+            {label}
+          </MenuItem>
+        );
+        return type === "TEXT" && showText ? <If condition={showText}>{item}</If> : item;
+      })}
     </MenuItemGroup>
   );
 }

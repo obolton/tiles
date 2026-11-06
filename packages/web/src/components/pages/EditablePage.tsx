@@ -22,9 +22,10 @@ export interface EditablePageProps {
 export default function EditablePage({ editor }: EditablePageProps) {
   const { isEditable, selection, versionHistory, share } = editor;
 
+  // Document pages show their own toolbar while nothing is selected
   const showPageToolbar = combine(
     { selection, isEditable },
-    ({ selection, isEditable }) => isEditable && selection.size === 0,
+    ({ selection, isEditable }) => isEditable && selection.size === 0 && !editor.page.body,
   );
 
   const isSidebarOpen = combine(

@@ -11,6 +11,7 @@ import { handleError } from "@/utils/errors";
 import type * as Y from "yjs";
 import type { EditorState } from "prosemirror-state";
 import type { Awareness } from "@/collaboration/types";
+import type Body from "@/models/Body";
 import type { JSX } from "jsx/jsx";
 import type { Reactive } from "reactivity";
 
@@ -19,6 +20,8 @@ export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {
   awareness: Awareness;
   undoManager?: Y.UndoManager;
   editorView: Reactive<EditorView | null>;
+  /** The document body, when the editor edits it and so embeds its tiles. */
+  body?: Body;
   onChange?: (state: EditorState) => void;
   signal?: AbortSignal;
 }
@@ -28,6 +31,7 @@ export default function CollaborativeTextEditor({
   awareness,
   undoManager,
   editorView,
+  body,
   classList,
   onChange,
   signal,
@@ -56,17 +60,21 @@ export default function CollaborativeTextEditor({
           };
         },
       });
-      const initialState = createState(null, [
-        ySyncPlugin(contentFragment),
-        yCursorPlugin(awareness),
-        createUndoPlugin(undoManager),
-        keymap({
-          "Mod-z": undo,
-          "Mod-y": redo,
-          "Mod-Shift-z": redo,
-        }),
-        onChangePlugin,
-      ]);
+      const initialState = createState(
+        null,
+        [
+          ySyncPlugin(contentFragment),
+          yCursorPlugin(awareness),
+          createUndoPlugin(undoManager),
+          keymap({
+            "Mod-z": undo,
+            "Mod-y": redo,
+            "Mod-Shift-z": redo,
+          }),
+          onChangePlugin,
+        ],
+        { body },
+      );
       const view = new EditorView({ mount: element }, { state: initialState });
       onChange?.(view.state);
       editorView.value = view;

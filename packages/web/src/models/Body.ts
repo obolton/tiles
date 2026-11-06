@@ -1,4 +1,4 @@
-import * as Y from "yjs";
+import type * as Y from "yjs";
 import { reactive, type Reactive } from "reactivity";
 import { getBody } from "doc/body";
 import {

@@ -613,10 +613,16 @@ export default class Editor {
 
     this.select([tile.id]);
     const element = document.getElementById(tile.id);
-    if (element) {
-      focusInside(element, { preventScroll: true });
-      scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+    if (!element) {
+      return;
     }
+    // An embedded tile stays node-selected in the body, so Enter continues the text below it
+    if (tile.embedded) {
+      this.focusBody({ preventScroll: true });
+    } else {
+      focusInside(element, { preventScroll: true });
+    }
+    scrollIntoViewIfNeeded(element, { behavior: "smooth" });
   }
 
   // Undo / redo
