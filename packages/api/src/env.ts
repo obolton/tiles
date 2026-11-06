@@ -35,12 +35,3 @@ export const env = defineEnv({
   AI_TEXT_PROVIDER: process.env.AI_TEXT_PROVIDER || DEFAULT_TEXT_PROVIDER,
   AI_TEXT_MODEL: process.env.AI_TEXT_MODEL || DEFAULT_TEXT_MODEL,
 });
-
-// Only needed by the matching AI text provider, which is loaded on demand.
-export const anthropicEnv = defineEnv({
-  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
-});
-
-export const googleEnv = defineEnv({
-  GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-});

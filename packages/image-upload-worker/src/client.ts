@@ -1,12 +1,11 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "api/routes/index";
-import { env } from "./env";
 
-export function createClient(sessionId: string) {
+export function createClient(apiOrigin: string, sessionId: string) {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: env.INTERNAL_API_ORIGIN,
+        url: apiOrigin,
         headers() {
           return {
             Authorization: `Bearer ${sessionId}`,

@@ -2,6 +2,8 @@ import { describe, expect, test, vi } from "vitest";
 import { httpBatchLink } from "@trpc/client";
 import { createClient } from "../client";
 
+const API_ORIGIN = "https://api.example.com";
+
 vi.mock("@trpc/client", () => ({
   createTRPCClient: vi.fn(),
   httpBatchLink: vi.fn(),
@@ -14,7 +16,7 @@ function getLastLinkConfig() {
 
 describe("createClient", () => {
   test("configures link with API origin", () => {
-    createClient("test-session");
+    createClient(API_ORIGIN, "test-session");
 
     expect(httpBatchLink).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -24,7 +26,7 @@ describe("createClient", () => {
   });
 
   test("includes Authorization header with session ID", () => {
-    createClient("my-session-id");
+    createClient(API_ORIGIN, "my-session-id");
 
     const config = getLastLinkConfig();
     const headers = (config.headers as () => Record<string, string>)();

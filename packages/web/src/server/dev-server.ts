@@ -52,13 +52,8 @@ export default async function createDevServer(options: DevServerOptions) {
     appType: "custom",
   });
 
-  // Validate the environment up front so configuration errors surface at startup.
-  const [{ publicEnv }, { serverEnv }] = await Promise.all([
-    vite.ssrLoadModule("@/env/public"),
-    vite.ssrLoadModule("@/env/server"),
-  ]);
-  publicEnv.validate();
-  serverEnv.validate();
+  // Load the environment registries up front so configuration errors surface at startup.
+  await Promise.all([vite.ssrLoadModule("@/env/public"), vite.ssrLoadModule("@/env/server")]);
 
   server.listen(port, hostname, () => console.log(`Development server: ${origin}`));
 

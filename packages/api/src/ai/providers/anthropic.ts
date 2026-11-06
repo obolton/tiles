@@ -1,4 +1,7 @@
+// oxlint-disable node/no-process-env
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { anthropicEnv } from "@/env";
+import { defineEnv } from "env";
 
-export const anthropic = createAnthropic({ apiKey: anthropicEnv.ANTHROPIC_API_KEY });
+const env = defineEnv({ ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY });
+
+export const anthropic = createAnthropic({ apiKey: env.ANTHROPIC_API_KEY });

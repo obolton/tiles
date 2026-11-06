@@ -9,6 +9,10 @@ export default mergeConfig(
       environment: "node",
       setupFiles: ["src/test/setup.ts"],
       env: {
+        API_HOST: "127.0.0.1",
+        API_PORT: "3001",
+        PUBLIC_WEB_ORIGIN: "https://test.example.com",
+        DATABASE_URL: "postgresql://test",
         PROFILE_IMAGES_BASE_URL: "https://example.com/profile-images",
         EMAIL_FROM: "from@test.com",
         AWS_ACCESS_KEY_ID: "test",

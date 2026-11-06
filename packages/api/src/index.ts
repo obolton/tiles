@@ -7,8 +7,6 @@ import { createContext } from "@/utils/trpc";
 import { hocuspocus } from "@/collaboration/instance";
 import { env } from "@/env";
 
-env.validate();
-
 const SERVER_URL = `http://${env.API_HOST}:${env.API_PORT}`;
 const COLLABORATION_PATH = "/collaboration";
 

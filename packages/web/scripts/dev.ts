@@ -7,8 +7,6 @@ const env = defineEnv({
   PUBLIC_WEB_ORIGIN: process.env.PUBLIC_WEB_ORIGIN,
 });
 
-env.validate();
-
 await createDevServer({
   hostname: env.WEB_HOST,
   port: env.WEB_PORT,

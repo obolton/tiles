@@ -19,7 +19,11 @@ const HEADERS = {
   Cookie: "__Secure-session=test-session",
 };
 
-const env = { IMAGES: {} } as Env;
+const env = {
+  IMAGES: {},
+  PUBLIC_WEB_ORIGIN: "https://example.com",
+  INTERNAL_API_ORIGIN: "https://api.example.com",
+} as Env;
 
 describe("fetch handler", () => {
   test("returns preflight response for OPTIONS requests", async () => {
@@ -31,6 +35,17 @@ describe("fetch handler", () => {
 
     expect(response.status).toBe(204);
     expect(response.headers.get("Access-Control-Allow-Methods")).toBe("PUT");
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://example.com");
+  });
+
+  test("throws when the variables are missing", async () => {
+    const request: Request<unknown, IncomingRequestCfProperties> = new Request(URL, {
+      method: "OPTIONS",
+    });
+
+    await expect(handler.fetch(request, { IMAGES: {} } as Env)).rejects.toThrow(
+      "Missing environment variables: PUBLIC_WEB_ORIGIN, INTERNAL_API_ORIGIN",
+    );
   });
 
   test("returns JSON response with image data on success", async () => {

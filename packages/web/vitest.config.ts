@@ -23,6 +23,8 @@ export default mergeConfig(
         GOOGLE_CLIENT_ID: "test-client-id",
         GOOGLE_CLIENT_SECRET: "test-client-secret",
         GOOGLE_REDIRECT_URI: "http://localhost:3000/sign-in/google/callback",
+        INTERNAL_API_ORIGIN: "https://internal.test",
+        SERVICE_API_TOKEN: "secret",
         PUBLIC_API_ORIGIN: "https://api.test",
         PUBLIC_UPLOAD_ORIGIN: "https://uploads.test",
         PUBLIC_COLLABORATION_URL: "wss://api.test/collaboration",
