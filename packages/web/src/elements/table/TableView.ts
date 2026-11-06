@@ -134,6 +134,7 @@ export default class TableView extends HTMLElement {
   private height = 0;
   private contentWidth = 0;
   private contentHeight = 0;
+  private averageRowHeight = 0;
   private footerHeight = 0;
   private buffer: HTMLTableCellElement[] = [];
   private rowBuffer: HTMLTableRowElement[] = [];
@@ -154,9 +155,8 @@ export default class TableView extends HTMLElement {
   }
 
   set columns(list: ReactiveList<ColumnItem> | undefined) {
-    this.#unsubscribeColumns?.();
     this.#columns = list;
-    this.#unsubscribeColumns = list?.subscribe((_, change) => this.applyColumnChange(change));
+    this.subscribeToLists();
     this.update();
   }
 
@@ -165,10 +165,28 @@ export default class TableView extends HTMLElement {
   }
 
   set rows(list: ReactiveList<RowItem> | undefined) {
-    this.#unsubscribeRows?.();
     this.#rows = list;
-    this.#unsubscribeRows = list?.subscribe((_, change) => this.applyRowChange(change));
+    this.subscribeToLists();
     this.update();
+  }
+
+  // Subscriptions follow the element's connection so a discarded view does not leak
+  private subscribeToLists() {
+    this.unsubscribeFromLists();
+    if (!this.isConnected) {
+      return;
+    }
+    this.#unsubscribeColumns = this.#columns?.subscribe((_, change) =>
+      this.applyColumnChange(change),
+    );
+    this.#unsubscribeRows = this.#rows?.subscribe((_, change) => this.applyRowChange(change));
+  }
+
+  private unsubscribeFromLists() {
+    this.#unsubscribeColumns?.();
+    this.#unsubscribeRows?.();
+    this.#unsubscribeColumns = undefined;
+    this.#unsubscribeRows = undefined;
   }
 
   get editable() {
@@ -188,6 +206,9 @@ export default class TableView extends HTMLElement {
       this.editAbortController?.abort();
       this.editAbortController = null;
     }
+
+    // Cached rows carry the previous mode's handles
+    this.rowBuffer = [];
 
     this.updateCellTabIndex();
     this.updateHeaders();
@@ -242,10 +263,10 @@ export default class TableView extends HTMLElement {
 
     this.addEventListener("keydown", this);
     this.addEventListener("pointerdown", this);
-    this.addEventListener("pointerup", this, { passive: true });
     this.addEventListener("dnd-dragstart", this);
     this.addEventListener("dnd-dragend", this);
     this.addEventListener("dnd-dragenter", this);
+    this.addEventListener("dnd-dragleave", this);
     this.addEventListener("dnd-dragover", this);
     this.addEventListener("dnd-drop", this);
     this.addEventListener("focusin", this);
@@ -334,11 +355,26 @@ export default class TableView extends HTMLElement {
 
     this.addEventListener("scroll", this, { passive: true });
 
+    this.observeResize();
+  }
+
+  private observeResize() {
+    this.resizeObserver?.disconnect();
     this.resizeObserver = new ResizeObserver(this.resizeObserverCallback.bind(this));
     this.resizeObserver.observe(this, { box: "border-box" });
   }
 
   connectedCallback() {
+    this.subscribeToLists();
+
+    if (this.virtualize) {
+      // Reconnected: the lists may have changed and the scroll position was lost
+      // while disconnected, so rebuild the rendered window from the model.
+      this.resetWindow();
+      this.observeResize();
+      return;
+    }
+
     this.table = this.querySelector("table");
     if (!this.table) {
       this.table = document.createElement("table");
@@ -382,8 +418,9 @@ export default class TableView extends HTMLElement {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
-    this.editAbortController?.abort();
-    this.editAbortController = null;
+    this.unsubscribeFromLists();
+    this.hideDropIndicator();
+    this.clearSelection();
   }
 
   attributeChangedCallback(
@@ -427,6 +464,8 @@ export default class TableView extends HTMLElement {
         return this.handlePointerDown(event as PointerEvent);
       case "pointerup":
         return this.handlePointerUp(event as PointerEvent);
+      case "pointercancel":
+        return this.stopDraggingRangeSelection();
       case "pointerover":
         return this.handlePointerOver(event as PointerEvent);
       case "resizeend":
@@ -437,6 +476,8 @@ export default class TableView extends HTMLElement {
         return this.handleDragEnd();
       case "dnd-dragenter":
         return this.handleDragEnter(event as DragDropEvent);
+      case "dnd-dragleave":
+        return this.hideDropIndicator();
       case "dnd-dragover":
         return this.handleDragOver(event as DragDropEvent);
       case "dnd-drop":
@@ -731,6 +772,7 @@ export default class TableView extends HTMLElement {
 
   private handleDragEnd() {
     delete this.dataset.drop;
+    this.hideDropIndicator();
   }
 
   private handleDragEnter(event: DragDropEvent) {
@@ -1018,11 +1060,15 @@ export default class TableView extends HTMLElement {
   private startDraggingRangeSelection() {
     this.isDraggingRange = true;
     this.addEventListener("pointerover", this, { passive: true });
+    addEventListener("pointerup", this, { passive: true });
+    addEventListener("pointercancel", this, { passive: true });
   }
 
   private stopDraggingRangeSelection() {
     this.isDraggingRange = false;
     this.removeEventListener("pointerover", this);
+    removeEventListener("pointerup", this);
+    removeEventListener("pointercancel", this);
   }
 
   private redrawSelection() {
@@ -1878,6 +1924,24 @@ export default class TableView extends HTMLElement {
     }
   }
 
+  private resetWindow() {
+    for (const row of this.visibleRows) {
+      this.recycleRow(row.element);
+    }
+    for (const column of this.visibleColumns) {
+      column.element.remove();
+      column.header?.remove();
+    }
+    this.visibleRows = [];
+    this.visibleColumns = [];
+    this.firstVisibleRow = 0;
+    this.firstVisibleColumn = 0;
+    this.translateX = 0;
+    this.translateY = 0;
+    this.contentWidth = 0;
+    this.contentHeight = 0;
+  }
+
   private update() {
     this.drainTop();
     this.fillTop();
@@ -1898,9 +1962,12 @@ export default class TableView extends HTMLElement {
     }
 
     const width = this.getColumnSpan(0, this.#columnCount);
-    const averageRowHeight =
-      this.visibleRows.length > 0 ? this.contentHeight / this.visibleRows.length : 0;
-    const height = this.#rowCount * averageRowHeight + this.footerHeight;
+    // Keep the last estimate while the window is empty mid-update, otherwise the
+    // scroll height collapses and the browser clamps the scroll position to 0.
+    if (this.visibleRows.length > 0) {
+      this.averageRowHeight = this.contentHeight / this.visibleRows.length;
+    }
+    const height = this.#rowCount * this.averageRowHeight + this.footerHeight;
 
     this.scrollContainer.style.setProperty("--scroll-width", width + "px");
     this.scrollContainer.style.setProperty("--scroll-height", height + "px");
@@ -1937,7 +2004,7 @@ export default class TableView extends HTMLElement {
         }
       }
     } else {
-      for (const handle of this.getElementsByTagName("resize-handle")) {
+      for (const handle of this.querySelectorAll("resize-handle")) {
         handle.remove();
       }
     }
