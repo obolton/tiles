@@ -180,7 +180,7 @@ describe("Editor", () => {
       editor.select([a.id]);
 
       expect(editor.contentPlacement).toEqual({ parentId: null, beforeId: b.id });
-      expect(editor.sectionPlacement).toEqual({ parentId: null, beforeId: b.id });
+      expect(editor.rootPlacement).toEqual({ parentId: null, beforeId: b.id });
     });
 
     test("inserts content into the active section and sections at the root", () => {
@@ -188,7 +188,7 @@ describe("Editor", () => {
       editor.select([section.id]);
 
       expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
-      expect(editor.sectionPlacement).toEqual({ parentId: null, beforeId: null });
+      expect(editor.rootPlacement).toEqual({ parentId: null, beforeId: null });
     });
 
     describe("on a document page", () => {
@@ -204,7 +204,7 @@ describe("Editor", () => {
         body.insertionPoint.value = at;
 
         expect(editor.contentPlacement).toEqual({ parentId: null, at });
-        expect(editor.sectionPlacement).toEqual({ parentId: null, at });
+        expect(editor.rootPlacement).toEqual({ parentId: null, at });
       });
 
       test("inserts after the selected embedded tile", () => {
@@ -222,7 +222,7 @@ describe("Editor", () => {
         editor.select([section.id]);
 
         expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
-        expect(editor.sectionPlacement.parentId).toBeNull();
+        expect(editor.rootPlacement.parentId).toBeNull();
       });
 
       test("deletes an embedded tile's node with its map", async () => {

@@ -109,10 +109,6 @@ export default abstract class Tile {
     return this.parentId.value === null && this.page.body !== null;
   }
 
-  get index(): number | null {
-    return this.parent?.value.indexOf(this) ?? null;
-  }
-
   get previous(): Tile | null {
     return this.container.previous(this);
   }

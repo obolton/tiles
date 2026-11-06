@@ -102,15 +102,12 @@ describe("Tile", () => {
     });
   });
 
-  describe("index, previous and next", () => {
+  describe("previous and next", () => {
     test("reflect the tile's position among its siblings", () => {
-      expect(a.index).toBe(0);
       expect(a.previous).toBeNull();
       expect(a.next).toBe(b);
-      expect(b.index).toBe(1);
       expect(b.previous).toBe(a);
       expect(b.next).toBe(c);
-      expect(c.index).toBe(2);
       expect(c.previous).toBe(b);
       expect(c.next).toBeNull();
     });
@@ -119,7 +116,6 @@ describe("Tile", () => {
       const orphan = createTile({}, { parentId: "missing-section" });
 
       expect(orphan.parent).toBeNull();
-      expect(orphan.index).toBeNull();
       expect(orphan.previous).toBeNull();
       expect(orphan.next).toBeNull();
     });

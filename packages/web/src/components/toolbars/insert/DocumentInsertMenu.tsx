@@ -14,7 +14,7 @@ export default function DocumentInsertMenu({ ...props }: JSX.Attributes<"popover
   return (
     <popover-menu {...props}>
       <InsertTileItems getPlacement={() => editor.contentPlacement} showText={showText} />
-      <SectionItems getPlacement={() => editor.sectionPlacement} />
+      <SectionItems getPlacement={() => editor.rootPlacement} />
     </popover-menu>
   );
 }

@@ -23,7 +23,7 @@ import Share from "@/components/collaboration/Share";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type Body from "@/models/Body";
-import type { TileContainer, TilePlacementInput } from "@/models/TileContainer";
+import type { TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type { Reactive, ReactiveSet } from "reactivity";
 
@@ -84,12 +84,8 @@ export default class Editor {
     return this.rootPlacement;
   }
 
-  /** Where new sections go: the document body, or the page root. Sections are never nested. */
-  get sectionPlacement(): TilePlacementInput {
-    return this.rootPlacement;
-  }
-
-  private get rootPlacement(): TilePlacementInput {
+  /** Where new root tiles go, sections among them: the document body, or the page root. */
+  get rootPlacement(): TilePlacementInput {
     const { body } = this.page;
     if (body) {
       return { parentId: null, at: this.bodyInsertionPoint(body) };
@@ -581,12 +577,7 @@ export default class Editor {
     }
 
     const doc = this.page.doc;
-    const groups = new Map<TileContainer, Tile[]>();
-    for (const tile of this.page.getTiles(ids)) {
-      const group = groups.get(tile.container) ?? [];
-      group.push(tile);
-      groups.set(tile.container, group);
-    }
+    const groups = Map.groupBy(this.page.getTiles(ids), (tile) => tile.container);
 
     void viewTransition(() => {
       doc.transact(() => {
