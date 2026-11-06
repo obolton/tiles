@@ -1,60 +1,65 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { BaseReactive, reactive } from "reactivity";
+import * as Y from "yjs";
+import { buildRow, buildTableMap } from "doc/tiles/table";
+import { orderAfter, orderedEntries } from "doc/placement/ordering";
+import { createId } from "doc/id";
 import { DragDropEvent, DragState } from "@/utils/drag";
-import type { ListChange, ReactiveList } from "reactivity";
+import SharedList from "@/collaboration/SharedList";
+import Column from "@/models/Column";
+import Row from "@/models/Row";
 import type TableView from "@/elements/table/TableView";
-import type { ColumnItem, RowItem } from "@/elements/table/TableView";
 import "@/elements/table/TableView";
 import "@/styles/tables.css";
 
-class TestList<T> extends BaseReactive<readonly T[], ListChange<T>> implements ReactiveList<T> {
-  readonly #items: T[];
-
-  constructor(items: T[]) {
-    super();
-    this.#items = items;
-  }
-
-  get value(): readonly T[] {
-    return this.#items;
-  }
-
-  get subscriberCount() {
-    return this.subscribers.size;
-  }
-
-  insert(index: number, item: T) {
-    this.#items.splice(index, 0, item);
-    this.notify({ added: [{ item, index }], removed: [], moved: [] });
-  }
+interface TableData {
+  doc: Y.Doc;
+  rowsMap: Y.Map<Y.Map<unknown>>;
+  rows: SharedList<Row>;
+  columns: SharedList<Column>;
 }
 
-function createRow(id: string): RowItem {
-  return { id, height: reactive(32) };
+function createTableData(rowCount: number, columnCount: number): TableData {
+  const doc = new Y.Doc();
+  const map = buildTableMap({ rows: rowCount, columns: columnCount });
+  doc.getMap("tiles").set("table", map);
+
+  const rowsMap = map.get("rows");
+  const columnsMap = map.get("columns");
+  if (!(rowsMap instanceof Y.Map) || !(columnsMap instanceof Y.Map)) {
+    throw new Error("Table map missing rows or columns");
+  }
+
+  return {
+    doc,
+    rowsMap,
+    rows: new SharedList(rowsMap, (id, rowMap) => new Row(id, rowMap)),
+    columns: new SharedList(columnsMap, (id, columnMap) => new Column(id, columnMap)),
+  };
 }
 
-function createColumn(id: string): ColumnItem {
-  return { id, width: reactive(100), title: reactive(`Column ${id}`) };
+function insertRow({ doc, rowsMap }: TableData, afterId: string | null) {
+  const id = createId();
+  doc.transact(() => {
+    rowsMap.set(id, buildRow(orderAfter(orderedEntries(rowsMap), afterId)));
+  });
+  return id;
 }
 
 function mount({ rows = 5, columns = 3, editable = true } = {}) {
-  const rowList = new TestList(Array.from({ length: rows }, (_, i) => createRow(`row-${i}`)));
-  const columnList = new TestList(
-    Array.from({ length: columns }, (_, i) => createColumn(`col-${i}`)),
-  );
+  const data = createTableData(rows, columns);
 
   const view = document.createElement("table-view");
-  view.style.width = "400px";
+  view.style.width = "800px";
   view.style.height = "300px";
-  view.rows = rowList;
-  view.columns = columnList;
+  view.rows = data.rows;
+  view.columns = data.columns;
   view.editable = editable;
   view.updateCell = (row, column, cell) => {
     cell.textContent = `${row.id}/${column.id}`;
   };
   document.body.appendChild(view);
 
-  return { view, rowList, columnList };
+  return { view, data };
 }
 
 async function rendered(view: TableView) {
@@ -214,35 +219,36 @@ describe("TableView (browser)", () => {
 
   describe("reconnection", () => {
     test("rebuilds the rendered rows from the model after being re-inserted", async () => {
-      const { view, rowList } = mount({ rows: 5, columns: 2 });
+      const { view, data } = mount({ rows: 5, columns: 2 });
       await rendered(view);
-      expect(rowList.subscriberCount).toBe(1);
+      const unsubscribe = vi.spyOn(data.rows, "unsubscribe");
 
       view.remove();
-      expect(rowList.subscriberCount).toBe(0);
-      rowList.insert(0, createRow("row-new"));
+      expect(unsubscribe).toHaveBeenCalledTimes(1);
+      expect(view.body.rows).toHaveLength(0);
+      const inserted = insertRow(data, null);
 
       document.body.appendChild(view);
       await vi.waitFor(() => {
         expect(view.body.rows).toHaveLength(6);
       });
-      expect(view.body.rows[0]?.dataset.id).toBe("row-new");
-      expect(cell(view, 0, 0).textContent).toBe("row-new/col-0");
-      expect(cell(view, 5, 1).textContent).toBe("row-4/col-1");
-      expect(rowList.subscriberCount).toBe(1);
+      const columns = data.columns.value.map((column) => column.id);
+      expect(view.body.rows[0]?.dataset.id).toBe(inserted);
+      expect(cell(view, 0, 0).textContent).toBe(`${inserted}/${columns[0]}`);
+      expect(cell(view, 5, 1).textContent).toBe(`${data.rows.value[5]?.id}/${columns[1]}`);
     });
 
-    test("keeps applying list changes after being re-inserted", async () => {
-      const { view, rowList } = mount({ rows: 3, columns: 2 });
+    test("keeps applying data changes after being re-inserted", async () => {
+      const { view, data } = mount({ rows: 3, columns: 2 });
       await rendered(view);
 
       view.remove();
       document.body.appendChild(view);
       await rendered(view);
 
-      rowList.insert(3, createRow("row-appended"));
+      const appended = insertRow(data, data.rows.value.at(-1)?.id ?? null);
       expect(view.body.rows).toHaveLength(4);
-      expect(cell(view, 3, 0).textContent).toBe("row-appended/col-0");
+      expect(cell(view, 3, 0).textContent).toBe(`${appended}/${data.columns.value[0]?.id}`);
     });
 
     test("clears the selection when removed", async () => {

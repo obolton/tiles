@@ -156,7 +156,7 @@ export default class TableView extends HTMLElement {
 
   set columns(list: ReactiveList<ColumnItem> | undefined) {
     this.#columns = list;
-    this.subscribeToLists();
+    this.subscribeToData();
     this.update();
   }
 
@@ -166,13 +166,13 @@ export default class TableView extends HTMLElement {
 
   set rows(list: ReactiveList<RowItem> | undefined) {
     this.#rows = list;
-    this.subscribeToLists();
+    this.subscribeToData();
     this.update();
   }
 
   // Subscriptions follow the element's connection so a discarded view does not leak
-  private subscribeToLists() {
-    this.unsubscribeFromLists();
+  private subscribeToData() {
+    this.unsubscribeFromData();
     if (!this.isConnected) {
       return;
     }
@@ -182,7 +182,7 @@ export default class TableView extends HTMLElement {
     this.#unsubscribeRows = this.#rows?.subscribe((_, change) => this.applyRowChange(change));
   }
 
-  private unsubscribeFromLists() {
+  private unsubscribeFromData() {
     this.#unsubscribeColumns?.();
     this.#unsubscribeRows?.();
     this.#unsubscribeColumns = undefined;
@@ -365,12 +365,10 @@ export default class TableView extends HTMLElement {
   }
 
   connectedCallback() {
-    this.subscribeToLists();
+    this.subscribeToData();
 
     if (this.virtualize) {
-      // Reconnected: the lists may have changed and the scroll position was lost
-      // while disconnected, so rebuild the rendered window from the model.
-      this.resetWindow();
+      // Reconnected: the observer's initial callback refills the window
       this.observeResize();
       return;
     }
@@ -418,9 +416,12 @@ export default class TableView extends HTMLElement {
   disconnectedCallback() {
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
-    this.unsubscribeFromLists();
+    this.unsubscribeFromData();
     this.hideDropIndicator();
     this.clearSelection();
+    // The scroll position is lost on removal and the data may change while
+    // disconnected, so the window is rebuilt from the model on reconnect.
+    this.resetWindow();
   }
 
   attributeChangedCallback(
