@@ -53,6 +53,7 @@
     "culori": "^4.0.2",
     "doc": "workspace:*",
     "entities": "^8.1.0",
+    "env": "workspace:*",
     "fonts": "workspace:*",
     "jittered-fractional-indexing": "^1.0.1",
     "jose": "^6.2.12",

@@ -170,14 +170,3 @@ describe("createContext with a service token", () => {
     expect(getSessionContext).not.toHaveBeenCalled();
   });
 });
-
-describe("SERVICE_API_TOKEN", () => {
-  test("is required when the module loads", async () => {
-    vi.resetModules();
-    vi.stubEnv("SERVICE_API_TOKEN", "");
-
-    await expect(import("@/utils/trpc")).rejects.toThrow("SERVICE_API_TOKEN is not defined");
-
-    vi.unstubAllEnvs();
-  });
-});

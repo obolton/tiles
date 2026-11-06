@@ -1,5 +1,12 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi, afterAll } from "vitest";
 import { GET } from "../index";
+
+// The server env registry only loads in the SSR context.
+vi.hoisted(() => vi.stubEnv("SSR", true));
+
+afterAll(() => {
+  vi.unstubAllEnvs();
+});
 
 const PAGE_ID = "b8c96309-cc54-445b-a274-98b6be12c43f";
 

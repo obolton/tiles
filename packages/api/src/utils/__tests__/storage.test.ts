@@ -1,5 +1,4 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import { AssertionError } from "node:assert";
+import { describe, expect, test, vi } from "vitest";
 import { Buffer } from "node:buffer";
 import { IMAGES_BUCKET, PROFILE_IMAGES_BUCKET, objectExists, upload } from "../storage";
 
@@ -122,10 +121,6 @@ describe("objectExists", () => {
 });
 
 describe("module initialization", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
-
   test("creates a single S3 client for the R2 endpoint", () => {
     expect(clients).toEqual([
       {
@@ -134,18 +129,5 @@ describe("module initialization", () => {
         credentials: { accessKeyId: "test", secretAccessKey: "test" },
       },
     ]);
-  });
-
-  test.each([
-    "CLOUDFLARE_ACCOUNT_ID",
-    "CLOUDFLARE_R2_ACCESS_KEY_ID",
-    "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
-    "CLOUDFLARE_R2_BUCKET_IMAGES",
-    "CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES",
-  ])("requires %s when the module loads", async (name) => {
-    vi.resetModules();
-    vi.stubEnv(name, "");
-
-    await expect(import("@/utils/storage")).rejects.toThrow(AssertionError);
   });
 });

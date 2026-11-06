@@ -8,13 +8,20 @@ import { handleError } from "@/utils/errors";
 const url = new URL(window.location.href);
 const editParam = url.searchParams.get("edit");
 const versionParam = url.searchParams.get("version");
+const presentParam = url.searchParams.get("present");
 
 if (editParam) {
   url.searchParams.delete("edit");
   history.replaceState(null, "", url);
 }
 
-if (!versionParam && (editParam || sessionStorage.getItem("edit") === window.location.pathname)) {
+if (presentParam !== null) {
+  // Presenting always leaves edit mode, as the Present button and shortcut do
+  setEditMode(false);
+} else if (
+  !versionParam &&
+  (editParam || sessionStorage.getItem("edit") === window.location.pathname)
+) {
   setEditMode(true);
 }
 
@@ -24,7 +31,6 @@ if (isSignedIn()) {
   await hydrateRoute().catch(handleError);
 }
 
-const presentParam = url.searchParams.get("present");
 if (presentParam !== null) {
   startPresentation(parseInt(presentParam, 10) || 0).catch(handleError);
 }

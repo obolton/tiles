@@ -1,6 +1,6 @@
-import assert from "node:assert";
 import { escapeUTF8 } from "entities";
 import type { Email } from "@/utils/email";
+import { env } from "@/env";
 
 export interface InviteToWorkspaceEmailOptions {
   inviter: { id: string; name: string };
@@ -8,8 +8,7 @@ export interface InviteToWorkspaceEmailOptions {
   key: string;
 }
 
-assert(process.env.CLIENT_ORIGIN, "CLIENT_ORIGIN is required");
-const BASE_URL = process.env.CLIENT_ORIGIN;
+const BASE_URL = env.CLIENT_ORIGIN;
 
 export function inviteToWorkspaceEmail({
   inviter,

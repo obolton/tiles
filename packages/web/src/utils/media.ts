@@ -1,8 +1,8 @@
 import { user } from "@/utils/sessions";
+import { publicEnv } from "@/env/public";
 
 export const ACCEPT_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
 export const ACCEPT_CONTENT_TYPES = new Set(["text/uri-list"]).union(ACCEPT_IMAGE_TYPES);
-export const UPLOAD_ORIGIN = import.meta.env.PUBLIC_UPLOAD_ORIGIN;
 export const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25 MB
 
 export interface UploadMediaOptions {
@@ -31,7 +31,7 @@ export async function uploadMedia({
     throw new Error("Not signed in");
   }
 
-  const url = new URL(UPLOAD_ORIGIN);
+  const url = new URL(publicEnv.PUBLIC_UPLOAD_ORIGIN);
   url.searchParams.set("workspaceId", workspaceId);
   url.searchParams.set("purpose", purpose);
 

@@ -38,9 +38,7 @@ describe("serviceClient", () => {
     vi.stubEnv("SERVICE_API_TOKEN", "secret");
     vi.stubEnv("INTERNAL_API_ORIGIN", "https://internal.test");
 
-    await expect(loadServiceClient()).rejects.toThrow(
-      "The service API client is only available in the server context",
-    );
+    await expect(loadServiceClient()).rejects.toThrow("only available in the server context");
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -65,18 +63,6 @@ describe("serviceClient", () => {
       const headers = fetchedHeaders();
       expect(headers.get(SERVICE_TOKEN_HEADER)).toBe("secret");
       expect(headers.get("Authorization")).toBeNull();
-    });
-
-    test("requires the service token", async () => {
-      vi.stubEnv("SERVICE_API_TOKEN", "");
-
-      await expect(loadServiceClient()).rejects.toThrow("SERVICE_API_TOKEN is not defined");
-    });
-
-    test("requires the internal API origin", async () => {
-      vi.stubEnv("INTERNAL_API_ORIGIN", "");
-
-      await expect(loadServiceClient()).rejects.toThrow("INTERNAL_API_ORIGIN is not defined");
     });
   });
 });

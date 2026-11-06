@@ -31,6 +31,7 @@ describe("fetch handler", () => {
 
     expect(response.status).toBe(204);
     expect(response.headers.get("Access-Control-Allow-Methods")).toBe("PUT");
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("https://example.com");
   });
 
   test("returns JSON response with image data on success", async () => {

@@ -6,6 +6,7 @@ export default defineConfig({
       "packages/api",
       "packages/dev-cdn",
       "packages/doc",
+      "packages/env",
       "packages/fonts",
       "packages/image-upload-worker",
       "packages/jsx",

@@ -31,10 +31,6 @@ export default mergeConfig(
       }),
     ],
     test: {
-      env: {
-        PUBLIC_API_ORIGIN: "https://api.test",
-        PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
-      },
       browser: {
         enabled: true,
         headless: true,

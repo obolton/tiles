@@ -2,6 +2,7 @@
   "$schema": "../node_modules/oxlint/configuration_schema.json",
   "extends": ["../.oxlintrc.json"],
   "rules": {
-    "import/extensions": ["error", { "ts": "always" }]
+    "import/extensions": ["error", { "ts": "always" }],
+    "node/no-process-env": "off"
   }
 }

@@ -10,5 +10,5 @@
     "rootDir": "."
   },
   "include": ["./src/**/*", "./src/**/*.json", "./scripts/**/*"],
-  "references": [{ "path": "../doc" }, { "path": "../fonts" }]
+  "references": [{ "path": "../doc" }, { "path": "../env" }, { "path": "../fonts" }]
 }
