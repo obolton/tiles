@@ -5,13 +5,6 @@ const { purgeCache } = vi.hoisted(() => ({ purgeCache: vi.fn(async () => {}) }))
 
 vi.mock("@/utils/cloudflare", () => ({ purgeCache }));
 
-// NODE_ENV is read when the env registry loads, so production tests evaluate the module afresh.
-async function loadInProduction() {
-  vi.stubEnv("NODE_ENV", "production");
-  vi.resetModules();
-  return import("../cdn");
-}
-
 describe("getProfileImageUrl", () => {
   test("returns the profile image URL", () => {
     const result = getProfileImageUrl("image-key");
@@ -41,8 +34,11 @@ describe("invalidateCachedUrls", () => {
   describe("in production", () => {
     let cdn: typeof import("../cdn");
 
+    // NODE_ENV is read when the env registry loads, so evaluate the module afresh.
     beforeEach(async () => {
-      cdn = await loadInProduction();
+      vi.stubEnv("NODE_ENV", "production");
+      vi.resetModules();
+      cdn = await import("../cdn");
     });
 
     afterEach(() => {
@@ -89,7 +85,9 @@ describe("invalidateCachedPages", () => {
   let cdn: typeof import("../cdn");
 
   beforeEach(async () => {
-    cdn = await loadInProduction();
+    vi.stubEnv("NODE_ENV", "production");
+    vi.resetModules();
+    cdn = await import("../cdn");
   });
 
   afterEach(() => {

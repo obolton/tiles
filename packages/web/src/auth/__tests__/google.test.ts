@@ -1,10 +1,17 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach, afterAll } from "vitest";
 import { getGoogleAuthorizationUrl, exchangeCode, verifyIdToken } from "../google";
 import { jwtVerify } from "jose";
 import * as oauth2 from "../oauth2";
 import { serverEnv } from "@/env/server";
 
+// The server env registry only loads in the SSR context.
+vi.hoisted(() => vi.stubEnv("SSR", true));
+
 vi.mock("jose");
+
+afterAll(() => {
+  vi.unstubAllEnvs();
+});
 
 describe("google", () => {
   describe("getGoogleAuthorizationUrl", () => {

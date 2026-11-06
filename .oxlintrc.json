@@ -34,14 +34,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "**/src/env.ts",
-        "**/src/env/*.ts",
-        "**/*.config.ts",
-        "**/vitest.*.ts",
-        "**/scripts/**",
-        "**/prisma/**"
-      ],
+      "files": ["**/*.config.ts", "**/vitest.*.ts", "**/scripts/**", "**/prisma/**"],
       "rules": {
         "node/no-process-env": "off"
       }

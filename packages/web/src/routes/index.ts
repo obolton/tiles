@@ -1,4 +1,5 @@
 import client from "@/api/client";
+import { publicEnv } from "@/env/public";
 import { getSessionId } from "@/utils/sessions";
 import { redirect, notFound } from "@/router/responses";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
@@ -10,9 +11,6 @@ import { getPageBodyStyle } from "@/utils/themes";
 import { SITE_DESCRIPTION } from "@/constants/site";
 import { initializeDoc } from "@/collaboration/doc";
 import type { Route, RouteLoaderResult, RouteMetadata } from "@/router/router";
-
-// Optional, so read directly until the env registry supports optional values.
-const PAGE_ID = import.meta.env.PUBLIC_PAGE_ID;
 
 export async function indexRoute(request: Request) {
   const sessionId = getSessionId(request.headers);
@@ -35,11 +33,7 @@ export async function indexRoute(request: Request) {
 }
 
 async function loader(): RouteLoaderResult<PageProps> {
-  if (!PAGE_ID) {
-    return notFound();
-  }
-
-  const page = await client.pages.getById.query({ id: PAGE_ID });
+  const page = await client.pages.getById.query({ id: publicEnv.PUBLIC_PAGE_ID });
 
   if (!page) {
     return notFound();

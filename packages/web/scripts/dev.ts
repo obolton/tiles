@@ -2,11 +2,9 @@ import { defineEnv } from "env";
 import createDevServer from "@/server/dev-server";
 
 const env = defineEnv({
-  required: {
-    WEB_HOST: process.env.WEB_HOST,
-    WEB_PORT: Number(process.env.WEB_PORT),
-    PUBLIC_WEB_ORIGIN: process.env.PUBLIC_WEB_ORIGIN,
-  },
+  WEB_HOST: process.env.WEB_HOST,
+  WEB_PORT: parseInt(process.env.WEB_PORT ?? "", 10),
+  PUBLIC_WEB_ORIGIN: process.env.PUBLIC_WEB_ORIGIN,
 });
 
 env.validate();

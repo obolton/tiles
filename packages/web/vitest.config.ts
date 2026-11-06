@@ -30,6 +30,7 @@ export default mergeConfig(
         PUBLIC_IMAGES_BASE_URL: "https://images.test",
         PUBLIC_PROFILE_IMAGES_BASE_URL: "https://profile-images.test",
         PUBLIC_SESSION_COOKIE_DOMAIN: ".test",
+        PUBLIC_PAGE_ID: "home-page",
       },
     },
   }),

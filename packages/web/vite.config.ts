@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import svgPlugin from "./src/vite/svg";
 import routeManifestPlugin from "./src/vite/routeManifest";
 import cloudflarePlugin from "./src/vite/cloudflare";
+import serverOnlyPlugin from "./src/vite/serverOnly";
 import { defineConfig } from "vite";
 
 const IS_CLOUDFLARE_WORKER = process.env.CF_PAGES === "1";
@@ -27,7 +28,15 @@ export default defineConfig(({ isSsrBuild }) => ({
       "@": resolve(__dirname, "./src"),
     },
   },
-  plugins: [svgPlugin({ importSource: "jsx" }), routeManifestPlugin(), cloudflarePlugin()],
+  plugins: [
+    svgPlugin({ importSource: "jsx" }),
+    routeManifestPlugin(),
+    cloudflarePlugin(),
+    serverOnlyPlugin({
+      modules: ["@/env/server"],
+      clientEntries: ["hydrate", "global", "pages-init"],
+    }),
+  ],
   build: {
     target: "esnext",
     assetsDir: isSsrBuild ? "" : "assets",

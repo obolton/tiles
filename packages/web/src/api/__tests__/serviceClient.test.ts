@@ -38,9 +38,7 @@ describe("serviceClient", () => {
     vi.stubEnv("SERVICE_API_TOKEN", "secret");
     vi.stubEnv("INTERNAL_API_ORIGIN", "https://internal.test");
 
-    await expect(loadServiceClient()).rejects.toThrow(
-      "The service API client is only available in the server context",
-    );
+    await expect(loadServiceClient()).rejects.toThrow("only available in the server context");
     expect(fetch).not.toHaveBeenCalled();
   });
 

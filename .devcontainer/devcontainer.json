@@ -67,6 +67,8 @@
     "PUBLIC_IMAGES_BASE_URL": "https://cdn.${localWorkspaceFolderBasename}.tiles.test/images",
     "PUBLIC_FONTS_BASE_URL": "https://cdn.${localWorkspaceFolderBasename}.tiles.test/fonts",
     "PUBLIC_SESSION_COOKIE_DOMAIN": ".${localWorkspaceFolderBasename}.tiles.test",
+    "PAGE_ID": "b8c96309-cc54-445b-a274-98b6be12c43f",
+    "PUBLIC_PAGE_ID": "b8c96309-cc54-445b-a274-98b6be12c43f",
     "PLAYWRIGHT_WS_ENDPOINT": "ws://tiles-playwright:3100/",
     "APP_HOST": "${localWorkspaceFolderBasename}-app"
   },

@@ -1,2 +1,2 @@
 export { defineEnv } from "./defineEnv";
-export type { Env, EnvDefinition, ValidateOptions } from "./defineEnv";
+export type { Env, EnvValue, ValidateOptions } from "./defineEnv";

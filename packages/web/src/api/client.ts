@@ -1,11 +1,11 @@
 import { createTRPCClient, httpBatchLink, httpBatchStreamLink, splitLink } from "@trpc/client";
 import { publicEnv } from "@/env/public";
-import { serverEnv } from "@/env/server";
 import type { AppRouter, AppRouterInputs, AppRouterOutputs } from "api/routes/index";
 import type { Operation } from "@trpc/client";
 
+// The server registry is loaded lazily so that it never ends up in the client bundle.
 const API_ORIGIN = import.meta.env.SSR
-  ? serverEnv.INTERNAL_API_ORIGIN
+  ? (await import("@/env/server")).serverEnv.INTERNAL_API_ORIGIN
   : publicEnv.PUBLIC_API_ORIGIN;
 
 function fetchWithCredentials(url: RequestInfo | URL, options?: RequestInit) {
