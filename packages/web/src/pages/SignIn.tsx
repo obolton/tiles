@@ -4,8 +4,7 @@ import { SITE_NAME } from "@/constants/site";
 import GoogleIcon from "@/icons/google.svg?jsx";
 import ErrorIcon from "@/icons/error.svg?jsx";
 import styles from "./SignIn.module.css";
-
-export type SignInError = "cancelled" | "failed";
+import type { SignInError } from "@/auth/oauth2";
 
 export interface SignInProps {
   destination: string | null;
@@ -36,10 +35,10 @@ export default function SignIn({ destination, error }: SignInProps) {
           <p className={styles.description}>Use your Google account to continue.</p>
 
           {error ? (
-            <div className={styles.alert} role="alert">
+            <p className={styles.alert} role="alert">
               <ErrorIcon aria-hidden="true" />
               {ERROR_MESSAGES[error]}
-            </div>
+            </p>
           ) : null}
 
           <a className="secondary" href={withDestination("/sign-in/google", destination)}>

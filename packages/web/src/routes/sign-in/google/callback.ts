@@ -1,17 +1,14 @@
-import { getOAuth2Cookies, clearOAuth2Cookies, compareOAuth2State } from "@/auth/oauth2";
+import {
+  getOAuth2Cookies,
+  clearOAuth2Cookies,
+  compareOAuth2State,
+  getSignInErrorUrl,
+} from "@/auth/oauth2";
 import { redirect, forbidden } from "@/router/responses";
 import { exchangeCode, verifyIdToken } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
-
-function getSignInErrorUrl(error: "cancelled" | "failed", destination: string | null) {
-  const params = new URLSearchParams({ error });
-  if (destination) {
-    params.set("destination", destination);
-  }
-  return `/sign-in?${params}`;
-}
 
 export const GET: APIRequestHandler = async ({ url, headers }) => {
   const cookies = getOAuth2Cookies(headers.get("cookie") ?? "");

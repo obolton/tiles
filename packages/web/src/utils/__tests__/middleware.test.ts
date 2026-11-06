@@ -25,7 +25,7 @@ describe("authenticatedRoute", () => {
   });
 
   test("omits paths that are not valid destinations", () => {
-    const response = authenticatedRoute(new Request("http://localhost/workspaces/not-a-uuid"));
+    const response = authenticatedRoute(new Request("http://localhost/not-a-route"));
     expect(response?.headers.get("Location")).toBe("/sign-in");
   });
 });

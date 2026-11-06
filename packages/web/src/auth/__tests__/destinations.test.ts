@@ -17,6 +17,7 @@ describe("validateDestination", () => {
 
   test("accepts page paths", () => {
     expect(validateDestination(`pages/${PAGE_ID}`)).toBe(true);
+    expect(validateDestination("pages/my-page")).toBe(true);
   });
 
   test("accepts workspace paths", () => {
@@ -24,6 +25,7 @@ describe("validateDestination", () => {
     expect(validateDestination(`workspaces/${WORKSPACE_ID}/shared`)).toBe(true);
     expect(validateDestination(`workspaces/${WORKSPACE_ID}/folders/${PAGE_ID}`)).toBe(true);
     expect(validateDestination(`workspaces/${WORKSPACE_ID}/settings/workspace/members`)).toBe(true);
+    expect(validateDestination("workspaces/acme/shared")).toBe(true);
   });
 
   test("rejects invalid paths", () => {
@@ -38,10 +40,11 @@ describe("validateDestination", () => {
     expect(validateDestination("INVITES/accept/abc")).toBe(false);
     expect(validateDestination("invites/join-workspace/")).toBe(false);
     expect(validateDestination("invites/other/abc")).toBe(false);
-    expect(validateDestination("pages/not-a-uuid")).toBe(false);
+    expect(validateDestination("pages/")).toBe(false);
+    expect(validateDestination("pages/../sign-in")).toBe(false);
+    expect(validateDestination("pages/abc%2Fdef")).toBe(false);
     expect(validateDestination(`pages/${PAGE_ID}/edit`)).toBe(false);
     expect(validateDestination(`pages/${PAGE_ID}?version=1`)).toBe(false);
-    expect(validateDestination("workspaces/not-a-uuid")).toBe(false);
     expect(validateDestination(`workspaces/${WORKSPACE_ID}/a/b/c/d`)).toBe(false);
     expect(validateDestination(`workspaces/${WORKSPACE_ID}//evil.com`)).toBe(false);
     expect(validateDestination("sign-in")).toBe(false);

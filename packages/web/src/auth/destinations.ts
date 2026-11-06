@@ -1,11 +1,10 @@
-const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
 const SEGMENT = "[A-Za-z0-9_-]+";
 
 // Same-origin paths (without the leading slash) that a user may be returned to after signing in
 const DESTINATION_PATTERNS = [
   new RegExp(`^invites/(accept|join-workspace)/${SEGMENT}$`),
-  new RegExp(`^pages/${UUID}$`),
-  new RegExp(`^workspaces/${UUID}(/${SEGMENT}){0,3}$`),
+  new RegExp(`^pages/${SEGMENT}$`),
+  new RegExp(`^workspaces/${SEGMENT}(/${SEGMENT}){0,3}$`),
 ];
 
 export function validateDestination(destination: string) {

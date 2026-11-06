@@ -5,14 +5,6 @@ import { signedOutRoute, loader } from "../index";
 const PAGE_ID = "b8c96309-cc54-445b-a274-98b6be12c43f";
 const SIGNED_IN_HEADERS = { cookie: `${SESSION_COOKIE_NAME}=session-id` };
 
-async function load(url: string) {
-  const result = await loader({ url: new URL(url), headers: new Headers(), parameters: {} });
-  if (result instanceof Response) {
-    throw new Error("Unexpected response");
-  }
-  return result;
-}
-
 describe("signedOutRoute", () => {
   test("redirects signed-in users to the index route", () => {
     const response = signedOutRoute(
@@ -47,27 +39,58 @@ describe("signedOutRoute", () => {
 
 describe("loader", () => {
   test("returns no error or destination by default", async () => {
-    const { title, data } = await load("http://localhost/sign-in");
-    expect(title).toBe("Sign in - Tiles");
-    expect(data).toEqual({ destination: null, error: null });
+    await expect(
+      loader({ url: new URL("http://localhost/sign-in"), headers: new Headers(), parameters: {} }),
+    ).resolves.toMatchObject({
+      title: "Sign in - Tiles",
+      data: { destination: null, error: null },
+    });
   });
 
   test("passes a valid destination through", async () => {
-    const { data } = await load(`http://localhost/sign-in?destination=pages%2F${PAGE_ID}`);
-    expect(data.destination).toBe(`pages/${PAGE_ID}`);
+    await expect(
+      loader({
+        url: new URL(`http://localhost/sign-in?destination=pages%2F${PAGE_ID}`),
+        headers: new Headers(),
+        parameters: {},
+      }),
+    ).resolves.toMatchObject({ data: { destination: `pages/${PAGE_ID}` } });
   });
 
   test("drops an invalid destination", async () => {
-    const { data } = await load("http://localhost/sign-in?destination=https%3A%2F%2Fevil.com");
-    expect(data.destination).toBeNull();
+    await expect(
+      loader({
+        url: new URL("http://localhost/sign-in?destination=https%3A%2F%2Fevil.com"),
+        headers: new Headers(),
+        parameters: {},
+      }),
+    ).resolves.toMatchObject({ data: { destination: null } });
   });
 
   test("parses known errors", async () => {
-    expect((await load("http://localhost/sign-in?error=cancelled")).data.error).toBe("cancelled");
-    expect((await load("http://localhost/sign-in?error=failed")).data.error).toBe("failed");
+    await expect(
+      loader({
+        url: new URL("http://localhost/sign-in?error=cancelled"),
+        headers: new Headers(),
+        parameters: {},
+      }),
+    ).resolves.toMatchObject({ data: { error: "cancelled" } });
+    await expect(
+      loader({
+        url: new URL("http://localhost/sign-in?error=failed"),
+        headers: new Headers(),
+        parameters: {},
+      }),
+    ).resolves.toMatchObject({ data: { error: "failed" } });
   });
 
   test("ignores unknown errors", async () => {
-    expect((await load("http://localhost/sign-in?error=other")).data.error).toBeNull();
+    await expect(
+      loader({
+        url: new URL("http://localhost/sign-in?error=other"),
+        headers: new Headers(),
+        parameters: {},
+      }),
+    ).resolves.toMatchObject({ data: { error: null } });
   });
 });

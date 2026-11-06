@@ -1,5 +1,6 @@
-import SignIn, { type SignInProps, type SignInError } from "@/pages/SignIn";
+import SignIn, { type SignInProps } from "@/pages/SignIn";
 import { getDestination } from "@/auth/destinations";
+import type { SignInError } from "@/auth/oauth2";
 import { getSessionId } from "@/utils/sessions";
 import { redirect } from "@/router/responses";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";

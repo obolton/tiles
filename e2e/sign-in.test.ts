@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
 
+// Created by packages/api/prisma/seed.ts
+const SEED_WORKSPACE_ID = "31042e0b-f7e7-4fe1-a361-28780bf53ee9";
+
 test.describe("sign-in page", () => {
   test("renders the sign-in page", async ({ page }) => {
     await page.goto("/sign-in");
@@ -32,21 +35,16 @@ test.describe("sign-in page", () => {
     );
   });
 
-  test("returns to the requested page after signing in", async ({ page, context }) => {
-    // Sign in once to find the test user's workspace, then start again signed out.
-    await page.goto("/sign-in/test-user");
-    await expect(page).toHaveURL(/\/workspaces\/[0-9a-f-]+$/);
-    const workspaceUrl = new URL(page.url());
-    const destination = workspaceUrl.pathname.slice(1);
-    await context.clearCookies();
+  test("returns to the requested page after signing in", async ({ page, baseURL }) => {
+    const destination = `workspaces/${SEED_WORKSPACE_ID}`;
 
-    await page.goto(workspaceUrl.pathname);
+    await page.goto(`/${destination}`);
     await expect(page).toHaveURL(
-      new URL(`/sign-in?destination=${encodeURIComponent(destination)}`, workspaceUrl).href,
+      new URL(`/sign-in?destination=${encodeURIComponent(destination)}`, baseURL).href,
     );
 
     await page.goto(`/sign-in/test-user?destination=${encodeURIComponent(destination)}`);
-    await expect(page).toHaveURL(workspaceUrl.href);
+    await expect(page).toHaveURL(new URL(`/${destination}`, baseURL).href);
   });
 
   test("redirects signed-in users away from the sign-in page", async ({ page }) => {
