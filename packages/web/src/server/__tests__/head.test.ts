@@ -20,7 +20,9 @@ describe("renderHead", () => {
   test("emits viewport, icon and theme color", () => {
     const head = render();
     expect(head).toContain(`<meta charset="utf-8">`);
-    expect(head).toContain(`<meta name="viewport" content="width=device-width, initial-scale=1">`);
+    expect(head).toContain(
+      `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">`,
+    );
     expect(head).toContain(`<meta name="theme-color" content="#ffffff">`);
     expect(head).toContain(`<link rel="icon" href="/favicon.svg" type="image/svg+xml">`);
   });

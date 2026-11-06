@@ -7,6 +7,9 @@
 }
 
 .rail {
+  --thumbnail-inline-size: 100%;
+  --thumbnail-block-size: auto;
+
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
@@ -19,4 +22,35 @@
 
 .add-slide {
   margin: 24px;
+}
+
+/* A horizontal rail under the header on phones */
+@media (width < 640px) {
+  .panel {
+    flex-direction: row;
+    border-inline-end: none;
+    border-block-end: 1px solid rgb(0 0 0 / 8%);
+
+    &::part(handle) {
+      display: none;
+    }
+  }
+
+  .rail {
+    --thumbnail-inline-size: auto;
+    --thumbnail-block-size: 100%;
+
+    flex-direction: row;
+    min-width: 0;
+    overflow: auto hidden;
+    scrollbar-width: none;
+    scroll-padding-inline: 16px;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .add-slide {
+    align-self: center;
+    margin: 12px 12px 12px 0;
+  }
 }

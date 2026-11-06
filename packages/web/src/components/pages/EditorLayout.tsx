@@ -26,9 +26,10 @@ export default function EditorLayout({ start, end, endVisible, children }: Edito
   const endSize = reactive(clamp(endWidth.value));
   const isEndVisible = endVisible ?? reactive(true);
 
+  // Raw panel sizes; the stylesheet derives the applied widths per breakpoint
   const style = {
-    "--sidebar-width-start": start ? startSize.derive((value) => `${value}px`) : "0px",
-    "--sidebar-width-end": end
+    "--sidebar-size-start": start ? startSize.derive((value) => `${value}px`) : "0px",
+    "--sidebar-size-end": end
       ? combine({ visible: isEndVisible, size: endSize }, ({ visible, size }) =>
           visible ? `${size}px` : "0px",
         )

@@ -139,3 +139,60 @@ export const WithTextLabels: Story = {
     </floating-toolbar>
   ),
 };
+
+/** A primary toolbar wider than its container scrolls, with fades marking the clipped edges */
+export const Overflowing: Story = {
+  render: () => (
+    <div style={{ width: "320px" }}>
+      <floating-toolbar className="primary" aria-label="Text toolbar" name="overflowing-toolbar">
+        <toolbar-tab name="text" label="Text">
+          <ToolbarGroup label="Text style">
+            <ToolbarButton label="Bold">
+              <BoldIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Italic">
+              <ItalicIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Underline">
+              <UnderlineIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+
+          <ToolbarGroup label="Alignment">
+            <ToolbarButton label="Align left">
+              <AlignLeftIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Align center">
+              <AlignCenterIcon aria-hidden="true" />
+            </ToolbarButton>
+            <ToolbarButton label="Align right">
+              <AlignRightIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+
+          <ToolbarGroup label="Insert">
+            <ToolbarButton label="Insert link">
+              <LinkIcon aria-hidden="true" />
+              Insert link
+            </ToolbarButton>
+          </ToolbarGroup>
+
+          <ToolbarGroup label="Danger zone">
+            <ToolbarButton label="Delete" destructive>
+              <TrashIcon aria-hidden="true" />
+              Delete
+            </ToolbarButton>
+          </ToolbarGroup>
+        </toolbar-tab>
+
+        <toolbar-tab name="style" label="Style">
+          <ToolbarGroup label="Style">
+            <ToolbarButton label="Bold">
+              <BoldIcon aria-hidden="true" />
+            </ToolbarButton>
+          </ToolbarGroup>
+        </toolbar-tab>
+      </floating-toolbar>
+    </div>
+  ),
+};

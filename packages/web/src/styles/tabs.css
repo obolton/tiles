@@ -32,10 +32,15 @@ tab-item {
     outline: var(--focus-outline);
   }
 
-  &:hover,
   &:focus,
   &[selected] {
     background-color: rgb(0 0 0 / 15%);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: rgb(0 0 0 / 15%);
+    }
   }
 
   &:enabled:active {

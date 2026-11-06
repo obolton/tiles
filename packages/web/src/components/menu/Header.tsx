@@ -10,8 +10,8 @@ export interface HeaderProps {
   center?: JSX.Node;
   actions?: JSX.Node;
   /**
-   * Prioritize wide center content (such as a search box): it takes the remaining width on
-   * tablets and moves onto its own row on phones.
+   * Prioritize wide center content (such as a search box or page title): it takes the
+   * remaining width on tablets and moves onto its own row on phones.
    */
   stacked?: boolean;
 }

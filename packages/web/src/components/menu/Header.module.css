@@ -29,6 +29,8 @@
   min-width: 0;
 
   & > h1 {
+    /* Clipped overflow keeps the automatic minimum size, so allow shrinking explicitly */
+    min-width: 0;
     font-size: 1.125rem;
     font-weight: 500;
     overflow: clip;
@@ -66,9 +68,12 @@
       "center center";
     padding-block: 8px;
 
+    /* The container query lets the navigation hide the workspace name when the actions
+       leave it no room */
     & > .start {
       grid-area: start;
       min-width: 0;
+      container-type: inline-size;
     }
 
     & > .center {

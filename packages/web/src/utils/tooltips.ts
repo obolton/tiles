@@ -23,7 +23,7 @@ class TooltipController {
       case "pointerover":
       case "focusin":
         {
-          if (!(event.target instanceof Element)) {
+          if (!(event.target instanceof Element) || !this.shouldShow(event)) {
             return;
           }
           const target = event.target.closest<HTMLElement>("[data-tooltip]");
@@ -41,6 +41,15 @@ class TooltipController {
       case "keydown":
         return this.handleKeyDown(event as KeyboardEvent);
     }
+  }
+
+  // Taps have no hover to end the tooltip, and focus moved by script (such as into a
+  // panel that just opened) is not a request for one
+  private shouldShow(event: Event) {
+    if (event instanceof PointerEvent) {
+      return event.pointerType !== "touch";
+    }
+    return event.target instanceof Element && event.target.matches(":focus-visible");
   }
 
   private handleKeyDown(event: KeyboardEvent) {

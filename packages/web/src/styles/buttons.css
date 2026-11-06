@@ -171,14 +171,16 @@
       }
     }
 
-    &:hover:not(:disabled, [aria-disabled="true"]) {
-      &:not(list-select)::before,
-      &:is(list-select)::part(button)::before {
-        background-color: rgb(0 0 0 / 10%);
-      }
+    @media (hover: hover) {
+      &:hover:not(:disabled, [aria-disabled="true"]) {
+        &:not(list-select)::before,
+        &:is(list-select)::part(button)::before {
+          background-color: rgb(0 0 0 / 10%);
+        }
 
-      & > :is(svg, .icon) {
-        scale: 1.05;
+        & > :is(svg, .icon) {
+          scale: 1.05;
+        }
       }
     }
 

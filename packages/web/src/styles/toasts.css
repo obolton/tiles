@@ -54,6 +54,29 @@ toast-container {
   }
 }
 
+@media (width < 640px) {
+  toast-container {
+    inset: calc(var(--header-height) + 16px) 16px auto;
+    align-items: center;
+
+    & output {
+      animation-name: slide-down;
+    }
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes slide-up {
   from {
     opacity: 0;

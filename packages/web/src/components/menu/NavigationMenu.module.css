@@ -9,3 +9,20 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+@media (width < 1024px) {
+  .name {
+    max-width: 10rem;
+  }
+}
+
+/* Too narrow for a meaningful name: keep it for assistive technology only */
+@container (width < 160px) {
+  .name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+}
