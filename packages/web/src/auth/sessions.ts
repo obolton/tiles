@@ -1,13 +1,11 @@
-import assert from "node:assert";
 import { stringifySetCookie } from "cookie";
 import serviceClient from "@/api/serviceClient";
+import { publicEnv } from "@/env/public";
 import type { AppRouterInputs } from "@/api/client";
 import { SESSION_COOKIE_NAME, SIGNED_IN_FLAG_COOKIE_NAME } from "api/constants/cookies";
 import type { SerializeOptions } from "cookie";
 
-assert(import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN);
-
-const SESSION_COOKIE_DOMAIN = import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN;
+const SESSION_COOKIE_DOMAIN = publicEnv.PUBLIC_SESSION_COOKIE_DOMAIN;
 
 const SESSION_COOKIE_OPTIONS: SerializeOptions = {
   httpOnly: true,

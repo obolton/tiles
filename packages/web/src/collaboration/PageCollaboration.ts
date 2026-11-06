@@ -4,10 +4,9 @@ import { IndexeddbPersistence } from "y-indexeddb";
 import { reactive, flag, type Reactive, type ReactiveFlag } from "reactivity";
 import { Awareness } from "y-protocols/awareness";
 import { user } from "@/utils/sessions";
+import { publicEnv } from "@/env/public";
 import { getUserColor } from "./userColor";
 import Presence from "./Presence";
-
-const COLLABORATION_URL = import.meta.env.PUBLIC_COLLABORATION_URL;
 
 export class PageCollaboration {
   readonly pageId: string;
@@ -23,10 +22,6 @@ export class PageCollaboration {
   #userColor: string | null = null;
 
   constructor(pageId: string, doc: Y.Doc) {
-    if (!COLLABORATION_URL) {
-      throw new Error("PUBLIC_COLLABORATION_URL is not set");
-    }
-
     this.pageId = pageId;
     this.doc = doc;
     this.status = reactive(WebSocketStatus.Connecting);
@@ -38,7 +33,7 @@ export class PageCollaboration {
     this.presence = new Presence(this.awareness);
 
     this.#provider = new HocuspocusProvider({
-      url: COLLABORATION_URL,
+      url: publicEnv.PUBLIC_COLLABORATION_URL,
       name: `page:${pageId}`,
       document: this.doc,
       awareness: this.awareness,

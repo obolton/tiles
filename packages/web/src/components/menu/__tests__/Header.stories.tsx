@@ -1,6 +1,9 @@
 import Header from "../Header";
+import SearchToolbar from "@/components/search/SearchToolbar";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import { PageSortOptions, type PageSort } from "@/components/grid/PagesGrid";
+import { reactive } from "reactivity";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
 import MenuIcon from "@/icons/menu.svg?jsx";
@@ -30,8 +33,40 @@ const USER: User = {
 
 const WORKSPACE_ID = "ws-1";
 
+function LibrarySearch() {
+  return (
+    <SearchToolbar
+      id="search-pages"
+      placeholder="Search pages"
+      autofocus={false}
+      query={reactive("")}
+      sortOptions={<PageSortOptions />}
+      sort={reactive<PageSort>("updatedAt:desc")}
+    />
+  );
+}
+
 export const LibraryPage: Story = {
-  render: () => <Header user={USER} workspaceId={WORKSPACE_ID} />,
+  render: () => (
+    <Header user={USER} workspaceId={WORKSPACE_ID} center={<LibrarySearch />} stacked />
+  ),
+};
+
+export const LibraryPagePhone: Story = {
+  render: () => (
+    <Header
+      user={{ ...USER, workspaces: [{ id: "ws-1", name: "A workspace with a long name" }] }}
+      workspaceId={WORKSPACE_ID}
+      center={<LibrarySearch />}
+      actions={
+        <button type="button" className="secondary">
+          Empty trash
+        </button>
+      }
+      stacked
+    />
+  ),
+  globals: { viewport: { value: "mobile2", isRotated: false } },
 };
 
 export const SettingsPage: Story = {

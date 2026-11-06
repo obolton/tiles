@@ -1,0 +1,11 @@
+.button {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.name {
+  max-width: 16rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

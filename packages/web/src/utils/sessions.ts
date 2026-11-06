@@ -1,11 +1,10 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME, SESSION_COOKIE_NAME } from "api/constants/cookies";
 import client from "@/api/client";
+import { publicEnv } from "@/env/public";
 import { getCookie } from "./cookies";
 import { navigate } from "./navigation";
 import { reactive } from "reactivity";
 import type { AppRouterOutputs } from "@/api/client";
-
-const SESSION_COOKIE_DOMAIN = import.meta.env.PUBLIC_SESSION_COOKIE_DOMAIN;
 
 export type User = AppRouterOutputs["users"]["getUserInfo"];
 
@@ -78,7 +77,7 @@ export function initializeSession(userData?: User | null) {
 
 export async function signOut() {
   await client.auth.signOut.mutate();
-  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${SESSION_COOKIE_DOMAIN}; Max-Age=0`;
+  document.cookie = `${SIGNED_IN_FLAG_COOKIE_NAME}=; Path=/; Secure; SameSite=Lax; Domain=${publicEnv.PUBLIC_SESSION_COOKIE_DOMAIN}; Max-Age=0`;
   sessionStorage.clear();
   localStorage.clear();
   navigate("/", { replace: true });

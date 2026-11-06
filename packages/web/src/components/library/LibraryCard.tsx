@@ -2,7 +2,6 @@ import ProfileImage from "@/components/profile-image/ProfileImage";
 import PublicIcon from "@/icons/public.svg?jsx";
 import DocumentIcon from "@/icons/document.svg?jsx";
 import PresentationIcon from "@/icons/presentation.svg?jsx";
-import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import { makeDraggable } from "@/utils/drag";
 import { formatRelativeDate } from "@/utils/dates";
@@ -18,7 +17,6 @@ const PAGE_TYPES: Record<PageType, { Icon: JSX.Component<JSX.Attributes<"svg">>;
   {
     DOCUMENT: { Icon: DocumentIcon, label: "Document" },
     PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
-    COLLECTION: { Icon: GridLayoutIcon, label: "Collection" },
     FREE: { Icon: EmptyIcon, label: "Blank page" },
   };
 
@@ -28,6 +26,7 @@ export interface LibraryCardProps {
   onToggle?: () => void;
   draggable?: boolean;
   link?: boolean;
+  showFolder?: boolean;
 }
 
 export default function LibraryCard({
@@ -36,6 +35,7 @@ export default function LibraryCard({
   onToggle,
   draggable,
   link = true,
+  showFolder = true,
 }: LibraryCardProps) {
   const updatedAt = new Date(page.updatedAt);
   const { Icon: TypeIcon, label: typeLabel } = PAGE_TYPES[page.type];
@@ -47,7 +47,9 @@ export default function LibraryCard({
 
   const content = (
     <>
-      <p className={styles.title}>{page.title}</p>
+      <p className={styles.title}>
+        <span>{page.title}</span>
+      </p>
 
       <div className={styles.details}>
         <div className={styles.meta}>
@@ -60,7 +62,9 @@ export default function LibraryCard({
           >
             {formatRelativeDate(updatedAt)}
           </time>
-          {page.folder ? <span className={styles.folder}>{page.folder.name}</span> : null}
+          {showFolder && page.folder ? (
+            <span className={styles.folder}>{page.folder.name}</span>
+          ) : null}
           {page.published ? (
             <PublicIcon
               className={styles.published}

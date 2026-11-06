@@ -6,6 +6,7 @@ services:
       - api_node_modules:/projects/${WORKSPACE}/packages/api/node_modules
       - dev-cdn_node_modules:/projects/${WORKSPACE}/packages/dev-cdn/node_modules
       - doc_node_modules:/projects/${WORKSPACE}/packages/doc/node_modules
+      - env_node_modules:/projects/${WORKSPACE}/packages/env/node_modules
       - fonts_node_modules:/projects/${WORKSPACE}/packages/fonts/node_modules
       - image-upload-worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
       - jsx_node_modules:/projects/${WORKSPACE}/packages/jsx/node_modules
@@ -16,6 +17,7 @@ volumes:
   api_node_modules:
   dev-cdn_node_modules:
   doc_node_modules:
+  env_node_modules:
   fonts_node_modules:
   image-upload-worker_node_modules:
   jsx_node_modules:

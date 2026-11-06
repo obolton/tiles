@@ -67,6 +67,17 @@ function createNonce() {
   return crypto.randomBytes(OAUTH2_NONCE_BYTES).toString("base64url");
 }
 
+export type SignInError = "cancelled" | "failed";
+
+/** The sign-in page URL to return to when a sign-in attempt fails, keeping the destination. */
+export function getSignInErrorUrl(error: SignInError, destination: string | null) {
+  const params = new URLSearchParams({ error });
+  if (destination) {
+    params.set("destination", destination);
+  }
+  return `/sign-in?${params}`;
+}
+
 export type OAuth2Cookies = {
   state: string | null;
   verifier: string | null;

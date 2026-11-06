@@ -9,13 +9,14 @@ import type { SignInSchema } from "./schema";
 
 type SendWelcomeEmailOptions = {
   userId: string;
+  workspaceId: string;
   name: string;
   email: string;
 };
 
-async function sendWelcomeEmail({ userId, name, email }: SendWelcomeEmailOptions) {
+async function sendWelcomeEmail({ userId, workspaceId, name, email }: SendWelcomeEmailOptions) {
   try {
-    await sendEmail(email, signUpEmail({ id: userId, name }));
+    await sendEmail(email, signUpEmail({ id: userId, name, workspaceId }));
   } catch (error) {
     console.error("Failed to send welcome email:", error);
   }
@@ -44,7 +45,7 @@ export async function signIn({
         emailVerified,
         imageUrl,
       });
-      await transaction.workspace.create({
+      const workspace = await transaction.workspace.create({
         data: {
           name: `${name}'s Workspace`,
           memberships: {
@@ -63,7 +64,7 @@ export async function signIn({
       const [, session] = await Promise.all([
         createKey(transaction, { provider, providerId, userId: user.id }),
         createSession(transaction, user.id),
-        sendWelcomeEmail({ userId: user.id, name, email }),
+        sendWelcomeEmail({ userId: user.id, workspaceId: workspace.id, name, email }),
       ]);
       return session;
     }

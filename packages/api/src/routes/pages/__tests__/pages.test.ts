@@ -205,10 +205,6 @@ describe("createInitialDoc", () => {
     expect(tile?.layout).toBe("FREEFORM");
   });
 
-  test("seeds no tiles for COLLECTION pages", () => {
-    expect(getTiles(createInitialDoc("COLLECTION"))).toHaveLength(0);
-  });
-
   test("seeds no tiles for FREE pages", () => {
     expect(getTiles(createInitialDoc("FREE"))).toHaveLength(0);
   });

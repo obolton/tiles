@@ -9,11 +9,20 @@ export interface HeaderProps {
   workspaceId: string;
   center?: JSX.Node;
   actions?: JSX.Node;
+  /**
+   * Prioritize wide center content (such as a search box): it takes the remaining width on
+   * tablets and moves onto its own row on phones.
+   */
+  stacked?: boolean;
 }
 
-export default function Header({ user, workspaceId, center, actions }: HeaderProps) {
+export default function Header({ user, workspaceId, center, actions, stacked }: HeaderProps) {
   return (
-    <header id="header" className={styles.header} data-tooltip-position="bottom">
+    <header
+      id="header"
+      classList={{ [styles.header]: true, [styles.stacked]: stacked }}
+      data-tooltip-position="bottom"
+    >
       <nav className={styles.start} aria-label="Navigation">
         <NavigationMenu user={user} workspaceId={workspaceId} />
         <NewPageMenu workspaceId={workspaceId} />

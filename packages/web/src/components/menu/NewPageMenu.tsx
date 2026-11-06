@@ -4,7 +4,6 @@ import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import WriteIcon from "@/icons/write.svg?jsx";
 import DocumentIcon from "@/icons/document.svg?jsx";
 import PresentationIcon from "@/icons/presentation.svg?jsx";
-import GridLayoutIcon from "@/icons/grid-layout.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
@@ -47,12 +46,6 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
             on:click={() => createNewPage("PRESENTATION")}
           >
             Presentation
-          </MenuItem>
-          <MenuItem
-            icon={<GridLayoutIcon aria-hidden="true" />}
-            on:click={() => createNewPage("COLLECTION")}
-          >
-            Collection
           </MenuItem>
           <MenuItem icon={<EmptyIcon aria-hidden="true" />} on:click={() => createNewPage("FREE")}>
             Blank page

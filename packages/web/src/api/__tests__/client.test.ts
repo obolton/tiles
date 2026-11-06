@@ -64,13 +64,5 @@ describe("client", () => {
       expect(headers.get(SERVICE_TOKEN_HEADER)).toBeNull();
       expect(headers.get("Authorization")).toBe("Bearer session-1");
     });
-
-    test("requires the internal API origin", async () => {
-      vi.stubEnv("INTERNAL_API_ORIGIN", "");
-
-      await expect(loadClient()).rejects.toThrow(
-        "INTERNAL_API_ORIGIN environment variable is required",
-      );
-    });
   });
 });

@@ -1,8 +1,9 @@
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
+import { getDestination } from "@/auth/destinations";
 import { notFound, redirect } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
-const GET: APIRequestHandler = async () => {
+export const GET: APIRequestHandler = async ({ url }) => {
   if (!import.meta.env.DEV) {
     return notFound();
   }
@@ -14,7 +15,12 @@ const GET: APIRequestHandler = async () => {
     email: "test@test.com",
     emailVerified: true,
   });
-  return redirect("/", 302, setAuthenticationCookies(session.id, new Date(session.expiresAt)));
+  const destination = getDestination(url);
+  return redirect(
+    `/${destination ?? ""}`,
+    302,
+    setAuthenticationCookies(session.id, new Date(session.expiresAt)),
+  );
 };
 
 export default {
