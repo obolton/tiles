@@ -52,8 +52,13 @@ export default async function createDevServer(options: DevServerOptions) {
     appType: "custom",
   });
 
-  // Load the SSR entry up front so configuration errors surface at startup.
-  await vite.ssrLoadModule("@/server/server");
+  // Validate the environment up front so configuration errors surface at startup.
+  const [{ publicEnv }, { serverEnv }] = await Promise.all([
+    vite.ssrLoadModule("@/env/public"),
+    vite.ssrLoadModule("@/env/server"),
+  ]);
+  publicEnv.validate();
+  serverEnv.validate();
 
   server.listen(port, hostname, () => console.log(`Development server: ${origin}`));
 

@@ -6,13 +6,8 @@ import Body from "./Body";
 import { internalError, notFound } from "@/router/responses";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
-import { publicEnv } from "@/env/public";
-import { serverEnv } from "@/env/server";
 import type { ModuleNode, ViteDevServer } from "vite";
 import type { RouteMetadata, RouteMatch, APIRoute } from "@/router/router";
-
-publicEnv.validate();
-serverEnv.validate();
 
 const router = getRouter();
 

@@ -5,10 +5,21 @@ import { parseUploadRequest } from "./requests";
 import { createPreflightResponse, createJsonResponse } from "./responses";
 import { uploadImage } from "./upload";
 
-env.validate();
+let validated = false;
+
+// Cloudflare evaluates the module when the script is uploaded, before the bindings exist, so the
+// variables are validated on the first request rather than at module scope.
+function validateEnv() {
+  if (!validated) {
+    env.validate();
+    validated = true;
+  }
+}
 
 export default {
   async fetch(request, env): Promise<Response> {
+    validateEnv();
+
     if (request.method === "OPTIONS") {
       return createPreflightResponse();
     }
