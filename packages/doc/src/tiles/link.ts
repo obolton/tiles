@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 
 export interface LinkMapInput extends Omit<CreateTileInput, "type"> {
   url: string;
@@ -9,9 +9,7 @@ export interface LinkMapInput extends Omit<CreateTileInput, "type"> {
   imageId: string | null;
 }
 
-export function buildLinkMap(
-  properties: Omit<LinkMapInput, "parentId" | "beforeId">,
-): Y.Map<unknown> {
+export function buildLinkMap(properties: Omit<LinkMapInput, keyof PlacementInput>): Y.Map<unknown> {
   const { url, title, description, siteName, imageId, background, ...baseProps } = properties;
   const map = buildBaseTileMap({
     ...baseProps,

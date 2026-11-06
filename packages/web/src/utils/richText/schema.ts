@@ -153,7 +153,7 @@ const nodesSpec = {
   },
 
   quote: {
-    content: "(paragraph | heading | ordered_list | unordered_list | check_list | divider)+",
+    content: "(paragraph | heading | ordered_list | unordered_list | check_list | divider | tile)+",
     group: "block",
     defining: true,
     parseDOM: [{ tag: "blockquote" }],
@@ -342,6 +342,27 @@ const nodesSpec = {
     parseDOM: [{ tag: "hr" }],
     toDOM() {
       return DOMOutput.divider;
+    },
+  },
+
+  // A tile embedded by id; editors that allow embeds render it with a node view.
+  tile: {
+    attrs: {
+      id: { validate: "string" },
+    },
+    group: "block",
+    atom: true,
+    selectable: true,
+    parseDOM: [
+      {
+        tag: "div[data-tile]",
+        getAttrs(node) {
+          return { id: node.getAttribute("data-tile") };
+        },
+      },
+    ],
+    toDOM(node) {
+      return ["div", { "data-tile": node.attrs.id as string }];
     },
   },
 

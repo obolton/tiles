@@ -1,6 +1,7 @@
 import * as Y from "yjs";
 import { ySyncPluginKey } from "y-prosemirror";
 import { flag, type ReactiveFlag } from "reactivity";
+import { getBody } from "doc/body";
 
 export interface UndoStepHooks {
   onRecord?(meta: Map<unknown, unknown>): void;
@@ -13,7 +14,7 @@ export class PageUndoManager {
   readonly canRedo: ReactiveFlag = flag(false);
 
   constructor(doc: Y.Doc, hooks?: UndoStepHooks) {
-    this.manager = new Y.UndoManager(doc.getMap("tiles"), {
+    this.manager = new Y.UndoManager([doc.getMap("tiles"), getBody(doc)], {
       trackedOrigins: new Set([null, ySyncPluginKey]),
       captureTimeout: 500,
     });

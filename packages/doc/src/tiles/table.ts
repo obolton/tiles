@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { generateNKeysBetween } from "jittered-fractional-indexing";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 import { createId } from "../id";
 import type { Fill } from "../types/fill";
 
@@ -26,7 +26,7 @@ export interface TableMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildTableMap(
-  properties: Omit<TableMapInput, "parentId" | "beforeId">,
+  properties: Omit<TableMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const { columns = [], rows = [], ...baseProperties } = properties;
   const map = buildBaseTileMap({

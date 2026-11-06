@@ -57,9 +57,9 @@ export default class Table extends Tile {
   private readonly rowsContent: YReactive<Y.Map<Y.Map<unknown>>>;
 
   static async create(page: Page, data: TableMapInput): Promise<Table> {
-    const { parentId, beforeId, ...rest } = data;
+    const { parentId, beforeId, at, ...rest } = data;
     const map = buildTableMap(rest);
-    const table = page.createTile(map, { parentId, beforeId }) as Table;
+    const table = page.createTile(map, { parentId, beforeId, at }) as Table;
     table.editor.addTile(table);
     return table;
   }

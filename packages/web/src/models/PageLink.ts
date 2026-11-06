@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildPageLinkMap, type LinkedPage } from "doc/tiles/pageLink";
 import { type Reactive } from "reactivity";
@@ -17,14 +18,14 @@ export default class PageLink extends Tile {
 
   readonly linkedPage: Reactive<LinkedPage | null>;
 
-  static createMap(properties: Omit<CreatePageLinkInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<CreatePageLinkInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildPageLinkMap(properties);
   }
 
   static async create(page: Page, data: CreatePageLinkInput): Promise<PageLink> {
-    const { parentId, beforeId, ...rest } = data;
+    const { parentId, beforeId, at, ...rest } = data;
     const map = PageLink.createMap(rest);
-    const pageLink = page.createTile(map, { parentId, beforeId }) as PageLink;
+    const pageLink = page.createTile(map, { parentId, beforeId, at }) as PageLink;
     pageLink.editor.addTile(pageLink);
     return pageLink;
   }

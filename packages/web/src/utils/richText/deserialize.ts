@@ -14,6 +14,7 @@ import type {
   PendingNode,
   DropdownNode,
   MentionNode,
+  TileNode,
   Node as SerializedNode,
 } from "doc/types/richText";
 import { TextFormat, ListType, TextAlignment, type BlockStyle } from "doc/types/richText";
@@ -193,6 +194,10 @@ function createDividerNode(_divider: DividerNode): Node {
   return schema.nodes.divider.create(null);
 }
 
+function createTileNode(tile: TileNode): Node {
+  return schema.nodes.tile.create({ id: tile.id });
+}
+
 function createNode(node: SerializedNode) {
   const type = node.type;
   switch (type) {
@@ -222,6 +227,8 @@ function createNode(node: SerializedNode) {
       return createMentionNode(node);
     case "divider":
       return createDividerNode(node);
+    case "tile":
+      return createTileNode(node);
     default:
       throw new Error(`Unsupported node type: ${String(type)}`);
   }

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
+import Image from "@/models/Image";
 import Section, { type CreateSectionInput } from "@/models/Section";
 import { createEditor } from "@/test/editor";
 import { publishSelection } from "@/test/mocks/PageCollaboration";
@@ -163,6 +164,75 @@ describe("Editor", () => {
       editor.undo();
 
       expect(editor.selection.has(tile.id)).toBe(true);
+    });
+  });
+
+  describe("placement", () => {
+    const IMAGE = { imageId: "image-id", size: { width: 10, height: 10 } };
+
+    function createImage() {
+      return editor.page.createTile(Image.createMap(IMAGE), {});
+    }
+
+    test("inserts after the selected root tile", () => {
+      const a = createImage();
+      const b = createImage();
+      editor.select([a.id]);
+
+      expect(editor.contentPlacement).toEqual({ parentId: null, beforeId: b.id });
+      expect(editor.sectionPlacement).toEqual({ parentId: null, beforeId: b.id });
+    });
+
+    test("inserts content into the active section and sections at the root", () => {
+      const section = createTile();
+      editor.select([section.id]);
+
+      expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
+      expect(editor.sectionPlacement).toEqual({ parentId: null, beforeId: null });
+    });
+
+    describe("on a document page", () => {
+      beforeEach(() => {
+        editor = createEditor({ page: { type: "DOCUMENT" } });
+      });
+
+      test("targets the body at the caret", () => {
+        const body = editor.page.body!;
+        expect(editor.contentPlacement).toEqual({ parentId: null, at: undefined });
+
+        const at = Y.createRelativePositionFromTypeIndex(body.fragment, 0);
+        body.insertionPoint.value = at;
+
+        expect(editor.contentPlacement).toEqual({ parentId: null, at });
+        expect(editor.sectionPlacement).toEqual({ parentId: null, at });
+      });
+
+      test("inserts after the selected embedded tile", () => {
+        const first = createImage();
+        createImage();
+        editor.select([first.id]);
+
+        const inserted = editor.page.createTile(Image.createMap(IMAGE), editor.contentPlacement);
+
+        expect(editor.page.body?.tileIds.indexOf(inserted.id)).toBe(1);
+      });
+
+      test("inserts content into a selected embedded section", () => {
+        const section = createTile();
+        editor.select([section.id]);
+
+        expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
+        expect(editor.sectionPlacement.parentId).toBeNull();
+      });
+
+      test("deletes an embedded tile's node with its map", async () => {
+        const tile = createTile();
+
+        await editor.deleteTiles([tile.id]);
+
+        expect(editor.page.body?.tileIds).toEqual([]);
+        expect(tilesMap().has(tile.id)).toBe(false);
+      });
     });
   });
 

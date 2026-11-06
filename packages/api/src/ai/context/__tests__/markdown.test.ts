@@ -285,4 +285,39 @@ describe("toMarkdown", () => {
       expect(toMarkdown([])).toBe("");
     });
   });
+
+  describe("tile", () => {
+    const input: RichText = [
+      { type: "paragraph", children: [{ type: "text", text: "Before", format: 0 }] },
+      { type: "tile", id: "tile-1" },
+      { type: "paragraph", children: [{ type: "text", text: "After", format: 0 }] },
+    ];
+
+    test("skips embedded tiles without a resolver", () => {
+      expect(toMarkdown(input)).toBe("Before\n\nAfter");
+    });
+
+    test("inlines resolved tile content at its position", () => {
+      expect(toMarkdown(input, { tile: (id) => `![${id}]` })).toBe("Before\n\n![tile-1]\n\nAfter");
+    });
+
+    test("resolves tiles nested in list items", () => {
+      const nested: RichText = [
+        {
+          type: "list",
+          listType: 1,
+          children: [
+            {
+              type: "listitem",
+              children: [
+                { type: "paragraph", children: [{ type: "text", text: "Item", format: 0 }] },
+                { type: "tile", id: "tile-2" },
+              ],
+            },
+          ],
+        },
+      ];
+      expect(toMarkdown(nested, { tile: (id) => `![${id}]` })).toBe("- Item\n\n![tile-2]");
+    });
+  });
 });

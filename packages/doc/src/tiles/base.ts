@@ -3,11 +3,20 @@ import type { Sizing, Animation, FrameStyle, TileType } from "../types/enums";
 import type { Color } from "../types/color";
 import type { Fill } from "../types/fill";
 
-export interface CreateTileInput {
-  type: TileType;
-  id?: string;
+/**
+ * Where a new tile goes: a section, dock or the page root (`parentId`), ordered before a sibling
+ * (`beforeId`), or embedded in a document body after the block at `at` (appended when omitted).
+ * `at` is `null` when the body already holds the tile's node, as for a pasted node.
+ */
+export interface PlacementInput {
   parentId?: string | null;
   beforeId?: string | null;
+  at?: Y.RelativePosition | null;
+}
+
+export interface CreateTileInput extends PlacementInput {
+  type: TileType;
+  id?: string;
   sizing?: Sizing;
   x?: number;
   y?: number;
@@ -25,7 +34,7 @@ export interface CreateTileInput {
   background?: Fill | null;
 }
 
-export type BaseTileInput = Omit<CreateTileInput, "parentId" | "beforeId">;
+export type BaseTileInput = Omit<CreateTileInput, keyof PlacementInput>;
 
 export function buildBaseTileMap(properties: BaseTileInput): Y.Map<unknown> {
   const map = new Y.Map<unknown>();

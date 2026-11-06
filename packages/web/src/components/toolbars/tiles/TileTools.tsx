@@ -22,12 +22,11 @@ export default function TileTools({ tile }: TileToolsProps) {
   }
 
   function handleDuplicate() {
-    tile
-      .duplicate({
-        parentId: tile.parentId.value,
-        beforeId: tile.next?.id ?? null,
-      })
-      .catch(handleError);
+    try {
+      tile.duplicate();
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   function toggleHide() {

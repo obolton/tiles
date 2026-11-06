@@ -1,22 +1,37 @@
 import * as Y from "yjs";
+import { TILE_NODE } from "doc/richText/tiles";
 import type { RichText, Node } from "doc/types/richText";
+
+export interface PlainTextOptions {
+  /** Describes an embedded tile by id. Tiles are skipped without it. */
+  tile?: (id: string) => string;
+}
+
+type FragmentChild = Y.XmlElement | Y.XmlText | Y.XmlHook;
+type QueueItem = Y.XmlFragment | FragmentChild | string;
 
 /**
  * Extracts plain text from a Y.XmlFragment.
  */
-type FragmentChild = Y.XmlElement | Y.XmlText | Y.XmlHook;
-type QueueItem = Y.XmlFragment | FragmentChild | "\n";
-
-export function fragmentToPlainText(fragment: Y.XmlFragment | Y.XmlElement): string {
+export function fragmentToPlainText(
+  fragment: Y.XmlFragment | Y.XmlElement,
+  options: PlainTextOptions = {},
+): string {
   let output = "";
   const queue: QueueItem[] = [fragment];
 
   while (queue.length > 0) {
     const node = queue.shift()!;
-    if (node === "\n") {
-      output += "\n";
+    if (typeof node === "string") {
+      output += node;
     } else if (node instanceof Y.XmlText) {
       output += node.toString();
+    } else if (node instanceof Y.XmlElement && node.nodeName === TILE_NODE) {
+      const id = node.getAttribute("id");
+      const text = typeof id === "string" ? options.tile?.(id) : undefined;
+      if (text) {
+        queue.push(`${text}\n`);
+      }
     } else if (node instanceof Y.XmlElement) {
       queue.push(...node.toArray(), "\n");
     } else if (node instanceof Y.XmlFragment) {
@@ -27,7 +42,7 @@ export function fragmentToPlainText(fragment: Y.XmlFragment | Y.XmlElement): str
   return output;
 }
 
-export function toPlainText(input: RichText) {
+export function toPlainText(input: RichText, options: PlainTextOptions = {}) {
   const queue: (Node | string)[] = [...input];
   let output = "";
 
@@ -62,6 +77,14 @@ export function toPlainText(input: RichText) {
       case "divider":
         queue.push("\n");
         break;
+
+      case "tile": {
+        const text = options.tile?.(node.id);
+        if (text) {
+          queue.push(`${text}\n`);
+        }
+        break;
+      }
 
       default:
         queue.push(...node.children);

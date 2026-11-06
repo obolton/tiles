@@ -9,6 +9,7 @@ import type { Fill } from "@/components/fills/types";
 import type { Color } from "@/utils/color";
 import type Page from "@/models/Page";
 import type TileCollection from "./TileCollection";
+import type { TileContainer, TilePlacementInput } from "./TileContainer";
 
 export type { Sizing, Animation, FrameStyle, DockEdge };
 
@@ -98,51 +99,41 @@ export default abstract class Tile {
     this.binding.dispose();
   }
 
+  /** The container ordering this tile: a collection, or the document body it is embedded in. */
+  get container(): TileContainer {
+    return this.page.container(this.parentId.value);
+  }
+
+  /** Whether the tile is embedded in the document body. */
+  get embedded(): boolean {
+    return this.parentId.value === null && this.page.body !== null;
+  }
+
   get index(): number | null {
     return this.parent?.value.indexOf(this) ?? null;
   }
 
   get previous(): Tile | null {
-    if (!this.parent) {
-      return null;
-    }
-    const index = this.index;
-    if (index === null) {
-      return null;
-    }
-    return this.parent.value[index - 1] ?? null;
+    return this.container.previous(this);
   }
 
   get next(): Tile | null {
-    if (!this.parent) {
-      return null;
-    }
-    const index = this.index;
-    if (index === null) {
-      return null;
-    }
-    return this.parent.value[index + 1] ?? null;
+    return this.container.next(this);
   }
 
-  async duplicate({
-    parentId,
-    beforeId,
-  }: {
-    parentId: string | null;
-    beforeId: string | null;
-  }): Promise<Tile> {
-    const cloned = this.page.createTile(this.map.clone(), {
-      parentId,
-      beforeId,
-    });
+  /** Copies the tile and its children into the given placement. */
+  clone(placement: TilePlacementInput): Tile {
+    const cloned = this.page.createTile(this.map.clone(), placement);
 
     for (const child of this.page.placement.getCollection(this.id).value) {
-      this.page.createTile(child.map.clone(), {
-        parentId: cloned.id,
-        beforeId: null,
-      });
+      this.page.createTile(child.map.clone(), { parentId: cloned.id, beforeId: null });
     }
     return cloned;
+  }
+
+  /** Copies the tile in place, directly after the original. */
+  duplicate(): Tile {
+    return this.container.duplicate(this);
   }
 
   delete() {
@@ -176,6 +167,13 @@ export default abstract class Tile {
   }) {
     const reparenting = parentId !== undefined && parentId !== this.parentId.value;
     const repositioning = beforeId !== undefined;
+
+    if (
+      (reparenting || repositioning) &&
+      (this.embedded || (parentId === null && this.page.body))
+    ) {
+      throw new Error("Tiles embedded in the document body are placed by the body");
+    }
 
     const apply = () => {
       if (reparenting || repositioning) {
@@ -248,16 +246,10 @@ export default abstract class Tile {
   }
 
   moveUp() {
-    const previous = this.previous;
-    if (previous) {
-      this.move({ beforeId: previous.id });
-    }
+    this.container.moveUp(this);
   }
 
   moveDown() {
-    const next = this.next;
-    if (next) {
-      this.move({ beforeId: next.next?.id ?? null });
-    }
+    this.container.moveDown(this);
   }
 }

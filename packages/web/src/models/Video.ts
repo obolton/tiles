@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import { type Reactive } from "reactivity";
@@ -17,7 +18,7 @@ export default class Video extends Tile {
   readonly description: Reactive<string | null>;
   readonly title: Reactive<string>;
 
-  static createMap(properties: Omit<CreateVideoInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateVideoInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildVideoMap(properties);
   }
 

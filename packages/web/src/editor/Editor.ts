@@ -22,6 +22,8 @@ import VersionHistory from "@/components/versions/VersionHistory";
 import Share from "@/components/collaboration/Share";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
+import type Body from "@/models/Body";
+import type { TileContainer, TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type { Reactive, ReactiveSet } from "reactivity";
 
@@ -71,6 +73,35 @@ export default class Editor {
       return null;
     }
     return lastSelected.next?.id ?? null;
+  }
+
+  /** Where new content goes: the active section, the document body, or the page root. */
+  get contentPlacement(): TilePlacementInput {
+    const section = this.activeSection;
+    if (section) {
+      return { parentId: section.id, beforeId: this.insertBeforeId };
+    }
+    return this.rootPlacement;
+  }
+
+  /** Where new sections go: the document body, or the page root. Sections are never nested. */
+  get sectionPlacement(): TilePlacementInput {
+    return this.rootPlacement;
+  }
+
+  private get rootPlacement(): TilePlacementInput {
+    const { body } = this.page;
+    if (body) {
+      return { parentId: null, at: this.bodyInsertionPoint(body) };
+    }
+    return { parentId: null, beforeId: this.insertBeforeId };
+  }
+
+  /** After the selected embedded tile, else at the caret, else at the end of the body. */
+  private bodyInsertionPoint(body: Body) {
+    const selected = this.lastSelectedTile;
+    const afterSelected = selected?.embedded ? body.positionAfter(selected.id) : null;
+    return afterSelected ?? body.insertionPoint.value ?? undefined;
   }
 
   get activeSection(): Section | null {
@@ -317,8 +348,7 @@ export default class Editor {
       workspaceId: this.workspaceId,
     });
     await Image.create(this.page, {
-      parentId: this.activeSection?.id ?? null,
-      beforeId: this.insertBeforeId,
+      ...this.contentPlacement,
       imageId: id,
       size: { width, height },
       sizing: "AUTO",
@@ -360,8 +390,7 @@ export default class Editor {
           workspaceId: this.workspaceId,
         });
         await Image.create(this.page, {
-          parentId: this.activeSection?.id ?? null,
-          beforeId: this.insertBeforeId,
+          ...this.contentPlacement,
           imageId: id,
           size: { width, height },
           sizing: "AUTO",
@@ -371,8 +400,7 @@ export default class Editor {
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await Link.create(this.page, {
-          parentId: this.activeSection?.id ?? null,
-          beforeId: this.insertBeforeId,
+          ...this.contentPlacement,
           url,
         });
       });
@@ -382,6 +410,10 @@ export default class Editor {
   // Selection
 
   focusFirstTile() {
+    if (this.page.body) {
+      this.focusBody();
+      return;
+    }
     const first = this.page.tiles.value[0];
     if (!first) {
       return;
@@ -390,6 +422,14 @@ export default class Editor {
     const element = document.getElementById(first.id);
     if (element) {
       focusInside(element);
+    }
+  }
+
+  /** Focuses the document body editor. */
+  focusBody(options?: FocusOptions) {
+    const body = document.querySelector<HTMLElement>("[data-body]");
+    if (body) {
+      focusInside(body, options);
     }
   }
 
@@ -533,16 +573,25 @@ export default class Editor {
     const containsFocus = !!elements.find((element) => element.contains(document.activeElement));
     if (containsFocus) {
       const last = elements.at(-1);
-      focus = (last?.nextElementSibling || last?.previousElementSibling) ?? null;
+      focus =
+        (last?.nextElementSibling ||
+          last?.previousElementSibling ||
+          last?.closest("[data-body]")) ??
+        null;
     }
 
     const doc = this.page.doc;
+    const groups = new Map<TileContainer, Tile[]>();
+    for (const tile of this.page.getTiles(ids)) {
+      const group = groups.get(tile.container) ?? [];
+      group.push(tile);
+      groups.set(tile.container, group);
+    }
 
     void viewTransition(() => {
-      const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
       doc.transact(() => {
-        for (const id of ids) {
-          tilesMap.delete(id);
+        for (const [container, tiles] of groups) {
+          container.remove(tiles);
         }
       });
 

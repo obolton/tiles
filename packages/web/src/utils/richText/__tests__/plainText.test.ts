@@ -37,6 +37,25 @@ describe("fragmentToPlainText", () => {
     const element = fragment.get(0) as Y.XmlElement;
     expect(fragmentToPlainText(element)).toBe("Hello\n");
   });
+
+  test("skips embedded tiles without a resolver", () => {
+    const fragment = toFragment(
+      schema.node("paragraph", null, [schema.text("Before")]),
+      schema.node("tile", { id: "tile-1" }),
+      schema.node("paragraph", null, [schema.text("After")]),
+    );
+    expect(fragmentToPlainText(fragment)).toBe("Before\nAfter\n");
+  });
+
+  test("describes embedded tiles with the resolver", () => {
+    const fragment = toFragment(
+      schema.node("paragraph", null, [schema.text("Before")]),
+      schema.node("tile", { id: "tile-1" }),
+    );
+    expect(fragmentToPlainText(fragment, { tile: (id) => `Image ${id}` })).toBe(
+      "Before\nImage tile-1\n",
+    );
+  });
 });
 
 describe("toPlainText", () => {
@@ -86,5 +105,14 @@ describe("toPlainText", () => {
       },
     ];
     expect(toPlainText(text)).toBe("Heading\nFirst line\nSecond line\nDONE\nList item\n");
+  });
+
+  test("describes embedded tiles with the resolver", () => {
+    const text: RichText = [
+      { type: "paragraph", children: [{ type: "text", text: "Before", format: 0 }] },
+      { type: "tile", id: "tile-1" },
+    ];
+    expect(toPlainText(text)).toBe("Before\n");
+    expect(toPlainText(text, { tile: (id) => `Table ${id}` })).toBe("Before\nTable tile-1\n");
   });
 });

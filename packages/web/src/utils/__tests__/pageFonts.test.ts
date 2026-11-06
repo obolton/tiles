@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
+import { getBody } from "doc/body";
 import { getPageFonts, getPagePreloads } from "../pageFonts";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
@@ -72,6 +73,12 @@ describe("getPageFonts", () => {
     const doc = createDoc();
     addTextTile(doc, "text-1", fontParagraph("lora"));
     expect(getPageFonts(doc)).toEqual(new Set(["lora"]));
+  });
+
+  test("includes fonts from font marks in the document body", () => {
+    const doc = createDoc();
+    prosemirrorToYXmlFragment(deserialize(fontParagraph("quicksand")), getBody(doc));
+    expect(getPageFonts(doc)).toEqual(new Set(["quicksand"]));
   });
 
   test("includes fonts from font marks in ImageTile text", () => {

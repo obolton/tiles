@@ -5,6 +5,7 @@ import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
 import TilePlacement, { type TileRemovalCallback } from "@/models/TilePlacement";
+import Body from "@/models/Body";
 import { dockParentId } from "@/models/parentId";
 import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
@@ -24,6 +25,7 @@ import type { DockEdge, HorizontalAlignment } from "doc/types/enums";
 import type { PageType } from "api/types/pages";
 import Dropdown from "@/models/Dropdown";
 import type Tile from "@/models/Tile";
+import type { TileContainer, TilePlacementInput } from "@/models/TileContainer";
 import type Editor from "@/editor/Editor";
 
 export type PageData = NonNullable<AppRouterOutputs["pages"]["getById"]>;
@@ -64,6 +66,8 @@ export default class Page {
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
   readonly index: Map<string, Tile>;
+  /** The rich text body of a document page, hosting its embedded tiles. */
+  readonly body: Body | null;
   readonly placement: TilePlacement;
   private readonly metadataBinding: YMapBinding;
 
@@ -117,6 +121,7 @@ export default class Page {
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
     this.index = new Map();
+    this.body = data.type === "DOCUMENT" ? new Body(this) : null;
     this.placement = new TilePlacement(this, onTilesRemoved);
   }
 
@@ -189,23 +194,15 @@ export default class Page {
     this.index.delete(id);
   }
 
-  createTile(
-    map: Y.Map<unknown>,
-    options: { parentId?: string | null; beforeId?: string | null } = {},
-  ): Tile {
+  /** The container for a parent: the body for root tiles of a document page, else a collection. */
+  container(parentId: string | null): TileContainer {
+    return parentId === null && this.body ? this.body : this.placement;
+  }
+
+  createTile(map: Y.Map<unknown>, placement: TilePlacementInput = {}): Tile {
     const id = createId();
-    const parentId = options.parentId ?? null;
-    const order = this.placement.orderBefore(parentId, options.beforeId);
-
     map.set("id", id);
-    map.set("parentId", parentId);
-    map.set("order", order);
-
-    this.doc.transact(() => {
-      this.doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
-    });
-
-    return this.add(map);
+    return this.container(placement.parentId ?? null).insert(id, map, placement);
   }
 
   private update(

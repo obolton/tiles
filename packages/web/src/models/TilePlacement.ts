@@ -4,6 +4,7 @@ import TileCollection from "./TileCollection";
 import { parseParentId } from "./parentId";
 import type Page from "./Page";
 import type Tile from "./Tile";
+import type { TileContainer, TilePlacementInput } from "./TileContainer";
 
 /** Tile Y.Map keys that affect placement. Other field writes are ignored. */
 const PLACEMENT_KEYS = ["parentId", "order"];
@@ -14,9 +15,10 @@ export type TileRemovalCallback = (ids: ReadonlySet<string>) => void;
  * Owns the per-parent {@link TileCollection}s and keeps them in sync with the
  * Y.Doc `tiles` map. The Y.Doc is the source of truth for placement
  * (`parentId` + `order`); each collection is an incrementally-maintained,
- * order-sorted view of it.
+ * order-sorted view of it. Tiles embedded in a document body are indexed but
+ * belong to the body instead of a collection.
  */
-export default class TilePlacement {
+export default class TilePlacement implements TileContainer {
   private readonly page: Page;
   private readonly onTilesRemoved?: TileRemovalCallback;
 
@@ -69,13 +71,63 @@ export default class TilePlacement {
   }
 
   /** Removes a tile from its collection and the page index. Idempotent. */
-  remove(id: string) {
+  private forget(id: string) {
     const tile = this.page.index.get(id);
     if (!tile) {
       return;
     }
     tile.parent?.remove(tile);
     this.page.remove(id);
+  }
+
+  // TileContainer
+
+  insert(id: string, map: Y.Map<unknown>, { parentId = null, beforeId }: TilePlacementInput): Tile {
+    map.set("parentId", parentId);
+    map.set("order", this.orderBefore(parentId, beforeId));
+    this.page.doc.transact(() => {
+      this.page.doc.getMap<Y.Map<unknown>>("tiles").set(id, map);
+    });
+    return this.page.add(map);
+  }
+
+  remove(tiles: readonly Tile[]) {
+    const tilesMap = this.page.doc.getMap<Y.Map<unknown>>("tiles");
+    this.page.doc.transact(() => {
+      for (const tile of tiles) {
+        tilesMap.delete(tile.id);
+      }
+    });
+  }
+
+  previous(tile: Tile): Tile | null {
+    const siblings = tile.parent?.value;
+    const index = siblings?.indexOf(tile) ?? -1;
+    return index > 0 ? (siblings?.[index - 1] ?? null) : null;
+  }
+
+  next(tile: Tile): Tile | null {
+    const siblings = tile.parent?.value;
+    const index = siblings?.indexOf(tile) ?? -1;
+    return index >= 0 ? (siblings?.[index + 1] ?? null) : null;
+  }
+
+  moveUp(tile: Tile) {
+    const previous = this.previous(tile);
+    if (previous) {
+      tile.move({ beforeId: previous.id });
+    }
+  }
+
+  moveDown(tile: Tile) {
+    const next = this.next(tile);
+    if (next) {
+      tile.move({ beforeId: this.next(next)?.id ?? null });
+    }
+  }
+
+  duplicate(tile: Tile): Tile {
+    return tile.clone({ parentId: tile.parentId.value, beforeId: this.next(tile)?.id ?? null });
   }
 
   /**
@@ -87,6 +139,12 @@ export default class TilePlacement {
   private place(tile: Tile) {
     const parentId = tile.parentId.value;
     const parent = parseParentId(parentId);
+
+    // Root tiles of a document page are embedded in its body.
+    if (parent.type === "root" && this.page.body) {
+      tile.parent?.remove(tile);
+      return;
+    }
 
     if (parent.type === "section" && !this.page.index.has(parent.sectionId)) {
       tile.parent?.remove(tile);
@@ -140,7 +198,7 @@ export default class TilePlacement {
     }
 
     for (const id of removed) {
-      this.remove(id);
+      this.forget(id);
     }
 
     const tilesToPlace: Tile[] = [];

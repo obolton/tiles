@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 import type { ImageSize } from "../types/image";
 import type { RichText } from "../types/richText";
 
@@ -11,7 +11,7 @@ export interface ImageMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildImageMap(
-  properties: Omit<ImageMapInput, "parentId" | "beforeId">,
+  properties: Omit<ImageMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const { imageId, size, alt, text, ...baseProps } = properties;
   const map = buildBaseTileMap({ ...baseProps, type: "IMAGE" });

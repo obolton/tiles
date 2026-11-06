@@ -3,6 +3,7 @@ import { DEFAULT_FONT, type FontId } from "fonts/config";
 import { getFontPreload } from "@/utils/fonts";
 import { getPageTheme, getPageFont } from "@/utils/themes";
 import { getRichTextFonts, getFragmentFonts } from "@/utils/richText/fonts";
+import { getBody } from "doc/body";
 import type { ThemeData } from "@/models/Theme";
 import type { RichText } from "doc/types/richText";
 import type { Link } from "@/router/router";
@@ -38,6 +39,9 @@ export function getPageFonts(doc: Y.Doc): Set<FontId> {
   }
 
   // Inline fonts
+  for (const id of getFragmentFonts(getBody(doc))) {
+    fonts.add(id);
+  }
   for (const tile of doc.getMap<Y.Map<unknown>>("tiles").values()) {
     for (const id of getTileFonts(tile)) {
       fonts.add(id);

@@ -279,11 +279,11 @@ describe("Tile", () => {
     });
   });
 
-  describe("duplicate", () => {
-    test("copies the tile with a new id into the given placement", async () => {
+  describe("clone", () => {
+    test("copies the tile with a new id into the given placement", () => {
       b.move({ x: 42, lat: 1, long: 2 });
 
-      const copy = await b.duplicate({ parentId: section.id, beforeId: a.id });
+      const copy = b.clone({ parentId: section.id, beforeId: a.id });
 
       expect(copy).toBeInstanceOf(Section);
       expect(copy.id).not.toBe(b.id);
@@ -293,12 +293,12 @@ describe("Tile", () => {
       expect(ids(section.tiles)).toEqual([copy.id, a.id, b.id, c.id]);
     });
 
-    test("copies children under the clone with new ids", async () => {
+    test("copies children under the clone with new ids", () => {
       const text = editor.page.createTile(Text.createMap({ align: "TOP" }), {
         parentId: a.id,
       });
 
-      const copy = (await a.duplicate({ parentId: null, beforeId: null })) as Section;
+      const copy = a.clone({ parentId: null, beforeId: null }) as Section;
 
       const [child] = copy.tiles.value;
       expect(copy.tiles.value).toHaveLength(1);
@@ -306,6 +306,61 @@ describe("Tile", () => {
       expect(child?.id).not.toBe(text.id);
       expect(child?.parentId.value).toBe(copy.id);
       expect(ids(a.tiles)).toEqual([text.id]);
+    });
+  });
+
+  describe("duplicate", () => {
+    test("copies the tile directly after itself", () => {
+      const copy = a.duplicate();
+
+      expect(copy.id).not.toBe(a.id);
+      expect(copy.parentId.value).toBe(section.id);
+      expect(ids(section.tiles)).toEqual([a.id, copy.id, b.id, c.id]);
+    });
+
+    test("appends the copy of the last tile", () => {
+      const copy = c.duplicate();
+
+      expect(ids(section.tiles)).toEqual([a.id, b.id, c.id, copy.id]);
+    });
+  });
+
+  describe("on a document page", () => {
+    let embedded: Section;
+
+    beforeEach(() => {
+      editor = createEditor({ page: { type: "DOCUMENT" } });
+      embedded = createTile();
+    });
+
+    test("is embedded in the body and in no collection", () => {
+      expect(embedded.embedded).toBe(true);
+      expect(embedded.container).toBe(editor.page.body);
+      expect(embedded.parent).toBeNull();
+      expect(embedded.previous).toBeNull();
+      expect(embedded.next).toBeNull();
+    });
+
+    test("refuses to be moved by placement", () => {
+      const target = createTile({}, { parentId: embedded.id });
+
+      expect(() => embedded.move({ beforeId: null })).toThrow("placed by the body");
+      expect(() => target.move({ parentId: null })).toThrow("placed by the body");
+    });
+
+    test("still accepts geometry changes", () => {
+      embedded.move({ x: 3, y: 4 });
+
+      expect(embedded.x.value).toBe(3);
+      expect(embedded.y.value).toBe(4);
+    });
+
+    test("uses collections inside embedded sections", () => {
+      const child = createTile({}, { parentId: embedded.id });
+
+      expect(child.embedded).toBe(false);
+      expect(child.container).toBe(editor.page.placement);
+      expect(ids(embedded.tiles)).toEqual([child.id]);
     });
   });
 

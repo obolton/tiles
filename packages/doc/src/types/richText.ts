@@ -124,6 +124,12 @@ export interface PendingNode {
   children: Exclude<BlockNode, { type: "pending" }>[];
 }
 
+/** A tile embedded in rich text, referenced by id. */
+export interface TileNode {
+  type: "tile";
+  id: string;
+}
+
 export type BlockNode =
   | ParagraphNode
   | HeadingNode
@@ -131,7 +137,8 @@ export type BlockNode =
   | ListNode
   | PendingNode
   | CodeNode
-  | DividerNode;
+  | DividerNode
+  | TileNode;
 
 export type Node = InlineNode | BlockNode | ListItemNode;
 

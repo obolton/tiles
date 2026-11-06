@@ -1,7 +1,13 @@
 import * as Y from "yjs";
 
 type YNode = Y.XmlElement | Y.XmlText | Y.XmlHook;
-type Serializer = (node: Y.XmlElement) => string;
+type Serializer = (node: Y.XmlElement, options: MarkdownOptions) => string;
+type InlineSerializer = (node: Y.XmlElement) => string;
+
+export interface MarkdownOptions {
+  /** Renders an embedded tile by id. Tiles are skipped without it. */
+  tile?: (id: string) => string;
+}
 
 const BLOCK_NODES: Record<string, Serializer> = {
   paragraph: serializeParagraph,
@@ -13,9 +19,10 @@ const BLOCK_NODES: Record<string, Serializer> = {
   check_list: serializeList,
   divider: serializeDivider,
   pending: serializePending,
+  tile: serializeTile,
 };
 
-const INLINE_NODES: Record<string, Serializer> = {
+const INLINE_NODES: Record<string, InlineSerializer> = {
   link: serializeLink,
   mention: serializeMention,
   date: serializeDate,
@@ -25,15 +32,15 @@ const INLINE_NODES: Record<string, Serializer> = {
 /**
  * Serializes a `Y.XmlFragment` of rich text to Markdown.
  */
-export function fragmentToMarkdown(fragment: Y.XmlFragment): string {
-  return serializeBlocks(fragment.toArray()).trim();
+export function fragmentToMarkdown(fragment: Y.XmlFragment, options: MarkdownOptions = {}): string {
+  return serializeBlocks(fragment.toArray(), options).trim();
 }
 
-function serializeBlocks(nodes: YNode[]): string {
+function serializeBlocks(nodes: YNode[], options: MarkdownOptions): string {
   let output = "";
   for (const node of nodes) {
     if (node instanceof Y.XmlElement) {
-      output += BLOCK_NODES[node.nodeName]?.(node) ?? "";
+      output += BLOCK_NODES[node.nodeName]?.(node, options) ?? "";
     }
   }
   return output;
@@ -53,8 +60,8 @@ function serializeCodeBlock(node: Y.XmlElement): string {
   return `\`\`\`${language}\n${serializeInline(node)}\n\`\`\`\n\n`;
 }
 
-function serializeQuote(node: Y.XmlElement): string {
-  const quoted = serializeBlocks(node.toArray())
+function serializeQuote(node: Y.XmlElement, options: MarkdownOptions): string {
+  const quoted = serializeBlocks(node.toArray(), options)
     .trim()
     .split("\n")
     .map((line) => `> ${line}`)
@@ -62,22 +69,22 @@ function serializeQuote(node: Y.XmlElement): string {
   return `${quoted}\n\n`;
 }
 
-function serializeList(node: Y.XmlElement): string {
+function serializeList(node: Y.XmlElement, options: MarkdownOptions): string {
   let output = "";
   let index = 0;
   for (const item of node.toArray()) {
     if (item instanceof Y.XmlElement) {
       const marker = listMarker(node, item, ++index);
-      output += `${marker} ${serializeListItem(item, marker.length + 1)}\n`;
+      output += `${marker} ${serializeListItem(item, marker.length + 1, options)}\n`;
     }
   }
   return `${output}\n`;
 }
 
-function serializeListItem(item: Y.XmlElement, indent: number): string {
+function serializeListItem(item: Y.XmlElement, indent: number, options: MarkdownOptions): string {
   const blocks = item.toArray();
   const head = blocks[0] instanceof Y.XmlElement ? serializeInline(blocks[0]) : "";
-  const rest = serializeBlocks(blocks.slice(1)).trim();
+  const rest = serializeBlocks(blocks.slice(1), options).trim();
   return rest ? `${head}\n${indentLines(rest, indent)}` : head;
 }
 
@@ -104,8 +111,14 @@ function serializeDivider(): string {
   return "---\n\n";
 }
 
-function serializePending(node: Y.XmlElement): string {
-  return serializeBlocks(node.toArray());
+function serializePending(node: Y.XmlElement, options: MarkdownOptions): string {
+  return serializeBlocks(node.toArray(), options);
+}
+
+function serializeTile(node: Y.XmlElement, options: MarkdownOptions): string {
+  const id = node.getAttribute("id");
+  const content = typeof id === "string" ? (options.tile?.(id) ?? "") : "";
+  return content ? `${content}\n\n` : "";
 }
 
 function serializeInline(node: Y.XmlElement): string {
