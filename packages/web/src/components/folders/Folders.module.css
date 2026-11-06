@@ -28,6 +28,7 @@
     padding: 4px var(--layout-gutter, 16px);
     overflow-x: auto;
     scrollbar-width: none;
+    scroll-padding-inline: var(--layout-gutter, 16px);
 
     & > li {
       flex: none;

@@ -86,7 +86,6 @@ export default function LibraryPage({
         <SearchToolbar
           id="search-pages"
           placeholder={placeholder}
-          autofocus="pointer"
           query={query}
           sortOptions={sort && <PageSortOptions />}
           sort={sort}

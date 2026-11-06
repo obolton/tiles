@@ -10,6 +10,7 @@ import { showModal } from "@/utils/modals";
 import { reactive } from "reactivity";
 import { invalidateWorkspaceFolders } from "@/utils/folders";
 import { redirectWithToast } from "@/utils/toasts";
+import { reveal } from "@/utils/scroll";
 import styles from "./Folders.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 
@@ -33,19 +34,16 @@ export interface FoldersProps {
 
 const FolderModalLoader = () => import("@/components/modals/folders/FolderModal");
 
-// Centers the current item when the menu is a horizontally scrolling row
+// Scrolls the current item into view when the menu is a horizontally scrolling row
 function revealCurrent(list: HTMLElement) {
   if (import.meta.env.SSR) {
     return;
   }
   requestAnimationFrame(() => {
     const current = list.querySelector('[aria-current="page"]');
-    if (!current || list.scrollWidth <= list.clientWidth) {
-      return;
+    if (current) {
+      reveal(list, current);
     }
-    const listRect = list.getBoundingClientRect();
-    const rect = current.getBoundingClientRect();
-    list.scrollLeft += rect.left - listRect.left - (listRect.width - rect.width) / 2;
   });
 }
 
