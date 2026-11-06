@@ -4,9 +4,12 @@ import { handleError } from "@/utils/errors";
 import { getWorkspaceThemes, createWorkspaceTheme } from "@/utils/workspaceThemes";
 import { loadThemeFonts } from "@/utils/themes";
 import ThemePreview from "@/components/themes/ThemePreview";
+import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import PaletteIcon from "@/icons/palette.svg?jsx";
+import SettingsIcon from "@/icons/settings.svg?jsx";
+import NewIcon from "@/icons/new.svg?jsx";
 import Editor from "@/editor/Editor";
 import Theme from "@/models/Theme";
 import styles from "./ThemePicker.module.css";
@@ -115,17 +118,21 @@ export default function ThemePicker({ id, value, onChange, ...props }: ThemePick
       </ListGroup>
 
       <div slot="footer" className={styles.footer}>
-        <button
-          type="button"
-          className="floating small"
+        <ToolbarButton
+          classList={{ small: true }}
+          label="Edit theme"
           disabled={applied.derive((theme) => !theme)}
           on:click={editTheme}
         >
-          Edit theme
-        </button>
-        <button type="button" className="floating small" on:click={() => void newTheme()}>
-          New theme
-        </button>
+          <SettingsIcon aria-hidden="true" />
+        </ToolbarButton>
+        <ToolbarButton
+          classList={{ small: true }}
+          label="New theme"
+          on:click={() => void newTheme()}
+        >
+          <NewIcon aria-hidden="true" />
+        </ToolbarButton>
       </div>
     </list-select>
   );

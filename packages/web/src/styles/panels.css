@@ -15,14 +15,15 @@
     gap: 4px;
     padding: 12px 12px 4px 16px;
   }
+}
 
-  .sidebar-panel-title {
-    flex: 1 1 auto;
-    min-width: 0;
-    font-size: 1.125rem;
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+/* Unlayered so the title size wins over the global heading sizes */
+.sidebar-panel-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -8,8 +8,6 @@ import { THEME_EDITOR_PANEL_ID, THEME_EDITOR_NAME_ID } from "./ThemeEditor";
 import debounce from "@/utils/debounce";
 import CloseIcon from "@/icons/close.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
-import DuplicateIcon from "@/icons/duplicate.svg?jsx";
-import TrashIcon from "@/icons/trash.svg?jsx";
 import styles from "./ThemeEditorPanel.module.css";
 import type ThemeEditor from "./ThemeEditor";
 import type Theme from "@/models/Theme";
@@ -107,28 +105,37 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
         <h3 className={styles.label}>Fonts</h3>
         <FontPicker
           label="Heading"
+          icon={null}
           value={data.derive((d) => d.fonts.heading)}
           onChange={(font) => state.update({ fonts: { heading: font } })}
         />
         <FontPicker
           label="Body"
+          icon={null}
           value={data.derive((d) => d.fonts.body)}
           onChange={(font) => state.update({ fonts: { body: font } })}
         />
         <FontPicker
           label="Code"
+          icon={null}
           value={data.derive((d) => d.fonts.code)}
           onChange={(font) => state.update({ fonts: { code: font } })}
         />
       </div>
 
       <div className={styles.actions}>
-        <button type="button" className="secondary" on:click={() => void state.duplicate()}>
-          <DuplicateIcon aria-hidden="true" />
+        <button
+          type="button"
+          classList={{ secondary: true, small: true }}
+          on:click={() => void state.duplicate()}
+        >
           Duplicate
         </button>
-        <button type="button" className="secondary destructive" on:click={() => state.delete()}>
-          <TrashIcon aria-hidden="true" />
+        <button
+          type="button"
+          classList={{ secondary: true, destructive: true, small: true }}
+          on:click={() => state.delete()}
+        >
           Delete
         </button>
       </div>

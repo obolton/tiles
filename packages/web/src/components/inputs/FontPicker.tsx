@@ -11,11 +11,19 @@ import type { JSX } from "jsx/jsx";
 
 export interface FontPickerProps extends JSX.Attributes<"list-select"> {
   label?: string;
+  /** The trigger icon. Pass null to show none. */
+  icon?: JSX.Node;
   value?: Reactive<FontId | null>;
   onChange: (value: FontId) => void;
 }
 
-export default function FontPicker({ label = "Font", value, onChange, ...props }: FontPickerProps) {
+export default function FontPicker({
+  label = "Font",
+  icon = <FontIcon aria-hidden="true" slot="default-icon" />,
+  value,
+  onChange,
+  ...props
+}: FontPickerProps) {
   if (!import.meta.env.SSR) {
     loadFontPreviews(...FONT_IDS).catch(handleError);
   }
@@ -40,7 +48,7 @@ export default function FontPicker({ label = "Font", value, onChange, ...props }
       value={value}
       on:change={setFont}
     >
-      <FontIcon aria-hidden="true" slot="default-icon" />
+      {icon}
       <ListGroup>
         {FONTS.map((font) => (
           <ListOption
