@@ -10,9 +10,11 @@ ul.navigation-menu {
     background: none;
     border-radius: var(--border-radius);
 
-    body:not([data-drag]) &:hover {
-      color: var(--ui-color);
-      background-color: rgb(0 0 0 / 5%);
+    @media (hover: hover) {
+      body:not([data-drag]) &:hover {
+        color: var(--ui-color);
+        background-color: rgb(0 0 0 / 5%);
+      }
     }
 
     &:active {
@@ -33,7 +35,7 @@ ul.navigation-menu {
     }
 
     &.muted:not(:hover, :active) {
-      color: rgb(0 0 0 / 50%);
+      color: rgb(0 0 0 / 60%);
     }
   }
 

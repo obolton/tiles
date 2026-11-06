@@ -19,3 +19,27 @@
     opacity: 1;
   }
 }
+
+@media (width < 640px) {
+  .nav > ul {
+    flex-direction: row;
+    gap: 8px;
+    margin-inline: calc(-1 * var(--layout-gutter, 16px));
+    padding: 4px var(--layout-gutter, 16px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-padding-inline: var(--layout-gutter, 16px);
+
+    & > li {
+      flex: none;
+    }
+
+    & > li > :is(a, button) {
+      width: auto;
+    }
+
+    & > li > a > span {
+      max-width: 10rem;
+    }
+  }
+}

@@ -43,4 +43,40 @@
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
+  white-space: nowrap;
+}
+
+/* Give the center content the remaining width rather than squeezing the sides */
+@media (width < 1024px) {
+  .stacked {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+
+@media (width < 640px) {
+  /* Two 40px rows with 8px padding and gap */
+  :root:has(.stacked) {
+    --header-height: 104px;
+  }
+
+  .stacked {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "start end"
+      "center center";
+    padding-block: 8px;
+
+    & > .start {
+      grid-area: start;
+      min-width: 0;
+    }
+
+    & > .center {
+      grid-area: center;
+    }
+
+    & > .end {
+      grid-area: end;
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { playwright } from "@vitest/browser-playwright";
 import path from "node:path";
 import { defineConfig, mergeConfig } from "vitest/config";
 import shared from "../../vitest.shared.ts";
+import svgPlugin from "./src/vite/svg.ts";
 
 const packageRoot = path.dirname(import.meta.filename);
 
@@ -21,6 +22,7 @@ export default mergeConfig(
         "@": path.resolve(packageRoot, "./src"),
       },
     },
+    plugins: [svgPlugin({ importSource: "jsx" })],
     test: {
       include: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
       env: {

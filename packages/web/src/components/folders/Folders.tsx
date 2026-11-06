@@ -10,10 +10,13 @@ import { showModal } from "@/utils/modals";
 import { reactive } from "reactivity";
 import { invalidateWorkspaceFolders } from "@/utils/folders";
 import { redirectWithToast } from "@/utils/toasts";
+import { reveal } from "@/utils/scroll";
 import styles from "./Folders.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 
-export type SYSTEM_FOLDER = "RECENT" | "SHARED" | "BOOKMARKS" | "TRASH";
+export const SYSTEM_FOLDERS = ["RECENT", "SHARED", "BOOKMARKS", "TRASH"] as const;
+
+export type SYSTEM_FOLDER = (typeof SYSTEM_FOLDERS)[number];
 
 export interface Folder {
   id: string;
@@ -30,6 +33,19 @@ export interface FoldersProps {
 }
 
 const FolderModalLoader = () => import("@/components/modals/folders/FolderModal");
+
+// Scrolls the current item into view when the menu is a horizontally scrolling row
+function revealCurrent(list: HTMLElement) {
+  if (import.meta.env.SSR) {
+    return;
+  }
+  requestAnimationFrame(() => {
+    const current = list.querySelector('[aria-current="page"]');
+    if (current) {
+      reveal(list, current);
+    }
+  });
+}
 
 export default function Folders({
   workspaceId,
@@ -110,8 +126,8 @@ export default function Folders({
   const basePath = `/workspaces/${workspaceId}`;
 
   return (
-    <nav>
-      <ul className="navigation-menu" on:dnd-drop={onDrop}>
+    <nav className={styles.nav}>
+      <ul className="navigation-menu" ref={revealCurrent} on:dnd-drop={onDrop}>
         <li aria-current={selectedId === "RECENT" ? "page" : "false"}>
           <a href={basePath}>
             <LibraryIcon aria-hidden="true" />

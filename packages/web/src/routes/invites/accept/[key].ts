@@ -1,4 +1,5 @@
 import client from "@/api/client";
+import { withDestination } from "@/auth/destinations";
 import { getSessionId } from "@/utils/sessions";
 import { redirect, notFound } from "@/router/responses";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
@@ -10,7 +11,7 @@ const GET: APIRequestHandler = async ({ headers, parameters }) => {
   }
   const sessionId = getSessionId(headers);
   if (!sessionId) {
-    return redirect(`/sign-in?destination=${encodeURIComponent(`invites/accept/${key}`)}`, 302);
+    return redirect(withDestination("/sign-in", `invites/accept/${key}`), 302);
   }
   const { pageId } = await client.collaboration.acceptPageInvite.mutate(
     { key },
