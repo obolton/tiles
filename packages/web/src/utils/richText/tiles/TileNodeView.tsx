@@ -110,11 +110,11 @@ export default class TileNodeView implements NodeView, EventListenerObject {
 
   private onKeyDown(event: KeyboardEvent) {
     const pos = this.getPos();
-    if (event.defaultPrevented || pos === undefined) {
+    if (pos === undefined) {
       return;
     }
 
-    // Step out of the tile from anywhere inside it
+    // Step out of the tile from anywhere inside it; nested editors prevent Escape's default
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
@@ -124,7 +124,7 @@ export default class TileNodeView implements NodeView, EventListenerObject {
 
     // Keys on the item itself move on; nested editors keep their own keys
     const target = event.target;
-    if (!(target instanceof Element) || target.tagName !== "PAGE-ITEM") {
+    if (event.defaultPrevented || !(target instanceof Element) || target.tagName !== "PAGE-ITEM") {
       return;
     }
 
