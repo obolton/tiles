@@ -111,7 +111,7 @@ describe("getPage", () => {
         deletedAt: null,
         OR: [{ authorId: "user-1" }, { access: { some: { userId: "user-1" } } }],
       },
-      select: { id: true, workspaceId: true },
+      select: { id: true, workspaceId: true, type: true },
     });
   });
 });

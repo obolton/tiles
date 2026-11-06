@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { BODY_ID } from "doc/body";
+
+/** A tile id, or the body of a document page. */
+const TargetIdSchema = z.union([z.uuid(), z.literal(BODY_ID)]);
 
 export const GenerateImageSchema = z.object({
   prompt: z.string().min(1).max(4096),
@@ -17,12 +21,12 @@ export const WriteSchema = z.object({
   context: z
     .strictObject({
       text: z.string().max(4096).optional(),
-      tileIds: z.array(z.uuid()).max(10).optional(),
+      tileIds: z.array(TargetIdSchema).max(10).optional(),
     })
     .optional(),
   selection: z
     .strictObject({
-      tileId: z.uuid(),
+      tileId: TargetIdSchema,
       from: z.string().max(1024),
       to: z.string().max(1024),
     })

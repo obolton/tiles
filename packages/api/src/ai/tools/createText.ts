@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BODY_ID } from "doc/body";
 import { buildTextMap } from "doc/tiles/text";
 import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
@@ -22,6 +23,10 @@ async function createTextTile(
 ): Promise<TileResult> {
   const { size, coordinates } = args;
   const parentId = resolveParentId(args.parentId, context);
+  // Text at the root of a document page is written into the body itself
+  if (parentId === null && context.session.body) {
+    return { tileId: BODY_ID, type: "TEXT" };
+  }
   const map = buildTextMap({ ...getDimensions(size), coordinates });
   const tileId = context.session.createTile(map, { parentId });
   return { tileId, type: "TEXT" };

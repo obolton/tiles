@@ -9,6 +9,8 @@ import { buildChartMap } from "doc/tiles/chart";
 import { buildTableMap, buildColumn, buildRow } from "doc/tiles/table";
 import { buildSectionMap } from "doc/tiles/section";
 import { getTileContent, resolveTileContents } from "@/ai/tileContent";
+import { BODY_ID, getBody } from "doc/body";
+import { insertTile } from "doc/richText/tiles";
 import type { RichText } from "doc/types/richText";
 
 function tiles(): { doc: Y.Doc; tiles: Y.Map<Y.Map<unknown>> } {
@@ -205,5 +207,53 @@ describe("resolveTileContents", () => {
   test("skips ids missing from the doc", () => {
     const { doc } = tiles();
     expect(resolveTileContents(doc, ["ghost"])).toEqual([]);
+  });
+
+  describe("document body", () => {
+    test("resolves the body with its embedded tiles inlined and listed after it", () => {
+      const { doc, tiles: map } = tiles();
+      const body = getBody(doc);
+      const paragraph = new Y.XmlElement("paragraph");
+      const text = new Y.XmlText();
+      text.insert(0, "Intro");
+      paragraph.insert(0, [text]);
+      body.insert(0, [paragraph]);
+      const link = buildLinkMap({
+        url: "https://example.com",
+        title: "Example",
+        description: null,
+        siteName: null,
+        imageId: null,
+      });
+      link.set("id", "l");
+      link.set("parentId", null);
+      map.set("l", link);
+      insertTile(body, "l");
+
+      expect(resolveTileContents(doc, [BODY_ID], body)).toEqual([
+        { id: BODY_ID, type: "TEXT", content: "Intro\n\n[1] (LINK)\nExample\nhttps://example.com" },
+        { id: "l", type: "LINK", content: "Example\nhttps://example.com" },
+      ]);
+    });
+
+    test("inlines the children of an embedded section", () => {
+      const { doc, tiles: map } = tiles();
+      const body = getBody(doc);
+      const section = place(map, "sec", buildSectionMap({}));
+      section.set("order", undefined);
+      insertTile(body, "sec");
+      const child = place(map, "child", buildTextMap({}), "sec");
+      writeText(child, "Inside");
+
+      expect(resolveTileContents(doc, [BODY_ID], body)).toEqual([
+        { id: BODY_ID, type: "TEXT", content: "[1] (TEXT)\nInside" },
+        { id: "child", type: "TEXT", content: "Inside" },
+      ]);
+    });
+
+    test("ignores the body id without a body", () => {
+      const { doc } = tiles();
+      expect(resolveTileContents(doc, [BODY_ID])).toEqual([]);
+    });
   });
 });

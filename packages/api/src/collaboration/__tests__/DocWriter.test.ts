@@ -1,9 +1,22 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
 import { AI_ORIGIN } from "doc/origins";
+import { BODY_ID, getBody } from "doc/body";
+import { getTileIds } from "doc/richText/tiles";
+import { buildImageMap } from "doc/tiles/image";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTextMap } from "doc/tiles/text";
 import { DocWriter } from "@/collaboration/DocWriter";
+
+const IMAGE = { imageId: "image-id", size: { width: 10, height: 10 } };
+
+function paragraph(text: string): Y.XmlElement {
+  const content = new Y.XmlText();
+  content.insert(0, text);
+  const element = new Y.XmlElement("paragraph");
+  element.insert(0, [content]);
+  return element;
+}
 
 describe("DocWriter", () => {
   let doc: Y.Doc;
@@ -104,7 +117,7 @@ describe("DocWriter", () => {
 
     test("uses a custom origin when provided", () => {
       const custom = Symbol("custom");
-      const customWriter = new DocWriter(doc, custom);
+      const customWriter = new DocWriter(doc, { origin: custom });
       const origins: unknown[] = [];
       doc.on("afterTransaction", (transaction) => {
         origins.push(transaction.origin);
@@ -113,6 +126,85 @@ describe("DocWriter", () => {
       customWriter.createTile(buildTextMap({}));
 
       expect(origins).toContain(custom);
+    });
+  });
+
+  describe("document body", () => {
+    let body: Y.XmlFragment;
+    let bodyWriter: DocWriter;
+
+    function outline(): string[] {
+      return body
+        .toArray()
+        .map((node) =>
+          node instanceof Y.XmlElement && node.nodeName === "tile"
+            ? `tile:${node.getAttribute("id")}`
+            : "paragraph",
+        );
+    }
+
+    beforeEach(() => {
+      body = getBody(doc);
+      body.insert(0, [paragraph("Intro")]);
+      bodyWriter = new DocWriter(doc, { body });
+    });
+
+    test("embeds root tiles in the body in order without an order key", () => {
+      const first = bodyWriter.createTile(buildImageMap(IMAGE));
+      const second = bodyWriter.createTile(buildImageMap(IMAGE));
+
+      expect(tiles.get(first)?.get("parentId")).toBeNull();
+      expect(tiles.get(first)?.has("order")).toBe(false);
+      expect(getTileIds(body)).toEqual([first, second]);
+      expect(outline()).toEqual(["paragraph", `tile:${first}`, `tile:${second}`, "paragraph"]);
+    });
+
+    test("inserts after the block at the insertion point, then after each tile", () => {
+      body.insert(1, [paragraph("Outro")]);
+      const intro = body.get(0) as Y.XmlElement;
+      const insertAt = Y.createRelativePositionFromTypeIndex(intro.firstChild as Y.XmlText, 1);
+      const writer = new DocWriter(doc, { body, insertAt });
+
+      const first = writer.createTile(buildImageMap(IMAGE));
+      const second = writer.createTile(buildImageMap(IMAGE));
+
+      expect(outline()).toEqual(["paragraph", `tile:${first}`, `tile:${second}`, "paragraph"]);
+    });
+
+    test("still orders tiles inside sections", () => {
+      const section = bodyWriter.createTile(buildSectionMap({}));
+      const child = bodyWriter.createTile(buildTextMap({}), { parentId: section });
+
+      expect(tiles.get(child)?.get("parentId")).toBe(section);
+      expect(typeof tiles.get(child)?.get("order")).toBe("string");
+      expect(getTileIds(body)).toEqual([section]);
+    });
+
+    test("streams text into the body", () => {
+      const stream = bodyWriter.streamText(BODY_ID, "append");
+      stream?.apply({ type: "paragraph" });
+      stream?.apply("Appended");
+
+      expect(body).toHaveLength(2);
+      expect(outline()).toEqual(["paragraph", "paragraph"]);
+    });
+
+    test("deletes the maps of embedded tiles when replacing the body", () => {
+      const image = bodyWriter.createTile(buildImageMap(IMAGE));
+
+      bodyWriter.streamText(BODY_ID, "replace");
+
+      expect(body).toHaveLength(0);
+      expect(tiles.has(image)).toBe(false);
+    });
+
+    test("removes an embedded tile's node with its map", () => {
+      const image = bodyWriter.createTile(buildImageMap(IMAGE));
+
+      bodyWriter.deleteTiles([image]);
+
+      expect(tiles.has(image)).toBe(false);
+      expect(getTileIds(body)).toEqual([]);
     });
   });
 });

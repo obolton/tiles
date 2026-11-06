@@ -37,6 +37,7 @@ const CTX: AuthenticatedPageProcedureContext = {
   ...MOCK_AUTH_CONTEXT,
   pageId: PAGE_ID,
   workspaceId: "workspace-1",
+  pageType: "FREE",
 };
 
 const WORKSPACE_CTX: AuthenticatedWorkspaceProcedureContext = {
