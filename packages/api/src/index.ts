@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import { createServer } from "node:http";
 import { createHTTPHandler } from "@trpc/server/adapters/standalone";
 import cors from "cors";
@@ -6,23 +5,15 @@ import crossws from "crossws/adapters/node";
 import router from "@/routes/index";
 import { createContext } from "@/utils/trpc";
 import { hocuspocus } from "@/collaboration/instance";
+import { env } from "@/env";
 
-const API_HOST = process.env.API_HOST;
-const API_PORT = parseInt(process.env.API_PORT || "", 10);
-const CORS_ORIGIN = process.env.PUBLIC_WEB_ORIGIN;
-
-assert(API_HOST);
-assert(API_PORT);
-assert(!Number.isNaN(API_PORT));
-assert(CORS_ORIGIN);
-
-const SERVER_URL = `http://${API_HOST}:${API_PORT}`;
+const SERVER_URL = `http://${env.API_HOST}:${env.API_PORT}`;
 const COLLABORATION_PATH = "/collaboration";
 
 const trpcHandler = createHTTPHandler({
   router,
   middleware: cors({
-    origin: CORS_ORIGIN,
+    origin: env.PUBLIC_WEB_ORIGIN,
     credentials: true,
   }),
   createContext,
@@ -69,7 +60,7 @@ server.on("upgrade", (req, socket, head) => {
   }
 });
 
-server.listen({ host: API_HOST, port: API_PORT }, () => {
+server.listen({ host: env.API_HOST, port: env.API_PORT }, () => {
   console.log(`API: Server started at ${SERVER_URL}`);
 });
 

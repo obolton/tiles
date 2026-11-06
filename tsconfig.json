@@ -4,6 +4,7 @@
     { "path": "./packages/api" },
     { "path": "./packages/dev-cdn" },
     { "path": "./packages/doc" },
+    { "path": "./packages/env" },
     { "path": "./packages/fonts" },
     { "path": "./packages/image-upload-worker" },
     { "path": "./packages/jsx" },

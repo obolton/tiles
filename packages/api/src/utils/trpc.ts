@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import crypto from "node:crypto";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { getCookie } from "@/utils/cookies";
@@ -6,16 +5,11 @@ import { getSessionContext } from "@/routes/users/users";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
 import { SERVICE_TOKEN_HEADER } from "@/constants/headers";
 import { clearSessionCookie } from "@/utils/cookies";
+import { env } from "@/env";
 import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import type { IncomingMessage, ServerResponse } from "node:http";
 
-function getServiceApiToken() {
-  const token = process.env.SERVICE_API_TOKEN;
-  assert(token, "SERVICE_API_TOKEN is not defined");
-  return token;
-}
-
-const SERVICE_API_TOKEN = getServiceApiToken();
+const SERVICE_API_TOKEN = env.SERVICE_API_TOKEN;
 
 export interface UnauthenticatedRequestContext {
   res: ServerResponse;

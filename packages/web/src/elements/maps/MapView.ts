@@ -27,6 +27,7 @@ const MAP_STYLE_NAMES: Record<MapStyleType, string> = {
 
 function getStyleUrl(style: MapStyleType = "DEFAULT") {
   const slug = MAP_STYLE_NAMES[style];
+  // Optional, so read directly until the env registry supports optional values.
   return `https://api.maptiler.com/maps/${slug}/style.json?key=${import.meta.env.PUBLIC_MAPTILER_API_KEY}`;
 }
 

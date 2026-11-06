@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createLanguageModel } from "../models";
 
 beforeEach(() => {
-  // Provider modules assert their API key on load, so evaluate them afresh per test.
+  // Provider modules read their API key on load, so evaluate them afresh per test.
   vi.resetModules();
 });
 
@@ -20,7 +20,7 @@ describe("createLanguageModel", () => {
 
   test("throws when the selected provider's key is missing", async () => {
     await expect(createLanguageModel("anthropic", "claude-sonnet-4-5")).rejects.toThrow(
-      "ANTHROPIC_API_KEY is not defined",
+      "Missing environment variables: ANTHROPIC_API_KEY",
     );
   });
 

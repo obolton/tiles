@@ -1,5 +1,5 @@
-import assert from "node:assert";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { env } from "@/env";
 
 export interface Email {
   subject: string;
@@ -13,15 +13,11 @@ function getClient() {
     return client;
   }
 
-  assert(process.env.AWS_ACCESS_KEY_ID, "AWS_ACCESS_KEY_ID is required");
-  assert(process.env.AWS_SECRET_ACCESS_KEY, "AWS_SECRET_ACCESS_KEY is required");
-  assert(process.env.AWS_REGION, "AWS_REGION is required");
-
   client = new SESv2Client({
-    region: process.env.AWS_REGION,
+    region: env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
     },
   });
 
@@ -29,11 +25,9 @@ function getClient() {
 }
 
 export async function sendEmail(recipient: string, message: Email) {
-  assert(process.env.EMAIL_FROM, "EMAIL_FROM is required");
-
   const client = getClient();
   const command = new SendEmailCommand({
-    FromEmailAddress: process.env.EMAIL_FROM,
+    FromEmailAddress: env.EMAIL_FROM,
     Destination: {
       ToAddresses: [recipient],
     },

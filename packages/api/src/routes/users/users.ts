@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import crypto from "node:crypto";
 import prisma, { type PrismaTransactionClient } from "@/database/prisma";
 import { upload } from "@/utils/storage";
@@ -7,16 +6,14 @@ import { getStream } from "@/utils/http";
 import type { CreateUserSchema, UpdateUserSchema, IsUsernameAvailableSchema } from "./schema";
 import type { AuthenticatedRequestContext } from "@/utils/trpc";
 import { USER_FIELDS } from "./fields";
-
-const PROFILE_IMAGES_BUCKET = process.env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
+import { env } from "@/env";
 
 export async function storeProfileImage(userId: string, imageUrl: string) {
-  assert(PROFILE_IMAGES_BUCKET, "CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES is not defined.");
   const { stream, contentType } = await getStream(imageUrl, IMAGE_CONTENT_TYPES);
   const extension = IMAGE_FILE_EXTENSIONS[contentType];
   const imageId = crypto.randomUUID();
   const imageKey = `${userId}/${imageId}.${extension}`;
-  await upload(PROFILE_IMAGES_BUCKET, imageKey, stream, contentType);
+  await upload(env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES, imageKey, stream, contentType);
   return imageKey;
 }
 

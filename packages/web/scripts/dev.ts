@@ -1,10 +1,14 @@
-import assert from "node:assert";
+import { defineEnv } from "env";
 import createDevServer from "@/server/dev-server";
 
-assert(process.env.WEB_HOST);
-assert(process.env.WEB_PORT);
+const env = defineEnv({
+  WEB_HOST: process.env.WEB_HOST,
+  WEB_PORT: parseInt(process.env.WEB_PORT ?? "", 10),
+  PUBLIC_WEB_ORIGIN: process.env.PUBLIC_WEB_ORIGIN,
+});
 
 await createDevServer({
-  hostname: process.env.WEB_HOST,
-  port: parseInt(process.env.WEB_PORT, 10),
+  hostname: env.WEB_HOST,
+  port: env.WEB_PORT,
+  origin: env.PUBLIC_WEB_ORIGIN,
 });

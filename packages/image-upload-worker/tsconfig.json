@@ -10,5 +10,5 @@
     "rootDir": "."
   },
   "include": ["./src/**/*"],
-  "references": [{ "path": "../api" }]
+  "references": [{ "path": "../api" }, { "path": "../env" }]
 }

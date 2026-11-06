@@ -1,5 +1,6 @@
 import { stringifySetCookie, parseCookie } from "cookie";
 import { SESSION_COOKIE_NAME } from "@/constants/cookies";
+import { env } from "@/env";
 import type { ServerResponse } from "node:http";
 
 export function getCookie(cookieString: string, name: string) {
@@ -12,7 +13,7 @@ export function clearSessionCookie(res: ServerResponse) {
     stringifySetCookie({
       name: SESSION_COOKIE_NAME,
       value: "",
-      domain: process.env.PUBLIC_SESSION_COOKIE_DOMAIN,
+      domain: env.PUBLIC_SESSION_COOKIE_DOMAIN,
       path: "/",
       httpOnly: true,
       secure: true,
