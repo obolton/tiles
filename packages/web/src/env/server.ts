@@ -1,7 +1,7 @@
 // oxlint-disable node/no-process-env
 import { defineEnv } from "env";
 
-// Server-only values. The client build fails if this module is reachable from a browser entry.
+// Server-only values. Importing this module outside SSR throws, so client code cannot read them.
 if (!import.meta.env.SSR) {
   throw new Error("Server environment variables are only available in the server context");
 }
