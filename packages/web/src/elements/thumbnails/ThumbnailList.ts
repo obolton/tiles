@@ -34,7 +34,6 @@ export default class ThumbnailList extends HTMLElement {
   private mutationObserver?: MutationObserver;
   private resizeObserver?: ResizeObserver;
   private dragController?: AbortController;
-  private dragOrientation: Orientation | null = null;
   private dragPlaceholder: HTMLElement | null = null;
   private beforeId: string | null = null;
   private jumpingTo: HTMLElement | null = null;
@@ -247,7 +246,6 @@ export default class ThumbnailList extends HTMLElement {
   private detachDrag() {
     this.dragController?.abort();
     this.dragController = undefined;
-    this.dragOrientation = null;
     delete this.dataset.drop;
     this.hidePlaceholder();
     this.beforeId = null;
@@ -259,10 +257,10 @@ export default class ThumbnailList extends HTMLElement {
     }
 
     const { signal } = this.dragController;
-    this.dragOrientation ??= this.orientation;
+    const constrain = this.orientation;
 
     for (const slide of this.querySelectorAll<HTMLElement>('[role="option"]')) {
-      makeDraggable(slide, { signal, constrain: this.dragOrientation });
+      makeDraggable(slide, { signal, constrain });
     }
   }
 

@@ -35,7 +35,7 @@
       "ai . insert" minmax(40px, auto)
       "toolbar toolbar toolbar" auto / auto 1fr auto;
 
-    & > button {
+    & > :global(#ai-button) {
       grid-area: ai;
     }
 

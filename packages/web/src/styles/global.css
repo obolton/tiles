@@ -11,6 +11,10 @@
   --chroma: 25%;
   --ui-font: "Inter", system, sans-serif;
   --max-width: 800px;
+
+  /* Floating chrome (toolbars, popovers, sheets) */
+  --surface-outline: 0 0 0 1px rgb(0 0 0 / 15%);
+  --surface-shadow: var(--surface-outline), 0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
 * {

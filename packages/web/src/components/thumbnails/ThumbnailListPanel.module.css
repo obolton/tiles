@@ -7,9 +7,6 @@
 }
 
 .rail {
-  --thumbnail-inline-size: 100%;
-  --thumbnail-block-size: auto;
-
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;

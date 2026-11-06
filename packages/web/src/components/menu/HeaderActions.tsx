@@ -25,7 +25,7 @@ import type TableOfContents from "@/elements/table-of-contents/TableOfContents";
 const PAGE_ACTIONS_MENU_ID = "page-actions-menu";
 
 /** Below this width the secondary actions collapse into an overflow menu. */
-export const COMPACT_ACTIONS_QUERY = "(width < 1024px)";
+const COMPACT_ACTIONS_QUERY = "(width < 1024px)";
 
 export interface HeaderActionsProps {
   editor: Editor;
@@ -72,12 +72,15 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
     void startPresentation();
   }
 
-  function closeMenu() {
-    document.getElementById(PAGE_ACTIONS_MENU_ID)?.hidePopover();
+  /** Runs a menu item's action once the overflow menu has closed. */
+  function menuAction(action: () => void) {
+    return () => {
+      document.getElementById(PAGE_ACTIONS_MENU_ID)?.hidePopover();
+      action();
+    };
   }
 
   function openTableOfContents() {
-    closeMenu();
     toc.anchorElement = moreButton;
     toc.showPopover();
   }
@@ -151,20 +154,14 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                     <MenuItem
                       icon={<ShareIcon aria-hidden="true" />}
                       checked={editor.share.isOpen}
-                      on:click={() => {
-                        closeMenu();
-                        editor.share.toggle();
-                      }}
+                      on:click={menuAction(() => editor.share.toggle())}
                     >
                       Share
                     </MenuItem>
                     <MenuItem
                       icon={<HistoryIcon aria-hidden="true" />}
                       checked={editor.versionHistory.isOpen}
-                      on:click={() => {
-                        closeMenu();
-                        editor.versionHistory.toggle();
-                      }}
+                      on:click={menuAction(() => editor.versionHistory.toggle())}
                     >
                       Version history
                     </MenuItem>
@@ -175,23 +172,20 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                   <MenuItem
                     icon={isBookmarked.derive(bookmarkIcon)}
                     checked={isBookmarked}
-                    on:click={() => {
-                      closeMenu();
-                      void onClickBookmark();
-                    }}
+                    on:click={menuAction(() => void onClickBookmark())}
                   >
                     Bookmark
                   </MenuItem>
                   <MenuItem
                     icon={<PresentIcon aria-hidden="true" />}
-                    on:click={() => {
-                      closeMenu();
-                      present();
-                    }}
+                    on:click={menuAction(present)}
                   >
                     Present
                   </MenuItem>
-                  <MenuItem icon={<MenuIcon aria-hidden="true" />} on:click={openTableOfContents}>
+                  <MenuItem
+                    icon={<MenuIcon aria-hidden="true" />}
+                    on:click={menuAction(openTableOfContents)}
+                  >
                     Table of contents
                   </MenuItem>
                 </MenuItemGroup>
