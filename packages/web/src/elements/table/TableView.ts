@@ -207,7 +207,6 @@ export default class TableView extends HTMLElement {
       this.editAbortController = null;
     }
 
-    // Cached rows carry the previous mode's handles
     this.rowBuffer = [];
 
     this.updateCellTabIndex();
@@ -419,8 +418,6 @@ export default class TableView extends HTMLElement {
     this.unsubscribeFromData();
     this.hideDropIndicator();
     this.clearSelection();
-    // The scroll position is lost on removal and the data may change while
-    // disconnected, so the window is rebuilt from the model on reconnect.
     this.resetWindow();
   }
 
