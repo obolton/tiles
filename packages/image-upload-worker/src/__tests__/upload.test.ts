@@ -58,7 +58,7 @@ function createBody() {
 }
 
 describe("uploadImage", () => {
-  const client = createClient("https://api.example.com", "test-session");
+  const client = createClient("test-session");
   const createImageMock = vi.mocked(client.media.createImage.mutate);
   const updateImageMock = vi.mocked(client.media.updateImage.mutate);
   const deleteImageMock = vi.mocked(client.media.deleteImage.mutate);

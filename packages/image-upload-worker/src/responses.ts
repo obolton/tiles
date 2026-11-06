@@ -1,10 +1,12 @@
+import { env } from "./env";
+
 const ACCESS_CONTROL_MAX_AGE = 3600; // 1 hour
 
-export function createPreflightResponse(allowOrigin: string): Response {
+export function createPreflightResponse(): Response {
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": allowOrigin,
+      "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
       "Access-Control-Allow-Credentials": "true",
       "Access-Control-Allow-Methods": "PUT",
       "Access-Control-Allow-Headers": "Content-Type",
@@ -13,11 +15,11 @@ export function createPreflightResponse(allowOrigin: string): Response {
   });
 }
 
-export function createJsonResponse(allowOrigin: string, data: unknown, status = 200): Response {
+export function createJsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      "Access-Control-Allow-Origin": allowOrigin,
+      "Access-Control-Allow-Origin": env.PUBLIC_WEB_ORIGIN,
       "Access-Control-Allow-Credentials": "true",
       "Content-Type": "application/json",
     },

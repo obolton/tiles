@@ -6,6 +6,10 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: "node",
+      env: {
+        PUBLIC_WEB_ORIGIN: "https://example.com",
+        INTERNAL_API_ORIGIN: "https://api.example.com",
+      },
     },
   }),
 );
