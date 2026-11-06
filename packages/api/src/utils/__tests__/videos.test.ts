@@ -1,13 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { parseVideoUrl } from "@/videos";
+import { getVideoInfo } from "../videos";
 
-describe("parseVideoUrl", () => {
-  test.each(["", "invalid", "youtube.com/watch?v=abc"])(
-    "returns null for an invalid URL: %s",
-    (url) => {
-      expect(parseVideoUrl(url)).toBeNull();
-    },
-  );
+describe("getVideoInfo", () => {
+  test.each(["", "invalid"])("throws an error for invalid URL: %s", (url) => {
+    expect(() => getVideoInfo(url)).toThrow("Invalid URL");
+  });
 
   test.each([
     "https://www.youtube.com/other-path?v=abc",
@@ -20,7 +17,7 @@ describe("parseVideoUrl", () => {
     "https://vimeo.com/",
     "https://example.com/",
   ])("returns null for a non-video URL: %s", (url) => {
-    expect(parseVideoUrl(url)).toBeNull();
+    expect(getVideoInfo(url)).toBeNull();
   });
 
   describe("YouTube", () => {
@@ -39,11 +36,11 @@ describe("parseVideoUrl", () => {
       "https://www.youtube.com/live/abc",
       "https://www.youtube.com/v/abc",
     ])("extracts the video ID from %s", (url) => {
-      expect(parseVideoUrl(url)).toEqual({ videoType: "YOUTUBE", videoId: "abc" });
+      expect(getVideoInfo(url)).toEqual({ videoType: "YOUTUBE", videoId: "abc" });
     });
 
     test("accepts the characters used in video IDs", () => {
-      expect(parseVideoUrl("https://youtu.be/a-B_1")).toEqual({
+      expect(getVideoInfo("https://youtu.be/a-B_1")).toEqual({
         videoType: "YOUTUBE",
         videoId: "a-B_1",
       });
@@ -57,7 +54,7 @@ describe("parseVideoUrl", () => {
       "https://youtu.be/",
       "https://www.youtube.com/embed/",
     ])("returns null when the video ID is missing or malformed: %s", (url) => {
-      expect(parseVideoUrl(url)).toBeNull();
+      expect(getVideoInfo(url)).toBeNull();
     });
   });
 
@@ -73,13 +70,13 @@ describe("parseVideoUrl", () => {
       "https://player.vimeo.com/video/123456",
       "https://player.vimeo.com/video/123456?h=abcdef1234",
     ])("extracts the video ID from %s", (url) => {
-      expect(parseVideoUrl(url)).toEqual({ videoType: "VIMEO", videoId: "123456" });
+      expect(getVideoInfo(url)).toEqual({ videoType: "VIMEO", videoId: "123456" });
     });
 
     test.each(["https://vimeo.com/abc", "https://player.vimeo.com/video/"])(
       "returns null when the video ID is missing or malformed: %s",
       (url) => {
-        expect(parseVideoUrl(url)).toBeNull();
+        expect(getVideoInfo(url)).toBeNull();
       },
     );
   });

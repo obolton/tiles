@@ -41,7 +41,6 @@ export const BOOLEAN_STRING_ATTRIBUTES = new Set([
   "aria-current",
   "aria-disabled",
   "aria-expanded",
-  "aria-invalid",
   "aria-pressed",
   "aria-selected",
 ]);

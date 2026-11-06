@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import Video, { type VideoMetadata } from "@/models/Video";
+import Video, { UnsupportedVideoError, type VideoMetadata } from "@/models/Video";
 import { createEditor } from "@/test/editor";
 import { PAGE } from "@/test/fixtures/Page";
 import client from "@/api/client";
@@ -11,7 +11,7 @@ vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageColl
 vi.mock("@/api/client", () => ({
   default: {
     externalLinks: {
-      getMetadata: {
+      getVideoMetadata: {
         query: vi.fn(),
       },
     },
@@ -36,7 +36,7 @@ const VIDEO_METADATA: VideoMetadata = {
 };
 
 describe("Video", () => {
-  const getMetadataMock = vi.mocked(client.externalLinks.getMetadata.query);
+  const getMetadataMock = vi.mocked(client.externalLinks.getVideoMetadata.query);
   let editor: Editor;
 
   beforeEach(() => {
@@ -80,17 +80,10 @@ describe("Video", () => {
     });
 
     test("rejects a URL that does not resolve to a video", async () => {
-      getMetadataMock.mockResolvedValue({
-        type: "LINK",
-        url: "https://tiles.dev",
-        title: null,
-        description: null,
-        siteName: null,
-        imageId: null,
-      });
+      getMetadataMock.mockResolvedValue(null);
 
       await expect(Video.create(editor.page, { url: "https://tiles.dev" })).rejects.toThrow(
-        "not a supported video",
+        UnsupportedVideoError,
       );
       expect(editor.page.tiles.value).toHaveLength(0);
     });

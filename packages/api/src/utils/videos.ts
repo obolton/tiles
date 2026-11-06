@@ -1,14 +1,14 @@
-import type { VideoType } from "./types/enums";
+import type { VideoType } from "doc/types/enums";
 
-export interface VideoInfo {
+export type Video = {
   videoType: VideoType;
   videoId: string;
-}
+};
 
 const YOUTUBE_ID = /^[\w-]+$/;
 const VIMEO_ID = /^\d+$/;
 
-function youtubeVideo(videoId: string | null | undefined): VideoInfo | null {
+function youtubeVideo(videoId: string | null | undefined): Video | null {
   return videoId && YOUTUBE_ID.test(videoId) ? { videoType: "YOUTUBE", videoId } : null;
 }
 
@@ -17,14 +17,8 @@ function youtubeVideo(videoId: string | null | undefined): VideoInfo | null {
  * `null` for anything else. Supports YouTube and Vimeo page, short and embed
  * links.
  */
-export function parseVideoUrl(input: string): VideoInfo | null {
-  let url: URL;
-  try {
-    url = new URL(input);
-  } catch {
-    return null;
-  }
-
+export function getVideoInfo(videoUrl: string): Video | null {
+  const url = new URL(videoUrl);
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     return null;
   }

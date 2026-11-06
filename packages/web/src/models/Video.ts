@@ -8,13 +8,18 @@ import type { VideoType } from "doc/types/enums";
 
 export type { VideoType };
 
-export type VideoMetadata = Extract<
-  AppRouterOutputs["externalLinks"]["getMetadata"],
-  { type: "VIDEO" }
->;
+export type VideoMetadata = NonNullable<AppRouterOutputs["externalLinks"]["getVideoMetadata"]>;
 
 export interface CreateVideoInput extends Omit<CreateTileInput, "type"> {
   url: string;
+}
+
+/** Thrown when a URL is not a video from a supported provider. */
+export class UnsupportedVideoError extends Error {
+  constructor(url: string) {
+    super(`Unsupported video URL: ${url}`);
+    this.name = "UnsupportedVideoError";
+  }
 }
 
 export default class Video extends Tile {
@@ -33,13 +38,13 @@ export default class Video extends Tile {
   /** Creates a video from a supported video URL, such as a YouTube or Vimeo link. */
   static async create(page: Page, data: CreateVideoInput): Promise<Video> {
     const { url, ...rest } = data;
-    const metadata = await client.externalLinks.getMetadata.query({
+    const metadata = await client.externalLinks.getVideoMetadata.query({
       pageId: page.id,
       url,
     });
 
-    if (metadata.type !== "VIDEO") {
-      throw new Error("The URL is not a supported video");
+    if (!metadata) {
+      throw new UnsupportedVideoError(url);
     }
 
     return Video.createFromMetadata(page, metadata, rest);

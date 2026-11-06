@@ -3,7 +3,7 @@ import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import styles from "./VideoModal.module.css";
 import { handleError } from "@/utils/errors";
-import { parseVideoUrl } from "doc/videos";
+import { UnsupportedVideoError } from "@/models/Video";
 import { flag } from "reactivity";
 import type { ModalProps } from "@/utils/modals";
 
@@ -13,42 +13,32 @@ export interface VideoModalResult {
 
 export type VideoModalProps = ModalProps<VideoModalResult>;
 
-const HINT = "Supports YouTube and Vimeo links.";
-const INVALID_MESSAGE = "Enter a link to a YouTube or Vimeo video.";
+function onInput(event: Event) {
+  (event.currentTarget as HTMLInputElement).setCustomValidity("");
+}
 
 export default function VideoModal({ cancel, confirm }: VideoModalProps) {
   const isPending = flag(false);
-  const isInvalid = flag(false);
-
-  function onInput() {
-    isInvalid.off();
-  }
 
   async function submit(event: Event) {
     const form = event.currentTarget as HTMLFormElement;
     event.preventDefault();
 
-    const formData = new FormData(form);
-    const url = (formData.get("url") as string).trim();
-
-    if (isPending.value || !url) {
-      return;
-    }
-
-    if (!parseVideoUrl(url)) {
-      isInvalid.on();
-      const input = form.elements.namedItem("url");
-      if (input instanceof HTMLInputElement) {
-        input.focus();
-      }
+    const input = form.elements.namedItem("url");
+    if (isPending.value || !(input instanceof HTMLInputElement)) {
       return;
     }
 
     isPending.on();
     try {
-      await confirm({ url });
+      await confirm({ url: input.value });
     } catch (error) {
-      handleError(error);
+      if (error instanceof UnsupportedVideoError) {
+        input.setCustomValidity("Enter a link to a YouTube or Vimeo video.");
+        input.reportValidity();
+      } else {
+        handleError(error);
+      }
     } finally {
       isPending.off();
     }
@@ -65,24 +55,18 @@ export default function VideoModal({ cancel, confirm }: VideoModalProps) {
           <label>
             Video URL
             <input
+              id="video-url"
               type="url"
               name="url"
               className={styles.input}
-              placeholder="Enter a video URL"
+              placeholder="Enter a YouTube or Vimeo URL"
               autofocus
               required
-              aria-describedby="video-url-hint"
-              aria-invalid={isInvalid}
+              aria-describedby="video-url-error"
               on:input={onInput}
             />
           </label>
-          <p
-            id="video-url-hint"
-            classList={{ [styles.hint]: true, [styles.error]: isInvalid }}
-            aria-live="polite"
-          >
-            {isInvalid.derive((invalid) => (invalid ? INVALID_MESSAGE : HINT))}
-          </p>
+          <form-error id="video-url-error" for="video-url" />
         </div>
       </ModalBody>
 

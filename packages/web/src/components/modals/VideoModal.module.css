@@ -6,19 +6,4 @@
 
 .input {
   width: 100%;
-
-  &[aria-invalid="true"] {
-    outline: 3px solid var(--destructive-color);
-  }
-}
-
-.hint {
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.4;
-  color: color-mix(in oklch, var(--ui-color) 70%, transparent);
-}
-
-.error {
-  color: oklch(from var(--destructive-color) 45% c h);
 }
