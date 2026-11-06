@@ -1,15 +1,51 @@
 .main {
+  --layout-gutter: 48px;
+  --sidebar-width: 240px;
+
   margin-top: var(--header-height);
-  padding: 48px;
+  padding: var(--layout-gutter);
 }
 
 .sidebar {
+  /* Room for focus and drop-target outlines inside the scroll container */
+  --outline-gutter: 4px;
+
   position: fixed;
-  top: calc(var(--header-height) + 48px);
-  width: 240px;
-  height: calc(100vh - var(--header-height));
+  top: calc(var(--header-height) + var(--layout-gutter) - var(--outline-gutter));
+  width: calc(var(--sidebar-width) + 2 * var(--outline-gutter));
+  max-height: calc(100dvh - var(--header-height) - var(--layout-gutter));
+  margin-inline-start: calc(-1 * var(--outline-gutter));
+  padding: var(--outline-gutter);
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .content {
-  margin-left: calc(240px + 48px);
+  margin-left: calc(var(--sidebar-width) + var(--layout-gutter));
+}
+
+@media (width < 1024px) {
+  .main {
+    --layout-gutter: 32px;
+    --sidebar-width: 200px;
+  }
+}
+
+@media (width < 640px) {
+  .main {
+    --layout-gutter: 16px;
+  }
+
+  .sidebar {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 0 0 16px;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .content {
+    margin-left: 0;
+  }
 }

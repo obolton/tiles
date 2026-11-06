@@ -10,11 +10,12 @@ export interface PageLayoutProps {
   user?: User;
   center?: JSX.Node;
   actions?: JSX.Node;
+  stacked?: boolean;
   children: JSX.Node;
 }
 
 export default function PageLayout(props: PageLayoutProps) {
-  const { workspaceId, center, actions, children } = props;
+  const { workspaceId, center, actions, stacked, children } = props;
 
   return (
     <>
@@ -22,7 +23,13 @@ export default function PageLayout(props: PageLayoutProps) {
         ? user.derive((value) => {
             const userData = value ?? props.user;
             return userData ? (
-              <Header user={userData} workspaceId={workspaceId} center={center} actions={actions} />
+              <Header
+                user={userData}
+                workspaceId={workspaceId}
+                center={center}
+                actions={actions}
+                stacked={stacked}
+              />
             ) : null;
           })
         : null}
