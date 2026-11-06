@@ -1,4 +1,9 @@
-import { getOAuth2Cookies, clearOAuth2Cookies, compareOAuth2State } from "@/auth/oauth2";
+import {
+  getOAuth2Cookies,
+  clearOAuth2Cookies,
+  compareOAuth2State,
+  getSignInErrorUrl,
+} from "@/auth/oauth2";
 import { redirect, forbidden } from "@/router/responses";
 import { exchangeCode, verifyIdToken } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
@@ -22,7 +27,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   if (error) {
     console.error("OAuth error from Google:", error);
     const errorCode = error === "access_denied" ? "cancelled" : "failed";
-    return redirect(`/sign-in?error=${errorCode}`, 302, cookiesToSet);
+    return redirect(getSignInErrorUrl(errorCode, cookies.destination), 302, cookiesToSet);
   }
 
   if (
@@ -56,7 +61,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     });
   } catch (error) {
     console.error("Sign-in failed:", error);
-    return redirect("/sign-in?error=failed", 302, cookiesToSet);
+    return redirect(getSignInErrorUrl("failed", cookies.destination), 302, cookiesToSet);
   }
 
   const authenticationCookies = setAuthenticationCookies(session.id, new Date(session.expiresAt));
