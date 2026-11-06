@@ -3,7 +3,13 @@ import * as Y from "yjs";
 import { AI_ORIGIN } from "doc/origins";
 import { BODY_ID } from "doc/body";
 import { getChildren, orderBetween } from "doc/placement/ordering";
-import { getTileIds, insertTile, positionAfterTile, removeTiles } from "doc/richText/tiles";
+import {
+  getTileIds,
+  insertTile,
+  positionAfterBlock,
+  positionAfterTile,
+  removeTiles,
+} from "doc/richText/tiles";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import type { SelectionRange } from "doc/richText/selection";
 import type { DestinationMode } from "doc/richText/events";
@@ -15,7 +21,6 @@ export interface CreateTilePlacement {
 
 export interface DocWriterOptions {
   origin?: unknown;
-  /** The body of a document page. Root tiles are embedded in it, after `insertAt`. */
   body?: Y.XmlFragment | null;
   insertAt?: Y.RelativePosition;
 }
@@ -31,7 +36,8 @@ export class DocWriter {
     this.doc = doc;
     this.origin = origin;
     this.body = body;
-    this.insertAt = insertAt;
+    this.insertAt =
+      body && insertAt ? (positionAfterBlock(body, insertAt) ?? undefined) : undefined;
   }
 
   private get tiles(): Y.Map<Y.Map<unknown>> {
@@ -40,7 +46,7 @@ export class DocWriter {
 
   /**
    * Adds a tile. On a document page a root tile is embedded in the body, each one after the
-   * last, starting at the insertion point or the end of the body.
+   * last, starting after the block holding the insertion point or at the end of the body.
    */
   createTile(map: Y.Map<unknown>, placement: CreateTilePlacement = {}): string {
     const parentId = placement.parentId ?? null;

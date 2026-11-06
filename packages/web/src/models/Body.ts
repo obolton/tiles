@@ -1,14 +1,7 @@
 import type * as Y from "yjs";
 import { reactive, type Reactive } from "reactivity";
 import { getBody } from "doc/body";
-import {
-  findTile,
-  getTileIds,
-  insertTile,
-  moveTile,
-  positionAfterTile,
-  removeTiles,
-} from "doc/richText/tiles";
+import { insertTile, positionAfterTile, removeTiles } from "doc/richText/tiles";
 import type Page from "./Page";
 import type Tile from "./Tile";
 import type { TileContainer, TilePlacementInput } from "./TileContainer";
@@ -21,7 +14,7 @@ export default class Body implements TileContainer {
   readonly page: Page;
   readonly fragment: Y.XmlFragment;
 
-  /** The editing caret, written by the body editor, for inserting tiles after it. */
+  /** Where the body editor embeds a tile: the slot after the block holding the caret. */
   readonly insertionPoint: Reactive<Y.RelativePosition | null> = reactive(null);
 
   constructor(page: Page) {
@@ -31,15 +24,6 @@ export default class Body implements TileContainer {
 
   private get tilesMap(): Y.Map<Y.Map<unknown>> {
     return this.page.doc.getMap<Y.Map<unknown>>("tiles");
-  }
-
-  /** Ids of the embedded tiles, in document order. */
-  get tileIds(): string[] {
-    return getTileIds(this.fragment);
-  }
-
-  contains(id: string): boolean {
-    return findTile(this.fragment, id) !== null;
   }
 
   positionAfter(id: string): Y.RelativePosition | null {
@@ -73,14 +57,6 @@ export default class Body implements TileContainer {
 
   next(): Tile | null {
     return null;
-  }
-
-  moveUp(tile: Tile) {
-    this.page.doc.transact(() => moveTile(this.fragment, tile.id, -1));
-  }
-
-  moveDown(tile: Tile) {
-    this.page.doc.transact(() => moveTile(this.fragment, tile.id, 1));
   }
 
   duplicate(tile: Tile): Tile {

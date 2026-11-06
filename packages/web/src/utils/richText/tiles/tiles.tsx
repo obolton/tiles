@@ -61,6 +61,21 @@ export function selectedTileId(state: EditorState): string | null {
   return null;
 }
 
+/**
+ * The position after the block holding the selection, at the nearest depth whose node may
+ * hold a tile: where a tile inserted at the caret goes.
+ */
+function insertionPos(state: EditorState): number | null {
+  const { $head } = state.selection;
+  for (let depth = $head.depth; depth >= 0; depth--) {
+    const index = $head.indexAfter(depth);
+    if ($head.node(depth).canReplaceWith(index, index, schema.nodes.tile)) {
+      return depth === $head.depth ? $head.pos : $head.after(depth + 1);
+    }
+  }
+  return null;
+}
+
 /** Rewrites the tile nodes in a slice, dropping those the mapper returns null for. */
 function mapTiles(fragment: Fragment, map: (node: Node) => Node | null): Fragment {
   const nodes: Node[] = [];
@@ -125,7 +140,8 @@ class TilesView {
   update(view: EditorView, prevState: EditorState) {
     this.collect(view.state);
     if (view.state.selection !== prevState.selection) {
-      this.body.insertionPoint.value = toRelativePosition(view.state, view.state.selection.head);
+      const pos = insertionPos(view.state);
+      this.body.insertionPoint.value = pos === null ? null : toRelativePosition(view.state, pos);
       this.syncToEditor(view.state);
     }
   }
@@ -235,19 +251,6 @@ export function tiles({ body }: TilesOptions = {}): Plugin {
       transformPasted(slice, view) {
         return mapSlice(slice, (node) => adoptTile(node, view, body));
       },
-    },
-
-    // A synced change that re-creates the selected tile's node (a move) keeps it selected
-    appendTransaction(transactions, oldState, newState) {
-      const synced = transactions.some((tr) => tr.docChanged && tr.getMeta(ySyncPluginKey));
-      const selected = selectedTileId(oldState);
-      if (!synced || !selected || selectedTileId(newState) === selected) {
-        return null;
-      }
-      const pos = tilePos(newState.doc, selected);
-      return pos === null
-        ? null
-        : newState.tr.setSelection(NodeSelection.create(newState.doc, pos));
     },
 
     view(view) {

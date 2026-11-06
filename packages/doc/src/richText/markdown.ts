@@ -5,7 +5,7 @@ type Serializer = (node: Y.XmlElement, options: MarkdownOptions) => string;
 type InlineSerializer = (node: Y.XmlElement) => string;
 
 export interface MarkdownOptions {
-  /** Renders an embedded tile by id. Tiles are skipped without it. */
+  /** Renders an embedded tile by id. */
   tile?: (id: string) => string;
 }
 
@@ -116,8 +116,11 @@ function serializePending(node: Y.XmlElement, options: MarkdownOptions): string 
 }
 
 function serializeTile(node: Y.XmlElement, options: MarkdownOptions): string {
+  if (!options.tile) {
+    throw new Error("Embedded tiles need a tile serializer");
+  }
   const id = node.getAttribute("id");
-  const content = typeof id === "string" ? (options.tile?.(id) ?? "") : "";
+  const content = typeof id === "string" ? options.tile(id) : "";
   return content ? `${content}\n\n` : "";
 }
 

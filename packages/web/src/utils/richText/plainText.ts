@@ -3,8 +3,15 @@ import { TILE_NODE } from "doc/richText/tiles";
 import type { RichText, Node } from "doc/types/richText";
 
 export interface PlainTextOptions {
-  /** Describes an embedded tile by id. Tiles are skipped without it. */
+  /** Describes an embedded tile by id. */
   tile?: (id: string) => string;
+}
+
+function describeTile({ tile }: PlainTextOptions, id: string): string {
+  if (!tile) {
+    throw new Error("Embedded tiles need a tile serializer");
+  }
+  return tile(id);
 }
 
 type FragmentChild = Y.XmlElement | Y.XmlText | Y.XmlHook;
@@ -28,7 +35,7 @@ export function fragmentToPlainText(
       output += node.toString();
     } else if (node instanceof Y.XmlElement && node.nodeName === TILE_NODE) {
       const id = node.getAttribute("id");
-      const text = typeof id === "string" ? options.tile?.(id) : undefined;
+      const text = typeof id === "string" ? describeTile(options, id) : "";
       if (text) {
         queue.push(`${text}\n`);
       }
@@ -79,7 +86,7 @@ export function toPlainText(input: RichText, options: PlainTextOptions = {}) {
         break;
 
       case "tile": {
-        const text = options.tile?.(node.id);
+        const text = describeTile(options, node.id);
         if (text) {
           queue.push(`${text}\n`);
         }

@@ -296,14 +296,10 @@ describe("write", () => {
     expect(doStream).toHaveBeenCalledTimes(1);
   });
 
-  test("writes text into the body of a document page without a text tile", async () => {
-    doStream
-      .mockResolvedValueOnce(
-        streamOf([toolCallChunk("create_text", CREATE_TEXT_ARGS), finishChunk("tool-calls")]),
-      )
-      .mockResolvedValueOnce(
-        streamOf([...textChunks(">>> 0\nIn the body\n<<<"), finishChunk("stop")]),
-      );
+  test("writes text into the body of a document page and offers no text tool", async () => {
+    doStream.mockResolvedValueOnce(
+      streamOf([...textChunks(">>>+ 0\nIn the body\n<<<"), finishChunk("stop")]),
+    );
 
     const collected = await collect(
       write(
@@ -321,6 +317,7 @@ describe("write", () => {
             content: expect.stringContaining("Document pages"),
           }),
         ]),
+        tools: expect.not.arrayContaining([expect.objectContaining({ name: "create_text" })]),
       }),
     );
   });

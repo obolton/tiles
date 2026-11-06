@@ -22,7 +22,7 @@ import type {
 import type { JSX } from "jsx/jsx";
 
 export interface RenderOptions {
-  /** Renders an embedded tile by id. Tiles render nothing without it. */
+  /** Renders an embedded tile by id. */
   renderTile?: (id: string) => JSX.Node;
 }
 
@@ -46,7 +46,10 @@ function renderNodes(nodes: Node[], options: RenderOptions = {}) {
           case "list":
             return <List node={node} options={options} />;
           case "tile":
-            return options.renderTile?.(node.id) ?? null;
+            if (!options.renderTile) {
+              throw new Error("Embedded tiles need a renderTile option");
+            }
+            return options.renderTile(node.id);
           case "text":
             return node.pending ? null : (
               <FormattedText

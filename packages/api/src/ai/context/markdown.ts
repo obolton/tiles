@@ -3,7 +3,6 @@ import type { RichText } from "doc/types/richText";
 type Node = RichText[number] | { type: string; [key: string]: unknown };
 
 export interface MarkdownOptions {
-  /** Renders an embedded tile by id. Tiles are skipped without it. */
   tile?: (id: string) => string;
 }
 
@@ -110,7 +109,10 @@ export function toMarkdown(input: RichText, options: MarkdownOptions = {}): stri
         break;
 
       case "tile": {
-        const content = options.tile?.(text(node.id)) ?? "";
+        if (!options.tile) {
+          throw new Error("Embedded tiles need a tile serializer");
+        }
+        const content = options.tile(text(node.id));
         if (content) {
           queue.push(`${content}\n\n`);
         }

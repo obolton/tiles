@@ -39,16 +39,18 @@ export default function TileTools({ tile }: TileToolsProps) {
 
   return (
     <>
-      <ToolbarGroup label="Move">
-        <ToolbarButton on:click={handleMoveUp}>
-          <ArrowUpIcon aria-hidden="true" />
-          Move up
-        </ToolbarButton>
-        <ToolbarButton on:click={handleMoveDown}>
-          <ArrowDownIcon aria-hidden="true" />
-          Move down
-        </ToolbarButton>
-      </ToolbarGroup>
+      {tile.embedded ? null : (
+        <ToolbarGroup label="Move">
+          <ToolbarButton on:click={handleMoveUp}>
+            <ArrowUpIcon aria-hidden="true" />
+            Move up
+          </ToolbarButton>
+          <ToolbarButton on:click={handleMoveDown}>
+            <ArrowDownIcon aria-hidden="true" />
+            Move down
+          </ToolbarButton>
+        </ToolbarGroup>
+      )}
 
       <ToolbarGroup label="Tile actions">
         <ToolbarButton on:click={handleDuplicate}>

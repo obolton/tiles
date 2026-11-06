@@ -108,20 +108,6 @@ export default class TilePlacement implements TileContainer {
     return this.sibling(tile, 1);
   }
 
-  moveUp(tile: Tile) {
-    const previous = this.previous(tile);
-    if (previous) {
-      tile.move({ beforeId: previous.id });
-    }
-  }
-
-  moveDown(tile: Tile) {
-    const next = this.next(tile);
-    if (next) {
-      tile.move({ beforeId: this.next(next)?.id ?? null });
-    }
-  }
-
   duplicate(tile: Tile): Tile {
     return tile.clone({ parentId: tile.parentId.value, beforeId: this.next(tile)?.id ?? null });
   }

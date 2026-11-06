@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
+import { getTileIds } from "doc/richText/tiles";
 import Page from "@/models/Page";
 import Dropdown from "@/models/Dropdown";
 import Section from "@/models/Section";
@@ -309,7 +310,7 @@ describe("Page", () => {
 
       expect(tile.parentId.value).toBeNull();
       expect(document.tiles.value).toHaveLength(0);
-      expect(document.body?.tileIds).toEqual([tile.id]);
+      expect(document.body && getTileIds(document.body.fragment)).toEqual([tile.id]);
     });
 
     test("attaches the map, mints an id, and returns the constructed tile", () => {

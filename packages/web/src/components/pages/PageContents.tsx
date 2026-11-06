@@ -9,6 +9,8 @@ import type { JSX } from "jsx/jsx";
 export interface PageContentsProps {
   page: Page;
   isEditable: Reactive<boolean>;
+  /** Whether the page's own toolbar is shown: editing with nothing selected. */
+  showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: JSX.Node;

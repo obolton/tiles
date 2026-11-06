@@ -150,8 +150,10 @@ describe("fragmentToMarkdown", () => {
   });
 
   describe("tile", () => {
-    test("skips embedded tiles without a resolver", () => {
-      expect(fragmentToMarkdown(fragment(paragraph(text("Before")), tile("t1")))).toBe("Before");
+    test("throws for an embedded tile without a resolver", () => {
+      expect(() => fragmentToMarkdown(fragment(paragraph(text("Before")), tile("t1")))).toThrow(
+        "Embedded tiles need a tile serializer",
+      );
     });
 
     test("inlines resolved tile content at its position", () => {

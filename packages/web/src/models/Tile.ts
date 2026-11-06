@@ -242,10 +242,16 @@ export default abstract class Tile {
   }
 
   moveUp() {
-    this.container.moveUp(this);
+    const previous = this.previous;
+    if (previous) {
+      this.move({ beforeId: previous.id });
+    }
   }
 
   moveDown() {
-    this.container.moveDown(this);
+    const next = this.next;
+    if (next) {
+      this.move({ beforeId: next.next?.id ?? null });
+    }
   }
 }

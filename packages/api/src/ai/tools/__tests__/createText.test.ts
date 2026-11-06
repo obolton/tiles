@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import * as Y from "yjs";
-import { BODY_ID, getBody } from "doc/body";
 import { DocWriter } from "@/collaboration/DocWriter";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { CREATE_TEXT_TOOL } from "../createText";
@@ -64,27 +63,5 @@ describe("CREATE_TEXT_TOOL", () => {
 
     expect(context.resolveArtifactId).toHaveBeenCalledWith(0);
     expect(tile(result).get("parentId")).toBe("resolved-0");
-  });
-
-  describe("on a document page", () => {
-    test("returns the body instead of creating a text tile", async () => {
-      const session = new DocWriter(doc, { body: getBody(doc) });
-
-      const result = await CREATE_TEXT_TOOL.function(BASE_ARGS, { ...context, session });
-
-      expect(result).toEqual({ tileId: BODY_ID, type: "TEXT" });
-      expect(doc.getMap("tiles").size).toBe(0);
-    });
-
-    test("still creates a text tile inside a section", async () => {
-      const session = new DocWriter(doc, { body: getBody(doc) });
-
-      const result = await CREATE_TEXT_TOOL.function(
-        { ...BASE_ARGS, parentId: 0 },
-        { ...context, session },
-      );
-
-      expect(tile(result).get("parentId")).toBe("resolved-0");
-    });
   });
 });

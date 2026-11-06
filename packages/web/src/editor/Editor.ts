@@ -76,7 +76,7 @@ export default class Editor {
   }
 
   /** Where new content goes: the active section, the document body, or the page root. */
-  get contentPlacement(): TilePlacementInput {
+  get insertPlacement(): TilePlacementInput {
     const section = this.activeSection;
     if (section) {
       return { parentId: section.id, beforeId: this.insertBeforeId };
@@ -84,7 +84,6 @@ export default class Editor {
     return this.rootPlacement;
   }
 
-  /** Where new root tiles go, sections among them: the document body, or the page root. */
   get rootPlacement(): TilePlacementInput {
     const { body } = this.page;
     if (body) {
@@ -344,7 +343,7 @@ export default class Editor {
       workspaceId: this.workspaceId,
     });
     await Image.create(this.page, {
-      ...this.contentPlacement,
+      ...this.insertPlacement,
       imageId: id,
       size: { width, height },
       sizing: "AUTO",
@@ -386,7 +385,7 @@ export default class Editor {
           workspaceId: this.workspaceId,
         });
         await Image.create(this.page, {
-          ...this.contentPlacement,
+          ...this.insertPlacement,
           imageId: id,
           size: { width, height },
           sizing: "AUTO",
@@ -396,7 +395,7 @@ export default class Editor {
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await Link.create(this.page, {
-          ...this.contentPlacement,
+          ...this.insertPlacement,
           url,
         });
       });

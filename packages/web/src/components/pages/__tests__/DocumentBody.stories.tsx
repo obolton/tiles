@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
+import { reactive } from "reactivity";
 import Editor from "@/editor/Editor";
 import Section from "@/models/Section";
 import Text from "@/models/Text";
@@ -8,9 +9,13 @@ import { deserialize } from "@/utils/richText/deserialize";
 import { PAGE } from "@/test/fixtures/Page";
 import type { Meta, Story } from "@/test/storybook";
 import type { RichText } from "doc/types/richText";
+import type { EditorState } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
 
 const editor = Editor.init({ ...PAGE, type: "DOCUMENT" }, new Y.Doc());
 const body = editor.page.body!;
+const editorView = reactive<EditorView | null>(null);
+const state = reactive<EditorState | null>(null);
 
 const meta = {
   title: "DocumentBody",
@@ -37,7 +42,7 @@ export const TextOnly: Story = {
       },
       paragraph("A document body with text only."),
     ]);
-    return <DocumentBody body={body} />;
+    return <DocumentBody body={body} editorView={editorView} state={state} />;
   },
 };
 
@@ -68,6 +73,6 @@ export const WithEmbeddedTiles: Story = {
       },
       paragraph("After."),
     ]);
-    return <DocumentBody body={body} />;
+    return <DocumentBody body={body} editorView={editorView} state={state} />;
   },
 };

@@ -37,6 +37,7 @@ export function resolveTileContents(
 ): TileContent[] {
   const tiles = doc.getMap<Y.Map<unknown>>("tiles");
   const resolved = expandReferences(tiles, ids, body);
+  const refs = new Map(resolved.map((id, index) => [id, index]));
 
   const describe = (id: string): string => {
     const tile = tiles.get(id);
@@ -50,7 +51,7 @@ export function resolveTileContents(
         .join("\n\n");
     }
     const content = getTileContent(tile);
-    const header = `[${resolved.indexOf(id)}] (${String(tile.get("type"))}${content ? "" : ", empty"})`;
+    const header = `[${refs.get(id)}] (${String(tile.get("type"))}${content ? "" : ", empty"})`;
     return content ? `${header}\n${content}` : header;
   };
 

@@ -6,7 +6,7 @@ import {
   findTile,
   getTileIds,
   insertTile,
-  moveTile,
+  positionAfterBlock,
   positionAfterTile,
   removeTiles,
 } from "@/richText/tiles";
@@ -103,49 +103,7 @@ describe("insertTile", () => {
     expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
   });
 
-  test("inserts after the block containing the position", () => {
-    const first = paragraph("first");
-    const content = fragment(first, paragraph("second"));
-
-    insertTile(content, "t1", caretIn(first));
-
-    expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
-  });
-
-  test("adds a trailing paragraph when inserting after the last block", () => {
-    const last = paragraph("last");
-    const content = fragment(paragraph("first"), last);
-
-    insertTile(content, "t1", caretIn(last));
-
-    expect(outline(content)).toEqual(["paragraph", "paragraph", "tile:t1", "paragraph"]);
-  });
-
-  test("inserts inside a list item after its paragraph", () => {
-    const item = paragraph("item");
-    const content = fragment(
-      element("unordered_list", [element("list_item", [item])]),
-      paragraph("after"),
-    );
-
-    insertTile(content, "t1", caretIn(item));
-
-    expect(outline(content)).toEqual([
-      { unordered_list: [{ list_item: ["paragraph", "tile:t1"] }] },
-      "paragraph",
-    ]);
-  });
-
-  test("inserts inside a quote after the containing block", () => {
-    const quoted = paragraph("quoted");
-    const content = fragment(element("quote", [quoted, paragraph("more")]));
-
-    insertTile(content, "t1", caretIn(quoted));
-
-    expect(outline(content)).toEqual([{ quote: ["paragraph", "tile:t1", "paragraph"] }]);
-  });
-
-  test("uses a position between blocks as is", () => {
+  test("inserts at a position between blocks", () => {
     const content = fragment(paragraph("first"), paragraph("second"));
 
     insertTile(content, "t1", Y.createRelativePositionFromTypeIndex(content, 1));
@@ -153,15 +111,32 @@ describe("insertTile", () => {
     expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
   });
 
-  test("keeps a list item's paragraph first", () => {
+  test("inserts between the children of a block", () => {
     const item = element("list_item", [paragraph("item")]);
     const content = fragment(element("unordered_list", [item]));
 
-    insertTile(content, "t1", Y.createRelativePositionFromTypeIndex(item, 0));
+    insertTile(content, "t1", Y.createRelativePositionFromTypeIndex(item, 1));
 
     expect(outline(content)).toEqual([
       { unordered_list: [{ list_item: ["paragraph", "tile:t1"] }] },
     ]);
+  });
+
+  test("adds a trailing paragraph when inserting at the end", () => {
+    const content = fragment(paragraph("first"));
+
+    insertTile(content, "t1", Y.createRelativePositionFromTypeIndex(content, 1));
+
+    expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
+  });
+
+  test("appends for a position inside text", () => {
+    const first = paragraph("first");
+    const content = fragment(first, paragraph("second"));
+
+    insertTile(content, "t1", caretIn(first));
+
+    expect(outline(content)).toEqual(["paragraph", "paragraph", "tile:t1", "paragraph"]);
   });
 
   test("appends when the position cannot be resolved", () => {
@@ -171,6 +146,41 @@ describe("insertTile", () => {
     insertTile(content, "t1", Y.createRelativePositionFromTypeIndex(other, 0));
 
     expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
+  });
+});
+
+describe("positionAfterBlock", () => {
+  test("points after the top-level block containing the position", () => {
+    const item = paragraph("item");
+    const content = fragment(
+      element("unordered_list", [element("list_item", [item])]),
+      paragraph("after"),
+    );
+
+    const at = positionAfterBlock(content, caretIn(item));
+    insertTile(content, "t1", at ?? undefined);
+
+    expect(outline(content)).toEqual([
+      { unordered_list: [{ list_item: ["paragraph"] }] },
+      "tile:t1",
+      "paragraph",
+    ]);
+  });
+
+  test("keeps a position between top-level blocks", () => {
+    const content = fragment(paragraph("first"), paragraph("second"));
+
+    const at = positionAfterBlock(content, Y.createRelativePositionFromTypeIndex(content, 1));
+    insertTile(content, "t1", at ?? undefined);
+
+    expect(outline(content)).toEqual(["paragraph", "tile:t1", "paragraph"]);
+  });
+
+  test("is null when the position cannot be resolved", () => {
+    const content = fragment(paragraph("p"));
+    const other = fragment(paragraph("elsewhere"));
+
+    expect(positionAfterBlock(content, Y.createRelativePositionFromTypeIndex(other, 0))).toBeNull();
   });
 });
 
@@ -200,40 +210,5 @@ describe("removeTiles", () => {
     removeTiles(content, ["a", "b", "missing"]);
 
     expect(outline(content)).toEqual([{ quote: ["paragraph"] }, "paragraph"]);
-  });
-});
-
-describe("moveTile", () => {
-  test("moves a tile up and down among its siblings", () => {
-    const content = fragment(paragraph("p"), createTileElement("a"), paragraph("q"));
-
-    moveTile(content, "a", -1);
-    expect(outline(content)).toEqual(["tile:a", "paragraph", "paragraph"]);
-
-    moveTile(content, "a", 2);
-    expect(outline(content)).toEqual(["paragraph", "paragraph", "tile:a"]);
-  });
-
-  test("does nothing at the edges", () => {
-    const content = fragment(createTileElement("a"), paragraph("p"));
-
-    moveTile(content, "a", -1);
-    moveTile(content, "a", 2);
-
-    expect(outline(content)).toEqual(["tile:a", "paragraph"]);
-  });
-
-  test("never moves a tile before a list item's paragraph", () => {
-    const content = fragment(
-      element("unordered_list", [
-        element("list_item", [paragraph("item"), createTileElement("a")]),
-      ]),
-    );
-
-    moveTile(content, "a", -1);
-
-    expect(outline(content)).toEqual([
-      { unordered_list: [{ list_item: ["paragraph", "tile:a"] }] },
-    ]);
   });
 });

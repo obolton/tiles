@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
+import { getTileIds } from "doc/richText/tiles";
 import Image from "@/models/Image";
 import Section, { type CreateSectionInput } from "@/models/Section";
 import { createEditor } from "@/test/editor";
@@ -179,7 +180,7 @@ describe("Editor", () => {
       const b = createImage();
       editor.select([a.id]);
 
-      expect(editor.contentPlacement).toEqual({ parentId: null, beforeId: b.id });
+      expect(editor.insertPlacement).toEqual({ parentId: null, beforeId: b.id });
       expect(editor.rootPlacement).toEqual({ parentId: null, beforeId: b.id });
     });
 
@@ -187,7 +188,7 @@ describe("Editor", () => {
       const section = createTile();
       editor.select([section.id]);
 
-      expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
+      expect(editor.insertPlacement).toEqual({ parentId: section.id, beforeId: null });
       expect(editor.rootPlacement).toEqual({ parentId: null, beforeId: null });
     });
 
@@ -196,14 +197,18 @@ describe("Editor", () => {
         editor = createEditor({ page: { type: "DOCUMENT" } });
       });
 
+      function bodyIds(): string[] | null {
+        return editor.page.body ? getTileIds(editor.page.body.fragment) : null;
+      }
+
       test("targets the body at the caret", () => {
         const body = editor.page.body!;
-        expect(editor.contentPlacement).toEqual({ parentId: null, at: undefined });
+        expect(editor.insertPlacement).toEqual({ parentId: null, at: undefined });
 
         const at = Y.createRelativePositionFromTypeIndex(body.fragment, 0);
         body.insertionPoint.value = at;
 
-        expect(editor.contentPlacement).toEqual({ parentId: null, at });
+        expect(editor.insertPlacement).toEqual({ parentId: null, at });
         expect(editor.rootPlacement).toEqual({ parentId: null, at });
       });
 
@@ -212,16 +217,16 @@ describe("Editor", () => {
         createImage();
         editor.select([first.id]);
 
-        const inserted = editor.page.createTile(Image.createMap(IMAGE), editor.contentPlacement);
+        const inserted = editor.page.createTile(Image.createMap(IMAGE), editor.insertPlacement);
 
-        expect(editor.page.body?.tileIds.indexOf(inserted.id)).toBe(1);
+        expect(bodyIds()?.indexOf(inserted.id)).toBe(1);
       });
 
       test("inserts content into a selected embedded section", () => {
         const section = createTile();
         editor.select([section.id]);
 
-        expect(editor.contentPlacement).toEqual({ parentId: section.id, beforeId: null });
+        expect(editor.insertPlacement).toEqual({ parentId: section.id, beforeId: null });
         expect(editor.rootPlacement.parentId).toBeNull();
       });
 
@@ -230,7 +235,7 @@ describe("Editor", () => {
 
         await editor.deleteTiles([tile.id]);
 
-        expect(editor.page.body?.tileIds).toEqual([]);
+        expect(bodyIds()).toEqual([]);
         expect(tilesMap().has(tile.id)).toBe(false);
       });
     });

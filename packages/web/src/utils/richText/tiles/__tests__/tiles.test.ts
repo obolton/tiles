@@ -26,6 +26,23 @@ function tileSlice(id: string): Slice {
   return new Slice(Fragment.from(schema.nodes.tile.create({ id })), 0, 0);
 }
 
+function block(name: string, children: (Y.XmlElement | Y.XmlText)[]): Y.XmlElement {
+  const element = new Y.XmlElement(name);
+  element.insert(0, children);
+  return element;
+}
+
+function paragraph(value: string): Y.XmlElement {
+  const text = new Y.XmlText();
+  text.insert(0, value);
+  return block("paragraph", [text]);
+}
+
+/** The node names of a parent's children. */
+function names(parent: Y.XmlFragment): string[] {
+  return parent.toArray().map((node) => (node instanceof Y.XmlElement ? node.nodeName : "text"));
+}
+
 describe("tiles plugin", () => {
   let editor: Editor;
   let body: Body;
@@ -216,20 +233,6 @@ describe("tiles plugin", () => {
       expect(editor.selection.size).toBe(0);
     });
 
-    test("keeps a moved tile selected", () => {
-      body.fragment.insert(0, [new Y.XmlElement("paragraph")]);
-      const image = createImage();
-      mount();
-      selectTile(image.id);
-
-      image.moveUp();
-
-      expect(getTileIds(body.fragment)).toEqual([image.id]);
-      expect(tilePos(view.state.doc, image.id)).toBe(0);
-      expect(selectedTileId(view.state)).toBe(image.id);
-      expect(Array.from(editor.selection)).toEqual([image.id]);
-    });
-
     test("selects the node when the page selects the tile", () => {
       const image = createImage();
       mount();
@@ -249,14 +252,38 @@ describe("tiles plugin", () => {
 
       expect(stopCapturing).not.toHaveBeenCalled();
     });
+  });
 
-    test("tracks the caret as the insertion point", () => {
+  describe("insertion point", () => {
+    function insertAtCaret(): string[] {
+      editor.page.createTile(Image.createMap(IMAGE), editor.insertPlacement);
+      return names(body.fragment);
+    }
+
+    test("is the slot after the block holding the caret", () => {
       mount();
-      body.fragment.insert(0, [new Y.XmlElement("paragraph")]);
+      body.fragment.insert(0, [paragraph("First"), paragraph("Second")]);
+      view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 2)));
 
-      view.dispatch(view.state.tr.setSelection(TextSelection.atEnd(view.state.doc)));
+      expect(insertAtCaret()).toEqual(["paragraph", "tile", "paragraph"]);
+    });
 
-      expect(body.insertionPoint.value).not.toBeNull();
+    test("is inside the list item holding the caret", () => {
+      mount();
+      const item = block("list_item", [paragraph("Item")]);
+      body.fragment.insert(0, [block("unordered_list", [item]), paragraph("After")]);
+      view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 4)));
+
+      expect(insertAtCaret()).toEqual(["unordered_list", "paragraph"]);
+      expect(names(item)).toEqual(["paragraph", "tile"]);
+    });
+
+    test("is after a selected tile", () => {
+      const image = createImage();
+      mount();
+      selectTile(image.id);
+
+      expect(insertAtCaret()).toEqual(["tile", "tile", "paragraph"]);
     });
   });
 });

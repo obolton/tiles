@@ -1,10 +1,9 @@
 import { NodeSelection } from "prosemirror-state";
 import { render } from "jsx/dom";
+import { reactive } from "reactivity";
 import { TILE_NODE } from "doc/richText/tiles";
-import Item from "@/components/item/Item";
-import TileContent from "@/components/item/TileContent";
+import EmbeddedTile from "@/components/item/EmbeddedTile";
 import { exitNode, insertParagraphAfter } from "@/utils/richText/navigation";
-import styles from "./tiles.module.css";
 import type * as Y from "yjs";
 import type { Node } from "prosemirror-model";
 import type { EditorView, NodeView } from "prosemirror-view";
@@ -23,8 +22,8 @@ export default class TileNodeView implements NodeView, EventListenerObject {
   private readonly getPos: () => number | undefined;
   private readonly body: Body;
   private readonly registry: Map<string, TileNodeView>;
-  private tile: Tile | null = null;
-  private abort = new AbortController();
+  private readonly tile = reactive<Tile | null>(null);
+  private readonly abort = new AbortController();
 
   constructor(
     node: Node,
@@ -39,8 +38,13 @@ export default class TileNodeView implements NodeView, EventListenerObject {
     this.body = body;
     this.registry = registry;
 
-    this.dom = document.createElement("div");
-    this.dom.className = styles.embed;
+    const [dom] = render(<EmbeddedTile tile={this.tile} tabindex={0} />, {
+      signal: this.abort.signal,
+    });
+    if (!(dom instanceof HTMLElement)) {
+      throw new Error("Embedded tile did not render");
+    }
+    this.dom = dom;
     this.dom.dataset.tileId = this.id;
     this.dom.addEventListener("keydown", this);
 
@@ -49,27 +53,14 @@ export default class TileNodeView implements NodeView, EventListenerObject {
   }
 
   get mounted(): boolean {
-    return this.tile !== null;
+    return this.tile.value !== null;
   }
 
-  /** Renders the tile, constructing its model from the map if it is not indexed yet. */
+  /** Resolves the tile, constructing its model from the map if it is not indexed yet. */
   mount() {
-    this.abort.abort();
-    this.abort = new AbortController();
-
     const { page } = this.body;
     const map = page.doc.getMap<Y.Map<unknown>>("tiles").get(this.id);
-    this.tile = page.index.get(this.id) ?? (map ? page.add(map) : null);
-
-    const contents = this.tile
-      ? render(
-          <Item tile={this.tile} tabindex={0} draggable={false}>
-            <TileContent tile={this.tile} />
-          </Item>,
-          { signal: this.abort.signal },
-        )
-      : [];
-    this.dom.replaceChildren(...contents);
+    this.tile.value = page.index.get(this.id) ?? (map ? page.add(map) : null);
   }
 
   update(node: Node): boolean {
@@ -93,7 +84,6 @@ export default class TileNodeView implements NodeView, EventListenerObject {
   destroy() {
     this.abort.abort();
     this.registry.delete(this.id);
-    this.dom.replaceChildren();
   }
 
   handleEvent(event: Event) {

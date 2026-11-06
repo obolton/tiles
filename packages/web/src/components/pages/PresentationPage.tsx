@@ -5,6 +5,7 @@ import Slide from "@/components/slides/Slide";
 import EditorLayout from "@/components/pages/EditorLayout";
 import ThumbnailListPanel from "@/components/thumbnails/ThumbnailListPanel";
 import InsertButton from "@/components/buttons/InsertButton";
+import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import PresentationInsertMenu from "@/components/toolbars/insert/PresentationInsertMenu";
 import Section from "@/models/Section";
 import styles from "./PresentationPage.module.css";
@@ -16,6 +17,7 @@ import type { JSX } from "jsx/jsx";
 export interface PresentationPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: JSX.Node;
@@ -25,6 +27,7 @@ export interface PresentationPageProps {
 export default function PresentationPage({
   page,
   isEditable,
+  showToolbar,
   tiles,
   signal,
   end,
@@ -84,6 +87,12 @@ export default function PresentationPage({
               align="auto"
               getPlacement={getInsertionPlacement}
             />
+          </Portal>
+        </If>
+
+        <If condition={showToolbar}>
+          <Portal element="toolbar-slot">
+            <PageToolbar page={page} />
           </Portal>
         </If>
       </main>

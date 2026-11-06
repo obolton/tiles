@@ -13,6 +13,7 @@ import { BODY_ID, getBody } from "doc/body";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import { decodeSelection, type SelectionRange } from "doc/richText/selection";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
+import type { PageType } from "@/types/pages";
 import type { ToolContext } from "@/ai/tools/types";
 import type { TileType } from "doc/types/enums";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
@@ -128,7 +129,7 @@ Use the "edit_style" tool to style any block after creating it. Unless directed,
 const DOCUMENT_PROMPT = `${PROMPT}
 # Document pages
 
-This page is a document: one flowing body of text, with images, links, maps, tables and sections embedded in it in the order they are created. "create_text" returns the body's ID, so write text with the marker syntax rather than creating text blocks.
+This page is a document whose body is block 0. Write text into the body with the marker syntax; tiles you create are embedded in it in order.
 `;
 
 export async function generateImage({ prompt }: GenerateImageSchema) {
@@ -141,8 +142,7 @@ interface InputOptions {
   contextTiles: TileContent[];
   history?: WriteSchema["history"];
   selectionRef: number | null;
-  /** Whether the page is a document with a single body. */
-  document?: boolean;
+  pageType: PageType;
 }
 
 export interface ModelInput {
@@ -161,9 +161,9 @@ function buildInput({
   contextTiles,
   history,
   selectionRef,
-  document = false,
+  pageType,
 }: InputOptions): ModelInput {
-  const base = document ? DOCUMENT_PROMPT : PROMPT;
+  const base = pageType === "DOCUMENT" ? DOCUMENT_PROMPT : PROMPT;
   const instructions =
     selectionRef === null
       ? base
@@ -237,7 +237,7 @@ export async function* write(
       contextTiles,
       history,
       selectionRef,
-      document: body !== null,
+      pageType: ctx.pageType,
     });
 
     const toolContext: ToolContext = {

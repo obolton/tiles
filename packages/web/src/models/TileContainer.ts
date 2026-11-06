@@ -14,8 +14,6 @@ export interface TileContainer {
   remove(tiles: readonly Tile[]): void;
   previous(tile: Tile): Tile | null;
   next(tile: Tile): Tile | null;
-  moveUp(tile: Tile): void;
-  moveDown(tile: Tile): void;
   /** Copies the tile in place, directly after the original. */
   duplicate(tile: Tile): Tile;
 }

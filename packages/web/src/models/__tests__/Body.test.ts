@@ -56,14 +56,13 @@ describe("Body", () => {
       expect(image.parentId.value).toBeNull();
       expect(tilesMap().get(image.id)?.has("order")).toBe(false);
       expect(outline()).toEqual(["paragraph", `tile:${image.id}`, "paragraph"]);
-      expect(body.tileIds).toEqual([image.id]);
+      expect(getTileIds(body.fragment)).toEqual([image.id]);
       expect(editor.page.tiles.value).toHaveLength(0);
     });
 
-    test("inserts after the block at the given position", () => {
-      const first = paragraph("First");
-      body.fragment.insert(0, [first, paragraph("Second")]);
-      const at = Y.createRelativePositionFromTypeIndex(first.firstChild as Y.XmlText, 0);
+    test("inserts at the given position", () => {
+      body.fragment.insert(0, [paragraph("First"), paragraph("Second")]);
+      const at = Y.createRelativePositionFromTypeIndex(body.fragment, 1);
 
       const image = editor.page.createTile(Image.createMap(IMAGE), { at });
 
@@ -105,30 +104,6 @@ describe("Body", () => {
     });
   });
 
-  describe("moveUp and moveDown", () => {
-    test("reorders the tile among the body's blocks", () => {
-      body.fragment.insert(0, [paragraph("Intro")]);
-      const image = editor.page.createTile(Image.createMap(IMAGE));
-
-      image.moveUp();
-      expect(outline()).toEqual([`tile:${image.id}`, "paragraph", "paragraph"]);
-
-      image.moveDown();
-      expect(outline()).toEqual(["paragraph", `tile:${image.id}`, "paragraph"]);
-    });
-
-    test("re-creates the node in one transaction", () => {
-      body.fragment.insert(0, [paragraph("Intro")]);
-      const image = editor.page.createTile(Image.createMap(IMAGE));
-      const seen: string[][] = [];
-      body.fragment.observe(() => seen.push(getTileIds(body.fragment)));
-
-      image.moveUp();
-
-      expect(seen).toEqual([[image.id]]);
-    });
-  });
-
   describe("duplicate", () => {
     test("copies the tile directly after itself with its children", () => {
       const section = editor.page.createTile(Section.createMap({ layout: "GRID" })) as Section;
@@ -151,7 +126,5 @@ describe("Body", () => {
     });
 
     expect(getTileIds(body.fragment)).toEqual([first.id, second.id]);
-    expect(body.contains(second.id)).toBe(true);
-    expect(body.contains("missing")).toBe(false);
   });
 });

@@ -293,8 +293,8 @@ describe("toMarkdown", () => {
       { type: "paragraph", children: [{ type: "text", text: "After", format: 0 }] },
     ];
 
-    test("skips embedded tiles without a resolver", () => {
-      expect(toMarkdown(input)).toBe("Before\n\nAfter");
+    test("throws for an embedded tile without a resolver", () => {
+      expect(() => toMarkdown(input)).toThrow("Embedded tiles need a tile serializer");
     });
 
     test("inlines resolved tile content at its position", () => {

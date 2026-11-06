@@ -1,56 +1,32 @@
-import If from "jsx/if";
-import Portal from "jsx/portal";
-import Item from "@/components/item/Item";
-import TileContent from "@/components/item/TileContent";
+import EmbeddedTile from "@/components/item/EmbeddedTile";
 import RichText from "@/components/text/RichText";
 import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";
-import DocumentToolbar from "@/components/toolbars/pages/DocumentToolbar";
 import { serializeFragment } from "@/utils/richText/serialize";
-import { combine, reactive } from "reactivity";
+import { combine } from "reactivity";
 import styles from "./DocumentBody.module.css";
-import embedStyles from "@/utils/richText/tiles/tiles.module.css";
 import type Body from "@/models/Body";
 import type { EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
+import type { Reactive } from "reactivity";
 
 export interface DocumentBodyProps {
   body: Body;
+  editorView: Reactive<EditorView | null>;
+  state: Reactive<EditorState | null>;
   signal?: AbortSignal;
 }
 
-/**
- * The rich text body of a document page, with its tiles embedded in the text. Editing uses a
- * collaborative editor that renders embedded tiles with node views; viewing renders a snapshot.
- */
-export default function DocumentBody({ body, signal }: DocumentBodyProps) {
+export default function DocumentBody({ body, editorView, state, signal }: DocumentBodyProps) {
   const { page } = body;
   const { editor } = page;
   if (!editor) {
     throw new Error("Requires editor context");
   }
-  const { isEditable, isCollaborating, selection } = editor;
-
-  const editorView = reactive<EditorView | null>(null);
-  const state = reactive<EditorState | null>(null);
-
-  // The document toolbar stands in for the page toolbar while nothing is selected
-  const showToolbar = combine(
-    { isEditable, selection },
-    ({ isEditable, selection }) => isEditable && selection.size === 0,
-  );
+  const { isEditable, isCollaborating } = editor;
 
   function renderTile(id: string) {
     const tile = page.index.get(id);
-    if (!tile) {
-      return null;
-    }
-    return (
-      <div className={embedStyles.embed}>
-        <Item tile={tile} draggable={false}>
-          <TileContent tile={tile} />
-        </Item>
-      </div>
-    );
+    return tile ? <EmbeddedTile tile={tile} /> : null;
   }
 
   // Editing waits for the collaboration session, which starts right after edit mode
@@ -85,12 +61,6 @@ export default function DocumentBody({ body, signal }: DocumentBodyProps) {
 
   return (
     <div className={styles.body} data-body>
-      <If condition={showToolbar}>
-        <Portal element="toolbar-slot">
-          <DocumentToolbar page={page} state={state} editorView={editorView} />
-        </Portal>
-      </If>
-
       {contents}
     </div>
   );
