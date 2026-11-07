@@ -5,6 +5,7 @@
   "compatibility_date": "2025-09-15",
   "compatibility_flags": ["nodejs_compat"],
   "send_metrics": false,
+  "keep_vars": true,
   "observability": {
     "enabled": true,
   },
