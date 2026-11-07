@@ -1,5 +1,6 @@
 import "@/styles/properties.css";
 import "@/styles/global.css";
+import "@/styles/themes.css";
 import "@/styles/toolbars.css";
 import "@/styles/buttons.css";
 import "@/styles/forms.css";
@@ -18,4 +19,4 @@ import "@/styles/tooltips.css";
 import "@/styles/richText.css";
 import "@/utils/richText/code/highlight.css";
 import "@/styles/tables.css";
-import "@/styles/themes.css";
+import "@/styles/theme-selector.css";

@@ -7,7 +7,7 @@ import { handleError } from "@/utils/errors";
 import Page, { type PageProps } from "@/pages/Page";
 import { generateFontFaceCSS } from "@/utils/fonts";
 import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
-import { getPageBodyStyle } from "@/utils/themes";
+import { getPageTheme, getThemeStyles } from "@/utils/themes";
 import { getPageDescription } from "@/utils/pages";
 import { initializeDoc } from "@/collaboration/doc";
 import { notFound, redirect } from "@/router/responses";
@@ -50,7 +50,7 @@ async function loader({
     doc = initializeDoc(page);
   }
 
-  const style = getPageBodyStyle(doc);
+  const style = getThemeStyles(getPageTheme(doc));
 
   // The global metadata already emits @font-face for DEFAULT_FONT.
   const pageFonts = getPageFonts(doc);

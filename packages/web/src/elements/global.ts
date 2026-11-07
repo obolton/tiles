@@ -7,6 +7,7 @@ import "./video/EmbeddedVideo";
 import "./infinite-scroll/InfiniteScroll";
 import "./thumbnails/ThumbnailList";
 import "./file-picker/FilePicker";
+import "./form-error/FormError";
 import "./scroll-view/ScrollView";
 import "./resizable-panel/ResizablePanel";
 import "./tabs/TabBar";

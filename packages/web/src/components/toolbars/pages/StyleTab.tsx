@@ -1,6 +1,3 @@
-import ColorPicker from "@/components/colors/ColorPicker";
-import SolidColorIcon from "@/icons/solid-color.svg?jsx";
-import FontPicker from "@/components/inputs/FontPicker";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import ListOption from "@/components/lists/ListOption";
@@ -10,10 +7,6 @@ import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
-import { toCSSColor, type Color } from "@/utils/color";
-import { getThemeStyles, loadThemeFonts } from "@/utils/themes";
-import { loadFonts } from "@/utils/fonts";
-import { getFontConfig, type FontId } from "fonts/config";
 import type { HorizontalAlignment } from "doc/types/enums";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
@@ -24,44 +17,9 @@ export interface StyleTabProps {
 }
 
 export default function StyleTab({ page }: StyleTabProps) {
-  const { backgroundColor, font, theme } = page;
-
-  async function setFont(newFont: FontId) {
-    await loadFonts(newFont);
-    viewTransition(() => {
-      document.body.style.setProperty("--font", getFontConfig(newFont).family);
-    });
-    page.font.value = newFont;
-  }
-
-  function setColor(value: Color | null) {
-    if (!value) {
-      return;
-    }
-    viewTransition(() => {
-      document.body.style.setProperty("--background-color", toCSSColor(value));
-    });
-    page.backgroundColor.value = value;
-  }
-
-  async function setTheme(newTheme: Theme | null) {
-    if (newTheme) {
-      await loadThemeFonts(newTheme.id);
-    }
-
-    const bgColor = backgroundColor.value;
-    const themeStyles = getThemeStyles(newTheme, {
-      background: bgColor ? { type: "color", color: bgColor } : null,
-      font: font.value,
-    });
-
-    viewTransition(() => {
-      for (const [property, value] of Object.entries(themeStyles)) {
-        document.body.style.setProperty(property, value);
-      }
-    });
-
-    page.setTheme(newTheme);
+  function setTheme(theme: Theme | null) {
+    page.editor?.undoManager?.stopCapturing();
+    viewTransition(() => page.setTheme(theme));
   }
 
   function setWidth(event: Event) {
@@ -78,21 +36,12 @@ export default function StyleTab({ page }: StyleTabProps) {
   return (
     <toolbar-tab name="style" label="Style">
       <ToolbarGroup label="Style">
-        <FontPicker value={font} onChange={setFont} aria-label="Font" data-tooltip="Font" />
-
         <ThemePicker
           id="page-theme"
-          value={theme}
+          value={page.theme}
           onChange={setTheme}
           aria-label="Theme"
           data-tooltip="Theme"
-        />
-
-        <ColorPicker
-          id="page-color-picker"
-          icon={<SolidColorIcon aria-hidden="true" />}
-          value={backgroundColor}
-          onChange={setColor}
         />
 
         <list-select label="Page width" value={page.width} showvalue on:change={setWidth}>

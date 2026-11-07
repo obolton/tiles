@@ -462,14 +462,11 @@ describe("Tile", () => {
       const tile = createTile();
       const theme = new Theme(THEME);
       tile.setTheme(theme);
-      theme.name.value = "Renamed";
+      theme.data.value = { ...theme.data.value, name: "Renamed" };
 
       tile.setTheme(theme);
 
-      const snapshot = editor.page.doc.getMap("themes").get(theme.id) as
-        | { name: string }
-        | undefined;
-      expect(snapshot?.name).toBe("Renamed");
+      expect(editor.page.doc.getMap("themes").get(theme.id)).toMatchObject({ name: "Renamed" });
     });
 
     test("clears the theme", () => {
@@ -481,6 +478,39 @@ describe("Tile", () => {
 
       expect(tile.themeId.value).toBeNull();
       expect(tile.theme.value).toBeNull();
+    });
+
+    test("drops the previous snapshot once nothing references it", () => {
+      const tile = createTile();
+      tile.setTheme(new Theme(THEME));
+
+      tile.setTheme(null);
+
+      expect(editor.page.doc.getMap("themes").has(THEME.id)).toBe(false);
+    });
+
+    test("keeps the previous snapshot while another tile uses it", () => {
+      const theme = new Theme(THEME);
+      const tile = createTile();
+      const other = createTile();
+      tile.setTheme(theme);
+      other.setTheme(theme);
+
+      tile.setTheme(null);
+
+      expect(editor.page.doc.getMap("themes").has(THEME.id)).toBe(true);
+    });
+  });
+
+  describe("borderColor", () => {
+    test("defaults to null and persists a colour", () => {
+      const tile = createTile();
+
+      expect(tile.borderColor.value).toBeNull();
+
+      tile.borderColor.value = "ff0000000000";
+
+      expect(tile.borderColor.value).toBe("ff0000000000");
     });
   });
 });

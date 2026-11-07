@@ -25,8 +25,15 @@ export default function ThumbnailItem({ tile, classList, children }: ThumbnailIt
       background: tile.background,
       theme: tile.theme,
       textColor: tile.textColor,
+      borderColor: tile.borderColor,
     },
-    ({ background, theme, textColor }) => getThemeStyles(theme, { background, textColor }),
+    ({ background, theme, textColor, borderColor }) =>
+      getThemeStyles(theme, { background, textColor, borderColor }),
+  );
+
+  const isFilled = combine(
+    { background: tile.background, theme: tile.theme },
+    ({ background, theme }) => background !== null || theme !== null,
   );
 
   const combinedStyles = combine(
@@ -52,6 +59,7 @@ export default function ThumbnailItem({ tile, classList, children }: ThumbnailIt
     <div
       classList={{
         [styles.item]: true,
+        [styles.filled]: isFilled,
         [styles["frame-outlined"]]: tile.frame.derive((f) => f === "OUTLINED"),
         [styles["frame-subtle"]]: tile.frame.derive((f) => f === "SUBTLE"),
         [styles["frame-card"]]: tile.frame.derive((f) => f === "CARD"),

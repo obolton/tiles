@@ -82,6 +82,7 @@ export type MapStyle = (typeof MapStyle)[keyof typeof MapStyle];
 
 export const VideoType = {
   YOUTUBE: "YOUTUBE",
+  VIMEO: "VIMEO",
 } as const;
 export type VideoType = (typeof VideoType)[keyof typeof VideoType];
 

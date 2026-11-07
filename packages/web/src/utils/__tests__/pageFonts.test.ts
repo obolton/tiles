@@ -48,12 +48,6 @@ describe("getPageFonts", () => {
     expect(getPageFonts(createDoc())).toEqual(new Set());
   });
 
-  test("includes the page font override", () => {
-    const doc = createDoc();
-    doc.getMap("metadata").set("font", "lora");
-    expect(getPageFonts(doc)).toEqual(new Set(["lora"]));
-  });
-
   test("includes all three fonts of a theme snapshot", () => {
     expect(getPageFonts(createDoc([THEME]))).toEqual(new Set(["lora", "inter", "jetbrains-mono"]));
   });
@@ -110,15 +104,7 @@ describe("getPagePreloads", () => {
     expect(preloads[0]?.as).toBe("font");
   });
 
-  test("respects the page font override", () => {
-    const doc = createDoc();
-    doc.getMap("metadata").set("font", "lora");
-    const preloads = getPagePreloads(doc);
-    expect(preloads).toHaveLength(1);
-    expect(preloads[0]?.href).toContain("lora-latin-wght-normal");
-  });
-
-  test("falls back to theme.fonts.body when no page font", () => {
+  test("preloads the body and heading fonts of the page theme", () => {
     const theme: Theme = {
       ...THEME,
       fonts: { heading: "lora", body: "quicksand", code: "jetbrains-mono" },

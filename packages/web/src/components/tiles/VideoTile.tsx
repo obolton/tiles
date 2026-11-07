@@ -7,6 +7,7 @@ import type { VideoType } from "@/models/Video";
 
 const EMBED_URLS: Record<VideoType, (videoId: string) => string> = {
   YOUTUBE: (videoId) => `https://www.youtube.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`,
+  VIMEO: (videoId) => `https://player.vimeo.com/video/${videoId}?autoplay=1&playsinline=1`,
 };
 
 function getEmbedUrl(videoType: VideoType, videoId: string) {

@@ -20,10 +20,6 @@ export default Prisma.defineExtension({
           code: codeFont,
         }),
       },
-      border: {
-        needs: { borderColor: true },
-        compute: ({ borderColor }) => (borderColor ? toHex(borderColor) : null),
-      },
     },
   },
 });

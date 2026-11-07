@@ -2,6 +2,7 @@ import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItem from "@/components/menus/MenuItem";
 import TextIcon from "@/icons/text.svg?jsx";
 import ImageIcon from "@/icons/image.svg?jsx";
+import VideoIcon from "@/icons/video.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
 import If from "jsx/if";
@@ -11,6 +12,7 @@ import { handleError } from "@/utils/errors";
 import Editor from "@/editor/Editor";
 import Text from "@/models/Text";
 import Image from "@/models/Image";
+import Video from "@/models/Video";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
@@ -28,11 +30,13 @@ type InsertTileButton = {
 const BUTTONS: readonly InsertTileButton[] = [
   { label: "Text", type: "TEXT", Icon: TextIcon },
   { label: "Image", type: "IMAGE", Icon: ImageIcon },
+  { label: "Video", type: "VIDEO", Icon: VideoIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
 ];
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
+const VideoModalLoader = () => import("@/components/modals/VideoModal");
 const LinkModalLoader = () => import("@/components/modals/LinkModal");
 
 export interface InsertTileItemsProps {
@@ -71,6 +75,18 @@ export default function InsertTileItems({ getPlacement, showText }: InsertTileIt
                 size: { width, height },
                 sizing: "AUTO",
                 width: Editor.current.page.width.value,
+              });
+            },
+          });
+          break;
+
+        case "VIDEO":
+          await showModal(VideoModalLoader, {
+            props: {},
+            async onConfirm({ url }) {
+              await Video.create(Editor.current.page, {
+                ...placement,
+                url,
               });
             },
           });

@@ -21,7 +21,7 @@
 .heading {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--secondary-text-color);
+  color: var(--ui-secondary-color);
 }
 
 .row {
@@ -50,5 +50,5 @@
 }
 
 .empty {
-  color: var(--secondary-text-color);
+  color: var(--ui-secondary-color);
 }

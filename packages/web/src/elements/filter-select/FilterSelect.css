@@ -8,5 +8,5 @@
 }
 
 #input::placeholder {
-  color: var(--placeholder-color);
+  color: var(--ui-placeholder-color);
 }

@@ -20,7 +20,9 @@ import Link from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
 import VersionHistory from "@/components/versions/VersionHistory";
 import Share from "@/components/collaboration/Share";
+import ThemeEditor from "@/components/themes/ThemeEditor";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
+import { applyThemeStyles, getThemeStyles } from "@/utils/themes";
 import type Tile from "@/models/Tile";
 import type Body from "@/models/Body";
 import type { Awareness } from "@/collaboration/types";
@@ -49,6 +51,7 @@ export default class Editor {
   readonly chat: ChatState;
   readonly versionHistory: VersionHistory;
   readonly share = new Share();
+  readonly themeEditor: ThemeEditor;
 
   readonly undoManager: PageUndoManager | null;
   readonly canUndo: Reactive<boolean>;
@@ -156,9 +159,16 @@ export default class Editor {
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
     this.versionHistory = new VersionHistory(this.page.id, version ?? null);
+    this.themeEditor = new ThemeEditor(this.page);
     // Only one end-slot panel at a time
-    this.versionHistory.isOpen.subscribe(({ value }) => value && this.share.close());
-    this.share.isOpen.subscribe(({ value }) => value && this.versionHistory.close());
+    const panels = [this.versionHistory, this.share, this.themeEditor];
+    for (const panel of panels) {
+      panel.isOpen.subscribe(({ value }) => {
+        if (value) {
+          panels.filter((other) => other !== panel).forEach((other) => other.close());
+        }
+      });
+    }
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -174,6 +184,12 @@ export default class Editor {
       this.enablePointerEvents();
 
       this.selection.subscribe(() => this.publishSelection());
+
+      // The server renders the page theme onto body; keep it in sync with the doc
+      this.page.theme.subscribe(
+        ({ value }) => applyThemeStyles(document.body, getThemeStyles(value)),
+        this.#abort.signal,
+      );
 
       // Focus the first tile if starting in edit mode
       if (this.isEditable.value) {
@@ -228,6 +244,7 @@ export default class Editor {
       this.clearSelection();
       this.versionHistory.close();
       this.share.close();
+      this.themeEditor.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();

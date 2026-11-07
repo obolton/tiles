@@ -30,70 +30,42 @@ describe("Theme", () => {
     deleteMock.mockReset();
   });
 
-  test("maps properties to reactive values", () => {
+  test("exposes the theme data reactively", () => {
     const theme = new Theme(THEME);
 
     expect(theme.id).toBe(THEME.id);
     expect(theme.workspaceId).toBe(THEME.workspaceId);
-    expect(theme.name.value).toBe(THEME.name);
-    expect(theme.background.value).toEqual(THEME.background);
-    expect(theme.colors.value).toEqual(THEME.colors);
-    expect(theme.fonts.value).toEqual(THEME.fonts);
-    expect(theme.border.value).toBe(THEME.border);
+    expect(theme.data.value).toEqual(THEME);
   });
 
-  describe("setName", () => {
-    test("updates name and persists the change", async () => {
+  describe("update", () => {
+    test("applies the change and persists it", async () => {
       const theme = new Theme(THEME);
-      const name = "New Theme Name";
 
-      await theme.setName(name);
+      await theme.update({ name: "Renamed", colors: { text: "ff0000000000" } });
 
-      expect(theme.name.value).toBe(name);
+      expect(theme.data.value.name).toBe("Renamed");
+      expect(theme.data.value.colors).toEqual({
+        text: "ff0000000000",
+        accent: THEME.colors.accent,
+      });
       expect(updateMock).toHaveBeenCalledWith({
         workspaceId: THEME.workspaceId,
         id: THEME.id,
-        name,
+        name: "Renamed",
+        colors: { text: "ff0000000000" },
       });
     });
-  });
 
-  describe("setColors", () => {
-    test("updates colors and persists the change", async () => {
+    test("merges partial fonts", async () => {
       const theme = new Theme(THEME);
-      const colors = { text: "ff0000000000" as const };
 
-      await theme.setColors(colors);
+      await theme.update({ fonts: { heading: "quicksand" } });
 
-      expect(theme.colors.value.text).toBe("ff0000000000");
-      expect(theme.colors.value.accent).toBe(THEME.colors.accent);
-      expect(updateMock).toHaveBeenCalledWith({
-        workspaceId: THEME.workspaceId,
-        id: THEME.id,
-        colors,
-      });
+      expect(theme.data.value.fonts).toEqual({ ...THEME.fonts, heading: "quicksand" });
     });
-  });
 
-  describe("setFonts", () => {
-    test("updates fonts and persists the change", async () => {
-      const theme = new Theme(THEME);
-      const fonts = { heading: "CLASSIC" as const };
-
-      await theme.setFonts(fonts);
-
-      expect(theme.fonts.value.heading).toBe("CLASSIC");
-      expect(theme.fonts.value.body).toBe(THEME.fonts.body);
-      expect(updateMock).toHaveBeenCalledWith({
-        workspaceId: THEME.workspaceId,
-        id: THEME.id,
-        fonts,
-      });
-    });
-  });
-
-  describe("setBackground", () => {
-    test("updates background and persists the change", async () => {
+    test("replaces the background", async () => {
       const theme = new Theme(THEME);
       const background = {
         type: "gradient" as const,
@@ -102,91 +74,52 @@ describe("Theme", () => {
         direction: "VERTICAL" as const,
       };
 
-      await theme.setBackground(background);
+      await theme.update({ background });
 
-      expect(theme.background.value).toEqual(background);
-      expect(updateMock).toHaveBeenCalledWith({
-        workspaceId: THEME.workspaceId,
-        id: THEME.id,
-        background,
-      });
+      expect(theme.data.value.background).toEqual(background);
     });
-  });
 
-  describe("setBorder", () => {
-    test("updates border color and persists the change", async () => {
+    test("notifies subscribers before persisting", () => {
       const theme = new Theme(THEME);
+      const listener = vi.fn();
+      theme.data.subscribe(listener);
 
-      await theme.setBorder("ff00ff00ff00");
+      void theme.update({ name: "Renamed" });
 
-      expect(theme.border.value).toBe("ff00ff00ff00");
-      expect(updateMock).toHaveBeenCalledWith({
-        workspaceId: THEME.workspaceId,
-        id: THEME.id,
-        border: "ff00ff00ff00",
-      });
+      expect(listener).toHaveBeenCalledTimes(1);
     });
 
-    test("clears border when set to null", async () => {
-      const themeWithBorder = { ...THEME, border: "ff00ff00ff00" };
-      const theme = new Theme(themeWithBorder);
+    test("reverts the change when persisting fails", async () => {
+      const theme = new Theme(THEME);
+      updateMock.mockRejectedValueOnce(new Error("Offline"));
 
-      await theme.setBorder(null);
+      await expect(theme.update({ name: "Renamed" })).rejects.toThrow("Offline");
 
-      expect(theme.border.value).toBeNull();
-      expect(updateMock).toHaveBeenCalledWith({
-        workspaceId: THEME.workspaceId,
-        id: THEME.id,
-        border: null,
-      });
+      expect(theme.data.value.name).toBe(THEME.name);
     });
   });
 
   describe("serialize", () => {
-    test("returns a plain data object matching the input", () => {
+    test("returns the theme data", () => {
       const theme = new Theme(THEME);
+
       expect(theme.serialize()).toEqual(THEME);
-    });
-
-    test("reflects mutated values", () => {
-      const theme = new Theme(THEME);
-      theme.name.value = "Changed";
-      theme.colors.value = { text: "aaaaaaaaaaaa", accent: "bbbbbbbbbbbb" };
-
-      const data = theme.serialize();
-      expect(data.name).toBe("Changed");
-      expect(data.colors).toEqual({
-        text: "aaaaaaaaaaaa",
-        accent: "bbbbbbbbbbbb",
-      });
     });
   });
 
   describe("duplicate", () => {
-    test("creates a copy with ' Copy' suffix", async () => {
+    test("creates a copy with a ' Copy' suffix", async () => {
       const theme = new Theme(THEME);
 
       await theme.duplicate();
 
       expect(createMock).toHaveBeenCalledWith({
-        id: THEME.id,
         workspaceId: THEME.workspaceId,
         name: `${THEME.name} Copy`,
         background: THEME.background,
         colors: THEME.colors,
         fonts: THEME.fonts,
-        border: THEME.border,
       });
-    });
-
-    test("omits background when null", async () => {
-      const themeData = { ...THEME, background: null };
-      const theme = new Theme(themeData);
-
-      await theme.duplicate();
-
-      const call = createMock.mock.calls[0]![0];
-      expect(call.background).toBeUndefined();
     });
   });
 

@@ -31,6 +31,7 @@ export interface CreateTileInput extends PlacementInput {
   frame?: FrameStyle | null;
   cornerRadius?: number;
   textColor?: Color | null;
+  borderColor?: Color | null;
   background?: Fill | null;
 }
 
@@ -57,6 +58,7 @@ export function buildBaseTileMap(properties: BaseTileInput): Y.Map<unknown> {
   map.set("frame", properties.frame ?? null);
   map.set("cornerRadius", properties.cornerRadius ?? 0);
   map.set("textColor", properties.textColor ?? null);
+  map.set("borderColor", properties.borderColor ?? null);
   map.set("background", properties.background ?? null);
 
   return map;

@@ -1,7 +1,50 @@
 import { describe, expect, test } from "vitest";
-import { getBackgroundStyle } from "../backgrounds";
+import { getBackgroundStyle, getBackgroundColor, getBackgroundImage } from "../backgrounds";
 import { getImageUrl } from "../images";
 import type { Fill } from "@/components/fills/types";
+
+describe("getBackgroundColor", () => {
+  test("returns the colour of a colour fill", () => {
+    expect(getBackgroundColor({ type: "color", color: "80000a000000" })).toBe("80000a000000");
+  });
+
+  test("returns the first colour of a gradient", () => {
+    expect(
+      getBackgroundColor({
+        type: "gradient",
+        colorA: "80000a000000",
+        colorB: "c000148000b4",
+        direction: "VERTICAL",
+      }),
+    ).toBe("80000a000000");
+  });
+
+  test("returns null for an image", () => {
+    expect(getBackgroundColor({ type: "image", imageId: "image" })).toBeNull();
+  });
+});
+
+describe("getBackgroundImage", () => {
+  test("returns none for a colour fill", () => {
+    expect(getBackgroundImage({ type: "color", color: "80000a000000" })).toBe("none");
+  });
+
+  test("returns a gradient", () => {
+    const image = getBackgroundImage({
+      type: "gradient",
+      colorA: "80000a000000",
+      colorB: "c000148000b4",
+      direction: "HORIZONTAL",
+    });
+    expect(image).toContain("linear-gradient(to right in oklch");
+  });
+
+  test("returns the image url", () => {
+    expect(getBackgroundImage({ type: "image", imageId: "image" })).toBe(
+      `url(${getImageUrl("image")})`,
+    );
+  });
+});
 
 describe("getBackgroundStyle", () => {
   test("returns undefined for null", () => {

@@ -23,7 +23,6 @@ const MOCK_THEME: Theme = {
   background: { type: "color", color: "ffffffffffff" },
   colors: { text: "1a1a1a1a1a1a", accent: "0066ff0066ff" },
   fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
-  border: null,
 };
 
 const CREATE_INPUT: CreateThemeSchema = {
@@ -73,7 +72,6 @@ describe("createTheme", () => {
         headingFont: "inter",
         bodyFont: "inter",
         codeFont: "jetbrains-mono",
-        borderColor: null,
       },
       select: THEME_FIELDS,
     });
@@ -132,26 +130,6 @@ describe("createTheme", () => {
       }),
     );
   });
-
-  test("encodes the border color when given", async () => {
-    await createTheme({ ...CREATE_INPUT, border: "e0e0e0e0e0e0" }, MOCK_CONTEXT);
-
-    expect(create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ borderColor: fromHex("e0e0e0e0e0e0") }),
-      }),
-    );
-  });
-
-  test("stores no border color when the border is null", async () => {
-    await createTheme({ ...CREATE_INPUT, border: null }, MOCK_CONTEXT);
-
-    expect(create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ borderColor: null }),
-      }),
-    );
-  });
 });
 
 describe("updateTheme", () => {
@@ -185,7 +163,6 @@ describe("updateTheme", () => {
           headingFont: undefined,
           bodyFont: undefined,
           codeFont: undefined,
-          borderColor: undefined,
         },
       }),
     );
@@ -238,26 +215,6 @@ describe("updateTheme", () => {
           bodyFont: undefined,
           codeFont: undefined,
         }),
-      }),
-    );
-  });
-
-  test("encodes the border color when given", async () => {
-    await updateTheme({ id: "theme-1", border: "e0e0e0e0e0e0" }, MOCK_CONTEXT);
-
-    expect(update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ borderColor: fromHex("e0e0e0e0e0e0") }),
-      }),
-    );
-  });
-
-  test("clears the border color when the border is null", async () => {
-    await updateTheme({ id: "theme-1", border: null }, MOCK_CONTEXT);
-
-    expect(update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({ borderColor: null }),
       }),
     );
   });

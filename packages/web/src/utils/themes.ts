@@ -1,124 +1,98 @@
 import * as Y from "yjs";
-import ThemeModel from "@/models/Theme";
 import { parseParentId } from "@/models/parentId";
-import { getBackgroundStyle } from "@/utils/backgrounds";
+import { getBackgroundColor, getBackgroundImage } from "@/utils/backgrounds";
 import { toCSSColor, type Color } from "@/utils/color";
-import { getFontConfig, type FontConfig, type FontId } from "fonts/config";
-import { themesCache } from "@/utils/cache";
 import { loadFonts } from "@/utils/fonts";
-import type { Theme } from "api/types/themes";
+import { getFontConfig, DEFAULT_FONT, DEFAULT_HEADING_FONT, DEFAULT_CODE_FONT } from "fonts/config";
+import type { FontId } from "fonts/config";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "@/components/fills/types";
 import type Tile from "@/models/Tile";
-import type { ThemeData } from "@/models/Theme";
+import type { ThemeData, ThemeValues } from "@/models/Theme";
 
-export type { Theme };
+export type { ThemeData };
 
-export type ThemeStyleInput =
-  | Pick<Theme, "background" | "colors" | "fonts" | "border">
-  | ThemeModel;
-
-function formatFont(config: FontConfig) {
-  return `"${config.family}", ${config.fallback}`;
-}
+/** The values a new theme starts from. */
+export const DEFAULT_THEME_VALUES: Omit<ThemeValues, "name"> = {
+  background: { type: "color", color: "ffffffffffff" },
+  colors: { text: "1a1a1a1a1a1a", accent: "0066ff0066ff" },
+  fonts: { heading: DEFAULT_HEADING_FONT, body: DEFAULT_FONT, code: DEFAULT_CODE_FONT },
+};
 
 export interface StyleOverrides {
   background?: Fill | null;
   textColor?: Color | null;
-  accentColor?: Color | null;
-  font?: FontId | null;
+  borderColor?: Color | null;
 }
 
-export interface ResolvedStyles {
-  background: Fill | null;
-  textColor: Color | null;
-  accentColor: Color | null;
-  font: string | null;
-  headingFont: string | null;
-  codeFont: string | null;
-  borderColor: Color | null;
+export type ThemeStyles = {
+  "--background-color": string | undefined;
+  "--background-image": string | undefined;
+  "--text-color": string | undefined;
+  "--accent-color": string | undefined;
+  "--font": string | undefined;
+  "--heading-font": string | undefined;
+  "--code-font": string | undefined;
+  "--border-color": string | undefined;
+};
+
+function formatFont(id: FontId) {
+  const config = getFontConfig(id);
+  return `"${config.family}", ${config.fallback}`;
+}
+
+function getFillColor(fill: Fill | null | undefined) {
+  return fill ? getBackgroundColor(fill) : null;
 }
 
 /**
- * Resolves the effective styles by applying overrides on top of theme defaults.
- * Overrides take precedence over theme values.
+ * Resolves a theme and any overrides into CSS custom properties. Every property is present, so
+ * applying the result also clears a stale value when an override is removed.
  */
-export function resolveThemeStyles(
-  input: ThemeStyleInput | null,
+export function getThemeStyles(
+  theme: ThemeData | null,
   overrides: StyleOverrides = {},
-): ResolvedStyles {
-  const theme = input instanceof ThemeModel ? input.serialize() : input;
-
-  const themeBackground = theme?.background ?? null;
-  const background = overrides.background ?? themeBackground;
+): ThemeStyles {
+  const background = overrides.background ?? theme?.background ?? null;
+  const backgroundColor = getFillColor(background) ?? getFillColor(theme?.background);
   const textColor = overrides.textColor ?? theme?.colors.text ?? null;
-  const accentColor = overrides.accentColor ?? theme?.colors.accent ?? null;
-  const fontId = overrides.font ?? theme?.fonts.body ?? null;
-  const font = fontId ? getFontConfig(fontId) : null;
-  const headingFontId = theme?.fonts.heading ?? null;
-  const headingFontConfig = headingFontId ? getFontConfig(headingFontId) : null;
-  const codeFontId = theme?.fonts.code ?? null;
-  const codeFontConfig = codeFontId ? getFontConfig(codeFontId) : null;
-
-  const borderColor = theme?.border ?? textColor;
 
   return {
-    background,
-    textColor,
-    accentColor,
-    font: font ? formatFont(font) : null,
-    headingFont: headingFontConfig ? formatFont(headingFontConfig) : null,
-    codeFont: codeFontConfig ? formatFont(codeFontConfig) : null,
-    borderColor,
+    "--background-color": backgroundColor ? toCSSColor(backgroundColor) : undefined,
+    "--background-image": background ? getBackgroundImage(background) : undefined,
+    "--text-color": textColor ? toCSSColor(textColor) : undefined,
+    "--accent-color": theme ? toCSSColor(theme.colors.accent) : undefined,
+    "--font": theme ? formatFont(theme.fonts.body) : undefined,
+    "--heading-font": theme ? formatFont(theme.fonts.heading) : undefined,
+    "--code-font": theme ? formatFont(theme.fonts.code) : undefined,
+    "--border-color": overrides.borderColor ? toCSSColor(overrides.borderColor) : undefined,
   };
 }
 
-/**
- * Converts resolved styles to CSS custom property values.
- */
-export function toCSSProperties(styles: ResolvedStyles): {
-  "--background"?: string;
-  "--text-color"?: string;
-  "--accent-color"?: string;
-  "--font"?: string;
-  "--heading-font"?: string;
-  "--code-font"?: string;
-  "--border-color"?: string;
-} {
-  return {
-    "--background": getBackgroundStyle(styles.background)?.background,
-    "--text-color": styles.textColor ? toCSSColor(styles.textColor) : undefined,
-    "--accent-color": styles.accentColor ? toCSSColor(styles.accentColor) : undefined,
-    "--font": styles.font ?? undefined,
-    "--heading-font": styles.headingFont ?? undefined,
-    "--code-font": styles.codeFont ?? undefined,
-    "--border-color": styles.borderColor ? toCSSColor(styles.borderColor) : undefined,
-  };
+/** Applies theme styles to an element, removing the properties that are unset. */
+export function applyThemeStyles(element: HTMLElement, styles: ThemeStyles) {
+  for (const [property, value] of Object.entries(styles)) {
+    if (value === undefined) {
+      element.style.removeProperty(property);
+    } else {
+      element.style.setProperty(property, value);
+    }
+  }
 }
 
-/**
- * Extracts displayable colors from a theme for use in color palettes.
- */
-export function getThemeColors(input: ThemeModel | Theme): ThemeColor[] {
-  const theme = input instanceof ThemeModel ? input.serialize() : input;
-
+/** The theme's colours, for use in colour palettes. */
+export function getThemeColors(theme: ThemeData): ThemeColor[] {
   const colors: ThemeColor[] = [
     { name: "Text", color: theme.colors.text },
     { name: "Accent", color: theme.colors.accent },
   ];
-  if (theme.background?.type === "color") {
+  if (theme.background.type === "color") {
     colors.push({ name: "Background", color: theme.background.color });
-  }
-  if (theme.border) {
-    colors.push({ name: "Border", color: theme.border });
   }
   return colors;
 }
 
-/**
- * Resolves the effective theme for a tile by walking up the cascade:
- * tile > parent section > page.
- */
+/** The theme in effect for a tile: its own, then its section's, then the page's. */
 export function resolveTheme(tile: Tile): ThemeData | null {
   if (tile.theme.value) {
     return tile.theme.value;
@@ -135,40 +109,12 @@ export function resolveTheme(tile: Tile): ThemeData | null {
   return tile.page.theme.value;
 }
 
-/**
- * Resolves theme and overrides directly into CSS custom properties.
- */
-export function getThemeStyles(
-  theme: ThemeStyleInput | null,
-  overrides: StyleOverrides = {},
-): ReturnType<typeof toCSSProperties> {
-  return toCSSProperties(resolveThemeStyles(theme, overrides));
-}
-
-/**
- * Loads the fonts for a theme.
- */
-export async function loadThemeFonts(themeId: string) {
-  const theme = themesCache.getById(themeId);
-  if (theme) {
-    const fonts = theme.fonts.value;
-    await loadFonts(fonts.heading, fonts.body, fonts.code);
-  }
+export function loadThemeFonts(theme: ThemeData) {
+  const { heading, body, code } = theme.fonts;
+  return loadFonts(heading, body, code);
 }
 
 export function getPageTheme(doc: Y.Doc): ThemeData | null {
   const themeId = doc.getMap("metadata").get("themeId") as string | null;
   return themeId ? (doc.getMap<ThemeData>("themes").get(themeId) ?? null) : null;
-}
-
-export function getPageFont(doc: Y.Doc): FontId | null {
-  return (doc.getMap("metadata").get("font") as FontId | null) ?? null;
-}
-
-export function getPageBodyStyle(doc: Y.Doc): ReturnType<typeof toCSSProperties> {
-  const backgroundColor = (doc.getMap("metadata").get("backgroundColor") as Color | null) ?? null;
-  return getThemeStyles(getPageTheme(doc), {
-    background: backgroundColor ? { type: "color", color: backgroundColor } : null,
-    font: getPageFont(doc),
-  });
 }

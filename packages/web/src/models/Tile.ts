@@ -51,6 +51,7 @@ export default abstract class Tile {
   readonly theme: Reactive<ThemeData | null>;
   readonly background: Reactive<Fill | null>;
   readonly textColor: Reactive<Color | null>;
+  readonly borderColor: Reactive<Color | null>;
 
   constructor(page: Page, map: Y.Map<unknown>) {
     this.page = page;
@@ -92,6 +93,7 @@ export default abstract class Tile {
       id ? (themes.get(id) ?? null) : null,
     );
     this.textColor = this.binding.field("textColor", null);
+    this.borderColor = this.binding.field("borderColor", null);
     this.background = this.binding.field("background", null);
   }
 
@@ -233,11 +235,15 @@ export default abstract class Tile {
   }
 
   setTheme(theme: Theme | null) {
+    const previousId = this.themeId.value;
     this.page.doc.transact(() => {
       if (theme) {
         this.page.themes.apply(theme);
       }
       this.themeId.value = theme?.id ?? null;
+      if (previousId) {
+        this.page.pruneTheme(previousId);
+      }
     });
   }
 

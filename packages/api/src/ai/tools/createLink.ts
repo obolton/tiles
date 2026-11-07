@@ -57,7 +57,7 @@ async function createLinkTile(
 
 export const CREATE_LINK_TOOL: FunctionToolOptions<typeof CreateLinkSchema> = {
   name: "create_link",
-  description: "Creates a link card for a URL.",
+  description: "Creates a link card for a URL, or a video for a YouTube or Vimeo link.",
   schema: CreateLinkSchema,
   function: createLinkTile,
 };

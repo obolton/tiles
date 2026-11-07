@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { DEFAULT_FONT, type FontId } from "fonts/config";
 import { getFontPreload } from "@/utils/fonts";
-import { getPageTheme, getPageFont } from "@/utils/themes";
+import { getPageTheme } from "@/utils/themes";
 import { getRichTextFonts, getFragmentFonts } from "@/utils/richText/fonts";
 import { getBody } from "doc/body";
 import type { ThemeData } from "@/models/Theme";
@@ -26,11 +26,6 @@ function getTileFonts(tile: Y.Map<unknown>): Set<FontId> {
 export function getPageFonts(doc: Y.Doc): Set<FontId> {
   const fonts = new Set<FontId>();
 
-  const font = getPageFont(doc);
-  if (font) {
-    fonts.add(font);
-  }
-
   // Themes
   for (const theme of doc.getMap<ThemeData>("themes").values()) {
     fonts.add(theme.fonts.heading);
@@ -53,7 +48,7 @@ export function getPageFonts(doc: Y.Doc): Set<FontId> {
 
 export function getPagePreloads(doc: Y.Doc): Link[] {
   const pageTheme = getPageTheme(doc);
-  const bodyFontId = getPageFont(doc) ?? pageTheme?.fonts.body ?? DEFAULT_FONT;
+  const bodyFontId = pageTheme?.fonts.body ?? DEFAULT_FONT;
   const headingFontId = pageTheme?.fonts.heading ?? bodyFontId;
 
   const preloads: Link[] = [getFontPreload(bodyFontId)];
