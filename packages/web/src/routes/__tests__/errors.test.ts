@@ -4,16 +4,6 @@ import { loader as forbiddenLoader } from "../403";
 import { loader as serverErrorLoader } from "../500";
 import { InternalServerError } from "@/router/errors";
 import { PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
-import type { HttpError } from "@/router/errors";
-
-function request(error: HttpError) {
-  return {
-    url: new URL("http://localhost/missing"),
-    headers: new Headers(),
-    parameters: {},
-    error,
-  };
-}
 
 describe("error route loaders", () => {
   test("title the 404 page and prevent caching", async () => {
@@ -34,16 +24,17 @@ describe("error route loaders", () => {
 
   test("pass the error to the 500 page", async () => {
     const error = new InternalServerError({ cause: new TypeError("Boom") });
-    await expect(serverErrorLoader(request(error))).resolves.toEqual({
+    await expect(
+      serverErrorLoader({
+        url: new URL("http://localhost/broken"),
+        headers: new Headers(),
+        parameters: {},
+        error,
+      }),
+    ).resolves.toEqual({
       title: "Something went wrong - Tiles",
       headers: { "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE },
       data: { error },
     });
-  });
-
-});
-    await expect(forbiddenLoader()).resolves.toMatchObject({ data: undefined });
-    expect(new NotFoundError().status).toBe(404);
-    expect(new ForbiddenError().status).toBe(403);
   });
 });
