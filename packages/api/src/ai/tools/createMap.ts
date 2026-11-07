@@ -6,12 +6,10 @@ import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateMapSchema = z.strictObject({
   size: SizeSchema,
-  mapStyle: z
-    .enum(MapStyle)
-    .meta({
-      description: "Map style: DEFAULT (street map), SATELLITE, WATERCOLOR, or MONOCHROME",
-    })
-    .default("DEFAULT"),
+  mapStyle: z.enum(MapStyle).nullable().meta({
+    description:
+      "Map style: DEFAULT (street map), SATELLITE, WATERCOLOR, or MONOCHROME. Use null for the default style.",
+  }),
 });
 
 async function createMapTile(
@@ -21,7 +19,7 @@ async function createMapTile(
   const { size, mapStyle } = args;
   const map = buildSectionMap({
     layout: "MAP",
-    mapStyle,
+    mapStyle: mapStyle ?? "DEFAULT",
     ...getDimensions(size),
   });
   const tileId = session.createTile(map);
