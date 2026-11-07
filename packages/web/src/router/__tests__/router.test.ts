@@ -84,4 +84,13 @@ describe("Router", () => {
   test("returns null if there is no error route for a status", () => {
     expect(router.getErrorRoute(500)).toBeNull();
   });
+
+  test("rejects error routes for statuses that are not errors", () => {
+    for (const status of [200, 302, 399, 600, 404.5, NaN]) {
+      expect(() => router.addErrorRoute(status, NOT_FOUND)).toThrow(
+        `Invalid error status: ${status}`,
+      );
+    }
+    expect(router.getErrorRoute(200)).toBeNull();
+  });
 });

@@ -34,7 +34,6 @@ describe("GET /sign-in/google/callback", () => {
   });
 
   test("drops an invalid destination cookie and reports a failed sign-in", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
     const response = await get(
       "http://localhost/sign-in/google/callback?error=access_denied",
       "__Host-oauth_dest=https%3A%2F%2Fevil.com",
@@ -45,7 +44,6 @@ describe("GET /sign-in/google/callback", () => {
   });
 
   test("reports a failed sign-in when the OAuth state does not match", async () => {
-    vi.spyOn(console, "error").mockImplementation(() => {});
     const response = await get(
       "http://localhost/sign-in/google/callback?state=other&code=abc",
       [

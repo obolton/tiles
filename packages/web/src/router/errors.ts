@@ -1,12 +1,7 @@
 export interface HttpErrorOptions extends ErrorOptions {
-  /** Headers to include in the error response, such as cookies to clear. */
   headers?: HeadersInit;
 }
 
-/**
- * Thrown by middleware, loaders and request handlers to respond with an error status. The server
- * renders the error route for the status (e.g. `routes/404.ts`) if one exists.
- */
 export class HttpError extends Error {
   readonly status: number;
   readonly headers: Headers;

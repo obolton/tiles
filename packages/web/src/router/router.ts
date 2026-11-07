@@ -5,7 +5,6 @@ export interface RequestProperties {
   url: URL;
   headers: Headers;
   parameters: RouteParameters;
-  /** The error being responded to. Only set when rendering an error route. */
   error?: HttpError;
 }
 
@@ -142,8 +141,10 @@ export default class Router {
     node.route = route;
   }
 
-  /** Registers the route rendered for responses with the given error status. */
   addErrorRoute(status: number, route: RouteConfig) {
+    if (!Number.isInteger(status) || status < 400 || status > 599) {
+      throw new Error(`Invalid error status: ${status}`);
+    }
     this.errorRoutes.set(status, route);
   }
 

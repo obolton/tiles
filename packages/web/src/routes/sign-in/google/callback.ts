@@ -15,7 +15,6 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   const cookiesToSet = clearOAuth2Cookies();
 
   if (cookies.destination && !validateDestination(cookies.destination)) {
-    console.error("Sign-in failed: invalid destination cookie");
     return redirect(getSignInErrorUrl("failed", null), 302, cookiesToSet);
   }
 
@@ -39,7 +38,6 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     !compareOAuth2State(cookies.state, state) ||
     !code
   ) {
-    console.error("Sign-in failed: invalid OAuth state");
     return redirect(getSignInErrorUrl("failed", cookies.destination), 302, cookiesToSet);
   }
 

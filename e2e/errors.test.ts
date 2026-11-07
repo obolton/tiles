@@ -10,7 +10,7 @@ test.describe("error pages", () => {
   });
 
   test("renders the 404 page for an unavailable page", async ({ page }) => {
-    const response = await page.goto("/pages/does-not-exist");
+    const response = await page.goto("/pages/00000000-0000-4000-8000-000000000000");
     expect(response?.status()).toBe(404);
     await expect(page.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");

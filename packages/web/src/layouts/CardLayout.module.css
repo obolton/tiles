@@ -87,15 +87,6 @@
   }
 }
 
-.eyebrow {
-  margin-bottom: -8px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--secondary-text-color);
-}
-
 .description {
   margin-top: -8px;
   color: var(--secondary-text-color);

@@ -21,8 +21,8 @@ function getPathFromModuleUrl(url: string) {
   return path;
 }
 
-// Top-level modules named by a status code (e.g. `404.ts`) render error responses instead of paths.
-const ERROR_ROUTE_PATTERN = /^[1-5]\d{2}$/;
+// Top-level modules named by an error status (e.g. `404.ts`) render errors instead of paths.
+const ERROR_ROUTE_PATTERN = /^[45]\d{2}$/;
 
 export function getRouter() {
   const router = new Router();

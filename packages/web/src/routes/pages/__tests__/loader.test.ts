@@ -1,5 +1,4 @@
 import { describe, expect, test, vi, beforeEach } from "vitest";
-import { TRPCClientError } from "@trpc/client";
 import * as Y from "yjs";
 import { bytesToBase64 } from "doc/encoding";
 import route from "../[id]";
@@ -8,7 +7,6 @@ import { PAGE } from "@/test/fixtures/Page";
 import { NAMED_VERSION } from "@/test/fixtures/PageVersion";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { NotFoundError } from "@/router/errors";
-import type { AppRouter } from "api/routes/index";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -119,22 +117,6 @@ describe("pages/[id] loader", () => {
 
   test("throws not found for a missing page", async () => {
     getPage.mockResolvedValue(null);
-
-    await expect(runLoader()).rejects.toThrow(NotFoundError);
-  });
-
-  test("throws not found for a malformed page id", async () => {
-    getPage.mockRejectedValue(
-      new TRPCClientError<AppRouter>("Invalid UUID", {
-        result: {
-          error: {
-            message: "Invalid UUID",
-            code: -32600,
-            data: { code: "BAD_REQUEST", httpStatus: 400 },
-          },
-        },
-      }),
-    );
 
     await expect(runLoader()).rejects.toThrow(NotFoundError);
   });

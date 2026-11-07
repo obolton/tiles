@@ -1,5 +1,4 @@
 import client from "@/api/client";
-import { isAPIErrorCode } from "@/api/errors";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { initRoute } from "@/routes/init";
@@ -16,18 +15,6 @@ import { NotFoundError } from "@/router/errors";
 import { DEFAULT_FONT } from "fonts/config";
 import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
-async function getPage(id: string, options: ReturnType<typeof getLoaderContext>) {
-  try {
-    return await client.pages.getById.query({ id }, options);
-  } catch (error) {
-    // The API rejects malformed ids, which read as not found rather than as a failure.
-    if (isAPIErrorCode(error, "BAD_REQUEST")) {
-      return null;
-    }
-    throw error;
-  }
-}
-
 async function loader({
   url,
   headers,
@@ -42,7 +29,7 @@ async function loader({
   const options = getLoaderContext(headers);
   const versionId = url.searchParams.get("version");
   const [page, versionResult] = await Promise.all([
-    getPage(pageId, options),
+    client.pages.getById.query({ id: pageId }, options),
     versionId ? client.versions.get.query({ pageId, versionId }, options).catch(() => null) : null,
   ]);
 
