@@ -39,7 +39,11 @@ export function renderHead({
 }: HeadOptions) {
   let chunk = "<head>";
   chunk += tag("meta", { charset: "utf-8" });
-  chunk += tag("meta", { name: "viewport", content: "width=device-width, initial-scale=1" });
+  chunk += tag("meta", {
+    name: "viewport",
+    content:
+      "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
+  });
   chunk += tag("title", {}, escapeUTF8(title));
   chunk += tag("meta", { name: "description", content: description });
   chunk += tag("meta", { name: "theme-color", content: THEME_COLOR });

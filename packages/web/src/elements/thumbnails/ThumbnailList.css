@@ -5,3 +5,10 @@ thumbnail-list .drop-indicator {
   border-radius: 1px;
   pointer-events: none;
 }
+
+thumbnail-list[data-orientation="horizontal"] .drop-indicator {
+  align-self: stretch;
+  width: 2px;
+  height: auto;
+  margin: 0 -7px;
+}

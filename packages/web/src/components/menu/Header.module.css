@@ -29,6 +29,7 @@
   min-width: 0;
 
   & > h1 {
+    min-width: 0;
     font-size: 1.125rem;
     font-weight: 500;
     overflow: clip;

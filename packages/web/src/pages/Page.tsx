@@ -25,6 +25,7 @@ export default function Page({ page, doc, version }: PageProps) {
       workspaceId={page.workspaceId}
       center={<PageTitle page={editor.page} isEditable={editor.isEditable} version={version} />}
       actions={showActions ? <HeaderActions editor={editor} /> : null}
+      stacked
     >
       <EditablePage editor={editor} />
     </PageLayout>

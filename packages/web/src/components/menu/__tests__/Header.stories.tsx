@@ -10,6 +10,7 @@ import MenuIcon from "@/icons/menu.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
+import MoreIcon from "@/icons/more.svg?jsx";
 import type { Meta, Story } from "@/test/storybook";
 import type { User } from "@/utils/sessions";
 
@@ -73,12 +74,23 @@ export const SettingsPage: Story = {
   render: () => <Header user={USER} workspaceId={WORKSPACE_ID} center={<h1>Settings</h1>} />,
 };
 
+function CompactPageActions() {
+  return (
+    <ToolbarGroup label="Page actions">
+      <ToolbarButton label="More actions" aria-haspopup="menu" aria-expanded="false">
+        <MoreIcon aria-hidden="true" />
+      </ToolbarButton>
+    </ToolbarGroup>
+  );
+}
+
 export const EditorViewMode: Story = {
   render: () => (
     <Header
       user={USER}
       workspaceId={WORKSPACE_ID}
       center={<h1>My Document</h1>}
+      stacked
       actions={
         <>
           <ToolbarGroup label="Editing">
@@ -110,6 +122,7 @@ export const EditorEditMode: Story = {
       user={USER}
       workspaceId={WORKSPACE_ID}
       center={<h1>My Document</h1>}
+      stacked
       actions={
         <>
           <ToolbarGroup label="Editing">
@@ -142,6 +155,50 @@ export const EditorEditMode: Story = {
       }
     />
   ),
+};
+
+export const EditorViewModePhone: Story = {
+  render: () => (
+    <Header
+      user={{ ...USER, workspaces: [{ id: "ws-1", name: "A workspace with a long name" }] }}
+      workspaceId={WORKSPACE_ID}
+      center={<h1>A document title that is long enough to need truncating</h1>}
+      stacked
+      actions={
+        <>
+          <ToolbarGroup label="Editing">
+            <button type="button" className="primary">
+              Edit
+            </button>
+          </ToolbarGroup>
+          <CompactPageActions />
+        </>
+      }
+    />
+  ),
+  globals: { viewport: { value: "mobile2", isRotated: false } },
+};
+
+export const EditorEditModePhone: Story = {
+  render: () => (
+    <Header
+      user={USER}
+      workspaceId={WORKSPACE_ID}
+      center={<h1>My Document</h1>}
+      stacked
+      actions={
+        <>
+          <ToolbarGroup label="Editing">
+            <button type="button" className="primary" aria-pressed="true">
+              Done
+            </button>
+          </ToolbarGroup>
+          <CompactPageActions />
+        </>
+      }
+    />
+  ),
+  globals: { viewport: { value: "mobile2", isRotated: false } },
 };
 
 export const SingleWorkspace: Story = {

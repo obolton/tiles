@@ -1,6 +1,9 @@
 .input {
-  width: min(400px, 50vw);
+  width: 400px;
+  max-width: 100%;
+  min-width: 0;
   height: 40px;
+  text-overflow: ellipsis;
   font-size: inherit;
   font-weight: inherit;
   text-align: center;

@@ -13,6 +13,10 @@
   --ui-mono-font: "JetBrains Mono", monospace;
   --ui-accent: linear-gradient(oklch(55% 0 0deg), oklch(45% 0 0deg));
   --max-width: 800px;
+
+  /* Floating chrome (toolbars, popovers, sheets) */
+  --surface-outline: 0 0 0 1px rgb(0 0 0 / 15%);
+  --surface-shadow: var(--surface-outline), 0 4px 12px -4px rgb(0 0 0 / 30%);
 }
 
 * {

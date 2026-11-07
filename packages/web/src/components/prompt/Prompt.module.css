@@ -11,6 +11,7 @@
   & > textarea {
     grid-column: 1;
     grid-row: 2;
+    min-width: 0;
     padding: 16px 8px 16px 12px;
     background: none;
     border: none;

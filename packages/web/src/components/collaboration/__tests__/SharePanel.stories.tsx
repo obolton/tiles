@@ -63,3 +63,8 @@ export const WithPeople: Story = {
 export const Online: Story = {
   render: () => <Panel access={EDITORS} online={["ada"]} />,
 };
+
+export const Phone: Story = {
+  render: () => <Panel access={EDITORS} invites />,
+  globals: { viewport: { value: "mobile2", isRotated: false } },
+};

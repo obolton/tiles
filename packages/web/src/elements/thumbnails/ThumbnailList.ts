@@ -7,6 +7,8 @@ import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const ACTIVE_THRESHOLD = 0.5;
 
+type Orientation = "horizontal" | "vertical";
+
 export interface ThumbnailListAttributes extends GlobalHTMLAttributes {
   allowdrag?: boolean;
 }
@@ -30,6 +32,7 @@ export default class ThumbnailList extends HTMLElement {
   private abortController?: AbortController;
   private intersectionObserver?: IntersectionObserver;
   private mutationObserver?: MutationObserver;
+  private resizeObserver?: ResizeObserver;
   private dragController?: AbortController;
   private dragPlaceholder: HTMLElement | null = null;
   private beforeId: string | null = null;
@@ -51,11 +54,17 @@ export default class ThumbnailList extends HTMLElement {
     );
     this.mutationObserver = new MutationObserver(() => this.syncObservations());
     this.mutationObserver.observe(this, { childList: true });
+    // The list flows horizontally or vertically depending on its layout
+    this.resizeObserver = new ResizeObserver(() => this.syncOrientation());
+    this.resizeObserver.observe(this);
 
     this.addEventListener("click", this, { signal });
 
     // Defer initial sync so sibling <main>'s <page-item>s are also in the DOM
-    queueMicrotask(() => this.syncObservations());
+    queueMicrotask(() => {
+      this.syncOrientation();
+      this.syncObservations();
+    });
   }
 
   disconnectedCallback() {
@@ -63,10 +72,31 @@ export default class ThumbnailList extends HTMLElement {
     this.abortController = undefined;
     this.intersectionObserver?.disconnect();
     this.mutationObserver?.disconnect();
+    this.resizeObserver?.disconnect();
     this.intersectionObserver = undefined;
     this.mutationObserver = undefined;
+    this.resizeObserver = undefined;
     this.ariaActiveDescendantElement = null;
     this.detachDrag();
+  }
+
+  /** Reads the orientation from the layout so it follows the stylesheet's breakpoints. */
+  get orientation(): Orientation {
+    return getComputedStyle(this).flexDirection.startsWith("row") ? "horizontal" : "vertical";
+  }
+
+  private syncOrientation() {
+    const orientation = this.orientation;
+    if (this.dataset.orientation === orientation) {
+      return;
+    }
+    this.dataset.orientation = orientation;
+    this.internals.ariaOrientation = orientation;
+    // Drag constraints are fixed when attached, so reattach for the new axis
+    if (this.dragController) {
+      this.detachDrag();
+      this.attachDrag();
+    }
   }
 
   attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null) {
@@ -189,7 +219,7 @@ export default class ThumbnailList extends HTMLElement {
     if (next) {
       next.ariaSelected = "true";
       this.ariaActiveDescendantElement = next;
-      next.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      next.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
       this.dispatchEvent(new ThumbnailListEvent("slideselect", { slideId }));
     } else {
       this.ariaActiveDescendantElement = null;
@@ -227,9 +257,10 @@ export default class ThumbnailList extends HTMLElement {
     }
 
     const { signal } = this.dragController;
+    const constrain = this.orientation;
 
     for (const slide of this.querySelectorAll<HTMLElement>('[role="option"]')) {
-      makeDraggable(slide, { signal, constrain: "vertical" });
+      makeDraggable(slide, { signal, constrain });
     }
   }
 
@@ -259,7 +290,7 @@ export default class ThumbnailList extends HTMLElement {
       this,
       event.clientX,
       event.clientY,
-      "vertical",
+      this.orientation,
       (el) => el !== placeholder && el !== dragged,
     );
 

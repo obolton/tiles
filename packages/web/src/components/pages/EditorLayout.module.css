@@ -1,7 +1,8 @@
 .layout {
-  /* Offset the content for any fixed sidebars, narrowing main's box so its
-     container queries and centering stay correct. Body remains the scroller. */
-  padding-inline: var(--sidebar-width-start, 0px) var(--sidebar-width-end, 0px);
+  --sidebar-width-start: var(--sidebar-size-start, 0px);
+  --sidebar-width-end: var(--sidebar-size-end, 0px);
+
+  padding-inline: var(--sidebar-width-start) var(--sidebar-width-end);
 }
 
 .start,
@@ -19,4 +20,44 @@
 .end {
   inset-inline-end: 0;
   inline-size: var(--sidebar-width-end);
+}
+
+/* Keep room for the page when both panels are open */
+@media (width < 1024px) {
+  .layout {
+    --sidebar-width-start: min(var(--sidebar-size-start, 0px), 30vw);
+    --sidebar-width-end: min(var(--sidebar-size-end, 0px), 30vw);
+  }
+}
+
+@media (width < 640px) {
+  :root:has(.start) {
+    --sidebar-rail-size: 96px;
+  }
+
+  .layout {
+    --sidebar-width-start: 0px;
+    --sidebar-width-end: 0px;
+
+    padding-block-start: var(--sidebar-rail-size, 0px);
+  }
+
+  /* The start panel becomes a rail under the header */
+  .start {
+    inset: var(--header-height, 0) 0 auto;
+    inline-size: auto;
+    block-size: var(--sidebar-rail-size);
+  }
+
+  /* The end panel becomes a bottom sheet over the page */
+  .end {
+    inset: auto 0 0;
+    inline-size: auto;
+    z-index: 2;
+    transition: translate var(--animation-duration) var(--spring);
+
+    @starting-style {
+      translate: 0 100%;
+    }
+  }
 }

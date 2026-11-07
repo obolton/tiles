@@ -9,3 +9,9 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+@media (width < 1024px) {
+  .name {
+    max-width: 10rem;
+  }
+}

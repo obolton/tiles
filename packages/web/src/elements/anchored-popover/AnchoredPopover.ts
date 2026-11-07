@@ -173,7 +173,8 @@ export default class AnchoredPopover extends HTMLElement {
   #cleanup() {
     if (SUPPORTS_ANCHOR_POSITIONING) {
       const anchor = this.anchorElement;
-      if (anchor) {
+      // Popovers can share an anchor, so only clear a name this popover applied
+      if (anchor?.style.anchorName === `--${this.id}-anchor`) {
         anchor.style.anchorName = "";
       }
       this.style.positionAnchor = "";

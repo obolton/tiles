@@ -49,3 +49,8 @@ export const EditMode: Story = {
 export const ViewMode: Story = {
   render: () => <Panel isEditable={flag(false)} />,
 };
+
+export const EditModePhone: Story = {
+  render: () => <Panel isEditable={flag(true)} />,
+  globals: { viewport: { value: "mobile2", isRotated: false } },
+};
