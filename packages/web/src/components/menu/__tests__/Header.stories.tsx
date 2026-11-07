@@ -6,7 +6,6 @@ import { PageSortOptions, type PageSort } from "@/components/grid/PagesGrid";
 import { reactive } from "reactivity";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
-import MenuIcon from "@/icons/menu.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import PeopleIcon from "@/icons/people.svg?jsx";
@@ -106,9 +105,6 @@ export const EditorViewMode: Story = {
             <ToolbarButton label="Present">
               <PresentIcon aria-hidden="true" />
             </ToolbarButton>
-            <ToolbarButton label="Table of contents">
-              <MenuIcon aria-hidden="true" />
-            </ToolbarButton>
           </ToolbarGroup>
         </>
       }
@@ -146,9 +142,6 @@ export const EditorEditMode: Story = {
             </ToolbarButton>
             <ToolbarButton label="Present">
               <PresentIcon aria-hidden="true" />
-            </ToolbarButton>
-            <ToolbarButton label="Table of contents">
-              <MenuIcon aria-hidden="true" />
             </ToolbarButton>
           </ToolbarGroup>
         </>

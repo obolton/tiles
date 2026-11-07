@@ -1,6 +1,5 @@
 anchored-popover,
-popover-menu,
-table-of-contents {
+popover-menu {
   position: fixed;
   inset: auto;
   overflow: visible;
@@ -47,26 +46,8 @@ table-of-contents {
   }
 }
 
-table-of-contents {
-  max-width: min(320px, 100vw - 32px);
-  max-height: 320px;
-
-  & .h1 {
-    font-weight: 600;
-  }
-
-  & .h2 {
-    padding-left: 24px;
-  }
-
-  & .h3 {
-    padding-left: 32px;
-  }
-}
-
 anchored-popover,
 popover-menu,
-table-of-contents,
 toolbar-tab,
 filter-select {
   padding: 8px;

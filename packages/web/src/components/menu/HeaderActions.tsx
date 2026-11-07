@@ -7,7 +7,6 @@ import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import BookmarkFilledIcon from "@/icons/bookmark-filled.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
-import MenuIcon from "@/icons/menu.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import ShareIcon from "@/icons/share.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
@@ -22,7 +21,6 @@ import { mediaQuery } from "@/utils/viewport";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import styles from "./HeaderActions.module.css";
 import type Editor from "@/editor/Editor";
-import type TableOfContents from "@/elements/table-of-contents/TableOfContents";
 
 const PAGE_ACTIONS_MENU_ID = "page-actions-menu";
 
@@ -65,9 +63,6 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
   const isPhone = mediaQuery(PHONE_QUERY);
   const showUndoRedo = isPhone.derive((phone) => !phone);
 
-  let toc: TableOfContents;
-  let moreButton: HTMLButtonElement;
-
   function toggleEdit() {
     viewTransition(() => {
       editor.setEditable(!isEditable.value);
@@ -85,11 +80,6 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
       document.getElementById(PAGE_ACTIONS_MENU_ID)?.hidePopover();
       action();
     };
-  }
-
-  function openTableOfContents() {
-    toc.anchorElement = moreButton;
-    toc.showPopover();
   }
 
   return (
@@ -131,21 +121,10 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               <ToolbarButton label="Present" on:click={present}>
                 <PresentIcon aria-hidden="true" />
               </ToolbarButton>
-
-              <ToolbarButton
-                id="toc-button"
-                label="Table of contents"
-                popovertarget="toc"
-                aria-haspopup="menu"
-                on:click={() => (toc.anchorElement = null)}
-              >
-                <MenuIcon aria-hidden="true" />
-              </ToolbarButton>
             </If>
 
             <If condition={isCompact}>
               <ToolbarButton
-                ref={(element: HTMLButtonElement) => (moreButton = element)}
                 id={PAGE_ACTIONS_BUTTON_ID}
                 label="More actions"
                 popovertarget={PAGE_ACTIONS_MENU_ID}
@@ -208,21 +187,9 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                   >
                     Present
                   </MenuItem>
-                  <MenuItem
-                    icon={<MenuIcon aria-hidden="true" />}
-                    on:click={menuAction(openTableOfContents)}
-                  >
-                    Table of contents
-                  </MenuItem>
                 </MenuItemGroup>
               </popover-menu>
             </If>
-
-            <table-of-contents
-              id="toc"
-              role="navigation"
-              ref={(element: TableOfContents) => (toc = element)}
-            />
           </ToolbarGroup>
         </>
       )}
