@@ -1,5 +1,5 @@
 import { plot, axisX, axisY, barY, lineY, areaY } from "@observablehq/plot";
-import { isDarkCSSColor, toCSSColor } from "@/utils/color";
+import { toCSSColor } from "@/utils/color";
 import { createSVGGradient } from "@/utils/svg-gradient";
 import { SERIES_COLORS } from "@/utils/charts";
 import css from "./ChartView.css?inline";
@@ -14,7 +14,13 @@ declare global {
   }
 }
 
-interface SeriesColor {
+interface Size {
+  width: number;
+  height: number;
+}
+
+interface SeriesEntry {
+  series: ChartSeries;
   /** The fill or stroke of the marks: a colour, or a reference to a gradient. */
   paint: string;
   /** The colour standing for the series in the legend. */
@@ -34,62 +40,50 @@ function describeSeries(seriesElements: ChartSeries[]) {
 
 /** The number of rows up to the last one holding a value or a label. */
 function getDataLength(seriesElements: ChartSeries[], labels: readonly (string | null)[]) {
-  let length = 0;
-  for (const series of seriesElements) {
-    for (let i = series.values.length - 1; i >= length; i--) {
-      if (series.values[i] != null) {
-        length = i + 1;
-        break;
-      }
-    }
-  }
-  for (let i = labels.length - 1; i >= length; i--) {
-    if (labels[i]) {
-      length = i + 1;
-      break;
-    }
-  }
-  return length;
+  const columns = [labels, ...seriesElements.map((series) => series.values)];
+  return Math.max(...columns.map((cells) => cells.findLastIndex((cell) => cell != null) + 1));
 }
 
-function getSeriesColor(series: ChartSeries, index: number, palette: readonly string[]) {
-  const [first] = series.color;
-  if (series.gradient && series.color.length >= 2) {
+function getSeriesEntry(series: ChartSeries, index: number, palette: readonly string[]) {
+  const [first, second] = series.color;
+  if (series.gradient && first && second) {
     const gradient = createSVGGradient(`series-gradient-${index}`, series.color, series.gradient);
-    return { paint: `url(#${gradient.id})`, swatch: toCSSColor(series.color[0]!), gradient };
+    return { series, paint: `url(#${gradient.id})`, swatch: toCSSColor(first), gradient };
   }
   // Series without a fill take the next default colour, in a fixed order.
   const paint = first ? toCSSColor(first) : palette[index % palette.length]!;
-  return { paint, swatch: paint };
+  return { series, paint, swatch: paint };
 }
 
-function createLegend(seriesElements: ChartSeries[], colors: SeriesColor[]) {
-  const legend = document.createElement("ul");
-  legend.className = "legend";
-  legend.part.add("legend");
-  legend.setAttribute("aria-label", "Legend");
-  seriesElements.forEach((series, index) => {
-    const item = document.createElement("li");
-    const swatch = document.createElement("span");
-    swatch.className = "swatch";
-    swatch.style.background = colors[index]!.swatch;
-    item.append(swatch, series.label || `Series ${index + 1}`);
-    legend.append(item);
-  });
-  return legend;
+function createLegendItem({ series, swatch }: SeriesEntry, index: number) {
+  const item = document.createElement("li");
+  const marker = document.createElement("span");
+  marker.className = "swatch";
+  marker.style.background = swatch;
+  item.append(marker, series.label || `Series ${index + 1}`);
+  return item;
 }
 
 export default class ChartView extends HTMLElement {
+  private readonly legend = document.createElement("ul");
+  private readonly frame = document.createElement("div");
   private readonly mutationObserver: MutationObserver;
   private readonly resizeObserver: ResizeObserver;
   private drawScheduled = false;
+  private size: Size | null = null;
   #labels: readonly (string | null)[] = [];
 
   constructor() {
     super();
 
-    this.attachShadow({ mode: "open" });
-    this.shadowRoot?.adoptedStyleSheets.push(stylesheet);
+    const root = this.attachShadow({ mode: "open" });
+    root.adoptedStyleSheets.push(stylesheet);
+    this.legend.className = "legend";
+    this.legend.part.add("legend");
+    this.legend.setAttribute("aria-label", "Legend");
+    this.legend.hidden = true;
+    this.frame.className = "frame";
+    root.append(this.legend, this.frame);
 
     this.mutationObserver = new MutationObserver(this.mutationObserverCallback.bind(this));
 
@@ -107,14 +101,14 @@ export default class ChartView extends HTMLElement {
   }
 
   connectedCallback() {
-    this.scheduleDraw();
     this.mutationObserver.observe(this, {
       subtree: true,
       childList: true,
       attributes: true,
       attributeFilter: ["type", "color", "gradient", "label"],
     });
-    this.resizeObserver.observe(this);
+    // The frame's size comes from the observer, so the first draw waits for its notification.
+    this.resizeObserver.observe(this.frame);
     this.addEventListener("serieschange", this);
   }
 
@@ -134,8 +128,12 @@ export default class ChartView extends HTMLElement {
     this.scheduleDraw();
   }
 
-  private resizeObserverCallback() {
-    this.scheduleDraw();
+  private resizeObserverCallback(entries: ResizeObserverEntry[]) {
+    const box = entries.at(-1)?.contentBoxSize[0];
+    if (box) {
+      this.size = { width: box.inlineSize, height: box.blockSize };
+      this.scheduleDraw();
+    }
   }
 
   private scheduleDraw() {
@@ -151,38 +149,31 @@ export default class ChartView extends HTMLElement {
     });
   }
 
-  /** The default series colours: steps selected for a dark or a light background. */
+  /** The default series colours: steps selected for the theme's dark or light background. */
   private get palette(): readonly string[] {
-    const background = getComputedStyle(this).getPropertyValue("--background-color");
-    return isDarkCSSColor(background) ? SERIES_COLORS.dark : SERIES_COLORS.light;
+    const scheme = getComputedStyle(this).getPropertyValue("--color-scheme").trim();
+    return scheme === "dark" ? SERIES_COLORS.dark : SERIES_COLORS.light;
   }
 
   draw() {
-    const root = this.shadowRoot;
-    if (!root) {
-      return;
-    }
-
     const seriesElements = Array.from(this.getElementsByTagName("chart-series"));
-    if (seriesElements.length === 0) {
-      root.replaceChildren();
+    const { size, labels } = this;
+    if (seriesElements.length === 0 || !size) {
+      this.legend.hidden = true;
+      this.frame.replaceChildren();
       return;
     }
 
-    const { palette, labels } = this;
-    const colors = seriesElements.map((series, index) => getSeriesColor(series, index, palette));
-    const legend = seriesElements.length > 1 ? createLegend(seriesElements, colors) : null;
-    // The legend is laid out first so the chart can take the remaining height.
-    root.replaceChildren(...(legend ? [legend] : []));
+    const { palette } = this;
+    const entries = seriesElements.map((series, index) => getSeriesEntry(series, index, palette));
+    this.legend.replaceChildren(...entries.map(createLegendItem));
+    this.legend.hidden = entries.length < 2;
 
-    const rect = this.getBoundingClientRect();
-    const legendHeight = legend ? legend.getBoundingClientRect().height + 8 : 0;
     const rows = Array.from({ length: getDataLength(seriesElements, labels) }, (_, index) => index);
-
     const chart = plot({
       className: "chart",
-      width: rect.width,
-      height: Math.max(rect.height - legendHeight, 0),
+      width: size.width,
+      height: size.height,
       marginTop: 24,
       marginBottom: 48,
       x: { type: "band" },
@@ -193,9 +184,8 @@ export default class ChartView extends HTMLElement {
           strokeOpacity: 0.5,
         }),
         axisY({ label: null, strokeOpacity: 0.5 }),
-        ...seriesElements.map((series, index) => {
+        ...entries.map(({ series, paint }) => {
           const marks = rows.map((row) => ({ row, value: series.values[row] ?? null }));
-          const { paint } = colors[index]!;
 
           switch (series.type) {
             default:
@@ -210,7 +200,7 @@ export default class ChartView extends HTMLElement {
       ],
     });
 
-    const gradients = colors.flatMap((color) => color.gradient ?? []);
+    const gradients = entries.flatMap((entry) => entry.gradient ?? []);
     if (gradients.length > 0) {
       const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
       defs.append(...gradients);
@@ -220,7 +210,7 @@ export default class ChartView extends HTMLElement {
     chart.part.add("chart");
     chart.setAttribute("role", "img");
     chart.setAttribute("aria-label", describeSeries(seriesElements));
-    root.append(chart);
+    this.frame.replaceChildren(chart);
   }
 }
 

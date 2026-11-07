@@ -5,6 +5,7 @@ import Text from "@/models/Text";
 import { createEditor } from "@/test/editor";
 import { buildTableMap } from "doc/tiles/table";
 import type Editor from "@/editor/Editor";
+import type Tile from "@/models/Tile";
 
 vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
 
@@ -40,6 +41,10 @@ function createTable(): Table {
     }),
     {},
   ) as Table;
+}
+
+function createChartFor(tile: Tile): Chart {
+  return editor.page.createTile(Chart.createMap({ tableId: tile.id }), {}) as Chart;
 }
 
 describe("Chart", () => {
@@ -99,7 +104,7 @@ describe("Chart", () => {
   describe("table", () => {
     test("resolves the table and becomes null when it is deleted", () => {
       const table = createTable();
-      const chart = editor.page.createTile(Chart.createMap({ tableId: table.id }), {}) as Chart;
+      const chart = createChartFor(table);
       const seen: (Table | null)[] = [];
       chart.table.subscribe((reactive) => seen.push(reactive.value));
 
@@ -113,7 +118,7 @@ describe("Chart", () => {
 
     test("resolves a table restored by undo", () => {
       const table = createTable();
-      const chart = editor.page.createTile(Chart.createMap({ tableId: table.id }), {}) as Chart;
+      const chart = createChartFor(table);
       chart.table.subscribe(() => {});
       editor.undoManager?.stopCapturing();
 
@@ -126,7 +131,7 @@ describe("Chart", () => {
 
     test("ignores edits to other tiles", () => {
       const table = createTable();
-      const chart = editor.page.createTile(Chart.createMap({ tableId: table.id }), {}) as Chart;
+      const chart = createChartFor(table);
       const text = editor.page.createTile(Text.createMap({}), {}) as Text;
       const notifications = vi.fn();
       chart.table.subscribe(notifications);
@@ -139,7 +144,7 @@ describe("Chart", () => {
 
     test("is null for a tile that is not a table", () => {
       const text = editor.page.createTile(Text.createMap({}), {}) as Text;
-      const chart = editor.page.createTile(Chart.createMap({ tableId: text.id }), {}) as Chart;
+      const chart = createChartFor(text);
 
       expect(chart.table.value).toBeNull();
     });
@@ -149,7 +154,7 @@ describe("Chart", () => {
     test("charts the numeric columns, labelled by the first text column", async () => {
       const table = createTable();
 
-      const chart = await Chart.createFromTable(editor.page, table);
+      const chart = await Chart.createFromTable(table);
 
       expect(chart.tableId.value).toBe(table.id);
       expect(chart.sizing.value).toBe("FOUR_THREE");
@@ -165,7 +170,7 @@ describe("Chart", () => {
       const table = createTable();
       const text = editor.page.createTile(Text.createMap({}), {});
 
-      const chart = await Chart.createFromTable(editor.page, table);
+      const chart = await Chart.createFromTable(table);
 
       expect(editor.page.tiles.value.map((tile) => tile.id)).toEqual([table.id, chart.id, text.id]);
       expect(Array.from(editor.selection)).toEqual([chart.id]);
@@ -175,7 +180,7 @@ describe("Chart", () => {
       const table = createTable();
       const rainy = table.columns.get("rainy");
 
-      const chart = await Chart.createFromTable(editor.page, table, { columns: [rainy] });
+      const chart = await Chart.createFromTable(table, { columns: [rainy] });
 
       expect(chart.series.value.map((series) => series.column.value.id)).toEqual(["rainy"]);
       expect(chart.label.value?.id).toBe("month");
@@ -190,11 +195,11 @@ describe("Chart", () => {
         {},
       ) as Table;
 
-      const chart = await Chart.createFromTable(editor.page, table);
+      const chart = await Chart.createFromTable(table);
       expect(chart.label.value).toBeNull();
       expect(chart.series.value.map((series) => series.column.value.id)).toEqual(["a", "b"]);
 
-      const single = await Chart.createFromTable(editor.page, table, {
+      const single = await Chart.createFromTable(table, {
         columns: [table.columns.get("b")],
       });
       expect(single.label.value?.id).toBe("a");
@@ -204,11 +209,42 @@ describe("Chart", () => {
       const table = createTable();
       const text = editor.page.createTile(Text.createMap({}), {});
 
-      const chart = await Chart.createFromTable(editor.page, table, {
+      const chart = await Chart.createFromTable(table, {
         placement: { parentId: null, beforeId: null },
       });
 
       expect(editor.page.tiles.value.map((tile) => tile.id)).toEqual([table.id, text.id, chart.id]);
+    });
+  });
+
+  describe("createWithSampleData", () => {
+    test("inserts a table of sample data with a chart of it directly after", async () => {
+      const text = editor.page.createTile(Text.createMap({}), {});
+
+      const chart = await Chart.createWithSampleData(editor.page, {
+        parentId: null,
+        beforeId: text.id,
+      });
+
+      const table = chart.table.value;
+      expect(table).toBeInstanceOf(Table);
+      expect(editor.page.tiles.value.map((tile) => tile.id)).toEqual([
+        table?.id,
+        chart.id,
+        text.id,
+      ]);
+      expect(table?.columns.value.map((column) => column.title.value)).toEqual([
+        "Month",
+        "Sunny days",
+        "Rainy days",
+      ]);
+      expect(table?.rows.value).toHaveLength(6);
+      expect(chart.label.value?.title).toBe("Month");
+      expect(chart.series.value.map((series) => series.column.value.title)).toEqual([
+        "Sunny days",
+        "Rainy days",
+      ]);
+      expect(Array.from(editor.selection)).toEqual([chart.id]);
     });
   });
 });

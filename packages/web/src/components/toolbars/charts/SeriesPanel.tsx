@@ -6,6 +6,7 @@ import NewIcon from "@/icons/new.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesPanel.module.css";
 import { combine } from "reactivity";
+import { toProperty } from "@/models/Chart";
 import type Chart from "@/models/Chart";
 import type Series from "@/models/Series";
 import type { ChartType } from "@/models/Series";
@@ -43,7 +44,7 @@ export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps
     const select = event.currentTarget as ListSelect;
     const value = select.value;
     const column = table.columns.value.find((c) => c.id === value);
-    chart.label.value = column ? { id: column.id, title: column.title.value } : null;
+    chart.label.value = column ? toProperty(column) : null;
   }
 
   function addSeries(event: Event) {
@@ -51,7 +52,7 @@ export default function SeriesPanel({ chart, table, ...props }: SeriesPanelProps
     const value = select.value;
     const column = table.columns.value.find((c) => c.id === value);
     if (column) {
-      chart.addSeries({ id: column.id, title: column.title.value });
+      chart.addSeries(toProperty(column));
     }
   }
 

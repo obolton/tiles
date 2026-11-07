@@ -4,6 +4,7 @@ import { createId } from "doc/id";
 import PageInvite from "@/models/PageInvite";
 import PageThemes from "@/models/PageThemes";
 import TileCollection from "@/models/TileCollection";
+import TileIndex from "@/models/TileIndex";
 import TilePlacement, { type TileRemovalCallback } from "@/models/TilePlacement";
 import Body from "@/models/Body";
 import { dockParentId } from "@/models/parentId";
@@ -60,7 +61,7 @@ export default class Page {
   private readonly dropdownsMap: Y.Map<Y.Map<unknown>>;
   readonly access: ReactiveArray<PageAccess>;
   readonly invites: ReactiveArray<PageInvite>;
-  readonly index: Map<string, Tile>;
+  readonly index: TileIndex;
   /** The rich text body of a document page, hosting its embedded tiles. */
   readonly body: Body | null;
   readonly placement: TilePlacement;
@@ -113,7 +114,7 @@ export default class Page {
     );
     this.access = array(data.access);
     this.invites = array(data.invites.map((i) => new PageInvite(this, i)));
-    this.index = new Map();
+    this.index = new TileIndex();
     this.body = data.type === "DOCUMENT" ? new Body(this) : null;
     this.placement = new TilePlacement(this, onTilesRemoved);
   }

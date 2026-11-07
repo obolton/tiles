@@ -112,10 +112,6 @@ export default class TilePlacement implements TileContainer {
     return { parentId: tile.parentId.value, beforeId: this.next(tile)?.id ?? null };
   }
 
-  duplicate(tile: Tile): Tile {
-    return tile.clone(this.placementAfter(tile));
-  }
-
   private sibling(tile: Tile, offset: number): Tile | null {
     const siblings = tile.parent?.value ?? [];
     const index = siblings.indexOf(tile);

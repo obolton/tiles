@@ -22,27 +22,19 @@ export function toCellText(cell: CellValue | undefined): string | null {
   return text || null;
 }
 
-/** The numeric value of a cell, or `null` when it is empty or not a number. */
-export function toNumber(cell: CellValue | undefined): number | null {
-  const text = toCellText(cell);
-  if (text === null) {
-    return null;
-  }
+function parseNumber(text: string): number | null {
   const value = Number(text.replace(/[,\s]/g, ""));
   return Number.isFinite(value) ? value : null;
 }
 
+/** The numeric value of a cell, or `null` when it is empty or not a number. */
+export function toNumber(cell: CellValue | undefined): number | null {
+  const text = toCellText(cell);
+  return text === null ? null : parseNumber(text);
+}
+
 /** Whether a column holds numbers: at least one value, and nothing that is not a number. */
 export function isNumericColumn(cells: readonly CellValue[]): boolean {
-  let count = 0;
-  for (const cell of cells) {
-    if (toCellText(cell) === null) {
-      continue;
-    }
-    if (toNumber(cell) === null) {
-      return false;
-    }
-    count++;
-  }
-  return count > 0;
+  const texts = cells.map(toCellText).filter((text) => text !== null);
+  return texts.length > 0 && texts.every((text) => parseNumber(text) !== null);
 }

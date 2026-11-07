@@ -62,8 +62,4 @@ export default class Body implements TileContainer {
   placementAfter(tile: Tile): TilePlacementInput {
     return { parentId: null, at: this.positionAfter(tile.id) ?? undefined };
   }
-
-  duplicate(tile: Tile): Tile {
-    return tile.clone(this.placementAfter(tile));
-  }
 }

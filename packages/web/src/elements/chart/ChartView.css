@@ -13,6 +13,10 @@
   list-style: none;
   color: var(--secondary-text-color);
 
+  &[hidden] {
+    display: none;
+  }
+
   & li {
     display: inline-flex;
     align-items: center;
@@ -28,7 +32,11 @@
   border-radius: 2px;
 }
 
-.chart {
+.frame {
   flex: 1;
   min-height: 0;
+
+  & > svg {
+    display: block;
+  }
 }

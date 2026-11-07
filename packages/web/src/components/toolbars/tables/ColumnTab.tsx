@@ -16,7 +16,7 @@ export interface ColumnTabProps {
 }
 
 export default function ColumnTab({ table, getTable }: ColumnTabProps) {
-  const { id, page, columns } = table;
+  const { id, columns } = table;
 
   function getSelectedColumn() {
     const selection = getTable().selection;
@@ -59,12 +59,12 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
 
   async function createChart() {
     const columnId = getSelectedColumn()?.id;
-    const selected = columnId ? columns.value.find((c) => c.id === columnId) : undefined;
+    const selected = columns.value.find((c) => c.id === columnId);
     if (!selected) {
       return;
     }
     try {
-      await Chart.createFromTable(page, table, { columns: [selected] });
+      await Chart.createFromTable(table, { columns: [selected] });
     } catch (error) {
       handleError(error);
     }

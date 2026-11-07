@@ -136,7 +136,7 @@ export default abstract class Tile {
 
   /** Copies the tile in place, directly after the original. */
   duplicate(): Tile {
-    return this.container.duplicate(this);
+    return this.clone(this.placementAfter());
   }
 
   delete() {

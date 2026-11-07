@@ -95,74 +95,40 @@ const editor = Editor.init(PAGE, doc);
 
 const FRAME = { display: "grid", width: "640px", height: "400px" };
 
+function framed(id: string) {
+  return (
+    <div style={FRAME}>
+      <ChartView chart={editor.page.getTile(id, Chart)} />
+    </div>
+  );
+}
+
 const meta = {
   title: "ChartView",
 } satisfies Meta;
 export default meta;
 
 export const Default: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-default", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-default"),
 };
 
 export const SingleSeries: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-single", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-single"),
 };
 
 export const GradientArea: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-area", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-area"),
 };
 
 export const Empty: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-empty", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-empty"),
 };
 
 /** Default colours, a legend, and trailing empty rows left out. */
 export const DefaultColors: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-defaults", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-defaults"),
 };
 
 export const MissingTable: Story = {
-  render: () => {
-    const chart = editor.page.getTile("chart-missing-table", Chart);
-    return (
-      <div style={FRAME}>
-        <ChartView chart={chart} />
-      </div>
-    );
-  },
+  render: () => framed("chart-missing-table"),
 };

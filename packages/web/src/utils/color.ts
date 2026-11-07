@@ -1,4 +1,4 @@
-import { useMode, modeOklch, modeP3, modeRgb, modeOklab, modeLab, modeLch, parse } from "culori/fn";
+import { useMode, modeOklch, modeP3 } from "culori/fn";
 import type { Color } from "doc/types/color";
 
 export type { Color };
@@ -19,20 +19,9 @@ export interface OklchColor {
 
 const p3 = useMode(modeP3);
 const oklch = useMode(modeOklch);
-// Registered so that `parse` reads the colour spaces a computed CSS colour can be serialized in.
-useMode(modeRgb);
-useMode(modeOklab);
-useMode(modeLab);
-useMode(modeLch);
 
-/** Whether a CSS colour is dark, by its OKLCH lightness. Colours that cannot be parsed are not. */
-export function isDarkCSSColor(css: string): boolean {
-  const parsed = parse(css.trim());
-  if (!parsed) {
-    return false;
-  }
-  return oklch(parsed).l < 0.5;
-}
+/** The OKLCH lightness below which a colour reads as dark. */
+const DARK_LIGHTNESS = 0.5;
 
 export function oklchToP3(color: OklchColor): P3Color {
   const result = p3({ mode: "oklch", ...color });
@@ -90,11 +79,15 @@ export function isSameColor(a: Color, b: Color) {
   return a === b;
 }
 
+export function isDarkColor(color: Color): boolean {
+  return p3ToOklch(parseColor(color)).l < DARK_LIGHTNESS;
+}
+
 export function getLightnessName(l: number) {
   if (l <= 0.3) {
     return "Very Dark";
   }
-  if (l < 0.5) {
+  if (l < DARK_LIGHTNESS) {
     return "Dark";
   }
   if (l < 0.7) {

@@ -3,9 +3,9 @@ import type { PlacementInput } from "doc/tiles/base";
 import Tile from "./Tile";
 import Table from "./Table";
 import { buildChartMap, type ChartMapInput } from "doc/tiles/chart";
+import { buildTableMap } from "doc/tiles/table";
 import Series from "@/models/Series";
 import SharedList from "@/collaboration/SharedList";
-import YReactive from "@/collaboration/YReactive";
 import { createId } from "doc/id";
 import { orderBetween, orderedEntries } from "doc/placement/ordering";
 import { isNumericColumn, MAX_DEFAULT_SERIES } from "@/utils/charts";
@@ -26,7 +26,21 @@ export interface CreateChartFromTableInput {
   placement?: PlacementInput;
 }
 
-function toProperty(column: Column): Property {
+/** The data a chart starts from when there is no table to chart. */
+const SAMPLE_TABLE = {
+  columns: [{ title: "Month" }, { title: "Sunny days" }, { title: "Rainy days" }],
+  rows: [
+    { cells: ["Jan", "8", "14"] },
+    { cells: ["Feb", "10", "12"] },
+    { cells: ["Mar", "13", "11"] },
+    { cells: ["Apr", "16", "9"] },
+    { cells: ["May", "19", "8"] },
+    { cells: ["Jun", "22", "6"] },
+  ],
+  height: 12,
+};
+
+export function toProperty(column: Column): Property {
   return { id: column.id, title: column.title.value };
 }
 
@@ -62,23 +76,34 @@ export default class Chart extends Tile {
    * series is drawn as bars and the rest as lines, so they stay distinguishable.
    */
   static async createFromTable(
-    page: Page,
     table: Table,
     { columns, placement = table.placementAfter() }: CreateChartFromTableInput = {},
   ): Promise<Chart> {
-    const isNumeric = (column: Column) => isNumericColumn(table.getColumnData(column.id).value);
-    const charted = columns ?? table.columns.value.filter(isNumeric).slice(0, MAX_DEFAULT_SERIES);
+    const all = table.columns.value;
+    const numeric = new Set(
+      all
+        .filter((column) => isNumericColumn(table.getColumnData(column.id).value))
+        .map((c) => c.id),
+    );
+    const charted =
+      columns ?? all.filter((column) => numeric.has(column.id)).slice(0, MAX_DEFAULT_SERIES);
     const chartedIds = new Set(charted.map((column) => column.id));
-    const unused = table.columns.value.filter((column) => !chartedIds.has(column.id));
-    const label = unused.find((column) => !isNumeric(column)) ?? unused[0] ?? null;
+    const unused = all.filter((column) => !chartedIds.has(column.id));
+    const label = unused.find((column) => !numeric.has(column.id)) ?? unused[0] ?? null;
 
-    return Chart.create(page, {
+    return Chart.create(table.page, {
       ...placement,
       tableId: table.id,
       sizing: "FOUR_THREE",
       label: label && toProperty(label),
       columns: charted.map(toProperty),
     });
+  }
+
+  /** Inserts a table of sample data at the placement, with a chart of it directly after. */
+  static createWithSampleData(page: Page, placement: PlacementInput): Promise<Chart> {
+    const table = page.createTile(buildTableMap(SAMPLE_TABLE), placement) as Table;
+    return Chart.createFromTable(table);
   }
 
   constructor(page: Page, map: Y.Map<unknown>) {
@@ -89,10 +114,9 @@ export default class Chart extends Tile {
     this.seriesMap = map.get("series") as Y.Map<Y.Map<unknown>>;
     this.series = new SharedList(this.seriesMap, (id, map) => new Series(id, map));
 
-    const tiles = new YReactive(page.doc.getMap<Y.Map<unknown>>("tiles"), { deep: false });
     // The derive dedupes, so subscribers only hear when the table appears or disappears.
-    this.table = combine({ id: this.tableId, tiles }, ({ id }) => {
-      const tile = page.index.get(id);
+    this.table = combine({ id: this.tableId, index: page.index }, ({ id, index }) => {
+      const tile = index.get(id);
       return tile instanceof Table ? tile : null;
     }).derive((table) => table);
   }

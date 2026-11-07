@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { parseParentId } from "@/models/parentId";
 import { getBackgroundColor, getBackgroundImage } from "@/utils/backgrounds";
-import { toCSSColor, type Color } from "@/utils/color";
+import { isDarkColor, toCSSColor, type Color } from "@/utils/color";
 import { loadFonts } from "@/utils/fonts";
 import { getFontConfig, DEFAULT_FONT, DEFAULT_HEADING_FONT, DEFAULT_CODE_FONT } from "fonts/config";
 import type { FontId } from "fonts/config";
@@ -28,6 +28,8 @@ export interface StyleOverrides {
 export type ThemeStyles = {
   "--background-color": string | undefined;
   "--background-image": string | undefined;
+  /** Whether the background is dark or light, for content that picks colours to suit it. */
+  "--color-scheme": "light" | "dark" | undefined;
   "--text-color": string | undefined;
   "--accent-color": string | undefined;
   "--font": string | undefined;
@@ -60,6 +62,11 @@ export function getThemeStyles(
   return {
     "--background-color": backgroundColor ? toCSSColor(backgroundColor) : undefined,
     "--background-image": background ? getBackgroundImage(background) : undefined,
+    "--color-scheme": backgroundColor
+      ? isDarkColor(backgroundColor)
+        ? "dark"
+        : "light"
+      : undefined,
     "--text-color": textColor ? toCSSColor(textColor) : undefined,
     "--accent-color": theme ? toCSSColor(theme.colors.accent) : undefined,
     "--font": theme ? formatFont(theme.fonts.body) : undefined,

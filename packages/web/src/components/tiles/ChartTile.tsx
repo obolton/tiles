@@ -7,38 +7,28 @@ import Portal from "jsx/portal";
 import styles from "./ChartTile.module.css";
 import { combine, type Reactive } from "reactivity";
 import type Chart from "@/models/Chart";
-import type Series from "@/models/Series";
-import type Table from "@/models/Table";
 
 export interface ChartTileProps {
   chart: Chart;
   showToolbar: Reactive<boolean>;
 }
 
-interface ChartState {
-  table: Table | null;
-  series: readonly Series[];
-  editable: boolean;
-}
-
-/** Guidance shown in place of a chart with nothing to draw, while editing. */
-function getPlaceholder({ table, series, editable }: ChartState): string | null {
-  if (!editable) {
-    return null;
-  }
-  if (!table) {
-    return "The table this chart was based on has been deleted.";
-  }
-  if (series.length === 0) {
-    return "Choose a column to chart from the Series panel.";
-  }
-  return null;
-}
-
 export default function ChartTile({ chart, showToolbar }: ChartTileProps) {
+  // Guidance shown in place of a chart with nothing to draw, while editing.
   const placeholder = combine(
     { table: chart.table, series: chart.series, editable: chart.editor.isEditable },
-    getPlaceholder,
+    ({ table, series, editable }) => {
+      if (!editable) {
+        return null;
+      }
+      if (!table) {
+        return "The table this chart was based on has been deleted.";
+      }
+      if (series.length === 0) {
+        return "Choose a column to chart from the Series panel.";
+      }
+      return null;
+    },
   );
 
   return (

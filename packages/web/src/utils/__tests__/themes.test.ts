@@ -51,6 +51,16 @@ describe("getThemeStyles", () => {
     expect(getThemeStyles(THEME)["--border-color"]).toBeUndefined();
   });
 
+  test("names the colour scheme after the background's lightness", () => {
+    expect(getThemeStyles(THEME)["--color-scheme"]).toBe("light");
+    expect(
+      getThemeStyles(THEME, { background: { type: "color", color: "111111111111" } })[
+        "--color-scheme"
+      ],
+    ).toBe("dark");
+    expect(getThemeStyles(null)["--color-scheme"]).toBeUndefined();
+  });
+
   test("prefers overrides over the theme values", () => {
     const styles = getThemeStyles(THEME, {
       background: { type: "color", color: "ffff80008000" },
@@ -93,7 +103,7 @@ describe("getThemeStyles", () => {
   test("emits every property as undefined without a theme or overrides", () => {
     const styles = getThemeStyles(null);
 
-    expect(Object.keys(styles)).toHaveLength(8);
+    expect(Object.keys(styles)).toHaveLength(9);
     expect(Object.values(styles).every((value) => value === undefined)).toBe(true);
   });
 });

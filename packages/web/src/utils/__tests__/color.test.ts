@@ -5,6 +5,7 @@ import {
   getComplementaryColor,
   getHueName,
   getLightnessName,
+  isDarkColor,
   isSameColor,
   oklchToP3,
   p3ToOklch,
@@ -205,5 +206,14 @@ describe("getComplementaryColor", () => {
 
     expect(darkComplementary.l).toBeCloseTo(0.3, 1);
     expect(lightComplementary.l).toBeCloseTo(0.8, 1);
+  });
+});
+
+describe("isDarkColor", () => {
+  test("is true below mid lightness", () => {
+    expect(isDarkColor("000000000000")).toBe(true);
+    expect(isDarkColor("333333333333")).toBe(true);
+    expect(isDarkColor("ffffffffffff")).toBe(false);
+    expect(isDarkColor("ffff80008000")).toBe(false);
   });
 });
