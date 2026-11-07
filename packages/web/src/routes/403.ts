@@ -1,8 +1,16 @@
 import Forbidden from "@/pages/errors/Forbidden";
-import { createErrorPageLoader, type ErrorPageProps } from "@/utils/errorPages";
-import type { Route } from "@/router/router";
+import { PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
+import type { Route, RouteLoaderResult } from "@/router/router";
+
+export async function loader(): RouteLoaderResult<undefined> {
+  return {
+    title: "Access denied - Tiles",
+    headers: { "Cache-Control": PRIVATE_CACHE_CONTROL_VALUE },
+    data: undefined,
+  };
+}
 
 export default {
-  loader: import.meta.env.SSR ? createErrorPageLoader("Access denied") : undefined,
+  loader: import.meta.env.SSR ? loader : undefined,
   component: Forbidden,
-} satisfies Route<ErrorPageProps>;
+} satisfies Route<undefined>;
