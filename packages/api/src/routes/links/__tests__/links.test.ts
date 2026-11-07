@@ -92,10 +92,12 @@ describe("resolveLinkMetadata", () => {
       expect(result).toEqual({
         type: "LINK",
         url: "https://example.com/",
-        title: "Example",
-        description: "An example page",
-        siteName: "Example Site",
-        imageId: "image-1",
+        preview: {
+          title: "Example",
+          description: "An example page",
+          siteName: "Example Site",
+          imageId: "image-1",
+        },
       });
     });
 
@@ -114,7 +116,7 @@ describe("resolveLinkMetadata", () => {
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
 
-      expect(result).toMatchObject({ type: "LINK", imageId: null });
+      expect(result).toMatchObject({ type: "LINK", preview: { imageId: null } });
     });
 
     test("does not fetch an image when the metadata has no image URL", async () => {
@@ -123,10 +125,10 @@ describe("resolveLinkMetadata", () => {
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
 
       expect(fetchImage).not.toHaveBeenCalled();
-      expect(result).toMatchObject({ type: "LINK", imageId: null });
+      expect(result).toMatchObject({ type: "LINK", preview: { imageId: null } });
     });
 
-    test("returns null fields when no metadata is available", async () => {
+    test("returns a null preview when the page cannot be fetched", async () => {
       vi.mocked(getLinkMetadata).mockResolvedValue(null);
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
@@ -135,10 +137,7 @@ describe("resolveLinkMetadata", () => {
       expect(result).toEqual({
         type: "LINK",
         url: "https://example.com/",
-        title: null,
-        description: null,
-        siteName: null,
-        imageId: null,
+        preview: null,
       });
     });
   });

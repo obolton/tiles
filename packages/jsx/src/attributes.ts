@@ -37,6 +37,7 @@ export function isValidStyleValue(value: unknown): value is string | number {
  * Used by dom.ts and server.ts for runtime attribute handling.
  */
 export const BOOLEAN_STRING_ATTRIBUTES = new Set([
+  "aria-busy",
   "aria-checked",
   "aria-current",
   "aria-disabled",

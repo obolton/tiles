@@ -109,6 +109,7 @@ export default function InsertTileItems({ getPlacement, showText }: InsertTileIt
                 await Link.create(Editor.current.page, {
                   ...placement,
                   url: result.url,
+                  preview: result.preview,
                   width: 5,
                   height: 5,
                 });

@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import If from "jsx/if";
+import { LinkCaption } from "./LinkTile";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
 import styles from "./LinkTile.module.css";
 import type Link from "@/models/Link";
@@ -9,19 +9,10 @@ export interface LinkTileThumbnailProps {
 }
 
 export default function LinkTileThumbnail({ link }: LinkTileThumbnailProps) {
-  const { title, description, siteName } = link;
   return (
     <Tile>
       <div className={styles.link}>
-        <div className={styles.caption}>
-          <p className={styles.title}>{title}</p>
-          <If condition={description}>
-            <p>{description}</p>
-          </If>
-          <If condition={siteName}>
-            <p>{siteName}</p>
-          </If>
-        </div>
+        <LinkCaption link={link} />
         <ArrowOutwardIcon className={styles.icon} aria-hidden="true" />
       </div>
     </Tile>
