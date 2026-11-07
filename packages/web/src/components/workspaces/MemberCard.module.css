@@ -24,7 +24,7 @@
 
 .email {
   font-size: 0.875rem;
-  color: var(--secondary-text-color);
+  color: var(--ui-secondary-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -33,7 +33,7 @@
 .role {
   flex-shrink: 0;
   font-size: 0.875rem;
-  color: var(--secondary-text-color);
+  color: var(--ui-secondary-color);
 }
 
 .remove {

@@ -31,17 +31,9 @@ export default class Link extends Tile {
     });
 
     if (metadata.type === "VIDEO") {
-      const map = Video.createMap({
-        ...rest,
-        videoType: metadata.videoType,
-        videoId: metadata.videoId,
-        title: metadata.title,
-        description: metadata.description,
-        imageUrl: metadata.imageUrl,
-      });
-      const video = page.createTile(map, { parentId, beforeId }) as Video;
-      video.editor.addTile(video);
-      return video;
+      // Link card dimensions do not suit a video, which uses its own sizing
+      const { coordinates } = rest;
+      return Video.createFromMetadata(page, metadata, { parentId, beforeId, coordinates });
     }
 
     const map = Link.createMap({

@@ -115,15 +115,14 @@ describe("cache", () => {
           name: "Test Theme",
           background: { type: "color", color: "ffffffffffff" },
           colors: { text: "000000", accent: "0000ff" },
-          fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
-          border: null,
+          fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
         }),
       ]);
       const cached = await themesCache.getCached();
 
       expect(cached).not.toBeNull();
       expect(cached?.items).toHaveLength(1);
-      expect(cached?.items[0]?.name.value).toBe("Test Theme");
+      expect(cached?.items[0]?.data.value.name).toBe("Test Theme");
     });
 
     test("bookmarksCache is accessible after initialization", async () => {

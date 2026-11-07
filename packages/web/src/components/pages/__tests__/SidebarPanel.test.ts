@@ -76,6 +76,13 @@ describe("SidebarPanel", () => {
       more.remove();
     });
 
+    test("leaves focus alone when the panel has no button", () => {
+      const state = new SidebarPanel(PANEL_ID);
+      state.open();
+      state.close();
+      expect(document.activeElement).not.toBe(button);
+    });
+
     test("leaves focus alone when it was outside the panel", () => {
       const state = new SidebarPanel(PANEL_ID, BUTTON_ID);
       state.open();

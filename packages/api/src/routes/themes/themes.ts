@@ -24,7 +24,7 @@ export async function listThemes(
 const DEFAULT_BACKGROUND = { type: "color" as const, color: "ffffffffffff" };
 
 export async function createTheme(
-  { workspaceId, name, background, colors, fonts, border }: CreateThemeSchema,
+  { workspaceId, name, background, colors, fonts }: CreateThemeSchema,
   _ctx: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.create({
@@ -37,14 +37,13 @@ export async function createTheme(
       headingFont: fonts.heading,
       bodyFont: fonts.body,
       codeFont: fonts.code,
-      borderColor: border ? fromHex(border) : null,
     },
     select: THEME_FIELDS,
   });
 }
 
 export async function updateTheme(
-  { id, name, background, colors, fonts, border }: UpdateThemeSchema,
+  { id, name, background, colors, fonts }: UpdateThemeSchema,
   { workspaceId }: AuthenticatedWorkspaceProcedureContext,
 ) {
   return prisma.theme.update({
@@ -57,7 +56,6 @@ export async function updateTheme(
       headingFont: fonts?.heading,
       bodyFont: fonts?.body,
       codeFont: fonts?.code,
-      borderColor: border !== undefined ? (border ? fromHex(border) : null) : undefined,
     },
     select: THEME_FIELDS,
   });

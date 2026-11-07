@@ -10,5 +10,5 @@
 }
 
 .cell {
-  background: var(--background, #fff);
+  background: var(--background-color);
 }

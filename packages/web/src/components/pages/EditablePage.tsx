@@ -5,6 +5,7 @@ import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
 import SharePanel from "@/components/collaboration/SharePanel";
+import ThemeEditorPanel from "@/components/themes/ThemeEditorPanel";
 import If from "jsx/if";
 import { combine } from "reactivity";
 import { handleError } from "@/utils/errors";
@@ -20,7 +21,7 @@ export interface EditablePageProps {
 }
 
 export default function EditablePage({ editor }: EditablePageProps) {
-  const { isEditable, selection, versionHistory, share } = editor;
+  const { isEditable, selection, versionHistory, share, themeEditor } = editor;
 
   const showPageToolbar = combine(
     { selection, isEditable },
@@ -28,8 +29,12 @@ export default function EditablePage({ editor }: EditablePageProps) {
   );
 
   const isSidebarOpen = combine(
-    { versionHistory: versionHistory.isOpen, share: share.isOpen },
-    ({ versionHistory, share }) => versionHistory || share,
+    {
+      versionHistory: versionHistory.isOpen,
+      share: share.isOpen,
+      themeEditor: themeEditor.isOpen,
+    },
+    ({ versionHistory, share, themeEditor }) => versionHistory || share || themeEditor,
   );
 
   return (
@@ -63,6 +68,9 @@ export default function EditablePage({ editor }: EditablePageProps) {
             </If>
             <If condition={share.isOpen}>
               <SharePanel state={share} editor={editor} />
+            </If>
+            <If condition={themeEditor.isOpen}>
+              <ThemeEditorPanel state={themeEditor} />
             </If>
           </>
         }

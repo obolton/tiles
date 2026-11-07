@@ -2,94 +2,60 @@ import { reactive, type Reactive } from "reactivity";
 import client from "@/api/client";
 import type { AppRouterInputs } from "@/api/client";
 import type { Theme as ThemeData } from "api/routes/themes/fields";
-import type { Color } from "@/utils/color";
-import type { FontId } from "fonts/config";
 
 export type { ThemeData };
 
-export type ThemeBackground = NonNullable<ThemeData["background"]>;
+export type ThemeBackground = ThemeData["background"];
+export type ThemeColors = ThemeData["colors"];
+export type ThemeFonts = ThemeData["fonts"];
 
-export interface ThemeColors {
-  text: Color;
-  accent: Color;
-}
+/** The editable values of a theme. */
+export type ThemeValues = Pick<ThemeData, "name" | "background" | "colors" | "fonts">;
 
-export interface ThemeFonts {
-  heading: FontId;
-  body: FontId;
-  code: FontId;
-}
+/** A partial change to a theme; colours and fonts may themselves be partial. */
+export type ThemePatch = Omit<AppRouterInputs["themes"]["update"], "id" | "workspaceId">;
 
 export default class Theme {
   readonly id: string;
   readonly workspaceId: string;
-  readonly name: Reactive<string>;
-  readonly background: Reactive<ThemeData["background"]>;
-  readonly colors: Reactive<ThemeColors>;
-  readonly fonts: Reactive<ThemeFonts>;
-  readonly border: Reactive<Color | null>;
+  readonly data: Reactive<ThemeData>;
 
   constructor(data: ThemeData) {
     this.id = data.id;
     this.workspaceId = data.workspaceId;
-    this.name = reactive(data.name);
-    this.background = reactive(data.background);
-    this.colors = reactive(data.colors);
-    this.fonts = reactive(data.fonts);
-    this.border = reactive(data.border);
+    this.data = reactive(data);
   }
 
-  private update(properties: Omit<AppRouterInputs["themes"]["update"], "id" | "workspaceId">) {
-    return client.themes.update.mutate({
-      ...properties,
-      workspaceId: this.workspaceId,
-      id: this.id,
-    });
-  }
+  /** Applies the change locally, persists it, and reverts it if persisting fails. */
+  async update(patch: ThemePatch) {
+    const previous = this.data.value;
+    this.data.value = {
+      ...previous,
+      ...patch,
+      colors: { ...previous.colors, ...patch.colors },
+      fonts: { ...previous.fonts, ...patch.fonts },
+    };
 
-  setName(name: string) {
-    this.name.value = name;
-    return this.update({ name });
-  }
-
-  setColors(colors: Partial<ThemeColors>) {
-    this.colors.value = { ...this.colors.value, ...colors };
-    return this.update({ colors });
-  }
-
-  setFonts(fonts: Partial<ThemeFonts>) {
-    this.fonts.value = { ...this.fonts.value, ...fonts };
-    return this.update({ fonts });
-  }
-
-  setBackground(background: ThemeBackground) {
-    this.background.value = background;
-    return this.update({ background });
-  }
-
-  setBorder(border: Color | null) {
-    this.border.value = border;
-    return this.update({ border });
+    try {
+      await client.themes.update.mutate({ ...patch, workspaceId: this.workspaceId, id: this.id });
+    } catch (error) {
+      this.data.value = previous;
+      throw error;
+    }
   }
 
   serialize(): ThemeData {
-    return {
-      id: this.id,
-      workspaceId: this.workspaceId,
-      name: this.name.value,
-      background: this.background.value,
-      colors: this.colors.value,
-      fonts: this.fonts.value,
-      border: this.border.value,
-    };
+    return this.data.value;
   }
 
   duplicate() {
-    const { background, ...data } = this.serialize();
+    const { name, background, colors, fonts } = this.data.value;
     return client.themes.create.mutate({
-      ...data,
-      name: `${data.name} Copy`,
-      background: background ?? undefined,
+      workspaceId: this.workspaceId,
+      name: `${name} Copy`,
+      background,
+      colors,
+      fonts,
     });
   }
 

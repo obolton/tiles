@@ -22,3 +22,26 @@ describe("buildVideoMap", () => {
     expect(map.get("imageUrl")).toBeNull();
   });
 });
+
+function attach(map: Y.Map<unknown>) {
+  new Y.Doc().getMap().set("tile", map);
+  return map;
+}
+
+describe("buildVideoMap sizing", () => {
+  const VIDEO = {
+    videoType: "YOUTUBE" as const,
+    videoId: "vid",
+    title: "Title",
+    description: null,
+    imageUrl: null,
+  };
+
+  test("defaults to landscape sizing", () => {
+    expect(attach(buildVideoMap(VIDEO)).get("sizing")).toBe("LANDSCAPE");
+  });
+
+  test("keeps an explicit sizing", () => {
+    expect(attach(buildVideoMap({ ...VIDEO, sizing: "SQUARE" })).get("sizing")).toBe("SQUARE");
+  });
+});

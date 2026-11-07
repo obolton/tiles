@@ -14,7 +14,12 @@ export function buildVideoMap(
   properties: Omit<VideoMapInput, "parentId" | "beforeId">,
 ): Y.Map<unknown> {
   const { videoType, videoId, title, description, imageUrl, ...baseProps } = properties;
-  const map = buildBaseTileMap({ ...baseProps, type: "VIDEO" });
+  const map = buildBaseTileMap({
+    ...baseProps,
+    type: "VIDEO",
+    // Override default AUTO sizing, which has no intrinsic height for an embed
+    sizing: baseProps.sizing ?? "LANDSCAPE",
+  });
   map.set("videoType", videoType);
   map.set("videoId", videoId);
   map.set("title", title);

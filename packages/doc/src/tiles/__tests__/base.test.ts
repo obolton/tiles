@@ -23,6 +23,7 @@ describe("buildBaseTileMap", () => {
     expect(map.get("frame")).toBeNull();
     expect(map.get("cornerRadius")).toBe(0);
     expect(map.get("textColor")).toBeNull();
+    expect(map.get("borderColor")).toBeNull();
     expect(map.get("background")).toBeNull();
   });
 

@@ -14,7 +14,6 @@ export const THEME: Theme = {
     body: "inter",
     code: "jetbrains-mono",
   },
-  border: null,
 };
 
 export const DARK_THEME: Theme = {
@@ -31,5 +30,4 @@ export const DARK_THEME: Theme = {
     body: "inter",
     code: "jetbrains-mono",
   },
-  border: null,
 };

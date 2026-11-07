@@ -10,7 +10,7 @@ export default class SidebarPanel {
 
   constructor(
     readonly panelId: string,
-    readonly buttonId: string,
+    readonly buttonId: string | null = null,
   ) {}
 
   open() {
@@ -34,7 +34,7 @@ export default class SidebarPanel {
     const panel = document.getElementById(this.panelId);
     const hadFocus = !!panel && !!getFocusedDescendant(panel);
     this.isOpen.off();
-    if (hadFocus) {
+    if (hadFocus && this.buttonId) {
       const button =
         document.getElementById(this.buttonId) ?? document.getElementById(PAGE_ACTIONS_BUTTON_ID);
       button?.focus();

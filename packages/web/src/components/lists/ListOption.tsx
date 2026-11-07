@@ -1,8 +1,9 @@
+import type { Reactive } from "reactivity";
 import type { JSX } from "jsx/jsx";
 
 export interface ListOptionProps extends JSX.Attributes<"div"> {
   value?: string;
-  label?: string;
+  label?: string | Reactive<string>;
   icon?: JSX.Node;
 }
 

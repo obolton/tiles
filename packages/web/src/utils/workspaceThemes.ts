@@ -1,6 +1,8 @@
 import client from "@/api/client";
 import Theme from "@/models/Theme";
+import { DEFAULT_THEME_VALUES } from "@/utils/themes";
 import { themesCache, getWorkspaceId } from "./cache";
+import type { ThemeData } from "@/models/Theme";
 
 export async function getWorkspaceThemes() {
   const cached = await themesCache.getCached();
@@ -20,13 +22,16 @@ export async function invalidateWorkspaceThemes(): Promise<void> {
   await themesCache.invalidate();
 }
 
-export async function createWorkspaceTheme(): Promise<Theme> {
+/** Creates a theme from the given theme's values, or the defaults. */
+export async function createWorkspaceTheme(from: ThemeData | null = null): Promise<Theme> {
   const workspaceId = getWorkspaceId();
+  const { background, colors, fonts } = from ?? DEFAULT_THEME_VALUES;
   const result = await client.themes.create.mutate({
     workspaceId,
-    name: "Untitled",
-    colors: { text: "141414141414", accent: "3b3b82f682f6" },
-    fonts: { heading: "MODERN", body: "MODERN", code: "CODE" },
+    name: "New theme",
+    background,
+    colors,
+    fonts,
   });
   const theme = new Theme(result);
   await themesCache.upsert(theme);
