@@ -9,9 +9,11 @@ import { buildContextIds, formatTileContext } from "@/ai/context/format";
 import { hocuspocus } from "@/collaboration/instance";
 import { docName } from "@/collaboration/server";
 import { DocWriter } from "@/collaboration/DocWriter";
+import { BODY_ID, getBody } from "doc/body";
 import { YXmlStreamWriter } from "doc/richText/writer";
 import { decodeSelection, type SelectionRange } from "doc/richText/selection";
 import type { GenerateImageSchema, WriteSchema } from "./schema";
+import type { PageType } from "@/types/pages";
 import type { ToolContext } from "@/ai/tools/types";
 import type { TileType } from "doc/types/enums";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
@@ -124,6 +126,12 @@ Use "delete_tiles" to remove one or more tiles from the document when the user a
 Use the "edit_style" tool to style any block after creating it. Unless directed, style blocks to make the document engaging and colorful. You may use emojis in text content.
 `;
 
+const DOCUMENT_PROMPT = `${PROMPT}
+# Document pages
+
+This page is a document whose body is block 0. Write text into the body with the marker syntax; tiles you create are embedded in it in order.
+`;
+
 export async function generateImage({ prompt }: GenerateImageSchema) {
   return generateImageFromPrompt(prompt);
 }
@@ -134,6 +142,7 @@ interface InputOptions {
   contextTiles: TileContent[];
   history?: WriteSchema["history"];
   selectionRef: number | null;
+  pageType: PageType;
 }
 
 export interface ModelInput {
@@ -152,11 +161,13 @@ function buildInput({
   contextTiles,
   history,
   selectionRef,
+  pageType,
 }: InputOptions): ModelInput {
+  const base = pageType === "DOCUMENT" ? DOCUMENT_PROMPT : PROMPT;
   const instructions =
     selectionRef === null
-      ? PROMPT
-      : `${PROMPT}\nThe user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`;
+      ? base
+      : `${base}\nThe user's selection is in block ${selectionRef}. Insert your response at the selection (replacing any selected text) using the marker:\n\n>>>@ ${selectionRef}\n...content...\n<<<`;
 
   const messages: ModelMessage[] = [];
 
@@ -207,11 +218,16 @@ export async function* write(
       throw new Error(`Failed to open page document: ${pageId}`);
     }
 
-    const contextIds = new Set(context?.tileIds ?? []);
+    // A document's body is always in context, so the model sees the whole document
+    const body = ctx.pageType === "DOCUMENT" ? getBody(document) : null;
+    const contextIds = new Set(body ? [BODY_ID] : []);
+    for (const id of context?.tileIds ?? []) {
+      contextIds.add(id);
+    }
     if (anchor) {
       contextIds.add(anchor.tileId);
     }
-    const contextTiles = resolveTileContents(document, [...contextIds]);
+    const contextTiles = resolveTileContents(document, [...contextIds], body);
     const artifactIds = buildContextIds(contextTiles);
 
     const selectionRef = anchor ? resolveSelectionRef(anchor, artifactIds) : null;
@@ -221,13 +237,17 @@ export async function* write(
       contextTiles,
       history,
       selectionRef,
+      pageType: ctx.pageType,
     });
 
     const toolContext: ToolContext = {
       ...ctx,
       pageId,
       sectionId,
-      session: new DocWriter(document),
+      session: new DocWriter(document, {
+        body,
+        insertAt: anchor?.tileId === BODY_ID ? anchor.range.from : undefined,
+      }),
       resolveArtifactId: (id: number) => {
         const artifactId = artifactIds[id];
         if (!artifactId) {
@@ -265,9 +285,15 @@ export function streamTurn(
   const references: Reference[] = [];
 
   const tools = createTools(toolContext, ({ tileId, type }) => {
+    const existing = artifactIds.indexOf(tileId);
+    if (existing !== -1) {
+      return String(existing);
+    }
     const id = String(artifactIds.length);
     artifactIds.push(tileId);
-    references.push({ id: tileId, type });
+    if (tileId !== BODY_ID) {
+      references.push({ id: tileId, type });
+    }
     return id;
   });
 

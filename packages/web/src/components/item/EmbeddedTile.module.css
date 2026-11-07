@@ -1,0 +1,17 @@
+.embed {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rlh;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  :global(main[data-alignment="LEFT"]) & {
+    justify-content: flex-start;
+  }
+
+  :global(main[data-alignment="RIGHT"]) & {
+    justify-content: flex-end;
+  }
+}

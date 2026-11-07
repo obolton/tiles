@@ -1,17 +1,18 @@
 import InsertTileItems from "./InsertTileItems";
+import type { TilePlacementInput } from "@/models/TileContainer";
 import type { JSX } from "jsx/jsx";
 
 export interface PresentationInsertMenuProps extends JSX.Attributes<"popover-menu"> {
-  getParentId: () => string | undefined;
+  getPlacement: () => TilePlacementInput;
 }
 
 export default function PresentationInsertMenu({
-  getParentId,
+  getPlacement,
   ...props
 }: PresentationInsertMenuProps) {
   return (
     <popover-menu {...props}>
-      <InsertTileItems getParentId={getParentId} />
+      <InsertTileItems getPlacement={getPlacement} />
     </popover-menu>
   );
 }

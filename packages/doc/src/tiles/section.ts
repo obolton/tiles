@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 import type { Layout, MapStyle } from "../types/enums";
 
 export interface SectionMapInput extends Omit<CreateTileInput, "type"> {
@@ -9,7 +9,7 @@ export interface SectionMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildSectionMap(
-  properties: Omit<SectionMapInput, "parentId" | "beforeId">,
+  properties: Omit<SectionMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const map = buildBaseTileMap({ ...properties, type: "SECTION" });
   map.set("layout", properties.layout ?? "VERTICAL");

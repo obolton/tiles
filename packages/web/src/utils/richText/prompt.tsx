@@ -3,6 +3,7 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "jsx/dom";
 import client from "@/api/client";
+import { BODY_ID } from "doc/body";
 import { SPRING } from "@/utils/animation/effects";
 import Editor from "@/editor/Editor";
 import { serializeSelection } from "./selection";
@@ -43,7 +44,8 @@ function getElement(view: EditorView) {
     const tileIds = editor.referenceIds;
     const sectionId = editor.activeSection?.id ?? null;
     const range = serializeSelection(view.state);
-    const tileId = view.dom.closest("page-item")?.id;
+    const tileId =
+      view.dom.closest("page-item")?.id ?? (view.dom.closest("[data-body]") ? BODY_ID : undefined);
     const stream = await client.ai.write.mutate(
       {
         pageId,

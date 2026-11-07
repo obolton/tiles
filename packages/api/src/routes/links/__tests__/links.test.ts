@@ -24,6 +24,7 @@ const MOCK_CONTEXT: AuthenticatedPageProcedureContext = {
   isService: false,
   pageId: "page-1",
   workspaceId: "workspace-1",
+  pageType: "FREE",
 };
 
 const MOCK_METADATA = {

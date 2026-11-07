@@ -1,5 +1,4 @@
 import PageContents from "@/components/pages/PageContents";
-import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import AIButton from "@/components/buttons/AIButton";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
@@ -43,9 +42,6 @@ export default function EditablePage({ editor }: EditablePageProps) {
         <div className={styles["bottom-bar"]} role="group" aria-label="Editor tools">
           <AIButton isOpen={editor.isPromptToolbarOpen} />
           <div id="toolbar-slot" className={styles["toolbar-slot"]}>
-            <If condition={showPageToolbar}>
-              <PageToolbar page={editor.page} />
-            </If>
             <If condition={selection.derive((value) => value.size >= 2)}>
               <SelectionToolbar />
             </If>
@@ -60,6 +56,7 @@ export default function EditablePage({ editor }: EditablePageProps) {
       <PageContents
         page={editor.page}
         isEditable={isEditable}
+        showToolbar={showPageToolbar}
         tiles={editor.page.tiles}
         end={
           <>

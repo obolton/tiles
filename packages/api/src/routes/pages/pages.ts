@@ -7,7 +7,6 @@ import { RESULTS_PER_PAGE, paginate } from "@/utils/pagination";
 import { invalidateCachedPages } from "@/utils/cdn";
 import { createEmptyDoc, currentSchemaVersion } from "@/collaboration";
 import { DocWriter } from "@/collaboration/DocWriter";
-import { buildTextMap } from "doc/tiles/text";
 import { buildSectionMap } from "doc/tiles/section";
 import { bytesToBase64 } from "doc/encoding";
 import type {
@@ -138,14 +137,6 @@ export async function listDeletedPages(
   return { pages: items, nextCursor };
 }
 
-function createDocumentDoc(): Y.Doc {
-  const doc = createEmptyDoc();
-  new DocWriter(doc).createTile(buildTextMap({ sizing: "AUTO", height: 1 }), {
-    parentId: null,
-  });
-  return doc;
-}
-
 function createPresentationDoc(): Y.Doc {
   const doc = createEmptyDoc();
   new DocWriter(doc).createTile(
@@ -159,10 +150,9 @@ function createPresentationDoc(): Y.Doc {
   return doc;
 }
 
+/** Document pages start with an empty body, which the client creates on demand. */
 export function createInitialDoc(pageType: PageType): Y.Doc {
   switch (pageType) {
-    case "DOCUMENT":
-      return createDocumentDoc();
     case "PRESENTATION":
       return createPresentationDoc();
     default:

@@ -1,6 +1,7 @@
 import * as Y from "yjs";
 import { ySyncPluginKey } from "y-prosemirror";
 import { flag, type ReactiveFlag } from "reactivity";
+import { getBody } from "doc/body";
 
 export interface UndoStepHooks {
   onRecord?(meta: Map<unknown, unknown>): void;
@@ -14,9 +15,9 @@ export class PageUndoManager {
 
   constructor(doc: Y.Doc, hooks?: UndoStepHooks) {
     // Page metadata and theme snapshots are tracked with the tiles so that applying a theme or
-    // changing the page layout can be undone.
+    // changing the page layout can be undone; the body holds a document page's text.
     this.manager = new Y.UndoManager(
-      [doc.getMap("tiles"), doc.getMap("metadata"), doc.getMap("themes")],
+      [doc.getMap("tiles"), doc.getMap("metadata"), doc.getMap("themes"), getBody(doc)],
       {
         trackedOrigins: new Set([null, ySyncPluginKey]),
         captureTimeout: 500,

@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import client, { type AppRouterOutputs } from "@/api/client";
@@ -31,7 +32,7 @@ export default class Video extends Tile {
   readonly description: Reactive<string | null>;
   readonly title: Reactive<string>;
 
-  static createMap(properties: Omit<VideoMapInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<VideoMapInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildVideoMap(properties);
   }
 
@@ -55,10 +56,10 @@ export default class Video extends Tile {
     metadata: VideoMetadata,
     data: Omit<CreateTileInput, "type"> = {},
   ): Video {
-    const { parentId, beforeId, ...rest } = data;
+    const { parentId, beforeId, at, ...rest } = data;
     const { videoType, videoId, title, description, imageUrl } = metadata;
     const map = Video.createMap({ ...rest, videoType, videoId, title, description, imageUrl });
-    const video = page.createTile(map, { parentId, beforeId }) as Video;
+    const video = page.createTile(map, { parentId, beforeId, at }) as Video;
     video.editor.addTile(video);
     return video;
   }

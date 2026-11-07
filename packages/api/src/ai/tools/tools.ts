@@ -24,6 +24,10 @@ export type RegisterTile = (tile: TileResult) => string;
 export function createTools(context: ToolContext, registerTile: RegisterTile): ToolSet {
   const tools: ToolSet = {};
   for (const options of FUNCTION_TOOLS) {
+    // Text is written straight into a document page's body
+    if (options === CREATE_TEXT_TOOL && context.pageType === "DOCUMENT") {
+      continue;
+    }
     tools[options.name] = tool({
       description: options.description,
       inputSchema: options.schema,

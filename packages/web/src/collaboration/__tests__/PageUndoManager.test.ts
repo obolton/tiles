@@ -1,6 +1,7 @@
 import * as Y from "yjs";
 import { describe, expect, test, beforeEach, vi } from "vitest";
 import { ySyncPluginKey } from "y-prosemirror";
+import { getBody } from "doc/body";
 import { PageUndoManager } from "../PageUndoManager";
 import { THEME_EDIT_ORIGIN } from "@/models/PageThemes";
 
@@ -71,6 +72,16 @@ describe("PageUndoManager", () => {
     undoManager.undo();
     expect(content).toHaveLength(0);
     expect(tiles.has("a")).toBe(true);
+  });
+
+  test("captures edits to the document body", () => {
+    const body = getBody(doc);
+
+    doc.transact(() => body.insert(0, [new Y.XmlElement("paragraph")]));
+    expect(undoManager.canUndo.value).toBe(true);
+
+    undoManager.undo();
+    expect(body).toHaveLength(0);
   });
 
   test("undoes changes to the page metadata", () => {

@@ -295,4 +295,30 @@ describe("write", () => {
     expect(collected).toEqual([{ message: "Hi there" }]);
     expect(doStream).toHaveBeenCalledTimes(1);
   });
+
+  test("writes text into the body of a document page and offers no text tool", async () => {
+    doStream.mockResolvedValueOnce(
+      streamOf([...textChunks(">>>+ 0\nIn the body\n<<<"), finishChunk("stop")]),
+    );
+
+    const collected = await collect(
+      write(
+        { pageId: "page-1", sectionId: null, prompt: "Write an intro" },
+        { ...MOCK_TOOL_CONTEXT, pageType: "DOCUMENT" },
+      ),
+    );
+
+    expect(collected).toEqual([]);
+    expect(doStream).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prompt: expect.arrayContaining([
+          expect.objectContaining({
+            role: "system",
+            content: expect.stringContaining("Document pages"),
+          }),
+        ]),
+        tools: expect.not.arrayContaining([expect.objectContaining({ name: "create_text" })]),
+      }),
+    );
+  });
 });

@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildLinkMap, type LinkMapInput } from "doc/tiles/link";
 import { type Reactive } from "reactivity";
@@ -19,12 +20,12 @@ export default class Link extends Tile {
   readonly siteName: Reactive<string | null>;
   readonly imageId: Reactive<string | null>;
 
-  static createMap(properties: Omit<LinkMapInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<LinkMapInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildLinkMap(properties);
   }
 
   static async create(page: Page, data: CreateLinkInput): Promise<Link | Video> {
-    const { parentId, beforeId, url, ...rest } = data;
+    const { parentId, beforeId, at, url, ...rest } = data;
     const metadata = await client.externalLinks.getMetadata.query({
       pageId: page.id,
       url,
@@ -33,7 +34,7 @@ export default class Link extends Tile {
     if (metadata.type === "VIDEO") {
       // Link card dimensions do not suit a video, which uses its own sizing
       const { coordinates } = rest;
-      return Video.createFromMetadata(page, metadata, { parentId, beforeId, coordinates });
+      return Video.createFromMetadata(page, metadata, { parentId, beforeId, at, coordinates });
     }
 
     const map = Link.createMap({
@@ -44,7 +45,7 @@ export default class Link extends Tile {
       siteName: metadata.siteName,
       imageId: metadata.imageId,
     });
-    const link = page.createTile(map, { parentId, beforeId }) as Link;
+    const link = page.createTile(map, { parentId, beforeId, at }) as Link;
     link.editor.addTile(link);
     return link;
   }

@@ -217,6 +217,10 @@ function serializeNode(node: Node): SerializedNode {
     return { type: "divider" };
   }
 
+  if (node.type === nodes.tile) {
+    return { type: "tile", id: node.attrs.id as string };
+  }
+
   throw new Error(`Unsupported node type: ${node.type.name}`);
 }
 

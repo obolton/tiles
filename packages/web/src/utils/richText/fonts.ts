@@ -19,6 +19,7 @@ export function getRichTextFonts(content: RichText): Set<FontId> {
         break;
 
       case "divider":
+      case "tile":
         break;
 
       default:

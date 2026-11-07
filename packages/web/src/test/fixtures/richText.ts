@@ -178,6 +178,18 @@ export const BLOCK_DOCUMENTS = {
       ],
     },
   ],
+  "embedded tile": [paragraph([text("Before")]), { type: "tile", id: "tile-1" }],
+  "tile inside a list item": [
+    list(ListType.UNORDERED, [
+      listItem([paragraph([text("Item")]), { type: "tile", id: "tile-2" }]),
+    ]),
+  ],
+  "tile inside a quote": [
+    { type: "quote", children: [paragraph([text("Quoted")]), { type: "tile", id: "tile-3" }] },
+  ],
+  "tile inside a pending block": [
+    { type: "pending", children: [{ type: "tile", id: "tile-4" }, paragraph([text("After")])] },
+  ],
   "multiple top-level blocks": [
     heading(1, [text("Doc")]),
     paragraph([text("Intro")]),

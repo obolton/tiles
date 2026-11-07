@@ -37,6 +37,13 @@ describe("createTools", () => {
     expect(Object.keys(tools)).toEqual(FUNCTION_TOOLS.map((tool) => tool.name));
   });
 
+  test("offers no text tool on document pages", () => {
+    const tools = createTools({ ...MOCK_TOOL_CONTEXT, pageType: "DOCUMENT" }, vi.fn());
+
+    expect(Object.keys(tools)).not.toContain("create_text");
+    expect(Object.keys(tools)).toContain("create_image");
+  });
+
   test("registers a created tile and returns its id to the model", async () => {
     const registerTile = vi.fn(() => "3");
     const tools = createTools(MOCK_TOOL_CONTEXT, registerTile);

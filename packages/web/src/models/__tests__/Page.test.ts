@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
+import { getTileIds } from "doc/richText/tiles";
 import Page from "@/models/Page";
 import Dropdown from "@/models/Dropdown";
 import Section from "@/models/Section";
@@ -293,11 +294,44 @@ describe("Page", () => {
     });
   });
 
+  describe("body", () => {
+    test("exists for document pages only", () => {
+      expect(new Page(PAGE, new Y.Doc()).body).toBeNull();
+      expect(new Page({ ...PAGE, type: "DOCUMENT" }, new Y.Doc()).body).not.toBeNull();
+    });
+  });
+
+  describe("container", () => {
+    test("is the placement for sections and the root of other page types", () => {
+      const page = new Page(PAGE, new Y.Doc());
+
+      expect(page.container(null)).toBe(page.placement);
+      expect(page.container("section-id")).toBe(page.placement);
+    });
+
+    test("is the body for the root of a document page", () => {
+      const page = new Page({ ...PAGE, type: "DOCUMENT" }, new Y.Doc());
+
+      expect(page.container(null)).toBe(page.body);
+      expect(page.container("section-id")).toBe(page.placement);
+    });
+  });
+
   describe("createTile", () => {
     let page: Page;
 
     beforeEach(() => {
       page = new Page(PAGE, new Y.Doc());
+    });
+
+    test("embeds the tile in the body of a document page", () => {
+      const document = new Page({ ...PAGE, type: "DOCUMENT" }, new Y.Doc());
+
+      const tile = document.createTile(Section.createMap({ layout: "VERTICAL" }));
+
+      expect(tile.parentId.value).toBeNull();
+      expect(document.tiles.value).toHaveLength(0);
+      expect(document.body && getTileIds(document.body.fragment)).toEqual([tile.id]);
     });
 
     test("attaches the map, mints an id, and returns the constructed tile", () => {

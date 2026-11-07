@@ -21,11 +21,16 @@ import type {
 } from "doc/types/richText";
 import type { JSX } from "jsx/jsx";
 
-interface RichTextProps {
+export interface RenderOptions {
+  /** Renders an embedded tile by id. */
+  renderTile?: (id: string) => JSX.Node;
+}
+
+interface RichTextProps extends RenderOptions {
   content: RichText;
 }
 
-function renderNodes(nodes: Node[]) {
+function renderNodes(nodes: Node[], options: RenderOptions = {}) {
   return (
     <>
       {nodes.map((node) => {
@@ -35,11 +40,16 @@ function renderNodes(nodes: Node[]) {
           case "heading":
             return <Heading node={node} />;
           case "quote":
-            return <Quote node={node} />;
+            return <Quote node={node} options={options} />;
           case "code":
             return <Code node={node} />;
           case "list":
-            return <List node={node} />;
+            return <List node={node} options={options} />;
+          case "tile":
+            if (!options.renderTile) {
+              throw new Error("Embedded tiles need a renderTile option");
+            }
+            return options.renderTile(node.id);
           case "text":
             return node.pending ? null : (
               <FormattedText
@@ -92,8 +102,8 @@ function renderNodes(nodes: Node[]) {
   );
 }
 
-function RichTextRoot({ content }: RichTextProps) {
-  return renderNodes(content);
+function RichTextRoot({ content, renderTile }: RichTextProps) {
+  return renderNodes(content, { renderTile });
 }
 
 export default RichTextRoot;
@@ -149,31 +159,40 @@ function Heading({ node }: HeadingProps) {
 
 interface QuoteProps {
   node: QuoteNode;
+  options: RenderOptions;
 }
 
-function Quote({ node }: QuoteProps) {
-  return <blockquote>{node.children.length > 0 ? renderNodes(node.children) : <br />}</blockquote>;
+function Quote({ node, options }: QuoteProps) {
+  return (
+    <blockquote>
+      {node.children.length > 0 ? renderNodes(node.children, options) : <br />}
+    </blockquote>
+  );
 }
 
 interface ListItemProps extends JSX.Attributes<"li"> {
   node: ListItemNode;
+  options: RenderOptions;
 }
 
-function ListItem({ node, ...props }: ListItemProps) {
-  return <li {...props}>{node.children.length > 0 ? renderNodes(node.children) : <br />}</li>;
+function ListItem({ node, options, ...props }: ListItemProps) {
+  return (
+    <li {...props}>{node.children.length > 0 ? renderNodes(node.children, options) : <br />}</li>
+  );
 }
 
 interface ListProps {
   node: ListNode;
+  options: RenderOptions;
 }
 
-function List({ node }: ListProps) {
+function List({ node, options }: ListProps) {
   switch (node.listType) {
     case ListType.ORDERED:
       return (
         <ol>
           {node.children.map((child) => (
-            <ListItem node={child} />
+            <ListItem node={child} options={options} />
           ))}
         </ol>
       );
@@ -181,7 +200,7 @@ function List({ node }: ListProps) {
       return (
         <ul>
           {node.children.map((child) => (
-            <ListItem node={child} />
+            <ListItem node={child} options={options} />
           ))}
         </ul>
       );
@@ -191,6 +210,7 @@ function List({ node }: ListProps) {
           {node.children.map((child) => (
             <ListItem
               node={child}
+              options={options}
               role={child.children[0]?.type === "list" ? undefined : "checkbox"}
               aria-checked={
                 child.children[0]?.type === "list" ? undefined : child.checked ? "true" : "false"

@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 import type { VideoType } from "../types/enums";
 
 export interface VideoMapInput extends Omit<CreateTileInput, "type"> {
@@ -11,7 +11,7 @@ export interface VideoMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildVideoMap(
-  properties: Omit<VideoMapInput, "parentId" | "beforeId">,
+  properties: Omit<VideoMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const { videoType, videoId, title, description, imageUrl, ...baseProps } = properties;
   const map = buildBaseTileMap({

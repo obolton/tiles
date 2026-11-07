@@ -24,6 +24,9 @@ import ThemeEditor from "@/components/themes/ThemeEditor";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import { applyThemeStyles, getThemeStyles } from "@/utils/themes";
 import type Tile from "@/models/Tile";
+import type Body from "@/models/Body";
+import type { Awareness } from "@/collaboration/types";
+import type { TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type { Reactive, ReactiveSet } from "reactivity";
 
@@ -74,6 +77,30 @@ export default class Editor {
       return null;
     }
     return lastSelected.next?.id ?? null;
+  }
+
+  /** Where new content goes: the active section, the document body, or the page root. */
+  get insertPlacement(): TilePlacementInput {
+    const section = this.activeSection;
+    if (section) {
+      return { parentId: section.id, beforeId: this.insertBeforeId };
+    }
+    return this.rootPlacement;
+  }
+
+  get rootPlacement(): TilePlacementInput {
+    const { body } = this.page;
+    if (body) {
+      return { parentId: null, at: this.bodyInsertionPoint(body) };
+    }
+    return { parentId: null, beforeId: this.insertBeforeId };
+  }
+
+  /** After the selected embedded tile, else at the caret, else at the end of the body. */
+  private bodyInsertionPoint(body: Body) {
+    const selected = this.lastSelectedTile;
+    const afterSelected = selected?.embedded ? body.positionAfter(selected.id) : null;
+    return afterSelected ?? body.insertionPoint.value ?? undefined;
   }
 
   get activeSection(): Section | null {
@@ -176,6 +203,14 @@ export default class Editor {
     }
   }
 
+  /** The collaboration session's awareness, available while editing. */
+  get awareness(): Awareness {
+    if (!this.collaboration) {
+      throw new Error("Requires a collaboration session");
+    }
+    return this.collaboration.awareness;
+  }
+
   private startCollaboration() {
     if (this.collaboration) {
       return;
@@ -201,9 +236,9 @@ export default class Editor {
     }
 
     if (editable) {
+      this.startCollaboration();
       this.isEditable.value = true;
       setEditMode(true);
-      this.startCollaboration();
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
@@ -334,8 +369,7 @@ export default class Editor {
       workspaceId: this.workspaceId,
     });
     await Image.create(this.page, {
-      parentId: this.activeSection?.id ?? null,
-      beforeId: this.insertBeforeId,
+      ...this.insertPlacement,
       imageId: id,
       size: { width, height },
       sizing: "AUTO",
@@ -377,8 +411,7 @@ export default class Editor {
           workspaceId: this.workspaceId,
         });
         await Image.create(this.page, {
-          parentId: this.activeSection?.id ?? null,
-          beforeId: this.insertBeforeId,
+          ...this.insertPlacement,
           imageId: id,
           size: { width, height },
           sizing: "AUTO",
@@ -388,8 +421,7 @@ export default class Editor {
     } else if (isUriList(item)) {
       item.getAsString(async (url) => {
         await Link.create(this.page, {
-          parentId: this.activeSection?.id ?? null,
-          beforeId: this.insertBeforeId,
+          ...this.insertPlacement,
           url,
         });
       });
@@ -399,6 +431,10 @@ export default class Editor {
   // Selection
 
   focusFirstTile() {
+    if (this.page.body) {
+      this.focusBody();
+      return;
+    }
     const first = this.page.tiles.value[0];
     if (!first) {
       return;
@@ -407,6 +443,14 @@ export default class Editor {
     const element = document.getElementById(first.id);
     if (element) {
       focusInside(element);
+    }
+  }
+
+  /** Focuses the document body editor. */
+  focusBody(options?: FocusOptions) {
+    const body = document.querySelector<HTMLElement>("[data-body]");
+    if (body) {
+      focusInside(body, options);
     }
   }
 
@@ -550,16 +594,20 @@ export default class Editor {
     const containsFocus = !!elements.find((element) => element.contains(document.activeElement));
     if (containsFocus) {
       const last = elements.at(-1);
-      focus = (last?.nextElementSibling || last?.previousElementSibling) ?? null;
+      focus =
+        (last?.nextElementSibling ||
+          last?.previousElementSibling ||
+          last?.closest("[data-body]")) ??
+        null;
     }
 
     const doc = this.page.doc;
+    const groups = Map.groupBy(this.page.getTiles(ids), (tile) => tile.container);
 
     void viewTransition(() => {
-      const tilesMap = doc.getMap<Y.Map<unknown>>("tiles");
       doc.transact(() => {
-        for (const id of ids) {
-          tilesMap.delete(id);
+        for (const [container, tiles] of groups) {
+          container.remove(tiles);
         }
       });
 
@@ -581,10 +629,16 @@ export default class Editor {
 
     this.select([tile.id]);
     const element = document.getElementById(tile.id);
-    if (element) {
-      focusInside(element, { preventScroll: true });
-      scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+    if (!element) {
+      return;
     }
+    // An embedded tile stays node-selected in the body, so Enter continues the text below it
+    if (tile.embedded) {
+      this.focusBody({ preventScroll: true });
+    } else {
+      focusInside(element, { preventScroll: true });
+    }
+    scrollIntoViewIfNeeded(element, { behavior: "smooth" });
   }
 
   // Undo / redo

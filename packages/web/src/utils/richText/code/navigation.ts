@@ -1,9 +1,6 @@
-import { Selection, TextSelection } from "prosemirror-state";
-import { schema } from "../schema";
+import { exitNode, type Direction } from "../navigation";
 import type { EditorView as CMEditorView } from "@codemirror/view";
 import type { EditorView as PMEditorView } from "prosemirror-view";
-
-type Direction = -1 | 1;
 
 /**
  * Check if the CodeMirror cursor is at the boundary of the document.
@@ -37,33 +34,6 @@ function isAtBoundary(cm: CMEditorView, unit: "line" | "char", dir: Direction): 
 }
 
 /**
- * Transfer focus from CodeMirror to ProseMirror at the appropriate position.
- */
-function transferFocus(pm: PMEditorView, pos: number, dir: Direction): void {
-  const node = pm.state.doc.nodeAt(pos);
-  if (!node) {
-    return;
-  }
-
-  const targetPos = pos + (dir < 0 ? 0 : node.nodeSize);
-  const targetSel = Selection.near(pm.state.doc.resolve(targetPos), dir);
-
-  pm.dispatch(pm.state.tr.setSelection(targetSel).scrollIntoView());
-  pm.focus();
-}
-
-/**
- * Check if the code block is the last node in the document.
- */
-function isLastNode(pm: PMEditorView, pos: number): boolean {
-  const node = pm.state.doc.nodeAt(pos);
-  if (!node) {
-    return false;
-  }
-  return pos + node.nodeSize >= pm.state.doc.content.size;
-}
-
-/**
  * Create a CodeMirror command that escapes to ProseMirror at document boundaries.
  * If escaping down from the last node, inserts a new paragraph.
  */
@@ -83,31 +53,8 @@ export function createEscapeCommand(
       return false;
     }
 
-    // If escaping down from the last node, insert a new paragraph
-    if (dir > 0 && isLastNode(pm, pos)) {
-      return insertParagraphAfter(pm, pos);
-    }
-
-    transferFocus(pm, pos, dir);
-    return true;
+    return exitNode(pm, pos, dir);
   };
-}
-
-/**
- * Insert a paragraph after the code block and move focus to it.
- */
-export function insertParagraphAfter(pm: PMEditorView, pos: number): boolean {
-  const node = pm.state.doc.nodeAt(pos);
-  if (!node) {
-    return false;
-  }
-
-  const nodeEnd = pos + node.nodeSize;
-  const tr = pm.state.tr.insert(nodeEnd, schema.nodes.paragraph.create());
-  tr.setSelection(TextSelection.near(tr.doc.resolve(nodeEnd + 1)));
-  pm.dispatch(tr);
-  pm.focus();
-  return true;
 }
 
 /**

@@ -73,20 +73,15 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
     [textViewStyles["align-bottom"]]: align === "BOTTOM",
   }));
 
-  const contents = isEditable.derive((value) => {
-    if (!value) {
+  const contents = isEditable.derive((editable) => {
+    if (!editable) {
       return <TextView text={text} />;
-    }
-
-    const awareness = text.page.awareness;
-    if (!awareness) {
-      return null;
     }
 
     return (
       <CollaborativeTextEditor
         contentFragment={text.contentFragment}
-        awareness={awareness}
+        awareness={text.editor.awareness}
         undoManager={text.editor.undoManager?.manager}
         editorView={editorView}
         classList={editorClassList}

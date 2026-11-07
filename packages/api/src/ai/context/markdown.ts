@@ -2,12 +2,16 @@ import type { RichText } from "doc/types/richText";
 
 type Node = RichText[number] | { type: string; [key: string]: unknown };
 
+export interface MarkdownOptions {
+  tile?: (id: string) => string;
+}
+
 const text = (value: unknown) => (typeof value === "string" ? value : "");
 
 /**
  * Convert rich text to markdown.
  */
-export function toMarkdown(input: RichText): string {
+export function toMarkdown(input: RichText, options: MarkdownOptions = {}): string {
   const queue: (Node | string)[] = [...input];
   let output = "";
 
@@ -24,7 +28,7 @@ export function toMarkdown(input: RichText): string {
         break;
 
       case "link": {
-        const linkText = toMarkdown(node.children as RichText);
+        const linkText = toMarkdown(node.children as RichText, options);
         output += `[${linkText}](${text(node.href)})`;
         break;
       }
@@ -72,7 +76,7 @@ export function toMarkdown(input: RichText): string {
               marker = "-";
               break;
           }
-          const itemText = toMarkdown(item.children as RichText);
+          const itemText = toMarkdown(item.children as RichText, options);
           queue.push(`${marker} ${itemText.trim()}\n`);
         }
         queue.push("\n");
@@ -80,13 +84,13 @@ export function toMarkdown(input: RichText): string {
       }
 
       case "code": {
-        const code = toMarkdown(node.children as RichText);
+        const code = toMarkdown(node.children as RichText, options);
         queue.push(`\`\`\`${text(node.language)}\n${code}\n\`\`\`\n\n`);
         break;
       }
 
       case "quote": {
-        const quoteText = toMarkdown(node.children as RichText);
+        const quoteText = toMarkdown(node.children as RichText, options);
         const quoted = quoteText
           .trim()
           .split("\n")
@@ -103,6 +107,17 @@ export function toMarkdown(input: RichText): string {
       case "pending":
         queue.push(...(node.children as Node[]));
         break;
+
+      case "tile": {
+        if (!options.tile) {
+          throw new Error("Embedded tiles need a tile serializer");
+        }
+        const content = options.tile(text(node.id));
+        if (content) {
+          queue.push(`${content}\n\n`);
+        }
+        break;
+      }
 
       default:
         if ("children" in node && Array.isArray(node.children)) {

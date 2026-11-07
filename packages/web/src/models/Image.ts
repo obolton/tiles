@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildImageMap } from "doc/tiles/image";
 import { reactive, type Reactive } from "reactivity";
@@ -35,14 +36,14 @@ export default class Image extends Tile {
     return imageId ? getImageUrl(imageId) : null;
   }
 
-  static createMap(properties: Omit<CreateImageInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateImageInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildImageMap(properties);
   }
 
   static async create(page: Page, data: CreateImageInput): Promise<Image> {
-    const { parentId, beforeId, ...rest } = data;
+    const { parentId, beforeId, at, ...rest } = data;
     const map = Image.createMap(rest);
-    const image = page.createTile(map, { parentId, beforeId }) as Image;
+    const image = page.createTile(map, { parentId, beforeId, at }) as Image;
     image.editor.addTile(image);
     return image;
   }

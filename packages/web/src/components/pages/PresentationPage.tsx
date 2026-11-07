@@ -5,6 +5,7 @@ import Slide from "@/components/slides/Slide";
 import EditorLayout from "@/components/pages/EditorLayout";
 import ThumbnailListPanel from "@/components/thumbnails/ThumbnailListPanel";
 import InsertButton from "@/components/buttons/InsertButton";
+import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import PresentationInsertMenu from "@/components/toolbars/insert/PresentationInsertMenu";
 import Section from "@/models/Section";
 import styles from "./PresentationPage.module.css";
@@ -16,6 +17,7 @@ import type { JSX } from "jsx/jsx";
 export interface PresentationPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: JSX.Node;
@@ -25,6 +27,7 @@ export interface PresentationPageProps {
 export default function PresentationPage({
   page,
   isEditable,
+  showToolbar,
   tiles,
   signal,
   end,
@@ -33,12 +36,12 @@ export default function PresentationPage({
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = isEditable.derive((editable) => (editable ? "all" : null));
 
-  function getInsertionParent(): string {
+  function getInsertionPlacement() {
     const section = page.editor?.activeSection;
     if (!section) {
       throw new Error("A slide must be selected to insert content");
     }
-    return section.id;
+    return { parentId: section.id, beforeId: null };
   }
 
   // Center a partially visible slide when clicked, so the viewport (and
@@ -82,8 +85,14 @@ export default function PresentationPage({
             <PresentationInsertMenu
               id="insert-menu"
               align="auto"
-              getParentId={getInsertionParent}
+              getPlacement={getInsertionPlacement}
             />
+          </Portal>
+        </If>
+
+        <If condition={showToolbar}>
+          <Portal element="toolbar-slot">
+            <PageToolbar page={page} />
           </Portal>
         </If>
       </main>

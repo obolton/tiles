@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import Tile from "./Tile";
 import { buildChartMap, type ChartMapInput } from "doc/tiles/chart";
 import Series from "@/models/Series";
@@ -22,15 +23,15 @@ export default class Chart extends Tile {
   private readonly seriesMap: Y.Map<Y.Map<unknown>>;
 
   static createMap(
-    properties: Omit<CreateChartInput, "parentId" | "beforeId" | "columns">,
+    properties: Omit<CreateChartInput, keyof PlacementInput | "columns">,
   ): Y.Map<unknown> {
     return buildChartMap(properties);
   }
 
   static async create(page: Page, data: CreateChartInput): Promise<Chart> {
-    const { parentId, beforeId, columns, ...rest } = data;
+    const { parentId, beforeId, at, columns, ...rest } = data;
     const map = Chart.createMap(rest);
-    const chart = page.createTile(map, { parentId, beforeId }) as Chart;
+    const chart = page.createTile(map, { parentId, beforeId, at }) as Chart;
     for (const column of columns ?? []) {
       chart.addSeries(column);
     }

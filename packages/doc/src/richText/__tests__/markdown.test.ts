@@ -35,6 +35,10 @@ const paragraph = (...children: (Y.XmlElement | Y.XmlText)[]) => element("paragr
 const item = (checked: boolean, ...blocks: Y.XmlElement[]) =>
   element("list_item", { checked }, blocks);
 
+const tile = (id: string) => element("tile", { id });
+
+const describeTile = (id: string) => `![image ${id}]`;
+
 describe("fragmentToMarkdown", () => {
   test("returns an empty string for an empty fragment", () => {
     expect(fragmentToMarkdown(fragment())).toBe("");
@@ -142,6 +146,36 @@ describe("fragmentToMarkdown", () => {
         paragraph(text("Line two")),
       ]);
       expect(fragmentToMarkdown(fragment(quote))).toBe("> Line one\n> \n> Line two");
+    });
+  });
+
+  describe("tile", () => {
+    test("throws for an embedded tile without a resolver", () => {
+      expect(() => fragmentToMarkdown(fragment(paragraph(text("Before")), tile("t1")))).toThrow(
+        "Embedded tiles need a tile serializer",
+      );
+    });
+
+    test("inlines resolved tile content at its position", () => {
+      expect(
+        fragmentToMarkdown(
+          fragment(paragraph(text("Before")), tile("t1"), paragraph(text("After"))),
+          { tile: describeTile },
+        ),
+      ).toBe("Before\n\n![image t1]\n\nAfter");
+    });
+
+    test("inlines a tile nested in a quote", () => {
+      const quote = element("quote", {}, [paragraph(text("Quoted")), tile("t1")]);
+      expect(fragmentToMarkdown(fragment(quote), { tile: () => "| a |" })).toBe(
+        "> Quoted\n> \n> | a |",
+      );
+    });
+
+    test("omits tiles the resolver leaves empty", () => {
+      expect(
+        fragmentToMarkdown(fragment(tile("t1"), paragraph(text("After"))), { tile: () => "" }),
+      ).toBe("After");
     });
   });
 

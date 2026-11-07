@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { generateKeyBetween } from "jittered-fractional-indexing";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 import { buildSeriesMap, type SeriesMapInput } from "./series";
 import { createId } from "../id";
 import type { Property } from "../types/chart";
@@ -12,7 +12,7 @@ export interface ChartMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildChartMap(
-  properties: Omit<ChartMapInput, "parentId" | "beforeId">,
+  properties: Omit<ChartMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const { tableId, label, series = [], ...baseProps } = properties;
   const map = buildBaseTileMap({ ...baseProps, type: "CHART" });

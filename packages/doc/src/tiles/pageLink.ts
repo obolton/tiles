@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { buildBaseTileMap, type CreateTileInput } from "./base";
+import { buildBaseTileMap, type CreateTileInput, type PlacementInput } from "./base";
 
 export interface LinkedPage {
   id: string;
@@ -11,7 +11,7 @@ export interface PageLinkMapInput extends Omit<CreateTileInput, "type"> {
 }
 
 export function buildPageLinkMap(
-  properties: Omit<PageLinkMapInput, "parentId" | "beforeId">,
+  properties: Omit<PageLinkMapInput, keyof PlacementInput>,
 ): Y.Map<unknown> {
   const { linkedPage, ...baseProps } = properties;
   const map = buildBaseTileMap({ ...baseProps, type: "PAGE_LINK" });

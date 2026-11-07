@@ -1,4 +1,5 @@
 import * as Y from "yjs";
+import type { PlacementInput } from "doc/tiles/base";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import Tile from "./Tile";
 import { buildTextMap, type TextMapInput } from "doc/tiles/text";
@@ -18,7 +19,7 @@ export default class Text extends Tile {
   readonly align: Reactive<VerticalAlignment>;
   readonly contentFragment: Y.XmlFragment;
 
-  static createMap(properties: Omit<CreateTextInput, "parentId" | "beforeId">): Y.Map<unknown> {
+  static createMap(properties: Omit<CreateTextInput, keyof PlacementInput>): Y.Map<unknown> {
     const { content, ...rest } = properties;
     const map = buildTextMap(rest);
     if (content && content.length > 0) {
@@ -28,9 +29,9 @@ export default class Text extends Tile {
   }
 
   static async create(page: Page, data: CreateTextInput): Promise<Text> {
-    const { parentId, beforeId, ...rest } = data;
+    const { parentId, beforeId, at, ...rest } = data;
     const map = Text.createMap(rest);
-    const text = page.createTile(map, { parentId, beforeId }) as Text;
+    const text = page.createTile(map, { parentId, beforeId, at }) as Text;
     text.editor.addTile(text);
     return text;
   }

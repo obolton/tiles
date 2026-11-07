@@ -4,6 +4,7 @@ import Portal from "jsx/portal";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import InsertButton from "@/components/buttons/InsertButton";
+import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
 import DockZone from "@/components/docks/DockZone";
 import EditorLayout from "@/components/pages/EditorLayout";
@@ -17,6 +18,7 @@ import type { JSX } from "jsx/jsx";
 export interface FreePageProps {
   page: Page;
   isEditable: Reactive<boolean>;
+  showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: JSX.Node;
@@ -26,6 +28,7 @@ export interface FreePageProps {
 export default function FreePage({
   page,
   isEditable,
+  showToolbar,
   tiles,
   signal,
   end,
@@ -114,6 +117,12 @@ export default function FreePage({
           <Portal element="insert-slot">
             <InsertButton id="insert-button" popovertarget="insert-menu" />
             <DocumentInsertMenu id="insert-menu" align="auto" />
+          </Portal>
+        </If>
+
+        <If condition={showToolbar}>
+          <Portal element="toolbar-slot">
+            <PageToolbar page={page} />
           </Portal>
         </If>
       </div>

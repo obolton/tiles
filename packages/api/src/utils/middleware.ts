@@ -4,7 +4,7 @@ import prisma from "@/database/prisma";
 import { invalidateCachedPages } from "@/utils/cdn";
 import { publicProcedure } from "@/utils/trpc";
 import type { AuthenticatedRequestContext } from "@/utils/trpc";
-import type { WorkspaceRole } from "@/generated/prisma/client";
+import type { PageType, WorkspaceRole } from "@/generated/prisma/client";
 
 export const authenticatedProcedure = publicProcedure.use(async (opts) => {
   const { ctx } = opts;
@@ -29,6 +29,7 @@ const AuthenticatedPageProcedureSchema = z.object({
 export interface AuthenticatedPageProcedureContext extends AuthenticatedRequestContext {
   pageId: string;
   workspaceId: string;
+  pageType: PageType;
 }
 
 export async function getPage(userId: string, pageId: string) {
@@ -38,7 +39,7 @@ export async function getPage(userId: string, pageId: string) {
       deletedAt: null,
       OR: [{ authorId: userId }, { access: { some: { userId } } }],
     },
-    select: { id: true, workspaceId: true },
+    select: { id: true, workspaceId: true, type: true },
   });
 }
 
@@ -59,6 +60,7 @@ export const authenticatedPageProcedure = authenticatedProcedure
         ...ctx,
         pageId: page.id,
         workspaceId: page.workspaceId,
+        pageType: page.type,
       },
       input,
     });

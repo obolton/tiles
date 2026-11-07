@@ -70,6 +70,17 @@ describe("TilePlacement", () => {
       expect(page.index.has("orphan")).toBe(true);
     });
 
+    test("leaves root tiles of a document page to the body", () => {
+      const doc = new Y.Doc();
+      placeTile(doc, Section.createMap({ layout: "GRID" }), "embedded", null, "a0");
+      placeTile(doc, Text.createMap({ align: "TOP" }), "child", "embedded", "a1");
+      const page = new Page({ ...PAGE, type: "DOCUMENT" }, doc);
+
+      expect(page.tiles.value).toHaveLength(0);
+      expect(page.index.has("embedded")).toBe(true);
+      expect(page.getSection("embedded").tiles.value.map((t) => t.id)).toEqual(["child"]);
+    });
+
     test("places children regardless of section order in the doc map", () => {
       const doc = new Y.Doc();
       placeTile(doc, Text.createMap({ align: "TOP" }), "child", "sec", "a1");

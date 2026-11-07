@@ -1,7 +1,9 @@
 import * as Y from "yjs";
+import { BODY_ID } from "doc/body";
 import { getChildren, orderedEntries } from "doc/placement/ordering";
 import { getCell } from "doc/tiles/table";
 import { fragmentToMarkdown } from "doc/richText/markdown";
+import { getTileIds } from "doc/richText/tiles";
 import { toMarkdown } from "@/ai/context/markdown";
 import type { RichText } from "doc/types/richText";
 import type { TileType } from "doc/types/enums";
@@ -25,22 +27,46 @@ const TILE_CONTENT: Partial<Record<TileType, TileSerializer>> = {
 };
 
 /**
- * Resolves tile IDs to their content from a Y.Doc.
+ * Resolves tile IDs to their content from a Y.Doc. Sections expand to their children and
+ * {@link BODY_ID} to the document body, whose embedded tiles are inlined with their own IDs.
  */
-export function resolveTileContents(doc: Y.Doc, ids: string[]): TileContent[] {
+export function resolveTileContents(
+  doc: Y.Doc,
+  ids: string[],
+  body: Y.XmlFragment | null = null,
+): TileContent[] {
   const tiles = doc.getMap<Y.Map<unknown>>("tiles");
-  const contents: TileContent[] = [];
+  const resolved = expandReferences(tiles, ids, body);
+  const refs = new Map(resolved.map((id, index) => [id, index]));
 
-  for (const id of expandSections(tiles, ids)) {
+  const describe = (id: string): string => {
     const tile = tiles.get(id);
-    const type = tile?.get("type") as TileType | undefined;
-    if (!tile || !type || type === "SECTION") {
-      continue;
+    if (!tile) {
+      return "";
     }
-    contents.push({ id, type, content: getTileContent(tile) });
-  }
+    if (tile.get("type") === "SECTION") {
+      return getChildren(tiles, id)
+        .map((child) => describe(child.id))
+        .filter((content) => content.length > 0)
+        .join("\n\n");
+    }
+    const content = getTileContent(tile);
+    const header = `[${refs.get(id)}] (${String(tile.get("type"))}${content ? "" : ", empty"})`;
+    return content ? `${header}\n${content}` : header;
+  };
 
-  return contents;
+  return resolved.map((id) => {
+    if (id === BODY_ID) {
+      return {
+        id,
+        type: "TEXT",
+        content: body ? fragmentToMarkdown(body, { tile: describe }) : "",
+      };
+    }
+    const tile = tiles.get(id);
+    const type = tile?.get("type") as TileType;
+    return { id, type, content: tile ? getTileContent(tile) : "" };
+  });
 }
 
 export function getTileContent(tile: Y.Map<unknown>): string {
@@ -138,17 +164,34 @@ function escapeCell(value: string): string {
   return value.replace(/\|/g, "\\|").replace(/[\r\n]+/g, " ");
 }
 
-function expandSections(tiles: Y.Map<Y.Map<unknown>>, ids: string[]): string[] {
+/** Content tile ids in order: the body before its embedded tiles, sections as their children. */
+function expandReferences(
+  tiles: Y.Map<Y.Map<unknown>>,
+  ids: string[],
+  body: Y.XmlFragment | null,
+): string[] {
   const resolved = new Set<string>();
-  for (const id of ids) {
-    if (tiles.get(id)?.get("type") === "SECTION") {
+  const visit = (id: string) => {
+    if (id === BODY_ID) {
+      if (body) {
+        resolved.add(id);
+        getTileIds(body).forEach(visit);
+      }
+      return;
+    }
+    const tile = tiles.get(id);
+    if (!tile) {
+      return;
+    }
+    if (tile.get("type") === "SECTION") {
       for (const child of getChildren(tiles, id)) {
-        resolved.add(child.id);
+        visit(child.id);
       }
     } else {
       resolved.add(id);
     }
-  }
+  };
+  ids.forEach(visit);
   return Array.from(resolved);
 }
 

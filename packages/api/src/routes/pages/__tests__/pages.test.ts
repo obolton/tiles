@@ -42,6 +42,7 @@ const MOCK_PAGE_CONTEXT: AuthenticatedPageProcedureContext = {
   isService: false,
   pageId: "page-1",
   workspaceId: "workspace-1",
+  pageType: "FREE",
 };
 
 const PAGE_ID = "6e9c6c65-7bb1-4f5e-a3d7-64d1e2b3a111";
@@ -191,11 +192,8 @@ describe("createPage", () => {
 });
 
 describe("createInitialDoc", () => {
-  test("seeds a single TEXT tile for DOCUMENT pages", () => {
-    const [tile, ...rest] = getTiles(createInitialDoc("DOCUMENT"));
-
-    expect(rest).toHaveLength(0);
-    expect(tile?.type).toBe("TEXT");
+  test("seeds no tiles for DOCUMENT pages, whose body starts empty", () => {
+    expect(getTiles(createInitialDoc("DOCUMENT"))).toHaveLength(0);
   });
 
   test("seeds a FREEFORM, LANDSCAPE section for PRESENTATION pages", () => {
