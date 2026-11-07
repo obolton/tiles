@@ -90,7 +90,6 @@ body:has(dialog[open]) {
   }
 }
 
-/* Layered so that button styles such as `a.primary` can override the reset */
 @layer base {
   a {
     color: inherit;
