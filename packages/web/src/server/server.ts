@@ -165,17 +165,15 @@ async function renderRoute(
     ) +
     "</html>";
 
-  const responseHeaders = new Headers(error?.headers);
-  responseHeaders.set("Content-Type", "text/html");
-  responseHeaders.set("Link", links.join(", "));
-  for (const [name, value] of Object.entries({ ...securityHeaders, ...headers })) {
-    responseHeaders.set(name, value);
-  }
-
   return new Response(body, {
     status: error?.status ?? 200,
     statusText: error?.message,
-    headers: responseHeaders,
+    headers: new Headers([
+      ...(error?.headers ?? []),
+      ["Content-Type", "text/html"],
+      ["Link", links.join(", ")],
+      ...Object.entries({ ...securityHeaders, ...headers }),
+    ]),
   });
 }
 
