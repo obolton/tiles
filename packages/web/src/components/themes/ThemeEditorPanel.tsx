@@ -4,7 +4,7 @@ import FillPicker from "@/components/fills/FillPicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
 import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
-import { THEME_EDITOR_PANEL_ID, THEME_EDITOR_NAME_ID } from "./ThemeEditor";
+import { THEME_EDITOR_PANEL_ID } from "./ThemeEditor";
 import debounce from "@/utils/debounce";
 import CloseIcon from "@/icons/close.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
@@ -65,17 +65,17 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
       <label className={styles.field}>
         <span className={styles.label}>Name</span>
         <input
-          id={THEME_EDITOR_NAME_ID}
           type="text"
           value={data.value.name}
+          autofocus
           on:input={(event: Event) => saveName((event.target as HTMLInputElement).value)}
         />
       </label>
 
       <ThemePreview theme={data} />
 
-      <div className={styles.section} role="group" aria-label="Colors">
-        <h3 className={styles.label}>Colors</h3>
+      <fieldset className={styles.section}>
+        <legend className={styles.label}>Colors</legend>
         <FillPicker
           id={`${id}-background`}
           label="Background"
@@ -101,10 +101,10 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
           value={data.derive((d) => d.colors.accent)}
           onChange={(color) => state.update({ colors: { accent: color } })}
         />
-      </div>
+      </fieldset>
 
-      <div className={styles.section} role="group" aria-label="Fonts">
-        <h3 className={styles.label}>Fonts</h3>
+      <fieldset className={styles.section}>
+        <legend className={styles.label}>Fonts</legend>
         <FontPicker
           label="Heading"
           icon={null}
@@ -123,7 +123,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
           value={data.derive((d) => d.fonts.code)}
           onChange={(font) => state.update({ fonts: { code: font } })}
         />
-      </div>
+      </fieldset>
 
       <div className={styles.actions}>
         <button

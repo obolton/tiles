@@ -239,13 +239,13 @@ export default class Page {
       }
       this.themeId.value = theme?.id ?? null;
       if (previousId) {
-        this.releaseTheme(previousId);
+        this.pruneTheme(previousId);
       }
     });
   }
 
-  /** Drops a theme snapshot once neither the page nor any tile references it. */
-  releaseTheme(id: string) {
+  /** Removes a theme snapshot that neither the page nor any tile references any more. */
+  pruneTheme(id: string) {
     if (this.themeId.value === id) {
       return;
     }

@@ -248,7 +248,7 @@ export default abstract class Tile {
       }
       this.themeId.value = theme?.id ?? null;
       if (previousId) {
-        this.page.releaseTheme(previousId);
+        this.page.pruneTheme(previousId);
       }
     });
   }

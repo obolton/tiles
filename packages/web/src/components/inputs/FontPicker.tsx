@@ -11,7 +11,6 @@ import type { JSX } from "jsx/jsx";
 
 export interface FontPickerProps extends JSX.Attributes<"list-select"> {
   label?: string;
-  /** The trigger icon. Pass null to show none. */
   icon?: JSX.Node;
   value?: Reactive<FontId | null>;
   onChange: (value: FontId) => void;
@@ -30,7 +29,6 @@ export default function FontPicker({
 
   const setFont = (event: Event) => onChange((event.target as ListSelect).value as FontId);
 
-  // Previews the selected font on the trigger
   const style = value?.derive((font) => ({
     "--preview-font": font ? `"${getFontConfig(font).family}"` : undefined,
   }));

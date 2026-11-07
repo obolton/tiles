@@ -2,6 +2,7 @@ import { reactive } from "reactivity";
 import SidebarPanel from "@/components/pages/SidebarPanel";
 import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
+import { focusInside } from "@/utils/focus";
 import { loadFonts } from "@/utils/fonts";
 import { showModal } from "@/utils/modals";
 import { duplicateWorkspaceTheme, deleteWorkspaceTheme } from "@/utils/workspaceThemes";
@@ -11,7 +12,6 @@ import type { ThemePatch } from "@/models/Theme";
 import type { UnsubscribeCallback } from "reactivity";
 
 export const THEME_EDITOR_PANEL_ID = "theme-editor-panel";
-export const THEME_EDITOR_NAME_ID = "theme-editor-name";
 
 /**
  * State for the theme editor sidebar. While a theme is being edited, every change refreshes
@@ -25,12 +25,22 @@ export default class ThemeEditor extends SidebarPanel {
     super(THEME_EDITOR_PANEL_ID);
   }
 
-  edit(theme: Theme, returnFocusId?: string) {
+  edit(theme: Theme) {
     this.unsubscribe?.();
     this.theme.value = theme;
     this.unsubscribe = theme.data.subscribe(() => this.page.themes.refresh(theme));
-    this.open(returnFocusId);
-    requestAnimationFrame(() => document.getElementById(THEME_EDITOR_NAME_ID)?.focus());
+
+    if (this.isOpen.value) {
+      // The form re-renders for the new theme, so keep focus within the panel
+      requestAnimationFrame(() => {
+        const panel = document.getElementById(this.panelId);
+        if (panel) {
+          focusInside(panel);
+        }
+      });
+    } else {
+      this.open();
+    }
   }
 
   close() {

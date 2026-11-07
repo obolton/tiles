@@ -25,7 +25,7 @@ import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import { applyThemeStyles, getThemeStyles } from "@/utils/themes";
 import type Tile from "@/models/Tile";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
-import type { Reactive, ReactiveSet, UnsubscribeCallback } from "reactivity";
+import type { Reactive, ReactiveSet } from "reactivity";
 
 export type { PageData } from "@/models/Page";
 
@@ -55,7 +55,6 @@ export default class Editor {
   readonly canRedo: Reactive<boolean>;
 
   #abort = new AbortController();
-  #unsubscribeTheme: UnsubscribeCallback | null = null;
 
   get pageId() {
     return this.page.id;
@@ -160,8 +159,9 @@ export default class Editor {
       this.selection.subscribe(() => this.publishSelection());
 
       // The server renders the page theme onto body; keep it in sync with the doc
-      this.#unsubscribeTheme = this.page.theme.subscribe(({ value }) =>
-        applyThemeStyles(document.body, getThemeStyles(value)),
+      this.page.theme.subscribe(
+        ({ value }) => applyThemeStyles(document.body, getThemeStyles(value)),
+        this.#abort.signal,
       );
 
       // Focus the first tile if starting in edit mode
@@ -599,7 +599,6 @@ export default class Editor {
 
   dispose(): void {
     this.#abort.abort();
-    this.#unsubscribeTheme?.();
     this.stopCollaboration();
     this.undoManager?.dispose();
     if (Editor.#current === this) {

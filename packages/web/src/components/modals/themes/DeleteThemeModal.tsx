@@ -37,8 +37,7 @@ export default function DeleteThemeModal({ name, cancel, confirm }: DeleteThemeM
 
       <ModalBody>
         <p>
-          This will delete <strong>{name}</strong> from the workspace. Pages that use it keep their
-          current look. This action cannot be undone.
+          Are you sure you want to delete the <strong>{name}</strong> theme? This cannot be undone.
         </p>
       </ModalBody>
 
@@ -48,7 +47,7 @@ export default function DeleteThemeModal({ name, cancel, confirm }: DeleteThemeM
           classList={{ primary: true, destructive: true, pending }}
           data-pending-text="Deleting&#x2026;"
         >
-          Delete theme
+          Delete
         </button>
         <button type="button" className="secondary" on:click={cancel}>
           Cancel

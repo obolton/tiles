@@ -23,7 +23,6 @@ export interface ThemePickerProps extends Omit<
   "value" | "on:change"
 > {
   id: string;
-  /** The applied theme snapshot. */
   value: Reactive<ThemeData | null>;
   onChange: (theme: Theme | null) => void;
 }
@@ -70,7 +69,7 @@ export default function ThemePicker({ id, value, onChange, ...props }: ThemePick
       return;
     }
     listSelect.hide();
-    Editor.current.themeEditor.edit(theme, id);
+    Editor.current.themeEditor.edit(theme);
   }
 
   async function newTheme() {
@@ -78,7 +77,7 @@ export default function ThemePicker({ id, value, onChange, ...props }: ThemePick
     try {
       const theme = await createWorkspaceTheme(value.value);
       await applyTheme(theme);
-      Editor.current.themeEditor.edit(theme, id);
+      Editor.current.themeEditor.edit(theme);
     } catch (error) {
       handleError(error);
     }

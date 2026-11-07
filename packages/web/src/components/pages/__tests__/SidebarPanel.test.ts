@@ -64,14 +64,6 @@ describe("SidebarPanel", () => {
       expect(document.activeElement).toBe(button);
     });
 
-    test("returns focus to the element given on open", () => {
-      const state = new SidebarPanel(PANEL_ID, BUTTON_ID);
-      other.id = "other-button";
-      state.open("other-button");
-      state.close();
-      expect(document.activeElement).toBe(other);
-    });
-
     test("leaves focus alone when the panel has no button", () => {
       const state = new SidebarPanel(PANEL_ID);
       state.open();

@@ -30,6 +30,12 @@
   flex-direction: column;
   align-items: stretch;
   gap: 4px;
+  min-width: 0;
+
+  & > legend {
+    padding: 0;
+    margin-bottom: 4px;
+  }
 
   /* The controls overhang the padding so their content lines up with the heading */
   & > button,
