@@ -1,7 +1,12 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
-import { getWorkspaceThemes, invalidateWorkspaceThemes } from "../workspaceThemes";
+import {
+  getWorkspaceThemes,
+  invalidateWorkspaceThemes,
+  createWorkspaceTheme,
+} from "../workspaceThemes";
 import { initializeCache, destroyCache, themesCache } from "../cache";
+import { DEFAULT_THEME_VALUES } from "../themes";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
 import client from "@/api/client";
 
@@ -10,6 +15,9 @@ vi.mock("@/api/client", () => ({
     themes: {
       list: {
         query: vi.fn(),
+      },
+      create: {
+        mutate: vi.fn(),
       },
     },
   },
@@ -52,6 +60,37 @@ describe("workspaceThemes", () => {
 
       const cached = await themesCache.getCached();
       expect(cached?.items.map((t) => t.serialize())).toEqual(mockThemesResponse);
+    });
+  });
+
+  describe("createWorkspaceTheme", () => {
+    test("creates a theme from the default values and caches it", async () => {
+      const created = { ...THEME, id: "new-theme", name: "New theme" };
+      vi.mocked(client.themes.create.mutate).mockResolvedValueOnce(created);
+
+      const theme = await createWorkspaceTheme();
+
+      expect(client.themes.create.mutate).toHaveBeenCalledWith({
+        workspaceId: "workspace-123",
+        name: "New theme",
+        ...DEFAULT_THEME_VALUES,
+      });
+      expect(theme.serialize()).toEqual(created);
+      expect(themesCache.getById("new-theme")).toBe(theme);
+    });
+
+    test("copies the values of the given theme", async () => {
+      vi.mocked(client.themes.create.mutate).mockResolvedValueOnce({ ...DARK_THEME, id: "copy" });
+
+      await createWorkspaceTheme(DARK_THEME);
+
+      expect(client.themes.create.mutate).toHaveBeenCalledWith({
+        workspaceId: "workspace-123",
+        name: "New theme",
+        background: DARK_THEME.background,
+        colors: DARK_THEME.colors,
+        fonts: DARK_THEME.fonts,
+      });
     });
   });
 

@@ -1,4 +1,6 @@
 .item {
+  --border-color: color-mix(in oklch, var(--text-color) 40%, transparent);
+
   display: flex;
   width: calc(var(--width, var(--page-width)) * 24px);
   max-width: 100%;
@@ -8,12 +10,19 @@
   outline-color: transparent;
   color: var(--text-color);
   font-family: var(--font);
+  background-color: var(--background-fallback);
   transition:
     opacity var(--animation-duration) var(--easing),
     box-shadow var(--animation-duration) var(--easing);
 
-  &:not(.frame-full-bleed) {
-    background: var(--background, var(--background-fallback));
+  /* A theme or background override paints only the tile it is set on */
+  &.filled:not(.frame-full-bleed),
+  &.filled.frame-full-bleed::before,
+  &.filled.frame-full-bleed:global(.drag-preview) {
+    background-color: var(--background-color);
+    background-image: var(--background-image);
+    background-size: cover;
+    background-position: center;
   }
 
   &.frame-full-bleed {
@@ -21,7 +30,6 @@
       content: "";
       position: absolute;
       z-index: -1;
-      background: var(--background, var(--background-fallback));
       pointer-events: none;
     }
 
@@ -37,12 +45,8 @@
       inset-inline: -24px;
     }
 
-    &:global(.drag-preview) {
-      background: var(--background, var(--background-fallback));
-
-      &::before {
-        content: none;
-      }
+    &:global(.drag-preview)::before {
+      content: none;
     }
   }
 

@@ -13,10 +13,15 @@ export class PageUndoManager {
   readonly canRedo: ReactiveFlag = flag(false);
 
   constructor(doc: Y.Doc, hooks?: UndoStepHooks) {
-    this.manager = new Y.UndoManager(doc.getMap("tiles"), {
-      trackedOrigins: new Set([null, ySyncPluginKey]),
-      captureTimeout: 500,
-    });
+    // Page metadata and theme snapshots are tracked with the tiles so that applying a theme or
+    // changing the page layout can be undone.
+    this.manager = new Y.UndoManager(
+      [doc.getMap("tiles"), doc.getMap("metadata"), doc.getMap("themes")],
+      {
+        trackedOrigins: new Set([null, ySyncPluginKey]),
+        captureTimeout: 500,
+      },
+    );
 
     this.syncState = this.syncState.bind(this);
     this.manager.on("stack-item-added", this.syncState);

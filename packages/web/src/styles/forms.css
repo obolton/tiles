@@ -77,7 +77,7 @@
 
   input::placeholder,
   textarea::placeholder {
-    color: var(--placeholder-color);
+    color: var(--ui-placeholder-color);
   }
 
   input[type="checkbox"]:not([role="switch"]) {

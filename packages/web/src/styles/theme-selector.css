@@ -1,0 +1,35 @@
+theme-selector {
+  position: relative;
+  display: block;
+
+  &.inline {
+    display: inline-block;
+
+    & > swipe-view {
+      display: inline-block;
+      vertical-align: bottom;
+
+      &::part(buttons) {
+        left: -28px;
+      }
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    background: none;
+    border-radius: var(--border-radius);
+    pointer-events: none;
+    transition: background-color var(--animation-duration) var(--easing);
+  }
+
+  &:state(open)::before {
+    background-color: rgb(0 0 0 / 8%);
+  }
+}
+
+.theme-selector-contents {
+  display: block;
+}

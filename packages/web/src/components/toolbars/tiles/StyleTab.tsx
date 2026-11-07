@@ -4,10 +4,12 @@ import DockSelect from "@/components/toolbars/tiles/DockSelect";
 import ThemePicker from "@/components/themes/ThemePicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import TextColorIcon from "@/icons/text-color.svg?jsx";
+import FrameIcon from "@/icons/frame.svg?jsx";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
-import { resolveTheme, getThemeColors, loadThemeFonts } from "@/utils/themes";
+import If from "jsx/if";
+import { resolveTheme, getThemeColors } from "@/utils/themes";
 import { viewTransition } from "@/utils/transitions";
 import type { JSX } from "jsx/jsx";
 import type Theme from "@/models/Theme";
@@ -19,18 +21,16 @@ export interface StyleTabProps {
 }
 
 export default function StyleTab({ tile, children }: StyleTabProps) {
-  const { id, textColor, background, theme, animation } = tile;
+  const { id, textColor, borderColor, background, theme, animation, frame } = tile;
   const themeColors = theme.derive(() => {
     const resolved = resolveTheme(tile);
     return resolved ? getThemeColors(resolved) : [];
   });
+  const hasBorder = frame.derive((f) => f === "OUTLINED" || f === "FRAMED");
 
-  async function setTheme(theme: Theme | null) {
-    if (theme) {
-      await loadThemeFonts(theme.id);
-    }
-
-    tile.setTheme(theme);
+  function setTheme(theme: Theme | null) {
+    tile.editor.undoManager?.stopCapturing();
+    viewTransition(() => tile.setTheme(theme));
   }
 
   return (
@@ -62,6 +62,8 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           value={textColor}
           onChange={(color) => viewTransition(() => (tile.textColor.value = color))}
           themeColors={themeColors}
+          showClear
+          onClear={() => viewTransition(() => (tile.textColor.value = null))}
         />
 
         <FillPicker
@@ -84,6 +86,19 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
             tile.frame.value = frame;
           }}
         />
+
+        <If condition={hasBorder}>
+          <ColorPicker
+            id={`${id}-border-color`}
+            icon={<FrameIcon aria-hidden="true" />}
+            label="Border"
+            value={borderColor}
+            onChange={(color) => viewTransition(() => (tile.borderColor.value = color))}
+            themeColors={themeColors}
+            showClear
+            onClear={() => viewTransition(() => (tile.borderColor.value = null))}
+          />
+        </If>
       </ToolbarGroup>
 
       {children}

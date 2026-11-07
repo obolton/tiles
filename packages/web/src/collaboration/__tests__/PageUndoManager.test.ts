@@ -2,6 +2,7 @@ import * as Y from "yjs";
 import { describe, expect, test, beforeEach, vi } from "vitest";
 import { ySyncPluginKey } from "y-prosemirror";
 import { PageUndoManager } from "../PageUndoManager";
+import { THEME_EDIT_ORIGIN } from "@/models/PageThemes";
 
 describe("PageUndoManager", () => {
   let doc: Y.Doc;
@@ -70,6 +71,30 @@ describe("PageUndoManager", () => {
     undoManager.undo();
     expect(content).toHaveLength(0);
     expect(tiles.has("a")).toBe(true);
+  });
+
+  test("undoes changes to the page metadata", () => {
+    const metadata = doc.getMap("metadata");
+    doc.transact(() => metadata.set("themeId", "theme-1"));
+    expect(undoManager.canUndo.value).toBe(true);
+
+    undoManager.undo();
+    expect(metadata.has("themeId")).toBe(false);
+  });
+
+  test("undoes changes to the theme snapshots", () => {
+    const themes = doc.getMap("themes");
+    doc.transact(() => themes.set("theme-1", { name: "Theme" }));
+
+    undoManager.undo();
+    expect(themes.has("theme-1")).toBe(false);
+  });
+
+  test("ignores snapshot refreshes made while editing a theme", () => {
+    const themes = doc.getMap("themes");
+    doc.transact(() => themes.set("theme-1", { name: "Theme" }), THEME_EDIT_ORIGIN);
+
+    expect(undoManager.canUndo.value).toBe(false);
   });
 
   test("stops tracking after dispose", () => {

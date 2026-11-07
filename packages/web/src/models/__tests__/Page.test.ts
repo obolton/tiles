@@ -8,7 +8,7 @@ import Theme from "@/models/Theme";
 import client from "@/api/client";
 import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
-import { THEME } from "@/test/fixtures/Theme";
+import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
 
 vi.mock("@/api/client", () => ({
   default: {
@@ -37,8 +37,6 @@ describe("Page", () => {
     expect(page.author).toBe(PAGE.author);
     expect(page.type).toBe(PAGE.type);
     expect(page.title.value).toBe(PAGE.title);
-    expect(page.backgroundColor.value).toBeNull();
-    expect(page.font.value).toBeNull();
     expect(page.isPublished.value).toBe(PAGE.published);
     expect(page.folderId.value).toBe(PAGE.folderId);
     expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);
@@ -199,6 +197,29 @@ describe("Page", () => {
 
       expect(page.themeId.value).toBeNull();
       expect(page.theme.value).toBeNull();
+    });
+
+    test("drops the previous snapshot once nothing references it", () => {
+      const doc = new Y.Doc();
+      const page = new Page(PAGE, doc);
+      page.setTheme(new Theme(THEME));
+
+      page.setTheme(new Theme(DARK_THEME));
+
+      expect(doc.getMap("themes").has(THEME.id)).toBe(false);
+      expect(doc.getMap("themes").has(DARK_THEME.id)).toBe(true);
+    });
+
+    test("keeps the previous snapshot while a tile uses it", () => {
+      const doc = new Y.Doc();
+      const page = new Page(PAGE, doc);
+      const theme = new Theme(THEME);
+      page.setTheme(theme);
+      page.createTile(Text.createMap({ align: "TOP" })).setTheme(theme);
+
+      page.setTheme(null);
+
+      expect(doc.getMap("themes").has(THEME.id)).toBe(true);
     });
   });
 

@@ -9,7 +9,7 @@ resize-handle {
   z-index: 1;
   touch-action: none;
   outline: none;
-  background: var(--highlight-color);
+  background: var(--ui-highlight-color);
   opacity: 0;
   transition: opacity var(--animation-duration-short) var(--easing);
   will-change: opacity;

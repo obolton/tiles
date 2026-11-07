@@ -1,0 +1,6 @@
+.footer {
+  display: flex;
+  gap: 4px;
+  margin-inline: 8px;
+  margin-block-end: 8px;
+}

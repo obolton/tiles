@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import Section, { type CreateSectionInput } from "@/models/Section";
+import Theme from "@/models/Theme";
 import { createEditor } from "@/test/editor";
+import { THEME } from "@/test/fixtures/Theme";
 import { publishSelection } from "@/test/mocks/PageCollaboration";
 import type Editor from "@/editor/Editor";
 
@@ -250,6 +252,24 @@ describe("Editor", () => {
       editor.setEditable(false);
 
       expect(editor.share.isOpen.value).toBe(false);
+    });
+
+    test("opening the theme editor closes the share panel", () => {
+      editor.share.open();
+      editor.themeEditor.edit(new Theme(THEME));
+
+      expect(editor.themeEditor.isOpen.value).toBe(true);
+      expect(editor.share.isOpen.value).toBe(false);
+      editor.themeEditor.close();
+    });
+
+    test("leaving edit mode closes the theme editor", () => {
+      editor.themeEditor.edit(new Theme(THEME));
+
+      editor.setEditable(false);
+
+      expect(editor.themeEditor.isOpen.value).toBe(false);
+      expect(editor.themeEditor.theme.value).toBeNull();
     });
   });
 });
