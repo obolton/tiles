@@ -1,4 +1,4 @@
-import ImageToolbar from "@/components/toolbars/images/ImageToolbar";
+import ImageToolbar, { type ImageToolbarTab } from "@/components/toolbars/images/ImageToolbar";
 import ImageView from "@/components/images/ImageView";
 import MovableImage from "@/components/images/MovableImage";
 import Tile from "./Tile";
@@ -35,6 +35,20 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   } = image;
 
   const editorView = reactive<EditorView | null>(null);
+  const selectedTab = reactive<ImageToolbarTab>("image");
+
+  function onCaptionFocus() {
+    selectedTab.value = "caption";
+  }
+
+  // The caption tools stay while focus moves into the toolbar's popovers or a modal they open
+  function onCaptionBlur(event: FocusEvent) {
+    image.persistText();
+    const { relatedTarget } = event;
+    if (!(relatedTarget instanceof Element && relatedTarget.closest("floating-toolbar, dialog"))) {
+      selectedTab.value = "image";
+    }
+  }
 
   if (!imageUrl) {
     return (
@@ -55,7 +69,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
     <Tile>
       <If condition={showToolbar}>
         <Portal element="toolbar-slot">
-          <ImageToolbar image={image} editorView={editorView} />
+          <ImageToolbar image={image} editorView={editorView} selectedTab={selectedTab} />
         </Portal>
       </If>
 
@@ -90,7 +104,8 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
               classList={{ [styles.caption]: true }}
               initialValue={text.value}
               on:keydown={onKeyDown}
-              on:blur={() => image.persistText()}
+              on:focus={onCaptionFocus}
+              on:blur={onCaptionBlur}
             />
           </figure>
         ) : (

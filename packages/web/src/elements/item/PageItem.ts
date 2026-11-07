@@ -8,6 +8,8 @@ stylesheet.replaceSync(css);
 
 export interface PageItemAttributes extends GlobalHTMLAttributes {
   allowdrag?: boolean;
+  /** Shows the handle's halo while selected, even when the item cannot be dragged or resized. */
+  highlight?: boolean;
   resize?: string | null;
 }
 
@@ -24,7 +26,12 @@ declare module "jsx/html-attributes" {
 }
 
 export default class PageItem extends HTMLElement {
-  static readonly observedAttributes = ["allowdrag", "resize", "aria-selected"] as const;
+  static readonly observedAttributes = [
+    "allowdrag",
+    "highlight",
+    "resize",
+    "aria-selected",
+  ] as const;
 
   #handle: ItemHandle | null = null;
 
@@ -57,6 +64,7 @@ export default class PageItem extends HTMLElement {
   attributeChangedCallback(name: (typeof PageItem.observedAttributes)[number]) {
     switch (name) {
       case "allowdrag":
+      case "highlight":
       case "resize":
       case "aria-selected":
         this.updateHandle();
@@ -70,10 +78,11 @@ export default class PageItem extends HTMLElement {
 
   private updateHandle() {
     const selected = this.getAttribute("aria-selected") === "true";
-    const showHandle = this.hasAttribute("allowdrag") && (this.matches(":hover") || selected);
+    const showDrag = this.hasAttribute("allowdrag") && (this.matches(":hover") || selected);
     const showResize = this.resize !== null && selected;
+    const showHighlight = this.hasAttribute("highlight") && selected;
 
-    if (!showHandle && !showResize) {
+    if (!showDrag && !showResize && !showHighlight) {
       this.#handle?.remove();
       this.#handle = null;
       return;
@@ -85,7 +94,7 @@ export default class PageItem extends HTMLElement {
       this.shadowRoot?.append(this.#handle);
     }
 
-    this.#handle.allowDrag = showHandle;
+    this.#handle.allowDrag = showDrag;
     this.#handle.resize = showResize ? this.resize : null;
   }
 }

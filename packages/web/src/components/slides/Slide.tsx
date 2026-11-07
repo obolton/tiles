@@ -36,7 +36,13 @@ export default function Slide({ section, tabindex, resize, signal }: SlideProps)
   }
 
   return (
-    <Item tile={section} classList={{ [styles.frame]: true }} tabindex={tabindex} draggable={false}>
+    <Item
+      tile={section}
+      classList={{ [styles.frame]: true }}
+      tabindex={tabindex}
+      draggable={false}
+      highlight={false}
+    >
       <If condition={showToolbar}>
         <Portal element="toolbar-slot">
           <SectionToolbar section={section} />

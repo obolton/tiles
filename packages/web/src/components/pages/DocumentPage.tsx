@@ -5,6 +5,7 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DocumentToolbar from "@/components/toolbars/pages/DocumentToolbar";
 import DocumentBody from "@/components/pages/DocumentBody";
 import EditorLayout from "@/components/pages/EditorLayout";
+import { focusNear } from "@/utils/richText/navigation";
 import { reactive, type Reactive } from "reactivity";
 import styles from "./DocumentPage.module.css";
 import type Page from "@/models/Page";
@@ -34,6 +35,22 @@ export default function DocumentPage({
   const editorView = reactive<EditorView | null>(null);
   const state = reactive<EditorState | null>(null);
 
+  // Clicking the page around the body puts the caret at the nearest position, so the body can be
+  // focused when it does not fill the viewport. A drag that selected text is left alone.
+  function onClick(event: MouseEvent) {
+    const view = editorView.value;
+    if (
+      !view ||
+      !(event.target instanceof Node) ||
+      view.dom.contains(event.target) ||
+      getSelection()?.isCollapsed === false
+    ) {
+      return;
+    }
+    page.editor?.clearSelection();
+    focusNear(view, { x: event.clientX, y: event.clientY });
+  }
+
   return (
     <EditorLayout end={end} endVisible={endVisible}>
       <main
@@ -42,6 +59,7 @@ export default function DocumentPage({
         data-alignment={page.alignment}
         data-layout="VERTICAL"
         data-page-type="DOCUMENT"
+        on:click={onClick}
       >
         {page.body ? (
           <DocumentBody body={page.body} editorView={editorView} state={state} signal={signal} />

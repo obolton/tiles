@@ -1,7 +1,7 @@
 .body {
   width: calc(var(--page-width) * 24px);
   max-width: 100%;
-  padding: clamp(8px, 2cqi, 16px);
+  padding-inline: clamp(8px, 2cqi, 16px);
   color: var(--text-color);
   font-family: var(--font);
 }

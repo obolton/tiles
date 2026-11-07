@@ -28,6 +28,8 @@ export interface ItemProps {
   tabindex?: number | Reactive<number | undefined>;
   resize?: Reactive<string | null>;
   draggable?: boolean;
+  /** Whether selection is shown by the handle's halo. Slides show theirs with an outline. */
+  highlight?: boolean;
   children: JSX.Node;
 }
 
@@ -64,10 +66,12 @@ export default function Item({
   tabindex,
   resize,
   draggable,
+  highlight,
   children,
 }: ItemProps) {
   const { id, sizing, x, y, width, height, rowSpan, hide, editor } = tile;
   const allowDrag = draggable === false ? false : editor.isTileEditable;
+  const showHighlight = highlight === false ? false : editor.isTileEditable;
 
   let item: PageItem;
   const ref = (element: PageItem) => {
@@ -196,6 +200,7 @@ export default function Item({
         ref={ref}
         aria-selected={isSelected}
         allowdrag={allowDrag}
+        highlight={showHighlight}
         resize={resizeDirection}
         classList={{
           [styles.item]: true,

@@ -17,7 +17,7 @@
   outline: var(--focus-outline);
 }
 
-:host([allowdrag])::before {
+:host::before {
   content: "";
   position: absolute;
   inset: 0;
