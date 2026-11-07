@@ -21,15 +21,24 @@ function getPathFromModuleUrl(url: string) {
   return path;
 }
 
+// Top-level modules named by an error status (e.g. `404.ts`) render errors instead of paths.
+const ERROR_ROUTE_PATTERN = /^[45]\d{2}$/;
+
 export function getRouter() {
   const router = new Router();
   for (const [moduleUrl, importer] of Object.entries(routeModules)) {
     const path = getPathFromModuleUrl(moduleUrl);
-    if (typeof path === "string") {
-      router.add(path, {
-        moduleUrl,
-        import: importer as RouteImporter<unknown>,
-      });
+    if (typeof path !== "string") {
+      continue;
+    }
+    const route = {
+      moduleUrl,
+      import: importer as RouteImporter<unknown>,
+    };
+    if (ERROR_ROUTE_PATTERN.test(path)) {
+      router.addErrorRoute(Number(path), route);
+    } else {
+      router.add(path, route);
     }
   }
   return router;

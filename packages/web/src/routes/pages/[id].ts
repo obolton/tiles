@@ -10,7 +10,8 @@ import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { getPageTheme, getThemeStyles } from "@/utils/themes";
 import { getPageDescription } from "@/utils/pages";
 import { initializeDoc } from "@/collaboration/doc";
-import { notFound, redirect } from "@/router/responses";
+import { redirect } from "@/router/responses";
+import { NotFoundError } from "@/router/errors";
 import { DEFAULT_FONT } from "fonts/config";
 import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
 
@@ -22,7 +23,7 @@ async function loader({
   const pageId = parameters.id;
 
   if (!pageId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   const options = getLoaderContext(headers);
@@ -33,7 +34,7 @@ async function loader({
   ]);
 
   if (!page) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (versionId && !versionResult) {

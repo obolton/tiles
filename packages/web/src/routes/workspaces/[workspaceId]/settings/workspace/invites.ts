@@ -4,17 +4,17 @@ import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Invites, { type InvitesProps } from "@/pages/settings/Invites";
-import { notFound, forbidden } from "@/router/responses";
+import { NotFoundError, ForbiddenError } from "@/router/errors";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
 async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<InvitesProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (!import.meta.env.SSR && !isSignedIn()) {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   const options = getLoaderContext(headers);
@@ -26,7 +26,7 @@ async function loader({ headers, parameters }: RequestProperties): RouteLoaderRe
   ]);
 
   if (workspace.role !== "ADMIN") {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   return {

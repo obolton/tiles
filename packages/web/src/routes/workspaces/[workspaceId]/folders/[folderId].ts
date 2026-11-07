@@ -4,17 +4,17 @@ import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Folder, { type FolderProps } from "@/pages/library/Folder";
-import { notFound, forbidden } from "@/router/responses";
+import { NotFoundError, ForbiddenError } from "@/router/errors";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
 async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<FolderProps> {
   const { workspaceId, folderId } = parameters;
   if (!workspaceId || !folderId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (!import.meta.env.SSR && !isSignedIn()) {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   const options = getLoaderContext(headers);

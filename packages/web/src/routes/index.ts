@@ -1,7 +1,8 @@
 import client from "@/api/client";
 import { publicEnv } from "@/env/public";
 import { getSessionId } from "@/utils/sessions";
-import { redirect, notFound } from "@/router/responses";
+import { redirect } from "@/router/responses";
+import { NotFoundError } from "@/router/errors";
 import { CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import Page, { type PageProps } from "@/pages/Page";
 import { generateFontFaceCSS } from "@/utils/fonts";
@@ -36,7 +37,7 @@ async function loader(): RouteLoaderResult<PageProps> {
   const page = await client.pages.getById.query({ id: publicEnv.PUBLIC_PAGE_ID });
 
   if (!page) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   const doc = initializeDoc(page);

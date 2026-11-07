@@ -4,18 +4,18 @@ import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Library, { type LibraryProps } from "@/pages/library/Library";
-import { notFound, forbidden } from "@/router/responses";
+import { NotFoundError, ForbiddenError } from "@/router/errors";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
 async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<LibraryProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   // Client-side auth check
   if (!import.meta.env.SSR && !isSignedIn()) {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   const options = getLoaderContext(headers);

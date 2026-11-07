@@ -3,7 +3,7 @@ import { renderToString } from "jsx/server";
 import { renderHead } from "./head";
 import globalMetadata from "@/routes/metadata";
 import Body from "./Body";
-import { internalError, notFound } from "@/router/responses";
+import { HttpError, InternalServerError, NotFoundError } from "@/router/errors";
 import { resolveImport, getStylesheetsForRouteModule } from "./assets";
 import { securityHeaders } from "./security";
 import type { ModuleNode, ViteDevServer } from "vite";
@@ -87,40 +87,27 @@ async function renderRoute(
   request: Request,
   routeMatch: RouteMatch,
   viteDevServer?: ViteDevServer,
+  error?: HttpError,
 ) {
   const method = request.method;
   const { route, parameters } = routeMatch;
   const routeConfig = await route.import();
+  const requestProperties = { url, headers: request.headers, parameters, error };
 
   if (!("component" in routeConfig)) {
-    try {
-      const handler = getRequestHandler(method, routeConfig);
-      if (!handler) {
-        return notFound();
-      }
-      const response = await handler({
-        url,
-        headers: request.headers,
-        parameters,
-      });
-      return response;
-    } catch (error) {
-      console.error("Route error:", error);
-      return internalError();
+    const handler = getRequestHandler(method, routeConfig);
+    if (!handler) {
+      throw new NotFoundError();
     }
+    return handler(requestProperties);
   }
 
   const { middleware, loader, component, metadata = {}, hydrate } = routeConfig;
 
   if (middleware) {
-    try {
-      const response = await middleware(request);
-      if (response) {
-        return response;
-      }
-    } catch (error) {
-      console.error("Middleware error:", error);
-      return internalError();
+    const response = await middleware(request);
+    if (response) {
+      return response;
     }
   }
 
@@ -128,13 +115,7 @@ async function renderRoute(
     ? getStylesheetsForRouteModule(route.moduleUrl)
     : await collectStylesheets(route.moduleUrl, viteDevServer);
 
-  const loaderResult = loader
-    ? await loader({
-        url,
-        headers: request.headers,
-        parameters,
-      })
-    : undefined;
+  const loaderResult = loader ? await loader(requestProperties) : undefined;
 
   if (loaderResult instanceof Response) {
     return loaderResult;
@@ -185,30 +166,60 @@ async function renderRoute(
     "</html>";
 
   return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/html",
-      Link: links.join(", "),
-      ...securityHeaders,
-      ...headers,
-    },
+    status: error?.status ?? 200,
+    statusText: error?.message,
+    headers: new Headers([
+      ...(error?.headers ?? []),
+      ["Content-Type", "text/html"],
+      ["Link", links.join(", ")],
+      ...Object.entries({ ...securityHeaders, ...headers }),
+    ]),
+  });
+}
+
+async function renderError(
+  url: URL,
+  request: Request,
+  error: unknown,
+  viteDevServer?: ViteDevServer,
+) {
+  const httpError = error instanceof HttpError ? error : new InternalServerError({ cause: error });
+
+  if (httpError.status >= 500) {
+    const cause = httpError.cause ?? httpError;
+    if (cause instanceof Error) {
+      viteDevServer?.ssrFixStacktrace(cause);
+    }
+    console.error(request.url, cause);
+  }
+
+  const route = router.getErrorRoute(httpError.status);
+  if (route) {
+    try {
+      return await renderRoute(url, request, { route, parameters: {} }, viteDevServer, httpError);
+    } catch (renderingError) {
+      console.error(`Failed to render the ${httpError.status} page:`, renderingError);
+    }
+  }
+
+  return new Response(httpError.message, {
+    status: httpError.status,
+    statusText: httpError.message,
+    headers: httpError.headers,
   });
 }
 
 export default async function respond(request: Request, viteDevServer?: ViteDevServer) {
   const url = new URL(request.url);
-  const route = router.match(url.pathname);
-
-  if (!route) {
-    return notFound();
-  }
 
   try {
-    const response = await renderRoute(url, request, route, viteDevServer);
-    return response;
+    const routeMatch = router.match(url.pathname);
+    if (!routeMatch) {
+      throw new NotFoundError();
+    }
+    return await renderRoute(url, request, routeMatch, viteDevServer);
   } catch (error) {
-    console.error(request.url, error);
-    return internalError();
+    return renderError(url, request, error, viteDevServer);
   }
 }
 

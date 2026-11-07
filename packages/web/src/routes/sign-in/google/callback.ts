@@ -4,7 +4,7 @@ import {
   compareOAuth2State,
   getSignInErrorUrl,
 } from "@/auth/oauth2";
-import { redirect, forbidden } from "@/router/responses";
+import { redirect } from "@/router/responses";
 import { exchangeCode, verifyIdToken } from "@/auth/google";
 import { validateDestination } from "@/auth/destinations";
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
@@ -15,7 +15,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
   const cookiesToSet = clearOAuth2Cookies();
 
   if (cookies.destination && !validateDestination(cookies.destination)) {
-    return forbidden(cookiesToSet);
+    return redirect(getSignInErrorUrl("failed", null), 302, cookiesToSet);
   }
 
   const searchParams = url.searchParams;
@@ -38,7 +38,7 @@ export const GET: APIRequestHandler = async ({ url, headers }) => {
     !compareOAuth2State(cookies.state, state) ||
     !code
   ) {
-    return forbidden(cookiesToSet);
+    return redirect(getSignInErrorUrl("failed", cookies.destination), 302, cookiesToSet);
   }
 
   let session;

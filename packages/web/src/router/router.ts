@@ -1,9 +1,11 @@
 import type { JSX } from "jsx/jsx";
+import type { HttpError } from "./errors";
 
 export interface RequestProperties {
   url: URL;
   headers: Headers;
   parameters: RouteParameters;
+  error?: HttpError;
 }
 
 export interface Link {
@@ -101,6 +103,7 @@ export interface RouteNode {
 
 export default class Router {
   readonly root: RouteNode = {};
+  readonly errorRoutes = new Map<number, RouteConfig>();
 
   getPathSegments(path: string) {
     return path.split("/").filter((segment) => segment.length > 0);
@@ -136,6 +139,17 @@ export default class Router {
       }
     }
     node.route = route;
+  }
+
+  addErrorRoute(status: number, route: RouteConfig) {
+    if (!Number.isInteger(status) || status < 400 || status > 599) {
+      throw new Error(`Invalid error status: ${status}`);
+    }
+    this.errorRoutes.set(status, route);
+  }
+
+  getErrorRoute(status: number) {
+    return this.errorRoutes.get(status) ?? null;
   }
 
   match(path: string): RouteMatch | null {
