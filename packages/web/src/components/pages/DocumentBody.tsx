@@ -2,7 +2,6 @@ import EmbeddedTile from "@/components/item/EmbeddedTile";
 import RichText from "@/components/text/RichText";
 import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";
 import { serializeFragment } from "@/utils/richText/serialize";
-import { combine } from "reactivity";
 import styles from "./DocumentBody.module.css";
 import type Body from "@/models/Body";
 import type { EditorState } from "prosemirror-state";
@@ -22,16 +21,15 @@ export default function DocumentBody({ body, editorView, state, signal }: Docume
   if (!editor) {
     throw new Error("Requires editor context");
   }
-  const { isEditable, isCollaborating } = editor;
+  const { isEditable } = editor;
 
   function renderTile(id: string) {
     const tile = page.index.get(id);
     return tile ? <EmbeddedTile tile={tile} /> : null;
   }
 
-  // Editing waits for the collaboration session, which starts right after edit mode
-  const contents = combine({ isEditable, isCollaborating }, ({ isEditable }) => {
-    if (!isEditable) {
+  const contents = isEditable.derive((editable) => {
+    if (!editable) {
       return (
         <div className="rich-text">
           <RichText content={serializeFragment(body.fragment)} renderTile={renderTile} />
@@ -39,15 +37,10 @@ export default function DocumentBody({ body, editorView, state, signal }: Docume
       );
     }
 
-    const awareness = page.awareness;
-    if (!awareness) {
-      return null;
-    }
-
     return (
       <CollaborativeTextEditor
         contentFragment={body.fragment}
-        awareness={awareness}
+        awareness={editor.awareness}
         undoManager={editor.undoManager?.manager}
         editorView={editorView}
         body={body}

@@ -19,7 +19,7 @@ export interface TextTileProps {
 export default function TextTile({ text, showToolbar }: TextTileProps) {
   const {
     align,
-    editor: { isEditable, isCollaborating },
+    editor: { isEditable },
   } = text;
 
   const editorView = reactive<EditorView | null>(null);
@@ -73,21 +73,15 @@ export default function TextTile({ text, showToolbar }: TextTileProps) {
     [textViewStyles["align-bottom"]]: align === "BOTTOM",
   }));
 
-  // Editing waits for the collaboration session, which starts right after edit mode
-  const contents = combine({ isEditable, isCollaborating }, ({ isEditable }) => {
-    if (!isEditable) {
+  const contents = isEditable.derive((editable) => {
+    if (!editable) {
       return <TextView text={text} />;
-    }
-
-    const awareness = text.page.awareness;
-    if (!awareness) {
-      return null;
     }
 
     return (
       <CollaborativeTextEditor
         contentFragment={text.contentFragment}
-        awareness={awareness}
+        awareness={text.editor.awareness}
         undoManager={text.editor.undoManager?.manager}
         editorView={editorView}
         classList={editorClassList}

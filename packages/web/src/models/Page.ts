@@ -20,7 +20,6 @@ import type { ThemeData } from "@/models/Theme";
 import type { Color } from "@/utils/color";
 import type { FontId } from "fonts/config";
 import type { PageAccess } from "@/types/collaboration";
-import type { Awareness } from "@/collaboration/types";
 import type { DockEdge, HorizontalAlignment } from "doc/types/enums";
 import type { PageType } from "api/types/pages";
 import Dropdown from "@/models/Dropdown";
@@ -123,10 +122,6 @@ export default class Page {
     this.index = new Map();
     this.body = data.type === "DOCUMENT" ? new Body(this) : null;
     this.placement = new TilePlacement(this, onTilesRemoved);
-  }
-
-  get awareness(): Awareness | null {
-    return this.editor?.collaboration?.awareness ?? null;
   }
 
   createDropdown(entry: Y.Map<unknown>): Dropdown {

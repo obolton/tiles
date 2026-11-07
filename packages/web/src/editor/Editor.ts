@@ -23,6 +23,7 @@ import Share from "@/components/collaboration/Share";
 import { PageUndoManager } from "@/collaboration/PageUndoManager";
 import type Tile from "@/models/Tile";
 import type Body from "@/models/Body";
+import type { Awareness } from "@/collaboration/types";
 import type { TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type { Reactive, ReactiveSet } from "reactivity";
@@ -186,6 +187,14 @@ export default class Editor {
     }
   }
 
+  /** The collaboration session's awareness, available while editing. */
+  get awareness(): Awareness {
+    if (!this.collaboration) {
+      throw new Error("Requires a collaboration session");
+    }
+    return this.collaboration.awareness;
+  }
+
   private startCollaboration() {
     if (this.collaboration) {
       return;
@@ -211,9 +220,9 @@ export default class Editor {
     }
 
     if (editable) {
+      this.startCollaboration();
       this.isEditable.value = true;
       setEditMode(true);
-      this.startCollaboration();
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
