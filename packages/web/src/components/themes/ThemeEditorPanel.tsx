@@ -8,6 +8,8 @@ import { THEME_EDITOR_PANEL_ID, THEME_EDITOR_NAME_ID } from "./ThemeEditor";
 import debounce from "@/utils/debounce";
 import CloseIcon from "@/icons/close.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
+import DuplicateIcon from "@/icons/duplicate.svg?jsx";
+import TrashIcon from "@/icons/trash.svg?jsx";
 import styles from "./ThemeEditorPanel.module.css";
 import type ThemeEditor from "./ThemeEditor";
 import type Theme from "@/models/Theme";
@@ -129,6 +131,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
           classList={{ secondary: true, small: true }}
           on:click={() => void state.duplicate()}
         >
+          <DuplicateIcon aria-hidden="true" />
           Duplicate
         </button>
         <button
@@ -136,6 +139,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
           classList={{ secondary: true, destructive: true, small: true }}
           on:click={() => state.delete()}
         >
+          <TrashIcon aria-hidden="true" />
           Delete
         </button>
       </div>

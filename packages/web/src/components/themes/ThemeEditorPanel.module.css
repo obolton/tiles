@@ -31,21 +31,29 @@
   align-items: stretch;
   gap: 4px;
 
+  /* The controls overhang the padding so their content lines up with the heading */
   & > button,
   & > list-select {
     justify-content: flex-start;
-    width: 100%;
+    width: calc(100% + 16px);
+    margin-inline: -8px;
+  }
+
+  & > list-select::part(button) {
+    column-gap: 0;
   }
 }
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: auto;
 
   & > button {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    gap: 8px;
     padding-inline: 10px;
     font-size: 0.875rem;
   }

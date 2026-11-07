@@ -5,10 +5,14 @@ import styles from "./EditorLayout.module.css";
 import type { Reactive } from "reactivity";
 import type { JSX } from "jsx/jsx";
 
-export const SIDEBAR_CONSTRAINTS = { min: 120, max: 480, default: 200 };
+// End panels hold forms and lists, so they open wider than the thumbnail rail
+export const SIDEBAR_CONSTRAINTS = { min: 120, max: 480, startDefault: 200, endDefault: 280 };
 
-const startWidth = persistent<number>("editor:sidebar-width:start", SIDEBAR_CONSTRAINTS.default);
-const endWidth = persistent<number>("editor:sidebar-width:end", SIDEBAR_CONSTRAINTS.default);
+const startWidth = persistent<number>(
+  "editor:sidebar-width:start",
+  SIDEBAR_CONSTRAINTS.startDefault,
+);
+const endWidth = persistent<number>("editor:sidebar-width:end", SIDEBAR_CONSTRAINTS.endDefault);
 
 function clamp(value: number): number {
   return Math.min(Math.max(value, SIDEBAR_CONSTRAINTS.min), SIDEBAR_CONSTRAINTS.max);
