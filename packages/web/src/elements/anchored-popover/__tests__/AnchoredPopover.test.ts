@@ -99,7 +99,7 @@ describe("AnchoredPopover", () => {
       expect(button.getAttribute("aria-expanded")).toBeNull();
     });
 
-    test("clears the trigger element on close", () => {
+    test("clears the trigger element on close", async () => {
       button.focus();
       popover.showPopover();
 
@@ -107,7 +107,43 @@ describe("AnchoredPopover", () => {
 
       popover.hidePopover();
 
-      expect(popover.anchorElement).toBeNull();
+      await vi.waitFor(() => expect(popover.anchorElement).toBeNull());
+    });
+  });
+
+  describe("closing transition", () => {
+    let finish: () => void;
+
+    beforeEach(() => {
+      const finished = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      vi.spyOn(popover, "getAnimations").mockReturnValue([{ finished } as unknown as Animation]);
+    });
+
+    test("stays anchored to the trigger until the transition finishes", async () => {
+      button.focus();
+      popover.showPopover();
+      popover.hidePopover();
+      await Promise.resolve();
+
+      expect(popover.anchorElement).toBe(button);
+
+      finish();
+
+      await vi.waitFor(() => expect(popover.anchorElement).toBeNull());
+    });
+
+    test("stays anchored when reopened before the transition finishes", async () => {
+      button.focus();
+      popover.showPopover();
+      popover.hidePopover();
+      popover.showPopover();
+      finish();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(popover.anchorElement).toBe(button);
+      expect(button.getAttribute("aria-expanded")).toBe("true");
     });
   });
 

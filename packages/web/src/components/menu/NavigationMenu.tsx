@@ -43,7 +43,7 @@ export default function NavigationMenu({ user, workspaceId }: NavigationMenuProp
         popovertarget="navigation-menu"
         aria-haspopup="menu"
       >
-        <ProfileImage imageUrl={user.imageUrl} name={user.name} />
+        <ProfileImage imageUrl={user.imageUrl} name={user.name} classList={{ icon: true }} />
         <span className={styles.name}>{workspace?.name}</span>
       </ToolbarButton>
       <popover-menu id="navigation-menu">

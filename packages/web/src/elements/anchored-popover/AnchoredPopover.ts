@@ -32,6 +32,9 @@ export default class AnchoredPopover extends HTMLElement {
 
   #anchorElement: HTMLElement | null = null;
   #triggerElement: HTMLElement | null = null;
+  /** The element this popover last applied its anchor name to. */
+  #positionedElement: HTMLElement | null = null;
+  #isOpen = false;
   #positionAbortController: AbortController | null = null;
 
   get anchorElement() {
@@ -52,6 +55,10 @@ export default class AnchoredPopover extends HTMLElement {
 
   set anchorElement(element: HTMLElement | null) {
     this.#anchorElement = element;
+  }
+
+  get #anchorName() {
+    return `--${this.id}-anchor`;
   }
 
   constructor() {
@@ -106,7 +113,9 @@ export default class AnchoredPopover extends HTMLElement {
       return;
     }
 
-    if (event.newState === "open") {
+    this.#isOpen = event.newState === "open";
+
+    if (this.#isOpen) {
       this.#triggerElement = this.#getTriggerElement();
       if (SUPPORTS_ANCHOR_POSITIONING) {
         this.#applyAnchorPositioning();
@@ -116,7 +125,7 @@ export default class AnchoredPopover extends HTMLElement {
     }
 
     if (this.#triggerElement) {
-      this.#triggerElement.ariaExpanded = event.newState === "open" ? "true" : "false";
+      this.#triggerElement.ariaExpanded = this.#isOpen ? "true" : "false";
     }
   }
 
@@ -147,6 +156,14 @@ export default class AnchoredPopover extends HTMLElement {
         });
       }
     } else {
+      void this.#cleanupAfterClose();
+    }
+  }
+
+  /** Keeps the popover anchored to its trigger while it transitions out. */
+  async #cleanupAfterClose() {
+    await Promise.allSettled(this.getAnimations().map((animation) => animation.finished));
+    if (!this.#isOpen) {
       this.#cleanup();
     }
   }
@@ -157,9 +174,21 @@ export default class AnchoredPopover extends HTMLElement {
       return;
     }
 
-    const anchorName = `--${this.id}-anchor`;
-    anchor.style.anchorName = anchorName;
-    this.style.positionAnchor = anchorName;
+    if (this.#positionedElement !== anchor) {
+      this.#releaseAnchor();
+    }
+    anchor.style.anchorName = this.#anchorName;
+    this.style.positionAnchor = this.#anchorName;
+    this.#positionedElement = anchor;
+  }
+
+  #releaseAnchor() {
+    const anchor = this.#positionedElement;
+    // Popovers can share an anchor, so only clear a name this popover applied
+    if (anchor?.style.anchorName === this.#anchorName) {
+      anchor.style.anchorName = "";
+    }
+    this.#positionedElement = null;
   }
 
   #addPositionListeners() {
@@ -172,11 +201,7 @@ export default class AnchoredPopover extends HTMLElement {
 
   #cleanup() {
     if (SUPPORTS_ANCHOR_POSITIONING) {
-      const anchor = this.anchorElement;
-      // Popovers can share an anchor, so only clear a name this popover applied
-      if (anchor?.style.anchorName === `--${this.id}-anchor`) {
-        anchor.style.anchorName = "";
-      }
+      this.#releaseAnchor();
       this.style.positionAnchor = "";
     } else {
       this.#positionAbortController?.abort();

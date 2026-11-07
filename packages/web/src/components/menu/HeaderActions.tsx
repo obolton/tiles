@@ -18,7 +18,9 @@ import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
 import { mediaQuery } from "@/utils/viewport";
+import { combine } from "reactivity";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
+import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import styles from "./HeaderActions.module.css";
 import type Editor from "@/editor/Editor";
 
@@ -62,6 +64,10 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
   const isExpanded = isCompact.derive((compact) => !compact);
   const isPhone = mediaQuery(PHONE_QUERY);
   const showUndoRedo = isPhone.derive((phone) => !phone);
+  const showShare = combine(
+    { expanded: isExpanded, editable: isEditable },
+    ({ expanded, editable }) => expanded && editable,
+  );
 
   function toggleEdit() {
     viewTransition(() => {
@@ -104,11 +110,25 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
             </button>
 
             <If condition={isEditable}>
-              <EditingTools editor={editor} undoRedo={showUndoRedo} panels={isExpanded} />
+              <EditingTools editor={editor} undoRedo={showUndoRedo} versionHistory={isExpanded} />
             </If>
           </ToolbarGroup>
 
           <ToolbarGroup label="Page actions">
+            <If condition={showShare}>
+              <ToolbarButton
+                id={SHARE_BUTTON_ID}
+                label="Share"
+                aria-pressed={editor.share.isOpen}
+                aria-controls={editor.share.isOpen.derive((open) =>
+                  open ? SHARE_PANEL_ID : undefined,
+                )}
+                on:click={() => editor.share.toggle()}
+              >
+                <ShareIcon aria-hidden="true" />
+              </ToolbarButton>
+            </If>
+
             <If condition={isExpanded}>
               <ToolbarButton
                 label={isBookmarked.derive((value) => (value ? "Bookmarked" : "Not bookmarked"))}
@@ -136,8 +156,8 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
 
               <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
                 <If condition={isEditable}>
-                  <If condition={isPhone}>
-                    <MenuItemGroup>
+                  <MenuItemGroup>
+                    <If condition={isPhone}>
                       <MenuItem
                         icon={<UndoIcon aria-hidden="true" />}
                         aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
@@ -152,17 +172,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                       >
                         Redo
                       </MenuItem>
-                    </MenuItemGroup>
-                  </If>
-
-                  <MenuItemGroup>
-                    <MenuItem
-                      icon={<ShareIcon aria-hidden="true" />}
-                      checked={editor.share.isOpen}
-                      on:click={menuAction(() => editor.share.toggle())}
-                    >
-                      Share
-                    </MenuItem>
+                    </If>
                     <MenuItem
                       icon={<HistoryIcon aria-hidden="true" />}
                       checked={editor.versionHistory.isOpen}
@@ -174,6 +184,15 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                 </If>
 
                 <MenuItemGroup>
+                  <If condition={isEditable}>
+                    <MenuItem
+                      icon={<ShareIcon aria-hidden="true" />}
+                      checked={editor.share.isOpen}
+                      on:click={menuAction(() => editor.share.toggle())}
+                    >
+                      Share
+                    </MenuItem>
+                  </If>
                   <MenuItem
                     icon={isBookmarked.derive(bookmarkIcon)}
                     checked={isBookmarked}
