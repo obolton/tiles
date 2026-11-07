@@ -15,32 +15,39 @@ import type { Reactive } from "reactivity";
 
 export interface EditingToolsProps {
   editor: Editor;
-  /** Whether the panel buttons are shown inline rather than in the overflow menu. */
-  expanded?: Reactive<boolean>;
+  /** Whether each group is shown inline rather than in the overflow menu. */
+  undoRedo?: Reactive<boolean>;
+  panels?: Reactive<boolean>;
 }
 
-export default function EditingTools({ editor, expanded = reactive(true) }: EditingToolsProps) {
+export default function EditingTools({
+  editor,
+  undoRedo = reactive(true),
+  panels = reactive(true),
+}: EditingToolsProps) {
   const { canUndo, canRedo } = editor;
 
   return (
     <>
-      <ToolbarButton
-        label="Undo"
-        aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
-        on:click={() => editor.undo()}
-      >
-        <UndoIcon aria-hidden="true" />
-      </ToolbarButton>
+      <If condition={undoRedo}>
+        <ToolbarButton
+          label="Undo"
+          aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
+          on:click={() => editor.undo()}
+        >
+          <UndoIcon aria-hidden="true" />
+        </ToolbarButton>
 
-      <ToolbarButton
-        label="Redo"
-        aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
-        on:click={() => editor.redo()}
-      >
-        <RedoIcon aria-hidden="true" />
-      </ToolbarButton>
+        <ToolbarButton
+          label="Redo"
+          aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
+          on:click={() => editor.redo()}
+        >
+          <RedoIcon aria-hidden="true" />
+        </ToolbarButton>
+      </If>
 
-      <If condition={expanded}>
+      <If condition={panels}>
         <ToolbarButton
           id={SHARE_BUTTON_ID}
           label="Share"

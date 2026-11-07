@@ -8,6 +8,8 @@ import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import type { JSX } from "jsx/jsx";
 import type { User } from "@/utils/sessions";
 
+const WORKSPACE_NAME = "A workspace with a long name";
+
 const USER: User = {
   id: "user-1",
   name: "Jane Smith",
@@ -15,7 +17,7 @@ const USER: User = {
   email: "jane@example.com",
   imageUrl: null,
   imageKey: null,
-  workspaces: [{ id: "ws-1", name: "A workspace with a long name" }],
+  workspaces: [{ id: "ws-1", name: WORKSPACE_NAME }],
 };
 
 const TITLE = "A page title that is long enough to need truncating on a phone";
@@ -27,52 +29,25 @@ function renderHeader(actions: JSX.Node) {
   document.body.append(...nodes);
 }
 
-function viewActions() {
+function compactActions({ editing = false, undoRedo = false } = {}) {
   return (
     <>
       <ToolbarGroup label="Editing">
         <button type="button" className="primary">
-          Edit
+          {editing ? "Done" : "Edit"}
         </button>
+        {undoRedo ? (
+          <>
+            <ToolbarButton label="Undo">↶</ToolbarButton>
+            <ToolbarButton label="Redo">↷</ToolbarButton>
+          </>
+        ) : null}
       </ToolbarGroup>
       <ToolbarGroup label="Page actions">
         <ToolbarButton label="More actions">…</ToolbarButton>
       </ToolbarGroup>
     </>
   );
-}
-
-function editActions() {
-  return (
-    <>
-      <ToolbarGroup label="Editing">
-        <button type="button" className="primary">
-          Done
-        </button>
-        <ToolbarButton label="Undo">↶</ToolbarButton>
-        <ToolbarButton label="Redo">↷</ToolbarButton>
-      </ToolbarGroup>
-      <ToolbarGroup label="Page actions">
-        <ToolbarButton label="More actions">…</ToolbarButton>
-      </ToolbarGroup>
-    </>
-  );
-}
-
-function rectOf(selector: string) {
-  const element = document.querySelector(selector);
-  if (!element) {
-    throw new Error(`Missing element: ${selector}`);
-  }
-  return element.getBoundingClientRect();
-}
-
-function workspaceName() {
-  const name = document.querySelector('[popovertarget="navigation-menu"] span:last-child');
-  if (!name) {
-    throw new Error("Missing workspace name");
-  }
-  return name;
 }
 
 afterEach(() => {
@@ -85,52 +60,49 @@ describe("Header", () => {
 
     test("stacks the title below the navigation and actions", async () => {
       await page.viewport(WIDTH, 844);
-      renderHeader(editActions());
+      renderHeader(compactActions({ editing: true }));
 
-      const more = rectOf('[aria-label="More actions"]');
-      const title = rectOf("#header h1");
+      const header = page.getByRole("banner").element().getBoundingClientRect();
+      const more = page.getByRole("button", { name: "More actions" }).element();
+      const title = page.getByRole("heading", { level: 1 }).element().getBoundingClientRect();
 
-      expect(rectOf("#header").height).toBe(104);
-      expect(more.right).toBeLessThanOrEqual(WIDTH);
-      expect(title.top).toBeGreaterThanOrEqual(more.bottom);
+      expect(header.height).toBe(104);
+      expect(more.getBoundingClientRect().right).toBeLessThanOrEqual(WIDTH);
+      expect(title.top).toBeGreaterThanOrEqual(more.getBoundingClientRect().bottom);
       expect(title.right).toBeLessThanOrEqual(WIDTH);
       expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(WIDTH);
     });
 
-    test("hides the workspace name when the actions leave no room for it", async () => {
+    test("truncates the workspace name rather than overflowing", async () => {
       await page.viewport(WIDTH, 844);
-      renderHeader(editActions());
+      renderHeader(compactActions({ editing: true }));
 
-      expect(workspaceName().getBoundingClientRect().width).toBeLessThanOrEqual(1);
-      expect(rectOf('[popovertarget="new-page-menu"]').right).toBeLessThan(
-        rectOf("button.primary").left,
-      );
-    });
-
-    test("keeps a truncated workspace name when there is room", async () => {
-      await page.viewport(WIDTH, 844);
-      renderHeader(viewActions());
-
-      const name = workspaceName();
-      expect(name.getBoundingClientRect().width).toBeGreaterThan(40);
-      expect(name.scrollWidth).toBeGreaterThan(name.clientWidth);
+      const name = page.getByRole("button", { name: WORKSPACE_NAME }).element().lastElementChild;
+      expect(name?.getBoundingClientRect().width).toBeGreaterThan(40);
+      expect(name && name.scrollWidth > name.clientWidth).toBe(true);
+      expect(
+        page.getByRole("button", { name: "More actions" }).element().getBoundingClientRect().right,
+      ).toBeLessThanOrEqual(WIDTH);
     });
   });
 
   describe("at tablet width", () => {
     test("keeps a single row and truncates the title between the groups", async () => {
       await page.viewport(768, 1024);
-      renderHeader(editActions());
+      renderHeader(compactActions({ editing: true, undoRedo: true }));
 
-      const title = document.querySelector("#header h1");
-      const titleRect = rectOf("#header h1");
-      const newPage = rectOf('[popovertarget="new-page-menu"]');
-      const done = rectOf("button.primary");
+      const title = page.getByRole("heading", { level: 1 }).element();
+      const newPage = page.getByRole("button", { name: "New page" }).element();
+      const done = page.getByRole("button", { name: "Done" }).element();
 
-      expect(rectOf("#header").height).toBe(56);
-      expect(titleRect.left).toBeGreaterThanOrEqual(newPage.right);
-      expect(titleRect.right).toBeLessThanOrEqual(done.left);
-      expect(title && title.scrollWidth > title.clientWidth).toBe(true);
+      expect(page.getByRole("banner").element().getBoundingClientRect().height).toBe(56);
+      expect(title.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+        newPage.getBoundingClientRect().right,
+      );
+      expect(title.getBoundingClientRect().right).toBeLessThanOrEqual(
+        done.getBoundingClientRect().left,
+      );
+      expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
     });
   });
 });

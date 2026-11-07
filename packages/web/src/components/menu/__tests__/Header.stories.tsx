@@ -74,7 +74,6 @@ export const SettingsPage: Story = {
   render: () => <Header user={USER} workspaceId={WORKSPACE_ID} center={<h1>Settings</h1>} />,
 };
 
-/** The secondary actions as they appear below the compact breakpoint */
 function CompactPageActions() {
   return (
     <ToolbarGroup label="Page actions">
@@ -193,12 +192,6 @@ export const EditorEditModePhone: Story = {
             <button type="button" className="primary" aria-pressed="true">
               Done
             </button>
-            <ToolbarButton label="Undo">
-              <UndoIcon aria-hidden="true" />
-            </ToolbarButton>
-            <ToolbarButton label="Redo">
-              <RedoIcon aria-hidden="true" />
-            </ToolbarButton>
           </ToolbarGroup>
           <CompactPageActions />
         </>

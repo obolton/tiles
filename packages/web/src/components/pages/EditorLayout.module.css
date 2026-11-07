@@ -1,8 +1,4 @@
 .layout {
-  /* Offset the content for any fixed sidebars, narrowing main's box so its
-     container queries and centering stay correct. Body remains the scroller.
-     The applied widths derive from the raw panel sizes so breakpoints can
-     clamp or zero them. */
   --sidebar-width-start: var(--sidebar-size-start, 0px);
   --sidebar-width-end: var(--sidebar-size-end, 0px);
 

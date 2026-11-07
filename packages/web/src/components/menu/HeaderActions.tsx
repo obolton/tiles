@@ -11,6 +11,8 @@ import MenuIcon from "@/icons/menu.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import ShareIcon from "@/icons/share.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
+import UndoIcon from "@/icons/undo.svg?jsx";
+import RedoIcon from "@/icons/redo.svg?jsx";
 import If from "jsx/if";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
@@ -26,6 +28,9 @@ const PAGE_ACTIONS_MENU_ID = "page-actions-menu";
 
 /** Below this width the secondary actions collapse into an overflow menu. */
 const COMPACT_ACTIONS_QUERY = "(width < 1024px)";
+
+/** Below this width undo and redo join the overflow menu. */
+const PHONE_QUERY = "(width < 640px)";
 
 export interface HeaderActionsProps {
   editor: Editor;
@@ -54,9 +59,11 @@ function bookmarkIcon(bookmarked: boolean) {
 }
 
 export default function HeaderActions({ editor }: HeaderActionsProps) {
-  const { isEditable } = editor;
+  const { isEditable, canUndo, canRedo } = editor;
   const isCompact = mediaQuery(COMPACT_ACTIONS_QUERY);
   const isExpanded = isCompact.derive((compact) => !compact);
+  const isPhone = mediaQuery(PHONE_QUERY);
+  const showUndoRedo = isPhone.derive((phone) => !phone);
 
   let toc: TableOfContents;
   let moreButton: HTMLButtonElement;
@@ -107,7 +114,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
             </button>
 
             <If condition={isEditable}>
-              <EditingTools editor={editor} expanded={isExpanded} />
+              <EditingTools editor={editor} undoRedo={showUndoRedo} panels={isExpanded} />
             </If>
           </ToolbarGroup>
 
@@ -150,6 +157,25 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
 
               <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
                 <If condition={isEditable}>
+                  <If condition={isPhone}>
+                    <MenuItemGroup>
+                      <MenuItem
+                        icon={<UndoIcon aria-hidden="true" />}
+                        aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
+                        on:click={menuAction(() => editor.undo())}
+                      >
+                        Undo
+                      </MenuItem>
+                      <MenuItem
+                        icon={<RedoIcon aria-hidden="true" />}
+                        aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
+                        on:click={menuAction(() => editor.redo())}
+                      >
+                        Redo
+                      </MenuItem>
+                    </MenuItemGroup>
+                  </If>
+
                   <MenuItemGroup>
                     <MenuItem
                       icon={<ShareIcon aria-hidden="true" />}
