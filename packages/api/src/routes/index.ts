@@ -12,6 +12,7 @@ import collaboration from "./collaboration/router";
 import folders from "./folders/router";
 import workspaces from "./workspaces/router";
 import versions from "./versions/router";
+import videos from "./videos/router";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 
 const appRouter = router({
@@ -28,6 +29,7 @@ const appRouter = router({
   folders,
   workspaces,
   versions,
+  videos,
 });
 
 export type AppRouter = typeof appRouter;
