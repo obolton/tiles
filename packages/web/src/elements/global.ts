@@ -13,7 +13,6 @@ import "./resizable-panel/ResizablePanel";
 import "./tabs/TabBar";
 import "./tabs/TabItem";
 import "./tabs/TabPanel";
-import "./table-of-contents/TableOfContents";
 import "./table/TableView";
 import "./swipe/SwipeView";
 import "./themes/ThemeSelector";
