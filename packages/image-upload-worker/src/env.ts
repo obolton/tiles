@@ -1,7 +1,7 @@
-import { env as bindings } from "cloudflare:workers";
+// oxlint-disable node/no-process-env
 import { defineEnv } from "env";
 
 export const env = defineEnv({
-  PUBLIC_WEB_ORIGIN: bindings.PUBLIC_WEB_ORIGIN,
-  INTERNAL_API_ORIGIN: bindings.INTERNAL_API_ORIGIN,
+  PUBLIC_WEB_ORIGIN: process.env.PUBLIC_WEB_ORIGIN,
+  INTERNAL_API_ORIGIN: process.env.INTERNAL_API_ORIGIN,
 });
