@@ -5,7 +5,6 @@
   "compatibility_date": "2025-09-15",
   "compatibility_flags": ["nodejs_compat"],
   "send_metrics": false,
-  // Runtime variables are managed in the dashboard, so deploys must not delete them.
   "keep_vars": true,
   "observability": {
     "enabled": true,
