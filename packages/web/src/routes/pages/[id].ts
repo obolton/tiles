@@ -1,4 +1,5 @@
 import client from "@/api/client";
+import { isAPIErrorCode } from "@/api/errors";
 import { getLoaderContext } from "@/utils/loaderContext";
 import { CACHE_CONTROL_VALUE, PRIVATE_CACHE_CONTROL_VALUE } from "@/constants/cdn";
 import { initRoute } from "@/routes/init";
@@ -10,9 +11,22 @@ import { getPageFonts, getPagePreloads } from "@/utils/pageFonts";
 import { getPageBodyStyle } from "@/utils/themes";
 import { getPageDescription } from "@/utils/pages";
 import { initializeDoc } from "@/collaboration/doc";
-import { notFound, redirect } from "@/router/responses";
+import { redirect } from "@/router/responses";
+import { NotFoundError } from "@/router/errors";
 import { DEFAULT_FONT } from "fonts/config";
 import type { Route, RequestProperties, RouteLoaderResult, RouteMetadata } from "@/router/router";
+
+async function getPage(id: string, options: ReturnType<typeof getLoaderContext>) {
+  try {
+    return await client.pages.getById.query({ id }, options);
+  } catch (error) {
+    // The API rejects malformed ids, which read as not found rather than as a failure.
+    if (isAPIErrorCode(error, "BAD_REQUEST")) {
+      return null;
+    }
+    throw error;
+  }
+}
 
 async function loader({
   url,
@@ -22,18 +36,18 @@ async function loader({
   const pageId = parameters.id;
 
   if (!pageId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   const options = getLoaderContext(headers);
   const versionId = url.searchParams.get("version");
   const [page, versionResult] = await Promise.all([
-    client.pages.getById.query({ id: pageId }, options),
+    getPage(pageId, options),
     versionId ? client.versions.get.query({ pageId, versionId }, options).catch(() => null) : null,
   ]);
 
   if (!page) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (versionId && !versionResult) {

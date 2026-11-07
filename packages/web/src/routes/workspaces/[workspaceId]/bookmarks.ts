@@ -4,7 +4,7 @@ import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Bookmarks, { type BookmarksProps } from "@/pages/library/Bookmarks";
-import { notFound, forbidden } from "@/router/responses";
+import { NotFoundError, ForbiddenError } from "@/router/errors";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
 async function loader({
@@ -13,11 +13,11 @@ async function loader({
 }: RequestProperties): RouteLoaderResult<BookmarksProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (!import.meta.env.SSR && !isSignedIn()) {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   const options = getLoaderContext(headers);

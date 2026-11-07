@@ -15,6 +15,7 @@ const FOO = mockRoute("foo");
 const BAR = mockRoute("bar");
 const ABC = mockRoute("abc");
 const GHI = mockRoute("ghi");
+const NOT_FOUND = mockRoute("404");
 
 const router = new Router();
 router.add("/", INDEX);
@@ -24,6 +25,7 @@ router.add("/:id/nested/:name", FOO_DYNAMIC);
 router.add("/bar", BAR);
 router.add("/bar/abc", ABC);
 router.add("/bar/def/ghi", GHI);
+router.addErrorRoute(404, NOT_FOUND);
 
 describe("Router", () => {
   test("matches the index for an empty path", () => {
@@ -73,5 +75,13 @@ describe("Router", () => {
 
   test("returns null if the path does not match a deeply nested subroute", () => {
     expect(router.match("/bar/def/ghi/other")).toBeNull();
+  });
+
+  test("returns the error route for a status", () => {
+    expect(router.getErrorRoute(404)).toBe(NOT_FOUND);
+  });
+
+  test("returns null if there is no error route for a status", () => {
+    expect(router.getErrorRoute(500)).toBeNull();
   });
 });

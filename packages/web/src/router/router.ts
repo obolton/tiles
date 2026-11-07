@@ -1,9 +1,12 @@
 import type { JSX } from "jsx/jsx";
+import type { HttpError } from "./errors";
 
 export interface RequestProperties {
   url: URL;
   headers: Headers;
   parameters: RouteParameters;
+  /** The error being responded to. Only set when rendering an error route. */
+  error?: HttpError;
 }
 
 export interface Link {
@@ -101,6 +104,7 @@ export interface RouteNode {
 
 export default class Router {
   readonly root: RouteNode = {};
+  readonly errorRoutes = new Map<number, RouteConfig>();
 
   getPathSegments(path: string) {
     return path.split("/").filter((segment) => segment.length > 0);
@@ -136,6 +140,15 @@ export default class Router {
       }
     }
     node.route = route;
+  }
+
+  /** Registers the route rendered for responses with the given error status. */
+  addErrorRoute(status: number, route: RouteConfig) {
+    this.errorRoutes.set(status, route);
+  }
+
+  getErrorRoute(status: number) {
+    return this.errorRoutes.get(status) ?? null;
   }
 
   match(path: string): RouteMatch | null {

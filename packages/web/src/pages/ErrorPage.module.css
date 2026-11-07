@@ -1,0 +1,19 @@
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.details {
+  max-height: 320px;
+  padding: 12px;
+  overflow: auto;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 5%);
+  font-family: monospace;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

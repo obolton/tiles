@@ -4,17 +4,17 @@ import { isSignedIn } from "@/utils/sessions";
 import { authenticatedRoute } from "@/utils/middleware";
 import { initRoute } from "@/routes/init";
 import Trash, { type TrashProps } from "@/pages/library/Trash";
-import { notFound, forbidden } from "@/router/responses";
+import { NotFoundError, ForbiddenError } from "@/router/errors";
 import type { Route, RequestProperties, RouteLoaderResult } from "@/router/router";
 
 async function loader({ headers, parameters }: RequestProperties): RouteLoaderResult<TrashProps> {
   const { workspaceId } = parameters;
   if (!workspaceId) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   if (!import.meta.env.SSR && !isSignedIn()) {
-    return forbidden();
+    throw new ForbiddenError();
   }
 
   const options = getLoaderContext(headers);

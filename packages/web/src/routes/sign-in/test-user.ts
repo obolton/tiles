@@ -1,11 +1,12 @@
 import { signIn, setAuthenticationCookies } from "@/auth/sessions";
 import { getDestination } from "@/auth/destinations";
-import { notFound, redirect } from "@/router/responses";
+import { redirect } from "@/router/responses";
+import { NotFoundError } from "@/router/errors";
 import type { APIRoute, APIRequestHandler } from "@/router/router";
 
 export const GET: APIRequestHandler = async ({ url }) => {
   if (!import.meta.env.DEV) {
-    return notFound();
+    throw new NotFoundError();
   }
 
   const session = await signIn({
