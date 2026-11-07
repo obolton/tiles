@@ -19,12 +19,6 @@
   }
 }
 
-.label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--ui-secondary-color);
-}
-
 .section {
   display: flex;
   flex-direction: column;

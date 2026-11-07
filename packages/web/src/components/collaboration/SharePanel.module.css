@@ -18,12 +18,6 @@
   }
 }
 
-.heading {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--ui-secondary-color);
-}
-
 .row {
   display: flex;
   align-items: center;
@@ -47,8 +41,4 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.empty {
-  color: var(--ui-secondary-color);
 }

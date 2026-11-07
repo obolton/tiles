@@ -1,16 +1,15 @@
-import ToolbarButton from "@/components/buttons/ToolbarButton";
+import Sidebar from "@/components/pages/Sidebar";
 import ThemePreview from "@/components/themes/ThemePreview";
 import FillPicker from "@/components/fills/FillPicker";
 import ColorPicker from "@/components/colors/ColorPicker";
 import FontPicker from "@/components/inputs/FontPicker";
-import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
 import { THEME_EDITOR_PANEL_ID } from "./ThemeEditor";
 import debounce from "@/utils/debounce";
-import CloseIcon from "@/icons/close.svg?jsx";
 import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import styles from "./ThemeEditorPanel.module.css";
+import sidebarStyles from "@/components/pages/Sidebar.module.css";
 import type ThemeEditor from "./ThemeEditor";
 import type Theme from "@/models/Theme";
 import type { JSX } from "jsx/jsx";
@@ -19,34 +18,11 @@ export interface ThemeEditorPanelProps extends JSX.Attributes<"resizable-panel">
   state: ThemeEditor;
 }
 
-export default function ThemeEditorPanel({ state, classList, ...props }: ThemeEditorPanelProps) {
-  function onKeyDown(event: KeyboardEvent) {
-    if (event.key === "Escape") {
-      state.close();
-    }
-  }
-
+export default function ThemeEditorPanel({ state, ...props }: ThemeEditorPanelProps) {
   return (
-    <resizable-panel
-      id={THEME_EDITOR_PANEL_ID}
-      classList={{ "sidebar-panel": true, ...classList }}
-      role="complementary"
-      aria-label="Theme"
-      edge="inline-end"
-      min={SIDEBAR_CONSTRAINTS.min}
-      max={SIDEBAR_CONSTRAINTS.max}
-      on:keydown={onKeyDown}
-      {...props}
-    >
-      <div className="sidebar-panel-header">
-        <h2 className="sidebar-panel-title">Theme</h2>
-        <ToolbarButton classList={{ small: true }} label="Close" on:click={() => state.close()}>
-          <CloseIcon aria-hidden="true" />
-        </ToolbarButton>
-      </div>
-
+    <Sidebar state={state} label="Theme" {...props}>
       {state.theme.derive((theme) => (theme ? <ThemeForm state={state} theme={theme} /> : null))}
-    </resizable-panel>
+    </Sidebar>
   );
 }
 
@@ -63,7 +39,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
   return (
     <form className={styles.form} on:submit={(event: Event) => event.preventDefault()}>
       <label className={styles.field}>
-        <span className={styles.label}>Name</span>
+        <span className={sidebarStyles.heading}>Name</span>
         <input
           type="text"
           value={data.value.name}
@@ -75,7 +51,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
       <ThemePreview theme={data} />
 
       <fieldset className={styles.section}>
-        <legend className={styles.label}>Colors</legend>
+        <legend className={sidebarStyles.heading}>Colors</legend>
         <FillPicker
           id={`${id}-background`}
           label="Background"
@@ -104,7 +80,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
       </fieldset>
 
       <fieldset className={styles.section}>
-        <legend className={styles.label}>Fonts</legend>
+        <legend className={sidebarStyles.heading}>Fonts</legend>
         <FontPicker
           label="Heading"
           icon={null}

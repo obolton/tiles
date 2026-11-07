@@ -27,14 +27,18 @@ export default function EditablePage({ editor }: EditablePageProps) {
     ({ selection, isEditable }) => isEditable && selection.size === 0,
   );
 
-  const isSidebarOpen = combine(
-    {
-      versionHistory: versionHistory.isOpen,
-      share: share.isOpen,
-      themeEditor: themeEditor.isOpen,
-    },
-    ({ versionHistory, share, themeEditor }) => versionHistory || share || themeEditor,
-  );
+  const sidebar = editor.sidebar.derive((panel) => {
+    switch (panel) {
+      case versionHistory:
+        return <VersionHistoryPanel state={versionHistory} />;
+      case share:
+        return <SharePanel state={share} editor={editor} />;
+      case themeEditor:
+        return <ThemeEditorPanel state={themeEditor} />;
+      default:
+        return null;
+    }
+  });
 
   return (
     <>
@@ -58,20 +62,7 @@ export default function EditablePage({ editor }: EditablePageProps) {
         isEditable={isEditable}
         showToolbar={showPageToolbar}
         tiles={editor.page.tiles}
-        end={
-          <>
-            <If condition={versionHistory.isOpen}>
-              <VersionHistoryPanel state={versionHistory} />
-            </If>
-            <If condition={share.isOpen}>
-              <SharePanel state={share} editor={editor} />
-            </If>
-            <If condition={themeEditor.isOpen}>
-              <ThemeEditorPanel state={themeEditor} />
-            </If>
-          </>
-        }
-        endVisible={isSidebarOpen}
+        end={sidebar}
       />
     </>
   );

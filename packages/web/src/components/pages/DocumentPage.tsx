@@ -19,8 +19,7 @@ export interface DocumentPageProps {
   showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
-  end?: JSX.Node;
-  endVisible?: Reactive<boolean>;
+  end?: Reactive<JSX.Node>;
 }
 
 export default function DocumentPage({
@@ -29,13 +28,12 @@ export default function DocumentPage({
   showToolbar,
   signal,
   end,
-  endVisible,
 }: DocumentPageProps) {
   const editorView = reactive<EditorView | null>(null);
   const state = reactive<EditorState | null>(null);
 
   return (
-    <EditorLayout end={end} endVisible={endVisible}>
+    <EditorLayout end={end}>
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}

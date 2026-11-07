@@ -4,11 +4,11 @@ import NewIcon from "@/icons/new.svg?jsx";
 import If from "jsx/if";
 import PageInvite from "@/models/PageInvite";
 import { user as currentUser } from "@/utils/sessions";
-import { combine } from "reactivity";
 import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./SharePanel.module.css";
+import sidebarStyles from "@/components/pages/Sidebar.module.css";
 import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
 import type { Reactive } from "reactivity";
@@ -34,10 +34,6 @@ export default function PeopleList({ page, online }: PeopleListProps) {
     value?.id === page.author.id ? "Owner · You" : "Owner",
   );
   const hasInvites = invites.derive((items) => items.length > 0);
-  const isEmpty = combine(
-    { access, invites },
-    ({ access, invites }) => access.length === 0 && invites.length === 0,
-  );
 
   function showInviteModal() {
     void showModal(InviteModalLoader, {
@@ -65,7 +61,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
   return (
     <section className={styles.section} aria-labelledby="share-people">
       <div className={styles.row}>
-        <h3 id="share-people" className={styles.heading}>
+        <h3 id="share-people" className={sidebarStyles.heading}>
           People
         </h3>
         <button type="button" className="secondary small" on:click={showInviteModal}>
@@ -95,7 +91,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
 
       <If condition={hasInvites}>
         <>
-          <h4 id="share-pending" className={styles.heading}>
+          <h4 id="share-pending" className={sidebarStyles.heading}>
             Pending invites
           </h4>
           <ul className={styles.list} aria-labelledby="share-pending">
@@ -106,10 +102,6 @@ export default function PeopleList({ page, online }: PeopleListProps) {
             )}
           </ul>
         </>
-      </If>
-
-      <If condition={isEmpty}>
-        <p className={styles.empty}>Only you have access</p>
       </If>
     </section>
   );
