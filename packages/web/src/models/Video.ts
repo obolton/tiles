@@ -8,7 +8,7 @@ import type { VideoType } from "doc/types/enums";
 
 export type { VideoType };
 
-export type VideoMetadata = NonNullable<AppRouterOutputs["externalLinks"]["getVideoMetadata"]>;
+export type VideoMetadata = NonNullable<AppRouterOutputs["videos"]["getMetadata"]>;
 
 export interface CreateVideoInput extends Omit<CreateTileInput, "type"> {
   url: string;
@@ -38,7 +38,7 @@ export default class Video extends Tile {
   /** Creates a video from a supported video URL, such as a YouTube or Vimeo link. */
   static async create(page: Page, data: CreateVideoInput): Promise<Video> {
     const { url, ...rest } = data;
-    const metadata = await client.externalLinks.getVideoMetadata.query({
+    const metadata = await client.videos.getMetadata.query({
       pageId: page.id,
       url,
     });

@@ -116,7 +116,6 @@ export default class FormError extends HTMLElement {
     }
 
     this.textContent = control.validationMessage;
-    control.setAttribute("aria-invalid", "true");
 
     // Cancelling the invalid event also stops the browser from focusing the
     // first invalid control, so do that here instead
@@ -127,7 +126,6 @@ export default class FormError extends HTMLElement {
 
   private clear() {
     this.replaceChildren();
-    this.control?.removeAttribute("aria-invalid");
   }
 }
 

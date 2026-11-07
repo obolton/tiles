@@ -10,8 +10,8 @@ vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageColl
 
 vi.mock("@/api/client", () => ({
   default: {
-    externalLinks: {
-      getVideoMetadata: {
+    videos: {
+      getMetadata: {
         query: vi.fn(),
       },
     },
@@ -36,7 +36,7 @@ const VIDEO_METADATA: VideoMetadata = {
 };
 
 describe("Video", () => {
-  const getMetadataMock = vi.mocked(client.externalLinks.getVideoMetadata.query);
+  const getMetadataMock = vi.mocked(client.videos.getMetadata.query);
   let editor: Editor;
 
   beforeEach(() => {

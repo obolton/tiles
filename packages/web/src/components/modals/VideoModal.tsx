@@ -51,7 +51,7 @@ export default function VideoModal({ cancel, confirm }: VideoModalProps) {
       </ModalHeader>
 
       <ModalBody>
-        <div className={styles.field}>
+        <p className={styles.field}>
           <label>
             Video URL
             <input
@@ -67,7 +67,7 @@ export default function VideoModal({ cancel, confirm }: VideoModalProps) {
             />
           </label>
           <form-error id="video-url-error" for="video-url" />
-        </div>
+        </p>
       </ModalBody>
 
       <ModalFooter>

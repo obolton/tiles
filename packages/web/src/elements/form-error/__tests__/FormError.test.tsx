@@ -38,7 +38,6 @@ describe("FormError", () => {
     expect(input.reportValidity()).toBe(false);
 
     expect(error.textContent).toBe("Enter a link to a YouTube or Vimeo video.");
-    expect(input.getAttribute("aria-invalid")).toBe("true");
   });
 
   test("suppresses the browser's validation bubble", () => {
@@ -66,7 +65,6 @@ describe("FormError", () => {
     input.dispatchEvent(new Event("input", { bubbles: true }));
 
     expect(error.textContent).toBe("");
-    expect(input.hasAttribute("aria-invalid")).toBe(false);
   });
 
   test("focuses only the first invalid control when the form is submitted", () => {

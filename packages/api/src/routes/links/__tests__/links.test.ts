@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getLinkMetadata } from "@/utils/linkMetadata";
 import { fetchImage } from "@/utils/fetchImage";
 import { getVideoInfo } from "@/utils/videos";
-import { resolveLinkMetadata, resolveVideoMetadata } from "../links";
+import { resolveLinkMetadata } from "../links";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
 vi.mock("@/utils/linkMetadata", () => ({
@@ -39,49 +39,6 @@ beforeEach(() => {
   vi.mocked(getVideoInfo).mockReturnValue(null);
   vi.mocked(getLinkMetadata).mockResolvedValue(MOCK_METADATA);
   vi.mocked(fetchImage).mockResolvedValue("image-1");
-});
-
-describe("resolveVideoMetadata", () => {
-  const VIDEO_INPUT = { pageId: "page-1", url: "https://youtu.be/abc123" };
-
-  test("returns the video details with its page metadata", async () => {
-    vi.mocked(getVideoInfo).mockReturnValue({ videoType: "YOUTUBE", videoId: "abc123" });
-
-    const result = await resolveVideoMetadata(VIDEO_INPUT);
-
-    expect(getLinkMetadata).toHaveBeenCalledWith(VIDEO_INPUT.url);
-    expect(result).toEqual({
-      type: "VIDEO",
-      videoType: "YOUTUBE",
-      videoId: "abc123",
-      title: "Example",
-      description: "An example page",
-      imageUrl: "https://example.com/image.png",
-    });
-  });
-
-  test("falls back to an empty title when no metadata is available", async () => {
-    vi.mocked(getVideoInfo).mockReturnValue({ videoType: "VIMEO", videoId: "123" });
-    vi.mocked(getLinkMetadata).mockResolvedValue(null);
-
-    const result = await resolveVideoMetadata(VIDEO_INPUT);
-
-    expect(result).toEqual({
-      type: "VIDEO",
-      videoType: "VIMEO",
-      videoId: "123",
-      title: "",
-      description: null,
-      imageUrl: null,
-    });
-  });
-
-  test("returns null without fetching metadata for a non-video URL", async () => {
-    const result = await resolveVideoMetadata(INPUT);
-
-    expect(result).toBeNull();
-    expect(getLinkMetadata).not.toHaveBeenCalled();
-  });
 });
 
 describe("resolveLinkMetadata", () => {
