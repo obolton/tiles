@@ -118,7 +118,8 @@ export default class Editor {
     return null;
   }
 
-  private get lastSelectedTile(): Tile | null {
+  /** The most recently selected tile, which new content is placed after. */
+  get lastSelectedTile(): Tile | null {
     const id = last(this.selection);
     return id === null ? null : (this.page.index.get(id) ?? null);
   }

@@ -5,6 +5,7 @@ import Table from "@/models/Table";
 import type { CellValue } from "@/models/Table";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTableMap, DEFAULT_COLUMN_WIDTH, DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
+import { reactive } from "reactivity";
 import type Editor from "@/editor/Editor";
 
 vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
@@ -104,6 +105,22 @@ describe("Table", () => {
 
       expect(subscriber).toHaveBeenCalledTimes(1);
       expect(data.value).toEqual(["b1", "b2", "b3", null]);
+    });
+
+    test("follows a reactive column id", () => {
+      const columnId = reactive<string | null>("a");
+      const data = table.getColumnData(columnId);
+      const subscriber = vi.fn();
+      data.subscribe(subscriber);
+
+      expect(data.value).toEqual(["a1", "a2", "a3"]);
+
+      columnId.value = "c";
+      expect(subscriber).toHaveBeenCalledTimes(1);
+      expect(data.value).toEqual(["c1", "c2", "c3"]);
+
+      columnId.value = null;
+      expect(data.value).toEqual([]);
     });
   });
 

@@ -1,15 +1,25 @@
 import * as Y from "yjs";
 import { BaseReactive, type SubscribeCallback } from "reactivity";
 
+export interface YReactiveOptions {
+  /** Whether changes to nested types notify, as well as changes to the type itself. */
+  deep?: boolean;
+}
+
 /**
  * A reactive view of a `Y.AbstractType`.
  */
 export default class YReactive<T extends Y.AbstractType<any>> extends BaseReactive<T> {
   private observing = false;
+  private readonly deep: boolean;
   private readonly onDeepChange = this.handleDeepChange.bind(this);
 
-  constructor(private readonly input: T) {
+  constructor(
+    private readonly input: T,
+    { deep = true }: YReactiveOptions = {},
+  ) {
     super();
+    this.deep = deep;
   }
 
   get value(): T {
@@ -41,7 +51,11 @@ export default class YReactive<T extends Y.AbstractType<any>> extends BaseReacti
     }
   }
 
-  private handleDeepChange() {
-    this.notify();
+  // Always observes deeply, so a shallow view registered after a deep one (such as the page's tile
+  // placement) is still notified after it: Yjs calls shallow observers before deep ones.
+  private handleDeepChange(events: Y.YEvent<any>[]) {
+    if (this.deep || events.some((event) => event.target === this.input)) {
+      this.notify();
+    }
   }
 }

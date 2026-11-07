@@ -14,6 +14,8 @@ export interface TileContainer {
   remove(tiles: readonly Tile[]): void;
   previous(tile: Tile): Tile | null;
   next(tile: Tile): Tile | null;
+  /** Where a new tile goes to directly follow the given one. */
+  placementAfter(tile: Tile): TilePlacementInput;
   /** Copies the tile in place, directly after the original. */
   duplicate(tile: Tile): Tile;
 }

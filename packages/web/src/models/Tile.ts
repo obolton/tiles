@@ -129,6 +129,11 @@ export default abstract class Tile {
     return cloned;
   }
 
+  /** Where a new tile goes to directly follow this one. */
+  placementAfter(): TilePlacementInput {
+    return this.container.placementAfter(this);
+  }
+
   /** Copies the tile in place, directly after the original. */
   duplicate(): Tile {
     return this.container.duplicate(this);

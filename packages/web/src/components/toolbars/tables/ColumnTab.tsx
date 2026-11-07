@@ -58,20 +58,16 @@ export default function ColumnTab({ table, getTable }: ColumnTabProps) {
   }
 
   async function createChart() {
-    const selection = getTable().selection;
-    const first = Array.from(selection)[0];
-    const column = first?.type === "column" ? first.column : null;
-    const columnId = column?.id;
-    if (!columnId) {
+    const columnId = getSelectedColumn()?.id;
+    const selected = columnId ? columns.value.find((c) => c.id === columnId) : undefined;
+    if (!selected) {
       return;
     }
-    const selected = columns.value.find((c) => c.id === columnId);
-    await Chart.create(page, {
-      parentId: table.parentId.value,
-      tableId: id,
-      sizing: "FOUR_THREE",
-      columns: selected ? [{ id: selected.id, title: selected.title.value }] : [],
-    });
+    try {
+      await Chart.createFromTable(page, table, { columns: [selected] });
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   async function deleteSelection() {

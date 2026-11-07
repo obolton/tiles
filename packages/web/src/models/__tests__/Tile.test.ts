@@ -5,10 +5,12 @@ import Section, { type CreateSectionInput } from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
 import type TileCollection from "@/models/TileCollection";
+import type { PlacementInput } from "doc/tiles/base";
 import { createEditor } from "@/test/editor";
 import { ASPECT_RATIOS } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
+import { getTileIds } from "doc/richText/tiles";
 import type Editor from "@/editor/Editor";
 
 vi.mock("@/collaboration/PageCollaboration", () => import("@/test/mocks/PageCollaboration"));
@@ -37,10 +39,7 @@ describe("Tile", () => {
     editor = createEditor();
   });
 
-  function createTile(
-    overrides: Partial<CreateSectionInput> = {},
-    placement: { parentId?: string | null; beforeId?: string | null } = {},
-  ) {
+  function createTile(overrides: Partial<CreateSectionInput> = {}, placement: PlacementInput = {}) {
     return editor.page.createTile(
       Section.createMap({ ...PROPS, ...overrides }),
       placement,
@@ -305,6 +304,16 @@ describe("Tile", () => {
     });
   });
 
+  describe("placementAfter", () => {
+    test("targets the parent, before the next sibling", () => {
+      expect(a.placementAfter()).toEqual({ parentId: section.id, beforeId: b.id });
+    });
+
+    test("appends after the last tile", () => {
+      expect(c.placementAfter()).toEqual({ parentId: section.id, beforeId: null });
+    });
+  });
+
   describe("duplicate", () => {
     test("copies the tile directly after itself", () => {
       const copy = a.duplicate();
@@ -335,6 +344,14 @@ describe("Tile", () => {
       expect(embedded.parent).toBeNull();
       expect(embedded.previous).toBeNull();
       expect(embedded.next).toBeNull();
+    });
+
+    test("places a following tile after its node in the body", () => {
+      const placement = embedded.placementAfter();
+      const next = createTile({}, placement);
+
+      expect(placement.parentId).toBeNull();
+      expect(getTileIds(editor.page.body!.fragment)).toEqual([embedded.id, next.id]);
     });
 
     test("refuses to be moved by placement", () => {

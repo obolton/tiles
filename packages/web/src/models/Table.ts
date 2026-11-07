@@ -15,7 +15,7 @@ import Row, { type CellValue } from "./Row";
 import SharedList from "@/collaboration/SharedList";
 import { createId } from "doc/id";
 import YReactive from "@/collaboration/YReactive";
-import type { Reactive } from "reactivity";
+import { combine, isReactive, type Reactive } from "reactivity";
 import type Page from "@/models/Page";
 
 export type { CellValue };
@@ -80,10 +80,18 @@ export default class Table extends Tile {
     this.rows = new SharedList(this.rowsMap, (id, rowMap) => new Row(id, rowMap));
   }
 
-  getColumnData(columnId: string): Reactive<CellValue[]> {
-    return this.rowsContent.derive((rows) =>
-      orderedEntries(rows).map(({ map }) => getCell(map, columnId) as CellValue),
+  /** The column's cells in row order; empty for a `null` column id. */
+  getColumnData(columnId: string | Reactive<string | null>): Reactive<CellValue[]> {
+    if (!isReactive(columnId)) {
+      return this.rowsContent.derive((rows) => this.getCells(rows, columnId));
+    }
+    return combine({ columnId, rows: this.rowsContent }, ({ columnId, rows }) =>
+      columnId === null ? [] : this.getCells(rows, columnId),
     );
+  }
+
+  private getCells(rows: Y.Map<Y.Map<unknown>>, columnId: string): CellValue[] {
+    return orderedEntries(rows).map(({ map }) => getCell(map, columnId) as CellValue);
   }
 
   // Columns

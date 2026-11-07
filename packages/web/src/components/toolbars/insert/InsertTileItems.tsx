@@ -5,6 +5,7 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import VideoIcon from "@/icons/video.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
+import ChartIcon from "@/icons/chart.svg?jsx";
 import If from "jsx/if";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
@@ -16,6 +17,8 @@ import Video from "@/models/Video";
 import Link from "@/models/Link";
 import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
+import Chart from "@/models/Chart";
+import type { TableMapInput } from "doc/tiles/table";
 import type { TileType } from "doc/types/enums";
 import type { TilePlacementInput } from "@/models/TileContainer";
 import type { JSX } from "jsx/jsx";
@@ -33,7 +36,21 @@ const BUTTONS: readonly InsertTileButton[] = [
   { label: "Video", type: "VIDEO", Icon: VideoIcon },
   { label: "Link", type: "LINK", Icon: LinkIcon },
   { label: "Table", type: "TABLE", Icon: TableIcon },
+  { label: "Chart", type: "CHART", Icon: ChartIcon },
 ];
+
+/** The data a chart starts from when there is no table to chart. */
+const SAMPLE_TABLE: Pick<TableMapInput, "columns" | "rows"> = {
+  columns: [{ title: "Month" }, { title: "Sunny days" }, { title: "Rainy days" }],
+  rows: [
+    { cells: ["Jan", "8", "14"] },
+    { cells: ["Feb", "10", "12"] },
+    { cells: ["Mar", "13", "11"] },
+    { cells: ["Apr", "16", "9"] },
+    { cells: ["May", "19", "8"] },
+    { cells: ["Jun", "22", "6"] },
+  ],
+};
 
 const ImageModalLoader = () => import("@/components/modals/image/ImageModal");
 const VideoModalLoader = () => import("@/components/modals/VideoModal");
@@ -125,6 +142,21 @@ export default function InsertTileItems({ getPlacement, showText }: InsertTileIt
             rows: 5,
           });
           break;
+
+        case "CHART": {
+          // Charts the selected table, else a new table of sample data to edit.
+          const selected = Editor.current.lastSelectedTile;
+          const table =
+            selected instanceof Table
+              ? selected
+              : await Table.create(Editor.current.page, {
+                  ...placement,
+                  ...SAMPLE_TABLE,
+                  height: 12,
+                });
+          await Chart.createFromTable(Editor.current.page, table);
+          break;
+        }
       }
     } catch (error) {
       handleError(error);

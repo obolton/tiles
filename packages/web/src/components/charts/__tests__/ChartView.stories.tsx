@@ -63,9 +63,37 @@ const doc = createDoc({
     ],
   }),
   "chart-empty": buildChartMap({ tableId: "table", series: [] }),
+  "chart-missing-table": buildChartMap({
+    tableId: "deleted-table",
+    series: [{ type: "BAR", column: { id: "col-2", title: "Expenses" }, fill: null }],
+  }),
+  "sparse-table": buildTableMap({
+    columns: [
+      { id: "col-1", title: "Month" },
+      { id: "col-2", title: "Sunny days" },
+      { id: "col-3", title: "Rainy days" },
+    ],
+    rows: [
+      { cells: ["Jan", "8", "14"] },
+      { cells: ["Feb", "10", "12"] },
+      { cells: ["Mar", "13", null] },
+      { cells: [null, null, null] },
+      { cells: [null, null, null] },
+    ],
+  }),
+  "chart-defaults": buildChartMap({
+    tableId: "sparse-table",
+    label: { id: "col-1", title: "Month" },
+    series: [
+      { type: "BAR", column: { id: "col-2", title: "Sunny days" }, fill: null },
+      { type: "LINE", column: { id: "col-3", title: "Rainy days" }, fill: null },
+    ],
+  }),
 });
 
 const editor = Editor.init(PAGE, doc);
+
+const FRAME = { display: "grid", width: "640px", height: "400px" };
 
 const meta = {
   title: "ChartView",
@@ -75,27 +103,66 @@ export default meta;
 export const Default: Story = {
   render: () => {
     const chart = editor.page.getTile("chart-default", Chart);
-    return <ChartView chart={chart} />;
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
   },
 };
 
 export const SingleSeries: Story = {
   render: () => {
     const chart = editor.page.getTile("chart-single", Chart);
-    return <ChartView chart={chart} />;
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
   },
 };
 
 export const GradientArea: Story = {
   render: () => {
     const chart = editor.page.getTile("chart-area", Chart);
-    return <ChartView chart={chart} />;
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
   },
 };
 
 export const Empty: Story = {
   render: () => {
     const chart = editor.page.getTile("chart-empty", Chart);
-    return <ChartView chart={chart} />;
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
+  },
+};
+
+/** Default colours, a legend, and trailing empty rows left out. */
+export const DefaultColors: Story = {
+  render: () => {
+    const chart = editor.page.getTile("chart-defaults", Chart);
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
+  },
+};
+
+export const MissingTable: Story = {
+  render: () => {
+    const chart = editor.page.getTile("chart-missing-table", Chart);
+    return (
+      <div style={FRAME}>
+        <ChartView chart={chart} />
+      </div>
+    );
   },
 };

@@ -4,8 +4,6 @@ import StyleTab from "@/components/toolbars/tiles/StyleTab";
 import DateTab from "@/components/toolbars/tiles/DateTab";
 import SeriesPanel from "./SeriesPanel";
 import ChartIcon from "@/icons/chart.svg?jsx";
-import Editor from "@/editor/Editor";
-import Table from "@/models/Table";
 import type Chart from "@/models/Chart";
 
 export interface ChartToolbarProps {
@@ -13,8 +11,6 @@ export interface ChartToolbarProps {
 }
 
 export default function ChartToolbar({ chart }: ChartToolbarProps) {
-  const table = Editor.current.page.getTile(chart.tableId.value, Table);
-
   return (
     <floating-toolbar className="primary" data-tooltip-position="bottom" aria-label="Chart tools">
       <toolbar-tab name="chart" label="Chart">
@@ -24,12 +20,16 @@ export default function ChartToolbar({ chart }: ChartToolbarProps) {
             label="Series"
             popovertarget={`${chart.id}-series-panel`}
             aria-haspopup="menu"
+            disabled={chart.table.derive((table) => table === null)}
           >
             <ChartIcon aria-hidden="true" />
             Series
           </ToolbarButton>
 
-          <SeriesPanel id={`${chart.id}-series-panel`} chart={chart} table={table} />
+          {chart.table.derive(
+            (table) =>
+              table && <SeriesPanel id={`${chart.id}-series-panel`} chart={chart} table={table} />,
+          )}
         </ToolbarGroup>
       </toolbar-tab>
 
