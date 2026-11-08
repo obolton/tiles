@@ -1,4 +1,5 @@
 import { describe, test, expect, vi } from "vitest";
+import { z } from "zod";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, createTools } from "../tools";
 
@@ -28,6 +29,26 @@ describe("FUNCTION_TOOLS", () => {
       expect(typeof tool.function).toBe("function");
     }
   });
+
+  // Strict tool schemas must list every property as required, so optional values are nullable
+  // rather than `.optional()` or `.default()`. The AI SDK converts schemas in input mode.
+  test.each(FUNCTION_TOOLS.map((tool) => [tool.name, tool] as const))(
+    "%s lists every property as required",
+    (_, tool) => {
+      const optional: string[] = [];
+      z.toJSONSchema(tool.schema, {
+        io: "input",
+        override: ({ jsonSchema, path }) => {
+          for (const key of Object.keys(jsonSchema.properties ?? {})) {
+            if (!jsonSchema.required?.includes(key)) {
+              optional.push([...path, key].join("."));
+            }
+          }
+        },
+      });
+      expect(optional).toEqual([]);
+    },
+  );
 });
 
 describe("createTools", () => {
