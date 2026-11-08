@@ -17,6 +17,13 @@
   /* Floating chrome (toolbars, popovers, sheets) */
   --surface-outline: 0 0 0 1px rgb(0 0 0 / 15%);
   --surface-shadow: var(--surface-outline), 0 4px 12px -4px rgb(0 0 0 / 30%);
+  --bottom-bar-inset: 32px;
+}
+
+@media (width < 640px) {
+  :root {
+    --bottom-bar-inset: 16px;
+  }
 }
 
 * {
