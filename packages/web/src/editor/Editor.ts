@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { set, flag, combine } from "reactivity";
+import { set, flag, combine, reactive } from "reactivity";
 import { last } from "@/utils/iterables";
 import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
 import { pulse } from "@/utils/animation/effects";
@@ -28,6 +28,7 @@ import type Body from "@/models/Body";
 import type { Awareness } from "@/collaboration/types";
 import type { TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
+import type SidebarPanel from "@/components/pages/SidebarPanel";
 import type { Reactive, ReactiveSet } from "reactivity";
 
 export type { PageData } from "@/models/Page";
@@ -49,8 +50,10 @@ export default class Editor {
   readonly isPromptToolbarOpen: Reactive<boolean>;
   readonly isTileEditable: Reactive<boolean>;
   readonly chat: ChatState;
+  /** The panel open in the end sidebar, if any. Opening a panel closes the other. */
+  readonly sidebar = reactive<SidebarPanel | null>(null);
   readonly versionHistory: VersionHistory;
-  readonly share = new Share();
+  readonly share: Share;
   readonly themeEditor: ThemeEditor;
 
   readonly undoManager: PageUndoManager | null;
@@ -158,17 +161,9 @@ export default class Editor {
     this.isPromptOpen = flag(false);
     this.isPromptToolbarOpen = flag(false);
     this.chat = new ChatState();
-    this.versionHistory = new VersionHistory(this.page.id, version ?? null);
-    this.themeEditor = new ThemeEditor(this.page);
-    // Only one end-slot panel at a time
-    const panels = [this.versionHistory, this.share, this.themeEditor];
-    for (const panel of panels) {
-      panel.isOpen.subscribe(({ value }) => {
-        if (value) {
-          panels.filter((other) => other !== panel).forEach((other) => other.close());
-        }
-      });
-    }
+    this.versionHistory = new VersionHistory(this.page.id, version ?? null, this.sidebar);
+    this.share = new Share(this.sidebar);
+    this.themeEditor = new ThemeEditor(this.page, this.sidebar);
     this.isTileEditable = combine(
       { isEditable: this.isEditable, isPromptOpen: this.isPromptOpen },
       ({ isEditable, isPromptOpen }) => isEditable && !isPromptOpen,
@@ -242,9 +237,7 @@ export default class Editor {
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
-      this.versionHistory.close();
-      this.share.close();
-      this.themeEditor.close();
+      this.sidebar.value?.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();

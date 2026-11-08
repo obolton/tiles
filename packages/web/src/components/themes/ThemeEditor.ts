@@ -9,6 +9,7 @@ import { duplicateWorkspaceTheme, deleteWorkspaceTheme } from "@/utils/workspace
 import type Page from "@/models/Page";
 import type Theme from "@/models/Theme";
 import type { ThemePatch } from "@/models/Theme";
+import type { SidebarSlot } from "@/components/pages/SidebarPanel";
 import type { UnsubscribeCallback } from "reactivity";
 
 export const THEME_EDITOR_PANEL_ID = "theme-editor-panel";
@@ -21,8 +22,11 @@ export default class ThemeEditor extends SidebarPanel {
   readonly theme = reactive<Theme | null>(null);
   private unsubscribe: UnsubscribeCallback | null = null;
 
-  constructor(private readonly page: Page) {
-    super(THEME_EDITOR_PANEL_ID);
+  constructor(
+    private readonly page: Page,
+    sidebar?: SidebarSlot,
+  ) {
+    super(THEME_EDITOR_PANEL_ID, null, sidebar);
   }
 
   edit(theme: Theme) {

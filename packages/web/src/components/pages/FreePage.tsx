@@ -21,8 +21,7 @@ export interface FreePageProps {
   showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
-  end?: JSX.Node;
-  endVisible?: Reactive<boolean>;
+  end?: Reactive<JSX.Node>;
 }
 
 export default function FreePage({
@@ -32,7 +31,6 @@ export default function FreePage({
   tiles,
   signal,
   end,
-  endVisible,
 }: FreePageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
@@ -67,7 +65,7 @@ export default function FreePage({
   }
 
   return (
-    <EditorLayout end={end} endVisible={endVisible}>
+    <EditorLayout end={end}>
       <div className={styles.layout} style={style}>
         <DockZone
           page={page}

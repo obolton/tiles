@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { reactive } from "reactivity";
 import SidebarPanel, { PAGE_ACTIONS_BUTTON_ID } from "../SidebarPanel";
 
 const PANEL_ID = "test-panel";
@@ -108,6 +109,42 @@ describe("SidebarPanel", () => {
       expect(state.isOpen.value).toBe(true);
       state.toggle();
       expect(state.isOpen.value).toBe(false);
+    });
+  });
+
+  describe("sidebar", () => {
+    test("holds the open panel", () => {
+      const sidebar = reactive<SidebarPanel | null>(null);
+      const state = new SidebarPanel(PANEL_ID, BUTTON_ID, sidebar);
+      state.open();
+      expect(sidebar.value).toBe(state);
+      state.close();
+      expect(sidebar.value).toBeNull();
+    });
+
+    test("opening a panel closes the panel sharing its sidebar", () => {
+      const sidebar = reactive<SidebarPanel | null>(null);
+      const first = new SidebarPanel(PANEL_ID, BUTTON_ID, sidebar);
+      const second = new SidebarPanel("other-panel", null, sidebar);
+      const close = vi.spyOn(first, "close");
+      first.open();
+
+      second.open();
+
+      expect(close).toHaveBeenCalledTimes(1);
+      expect(first.isOpen.value).toBe(false);
+      expect(second.isOpen.value).toBe(true);
+    });
+
+    test("closing a panel leaves another sidebar's panel open", () => {
+      const first = new SidebarPanel(PANEL_ID, BUTTON_ID);
+      const second = new SidebarPanel("other-panel");
+      first.open();
+      second.open();
+
+      first.close();
+
+      expect(second.isOpen.value).toBe(true);
     });
   });
 });

@@ -26,6 +26,11 @@ class TooltipController {
           if (!(event.target instanceof Element)) {
             return;
           }
+          // Focus only counts when it is visible, so focus moved by script after a click
+          // (e.g. into a newly opened panel) does not show a tooltip
+          if (event.type === "focusin" && !event.target.matches(":focus-visible")) {
+            return;
+          }
           const target = event.target.closest<HTMLElement>("[data-tooltip]");
           if (target && target !== this.target && target.ariaExpanded !== "true") {
             this.enter(target);
