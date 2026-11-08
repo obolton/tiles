@@ -1,28 +1,9 @@
 import { describe, test, expect, vi } from "vitest";
-import { asSchema, type JSONSchema7 } from "ai";
+import { z } from "zod";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, createTools } from "../tools";
 
 const EXECUTION_OPTIONS = { toolCallId: "call-1", messages: [], context: {} };
-
-function collectObjectSchemas(schema: JSONSchema7, found: JSONSchema7[] = []): JSONSchema7[] {
-  if (schema.properties) {
-    found.push(schema);
-  }
-  const children = [
-    ...Object.values(schema.properties ?? {}),
-    ...(schema.anyOf ?? []),
-    ...(schema.oneOf ?? []),
-    ...(schema.allOf ?? []),
-    ...(Array.isArray(schema.items) ? schema.items : [schema.items]),
-  ];
-  for (const child of children) {
-    if (typeof child === "object") {
-      collectObjectSchemas(child, found);
-    }
-  }
-  return found;
-}
 
 describe("FUNCTION_TOOLS", () => {
   test("contains all expected tools", () => {
@@ -49,19 +30,23 @@ describe("FUNCTION_TOOLS", () => {
     }
   });
 
-  // Strict tool schemas must list every property as required; optional values are nullable.
+  // Strict tool schemas must list every property as required, so optional values are nullable
+  // rather than `.optional()` or `.default()`. The AI SDK converts schemas in input mode.
   test.each(FUNCTION_TOOLS.map((tool) => [tool.name, tool] as const))(
     "%s lists every property as required",
     (_, tool) => {
-      const objects = collectObjectSchemas(asSchema(tool.schema).jsonSchema);
-      expect(objects.length).toBeGreaterThan(0);
-
-      for (const object of objects) {
-        const missing = Object.keys(object.properties ?? {}).filter(
-          (key) => !object.required?.includes(key),
-        );
-        expect(missing).toEqual([]);
-      }
+      const optional: string[] = [];
+      z.toJSONSchema(tool.schema, {
+        io: "input",
+        override: ({ jsonSchema, path }) => {
+          for (const key of Object.keys(jsonSchema.properties ?? {})) {
+            if (!jsonSchema.required?.includes(key)) {
+              optional.push([...path, key].join("."));
+            }
+          }
+        },
+      });
+      expect(optional).toEqual([]);
     },
   );
 });
