@@ -3,22 +3,6 @@ import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 const VIEWPORT_MARGIN = 64;
 const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
 
-// An anchor keeps one name for life, so popovers sharing a trigger never clobber each other
-const anchorNames = new WeakMap<Element, string>();
-let anchorCount = 0;
-
-function getAnchorName(anchor: HTMLElement) {
-  let name = anchorNames.get(anchor);
-  if (!name) {
-    name = `--popover-anchor-${++anchorCount}`;
-    anchorNames.set(anchor, name);
-  }
-  if (anchor.style.anchorName !== name) {
-    anchor.style.anchorName = name;
-  }
-  return name;
-}
-
 export type Alignment = "left" | "center" | "right" | "auto";
 
 export interface AnchoredPopoverAttributes extends GlobalHTMLAttributes {
@@ -48,6 +32,7 @@ export default class AnchoredPopover extends HTMLElement {
 
   #anchorElement: HTMLElement | null = null;
   #triggerElement: HTMLElement | null = null;
+  #anchoredElement: HTMLElement | null = null;
   #positionAbortController: AbortController | null = null;
 
   get anchorElement() {
@@ -180,13 +165,30 @@ export default class AnchoredPopover extends HTMLElement {
   }
 
   /**
-   * Points the popover at its anchor. The association is deliberately kept when the popover
-   * closes so it stays attached to the anchor while it fades out; the next open re-points it.
-   * Without an anchor, the stylesheet's `position-anchor: auto` falls back to the invoker.
+   * Points the popover at its anchor. The association is kept when the popover closes so it stays
+   * attached while fading out; the next open re-points it. Without an anchor, the stylesheet's
+   * `position-anchor: auto` falls back to the invoker.
    */
   #applyAnchorPositioning() {
     const anchor = this.anchorElement;
-    this.style.positionAnchor = anchor ? getAnchorName(anchor) : "";
+    const anchorName = `--${this.id}-anchor`;
+
+    // Popovers can share an anchor, so only clear a name this popover applied
+    if (
+      this.#anchoredElement &&
+      this.#anchoredElement !== anchor &&
+      this.#anchoredElement.style.anchorName === anchorName
+    ) {
+      this.#anchoredElement.style.anchorName = "";
+    }
+    this.#anchoredElement = anchor;
+
+    if (anchor) {
+      anchor.style.anchorName = anchorName;
+      this.style.positionAnchor = anchorName;
+    } else {
+      this.style.positionAnchor = "";
+    }
   }
 
   #addPositionListeners() {

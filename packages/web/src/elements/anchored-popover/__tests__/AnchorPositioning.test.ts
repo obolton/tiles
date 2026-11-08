@@ -33,8 +33,8 @@ describe("AnchoredPopover", () => {
       button.focus();
       popover.showPopover();
 
-      expect(button.style.anchorName).toMatch(/^--/);
-      expect(popover.style.positionAnchor).toBe(button.style.anchorName);
+      expect(button.style.anchorName).toBe("--popover-anchor");
+      expect(popover.style.positionAnchor).toBe("--popover-anchor");
     });
 
     test("uses the toggle event source as the trigger", () => {
@@ -47,61 +47,50 @@ describe("AnchoredPopover", () => {
       expect(popover.anchorElement).toBe(source);
       expect(source.getAttribute("aria-expanded")).toBe("true");
       expect(button.getAttribute("aria-expanded")).toBeNull();
-      expect(popover.style.positionAnchor).toBe(source.style.anchorName);
+      expect(source.style.anchorName).toBe("--popover-anchor");
+      expect(button.style.anchorName).toBe("");
     });
 
     test("stays anchored to the trigger after closing", () => {
       button.focus();
       popover.showPopover();
-      const anchorName = popover.style.positionAnchor;
 
       popover.hidePopover();
 
-      expect(popover.style.positionAnchor).toBe(anchorName);
-      expect(button.style.anchorName).toBe(anchorName);
+      expect(popover.style.positionAnchor).toBe("--popover-anchor");
+      expect(button.style.anchorName).toBe("--popover-anchor");
     });
 
-    test("re-anchors to a different trigger when reopened", () => {
+    test("moves the anchor name to a different trigger when reopened", () => {
       const button2 = document.createElement("button");
       button2.setAttribute("popovertarget", popover.id);
       document.body.appendChild(button2);
 
       button.focus();
       popover.showPopover();
-      const firstName = popover.style.positionAnchor;
       popover.hidePopover();
 
       button2.focus();
       popover.showPopover();
 
-      expect(popover.style.positionAnchor).toBe(button2.style.anchorName);
-      expect(popover.style.positionAnchor).not.toBe(firstName);
-      expect(button.style.anchorName).toBe(firstName);
+      expect(button2.style.anchorName).toBe("--popover-anchor");
+      expect(button.style.anchorName).toBe("");
+      expect(popover.style.positionAnchor).toBe("--popover-anchor");
     });
 
-    test("keeps one anchor name for a trigger shared by popovers", () => {
+    test("leaves another popover's anchor name on a shared trigger", () => {
       const popover2 = document.createElement("anchored-popover");
       popover2.id = "popover2";
-      document.body.appendChild(popover2);
+      const other = document.createElement("button");
+      document.body.append(popover2, other);
 
       popover.showPopover({ source: button });
-      const anchorName = button.style.anchorName;
-      popover2.showPopover({ source: button });
-
-      expect(button.style.anchorName).toBe(anchorName);
-      expect(popover.style.positionAnchor).toBe(anchorName);
-      expect(popover2.style.positionAnchor).toBe(anchorName);
-    });
-
-    test("restores the trigger's anchor name if it was removed", () => {
-      popover.showPopover({ source: button });
-      const anchorName = button.style.anchorName;
       popover.hidePopover();
-      button.style.anchorName = "";
+      popover2.showPopover({ source: button });
+      popover.showPopover({ source: other });
 
-      popover.showPopover({ source: button });
-
-      expect(button.style.anchorName).toBe(anchorName);
+      expect(button.style.anchorName).toBe("--popover2-anchor");
+      expect(other.style.anchorName).toBe("--popover-anchor");
     });
 
     test("falls back to the implicit anchor without a trigger", () => {
@@ -125,8 +114,8 @@ describe("AnchoredPopover", () => {
 
       popover.showPopover();
 
-      expect(popover.style.positionAnchor).toBe(anchor.style.anchorName);
-      expect(anchor.style.anchorName).toMatch(/^--/);
+      expect(anchor.style.anchorName).toBe("--popover-anchor");
+      expect(popover.style.positionAnchor).toBe("--popover-anchor");
     });
 
     test("re-anchors when the anchor attribute changes while open", () => {
@@ -142,8 +131,8 @@ describe("AnchoredPopover", () => {
 
       popover.setAttribute("anchor", "second");
 
-      expect(popover.style.positionAnchor).toBe(second.style.anchorName);
-      expect(second.style.anchorName).not.toBe(first.style.anchorName);
+      expect(second.style.anchorName).toBe("--popover-anchor");
+      expect(first.style.anchorName).toBe("");
     });
   });
 });
