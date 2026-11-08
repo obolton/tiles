@@ -37,29 +37,6 @@ export function exitNode(view: EditorView, pos: number, dir: Direction): boolean
 }
 
 /**
- * Focuses the editor with the caret nearest to a viewport point outside its content: at the
- * start above it, at the end below it, and on the nearest line beside it.
- */
-export function focusNear(view: EditorView, point: { x: number; y: number }) {
-  const { doc } = view.state;
-  const rect = view.dom.getBoundingClientRect();
-  let selection: Selection;
-
-  if (point.y < rect.top) {
-    selection = Selection.atStart(doc);
-  } else if (point.y > rect.bottom) {
-    selection = Selection.atEnd(doc);
-  } else {
-    const left = Math.min(Math.max(point.x, rect.left + 1), rect.right - 1);
-    const found = view.posAtCoords({ left, top: point.y });
-    selection = found ? TextSelection.near(doc.resolve(found.pos)) : Selection.atEnd(doc);
-  }
-
-  view.dispatch(view.state.tr.setSelection(selection).scrollIntoView());
-  view.focus();
-}
-
-/**
  * Inserts a paragraph after the node at `pos` and moves the caret into it.
  */
 export function insertParagraphAfter(view: EditorView, pos: number): boolean {

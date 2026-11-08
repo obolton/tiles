@@ -1,4 +1,8 @@
+/* The body fills the page so clicks below the text land in the editor */
 .body {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
   width: calc(var(--page-width) * 24px);
   max-width: 100%;
   padding-inline: clamp(8px, 2cqi, 16px);
@@ -7,6 +11,7 @@
 }
 
 .editor {
+  flex: 1 0 auto;
   outline: none;
 
   & li[role="checkbox"]::after {
