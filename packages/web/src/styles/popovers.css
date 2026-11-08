@@ -28,6 +28,8 @@ popover-menu {
   }
 
   @supports (anchor-name: --anchor) {
+    /* Anchor to the invoker when no explicit anchor is set; the browser keeps it while closing */
+    position-anchor: auto;
     inset-block-start: anchor(end);
     inset-inline-start: anchor(start);
     position-try-fallbacks:

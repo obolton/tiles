@@ -3,6 +3,22 @@ import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 const VIEWPORT_MARGIN = 64;
 const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
 
+// An anchor keeps one name for life, so popovers sharing a trigger never clobber each other
+const anchorNames = new WeakMap<Element, string>();
+let anchorCount = 0;
+
+function getAnchorName(anchor: HTMLElement) {
+  let name = anchorNames.get(anchor);
+  if (!name) {
+    name = `--popover-anchor-${++anchorCount}`;
+    anchorNames.set(anchor, name);
+  }
+  if (anchor.style.anchorName !== name) {
+    anchor.style.anchorName = name;
+  }
+  return name;
+}
+
 export type Alignment = "left" | "center" | "right" | "auto";
 
 export interface AnchoredPopoverAttributes extends GlobalHTMLAttributes {
@@ -76,7 +92,7 @@ export default class AnchoredPopover extends HTMLElement {
     switch (name) {
       case "anchor":
         if (this.matches(":popover-open")) {
-          this.setPosition();
+          this.#updatePosition();
         }
         return;
       case "align":
@@ -107,7 +123,7 @@ export default class AnchoredPopover extends HTMLElement {
     }
 
     if (event.newState === "open") {
-      this.#triggerElement = this.#getTriggerElement();
+      this.#triggerElement = this.#getTriggerElement(event);
       if (SUPPORTS_ANCHOR_POSITIONING) {
         this.#applyAnchorPositioning();
       } else {
@@ -120,7 +136,11 @@ export default class AnchoredPopover extends HTMLElement {
     }
   }
 
-  #getTriggerElement(): HTMLElement | null {
+  #getTriggerElement(event: ToggleEvent): HTMLElement | null {
+    if (event.source instanceof HTMLElement) {
+      return event.source;
+    }
+
     const activeElement = document.activeElement;
     if (
       activeElement instanceof HTMLElement &&
@@ -151,15 +171,22 @@ export default class AnchoredPopover extends HTMLElement {
     }
   }
 
+  #updatePosition() {
+    if (SUPPORTS_ANCHOR_POSITIONING) {
+      this.#applyAnchorPositioning();
+    } else {
+      this.setPosition();
+    }
+  }
+
+  /**
+   * Points the popover at its anchor. The association is deliberately kept when the popover
+   * closes so it stays attached to the anchor while it fades out; the next open re-points it.
+   * Without an anchor, the stylesheet's `position-anchor: auto` falls back to the invoker.
+   */
   #applyAnchorPositioning() {
     const anchor = this.anchorElement;
-    if (!anchor) {
-      return;
-    }
-
-    const anchorName = `--${this.id}-anchor`;
-    anchor.style.anchorName = anchorName;
-    this.style.positionAnchor = anchorName;
+    this.style.positionAnchor = anchor ? getAnchorName(anchor) : "";
   }
 
   #addPositionListeners() {
@@ -171,18 +198,8 @@ export default class AnchoredPopover extends HTMLElement {
   }
 
   #cleanup() {
-    if (SUPPORTS_ANCHOR_POSITIONING) {
-      const anchor = this.anchorElement;
-      // Popovers can share an anchor, so only clear a name this popover applied
-      if (anchor?.style.anchorName === `--${this.id}-anchor`) {
-        anchor.style.anchorName = "";
-      }
-      this.style.positionAnchor = "";
-    } else {
-      this.#positionAbortController?.abort();
-      this.#positionAbortController = null;
-    }
-
+    this.#positionAbortController?.abort();
+    this.#positionAbortController = null;
     this.#triggerElement = null;
   }
 
