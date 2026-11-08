@@ -19,6 +19,13 @@
   }
 }
 
+/* Matches the sidebar's section headings */
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ui-secondary-color);
+}
+
 .section {
   display: flex;
   flex-direction: column;

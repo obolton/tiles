@@ -8,7 +8,6 @@ import { getPublicPageUrl } from "@/utils/pages";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./SharePanel.module.css";
-import sidebarStyles from "@/components/pages/Sidebar.module.css";
 import type Page from "@/models/Page";
 
 const COPIED_DURATION = 2000;
@@ -48,9 +47,7 @@ export default function PublicLink({ page }: PublicLinkProps) {
 
   return (
     <section className={styles.section} aria-labelledby="share-public-link">
-      <h3 id="share-public-link" className={sidebarStyles.heading}>
-        Public link
-      </h3>
+      <h3 id="share-public-link">Public link</h3>
 
       <label>
         Anyone with the link can view

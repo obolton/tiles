@@ -8,7 +8,6 @@ import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import styles from "./SharePanel.module.css";
-import sidebarStyles from "@/components/pages/Sidebar.module.css";
 import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
 import type { Reactive } from "reactivity";
@@ -61,9 +60,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
   return (
     <section className={styles.section} aria-labelledby="share-people">
       <div className={styles.row}>
-        <h3 id="share-people" className={sidebarStyles.heading}>
-          People
-        </h3>
+        <h3 id="share-people">People</h3>
         <button type="button" className="secondary small" on:click={showInviteModal}>
           <NewIcon aria-hidden="true" />
           Invite
@@ -91,9 +88,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
 
       <If condition={hasInvites}>
         <>
-          <h4 id="share-pending" className={sidebarStyles.heading}>
-            Pending invites
-          </h4>
+          <h4 id="share-pending">Pending invites</h4>
           <ul className={styles.list} aria-labelledby="share-pending">
             {invites.derive((items) =>
               items.map((invite) => (

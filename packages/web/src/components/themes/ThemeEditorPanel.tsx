@@ -9,7 +9,6 @@ import SolidColorIcon from "@/icons/solid-color.svg?jsx";
 import DuplicateIcon from "@/icons/duplicate.svg?jsx";
 import TrashIcon from "@/icons/trash.svg?jsx";
 import styles from "./ThemeEditorPanel.module.css";
-import sidebarStyles from "@/components/pages/Sidebar.module.css";
 import type ThemeEditor from "./ThemeEditor";
 import type Theme from "@/models/Theme";
 import type { JSX } from "jsx/jsx";
@@ -39,7 +38,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
   return (
     <form className={styles.form} on:submit={(event: Event) => event.preventDefault()}>
       <label className={styles.field}>
-        <span className={sidebarStyles.heading}>Name</span>
+        <span className={styles.label}>Name</span>
         <input
           type="text"
           value={data.value.name}
@@ -51,7 +50,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
       <ThemePreview theme={data} />
 
       <fieldset className={styles.section}>
-        <legend className={sidebarStyles.heading}>Colors</legend>
+        <legend>Colors</legend>
         <FillPicker
           id={`${id}-background`}
           label="Background"
@@ -80,7 +79,7 @@ function ThemeForm({ state, theme }: ThemeFormProps) {
       </fieldset>
 
       <fieldset className={styles.section}>
-        <legend className={sidebarStyles.heading}>Fonts</legend>
+        <legend>Fonts</legend>
         <FontPicker
           label="Heading"
           icon={null}
