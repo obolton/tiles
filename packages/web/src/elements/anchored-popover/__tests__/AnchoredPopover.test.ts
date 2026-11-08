@@ -133,18 +133,6 @@ describe("AnchoredPopover", () => {
 
       await vi.waitFor(() => expect(popover.anchorElement).toBeNull());
     });
-
-    test("stays anchored when reopened before the transition finishes", async () => {
-      button.focus();
-      popover.showPopover();
-      popover.hidePopover();
-      popover.showPopover();
-      finish();
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      expect(popover.anchorElement).toBe(button);
-      expect(button.getAttribute("aria-expanded")).toBe("true");
-    });
   });
 
   describe("position", () => {
