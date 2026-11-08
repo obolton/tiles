@@ -24,7 +24,6 @@ Object.defineProperty(document, "fonts", {
 });
 
 Element.prototype.scrollIntoView = vi.fn();
-Element.prototype.getAnimations = vi.fn(() => []);
 
 HTMLElement.prototype.showPopover = function () {
   const allowToggle = this.dispatchEvent(

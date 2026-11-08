@@ -3,6 +3,20 @@ import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 const VIEWPORT_MARGIN = 64;
 const SUPPORTS_ANCHOR_POSITIONING = CSS.supports("anchor-name", "--anchor");
 
+let anchorCount = 0;
+
+/**
+ * Gives an element a stable anchor name on first use. The name is left in place afterwards so
+ * popovers stay anchored while they transition out, and it is unique per element so popovers
+ * can share an anchor and be opened from multiple triggers.
+ */
+function getAnchorName(element: HTMLElement) {
+  if (!element.style.anchorName) {
+    element.style.anchorName = `--anchor-${++anchorCount}`;
+  }
+  return element.style.anchorName;
+}
+
 export type Alignment = "left" | "center" | "right" | "auto";
 
 export interface AnchoredPopoverAttributes extends GlobalHTMLAttributes {
@@ -107,8 +121,6 @@ export default class AnchoredPopover extends HTMLElement {
     }
 
     if (event.newState === "open") {
-      // Release the previous anchor in case the popover is still transitioning out
-      this.#cleanup();
       this.#triggerElement = this.#getTriggerElement();
       if (SUPPORTS_ANCHOR_POSITIONING) {
         this.#applyAnchorPositioning();
@@ -149,14 +161,6 @@ export default class AnchoredPopover extends HTMLElement {
         });
       }
     } else {
-      void this.#cleanupAfterClose();
-    }
-  }
-
-  /** Keeps the popover anchored to its trigger while it transitions out. */
-  async #cleanupAfterClose() {
-    await Promise.allSettled(this.getAnimations().map((animation) => animation.finished));
-    if (!this.matches(":popover-open")) {
       this.#cleanup();
     }
   }
@@ -167,9 +171,7 @@ export default class AnchoredPopover extends HTMLElement {
       return;
     }
 
-    const anchorName = `--${this.id}-anchor`;
-    anchor.style.anchorName = anchorName;
-    this.style.positionAnchor = anchorName;
+    this.style.positionAnchor = getAnchorName(anchor);
   }
 
   #addPositionListeners() {
@@ -181,18 +183,8 @@ export default class AnchoredPopover extends HTMLElement {
   }
 
   #cleanup() {
-    if (SUPPORTS_ANCHOR_POSITIONING) {
-      const anchor = this.anchorElement;
-      // Popovers can share an anchor, so only clear a name this popover applied
-      if (anchor?.style.anchorName === `--${this.id}-anchor`) {
-        anchor.style.anchorName = "";
-      }
-      this.style.positionAnchor = "";
-    } else {
-      this.#positionAbortController?.abort();
-      this.#positionAbortController = null;
-    }
-
+    this.#positionAbortController?.abort();
+    this.#positionAbortController = null;
     this.#triggerElement = null;
   }
 
