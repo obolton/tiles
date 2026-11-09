@@ -13,7 +13,10 @@ export interface MarkdownOptions {
  * Serializes rich text JSON to Markdown.
  */
 export function richTextToMarkdown(content: RichText, options: MarkdownOptions = {}): string {
-  return renderBlocks(content, options).join("\n\n");
+  return content
+    .map((block) => renderBlock(block, options))
+    .filter((rendered) => rendered.length > 0)
+    .join("\n\n");
 }
 
 /**
@@ -21,14 +24,6 @@ export function richTextToMarkdown(content: RichText, options: MarkdownOptions =
  */
 export function fragmentToMarkdown(fragment: Y.XmlFragment, options: MarkdownOptions = {}): string {
   return richTextToMarkdown(fragmentToRichText(fragment), options);
-}
-
-/** Each block's Markdown, leaving out blocks that render to nothing. */
-function renderBlocks(blocks: BlockNode[], options: MarkdownOptions): string[] {
-  return blocks.flatMap((block) => {
-    const rendered = renderBlock(block, options);
-    return rendered ? [rendered] : [];
-  });
 }
 
 function renderBlock(block: BlockNode, options: MarkdownOptions): string {
@@ -52,7 +47,7 @@ function renderBlock(block: BlockNode, options: MarkdownOptions): string {
     case "pending":
       return richTextToMarkdown(block.children, options);
     case "tile":
-      return renderTile(block.id, options);
+      return renderEmbeddedTile(block.id, options);
   }
 }
 
@@ -70,8 +65,9 @@ function renderListItem(
   // Continuation lines align with the item's content, which follows the marker and a space
   const indent = " ".repeat(list.listType === ListType.ORDERED ? marker.length + 1 : 2);
   const [first, ...rest] = item.children;
-  const head = first?.type === "paragraph" ? inlineToMarkdown(first.children).trim() : "";
-  const blocks = first && first.type !== "paragraph" ? item.children : rest;
+  const paragraph = first?.type === "paragraph" ? first : null;
+  const head = paragraph ? inlineToMarkdown(paragraph.children).trim() : "";
+  const blocks = paragraph ? rest : item.children;
 
   let output = head ? `${marker} ${head}` : marker;
   for (const block of blocks) {
@@ -102,7 +98,7 @@ function renderCode(block: CodeNode): string {
   return `${fence}${block.language}\n${text}\n${fence}`;
 }
 
-function renderTile(id: string, options: MarkdownOptions): string {
+function renderEmbeddedTile(id: string, options: MarkdownOptions): string {
   if (!options.tile) {
     throw new Error("Embedded tiles need a tile serializer");
   }

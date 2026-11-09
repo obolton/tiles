@@ -135,7 +135,6 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               <MoreIcon aria-hidden="true" />
             </ToolbarButton>
 
-            {/* Holds the actions that do not fit as buttons at the current width, plus the export */}
             <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
               <If condition={isEditable}>
                 <If condition={isPhone}>

@@ -86,7 +86,7 @@ function toBlock(element: Y.XmlElement): BlockNode | null {
         type: "code",
         language: getString(attrs.language) ?? "",
         lineNumbers: attrs.lineNumbers === true,
-        children: toText(element),
+        children: toTextChildren(element),
       };
     case "divider":
       return { type: "divider" };
@@ -120,7 +120,7 @@ function toInline(element: Y.XmlElement): InlineNode[] {
   const nodes: InlineNode[] = [];
   for (const child of element.toArray()) {
     if (child instanceof Y.XmlText) {
-      nodes.push(...toText(child));
+      nodes.push(...toTextNodes(child));
     } else if (child instanceof Y.XmlElement) {
       const node = toInlineElement(child);
       if (node) {
@@ -139,7 +139,7 @@ function toInlineElement(element: Y.XmlElement): InlineNode | null {
         type: "link",
         href: getString(attrs.href) ?? "",
         ...(typeof attrs.theme === "string" && { theme: attrs.theme }),
-        children: toText(element),
+        children: toTextChildren(element),
       };
     case "date": {
       const value = getString(attrs.value) ?? "";
@@ -169,12 +169,16 @@ function toInlineElement(element: Y.XmlElement): InlineNode | null {
   }
 }
 
-/** The text runs of a text node, or of the text nodes directly within an element. */
-function toText(node: Y.XmlText | Y.XmlElement): TextNode[] {
-  if (node instanceof Y.XmlElement) {
-    return node.toArray().flatMap((child) => (child instanceof Y.XmlText ? toText(child) : []));
-  }
-  const delta: DeltaOp[] = node.toDelta();
+/** The text nodes of an element that holds text only, such as a link or code block. */
+function toTextChildren(element: Y.XmlElement): TextNode[] {
+  return element
+    .toArray()
+    .flatMap((child) => (child instanceof Y.XmlText ? toTextNodes(child) : []));
+}
+
+/** One text node per differently formatted run of the text. */
+function toTextNodes(text: Y.XmlText): TextNode[] {
+  const delta: DeltaOp[] = text.toDelta();
   return delta.flatMap((op) =>
     typeof op.insert === "string" ? [textNode(op.insert, op.attributes ?? {})] : [],
   );

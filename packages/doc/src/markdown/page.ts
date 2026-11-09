@@ -12,7 +12,7 @@ export interface PageMarkdownOptions extends Pick<TileMarkdownOptions, "imageUrl
   type: PageType;
 }
 
-/** The containers of a free page in reading order: the top and left docks, the page, then the right and bottom docks. */
+/** A free page's containers in reading order: top and left docks, the page, right and bottom docks. */
 const FREE_PAGE_PARENTS = [
   dockParentId("TOP"),
   dockParentId("LEFT"),

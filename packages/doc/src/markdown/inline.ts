@@ -29,18 +29,18 @@ interface Run {
   /** The subset of {@link MARK_FORMATS} applied to the text. */
   format: number;
   /** Rendered as a code span, verbatim. */
-  code?: boolean;
+  code: boolean;
   /** Already rendered Markdown, emitted as is. */
-  raw?: boolean;
+  raw: boolean;
 }
 
 const ESCAPED = /[\\`*[\]<~_]/g;
 const ENTITY = /&(?=[a-zA-Z0-9#]+;)/g;
 const ALPHANUMERIC = /[\p{L}\p{N}]/u;
 
-const BLOCK_START = /^(\s*)(>|#(?=[\s#]|$)|[-+](?=\s|$))/;
+/** Block syntax at the start of a line: a quote, heading, list item or thematic break. */
+const BLOCK_START = /^(\s*)(>|#(?=[\s#]|$)|-(?=[\s-]|$)|\+(?=\s|$))/;
 const ORDERED_START = /^(\s*\d{1,9})([.)])(?=\s|$)/;
-const THEMATIC_BREAK = /^\s*-(\s*-){2,}\s*$/;
 
 /**
  * Serializes inline nodes to Markdown, opening and closing marks only where they change and
@@ -50,18 +50,13 @@ export function inlineToMarkdown(nodes: InlineNode[]): string {
   let output = "";
   let open: Mark[] = [];
 
-  for (const run of mergeRuns(expelWhitespace(toRuns(nodes)))) {
+  for (const run of mergeRuns(shareWhitespace(splitWhitespace(toRuns(nodes))))) {
     const wanted = MARKS.filter((mark) => run.format & mark.format);
     let shared = 0;
     while (shared < open.length && open[shared] === wanted[shared]) {
       shared++;
     }
-    for (let index = open.length - 1; index >= shared; index--) {
-      output += open[index]?.close ?? "";
-    }
-    for (let index = shared; index < wanted.length; index++) {
-      output += wanted[index]?.open ?? "";
-    }
+    output += closing(open.slice(shared)) + opening(wanted.slice(shared));
     open = wanted;
 
     if (run.raw) {
@@ -73,10 +68,7 @@ export function inlineToMarkdown(nodes: InlineNode[]): string {
     }
   }
 
-  for (let index = open.length - 1; index >= 0; index--) {
-    output += open[index]?.close ?? "";
-  }
-  return output;
+  return output + closing(open);
 }
 
 /**
@@ -84,18 +76,14 @@ export function inlineToMarkdown(nodes: InlineNode[]): string {
  * block syntax that only applies at the start of a line.
  */
 export function escapeText(text: string, lineStart = false): string {
-  let escaped = text
+  const escaped = text
     .replace(ESCAPED, (char, offset: number, source: string) =>
       char === "_" && isWordInternal(source, offset) ? char : `\\${char}`,
     )
     .replace(ENTITY, "\\&");
-
-  if (lineStart) {
-    escaped = THEMATIC_BREAK.test(escaped)
-      ? escaped.replace("-", "\\-")
-      : escaped.replace(BLOCK_START, "$1\\$2").replace(ORDERED_START, "$1\\$2");
-  }
-  return escaped;
+  return lineStart
+    ? escaped.replace(BLOCK_START, "$1\\$2").replace(ORDERED_START, "$1\\$2")
+    : escaped;
 }
 
 /** A code span fenced with more backticks than any run inside it. */
@@ -123,6 +111,17 @@ export function longestRun(text: string, char: string): number {
   return longest;
 }
 
+function opening(marks: Mark[]): string {
+  return marks.map((mark) => mark.open).join("");
+}
+
+function closing(marks: Mark[]): string {
+  return marks
+    .map((mark) => mark.close)
+    .toReversed()
+    .join("");
+}
+
 function toRuns(nodes: InlineNode[]): Run[] {
   const runs: Run[] = [];
   for (const node of nodes) {
@@ -140,7 +139,7 @@ function toRuns(nodes: InlineNode[]): Run[] {
         runs.push(textRun(`@${node.displayName}`, node.format));
         break;
       case "link":
-        runs.push({ text: renderLink(node), format: TextFormat.NONE, raw: true });
+        runs.push({ text: renderLink(node), format: TextFormat.NONE, code: false, raw: true });
         break;
     }
   }
@@ -151,41 +150,39 @@ function textRun(text: string, format: number): Run {
   return {
     text,
     format: format & MARK_FORMATS,
-    ...((format & TextFormat.CODE) !== 0 && { code: true }),
+    code: (format & TextFormat.CODE) !== 0,
+    raw: false,
   };
 }
 
-/**
- * Splits the whitespace at the edges of marked runs into runs of their own, then gives each
- * whitespace-only run the marks its neighbours share, so delimiters never enclose whitespace.
- */
-function expelWhitespace(runs: Run[]): Run[] {
-  const split: Run[] = [];
-  for (const run of runs) {
+/** Splits the whitespace at the edges of each marked run into runs of its own. */
+function splitWhitespace(runs: Run[]): Run[] {
+  return runs.flatMap((run) => {
     const match = run.code || run.raw ? null : /^(\s*)(.*?)(\s*)$/s.exec(run.text);
-    if (!match || match[2] === undefined) {
-      split.push(run);
-      continue;
+    if (!match) {
+      return [run];
     }
-    for (const part of [match[1], match[2], match[3]]) {
-      if (part) {
-        split.push({ ...run, text: part });
-      }
-    }
-  }
+    return match.slice(1).flatMap((part) => (part ? [{ ...run, text: part }] : []));
+  });
+}
 
-  return split.map((run, index) => {
-    if (run.code || run.raw || run.text.trim().length > 0) {
+/**
+ * Gives each whitespace-only run the marks its neighbours share, so whitespace between two runs
+ * of a span stays inside it while whitespace at the edges of a span falls outside the delimiters.
+ */
+function shareWhitespace(runs: Run[]): Run[] {
+  return runs.map((run, index) => {
+    if (isContent(run)) {
       return run;
     }
-    const before = split.slice(0, index).findLast(isContent);
-    const after = split.slice(index + 1).find(isContent);
-    return { text: run.text, format: (before?.format ?? 0) & (after?.format ?? 0) };
+    const before = runs.slice(0, index).findLast(isContent);
+    const after = runs.slice(index + 1).find(isContent);
+    return { ...run, format: (before?.format ?? 0) & (after?.format ?? 0) };
   });
 }
 
 function isContent(run: Run): boolean {
-  return run.code === true || run.raw === true || run.text.trim().length > 0;
+  return run.code || run.raw || run.text.trim().length > 0;
 }
 
 function mergeRuns(runs: Run[]): Run[] {
@@ -206,7 +203,7 @@ function renderLink(node: LinkNode): string {
   return `[${text}](${destination(node.href)})`;
 }
 
-/** A link destination: wrapped in angle brackets when it has whitespace, else with parentheses escaped. */
+/** A link destination: in angle brackets when it has whitespace, else with parentheses escaped. */
 function destination(href: string): string {
   if (/\s/.test(href)) {
     return `<${href.replace(/[<>]/g, encodeURIComponent)}>`;
