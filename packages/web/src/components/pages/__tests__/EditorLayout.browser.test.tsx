@@ -4,12 +4,17 @@ import { page } from "vitest/browser";
 import { render } from "jsx/dom";
 import EditorLayout from "../EditorLayout";
 import { PanelResizeEvent } from "@/elements/resizable-panel/events";
+import barStyles from "../EditablePage.module.css";
 
 function renderLayout() {
   // Measure final positions rather than the sheet's slide-in transition
   document.body.dataset.disableTransitions = "";
   const nodes = render(
-    <EditorLayout start={<div id="start-panel">Start</div>} end={<div id="end-panel">End</div>}>
+    <EditorLayout
+      start={<div id="start-panel">Start</div>}
+      end={<div id="end-panel">End</div>}
+      bar={<div id="bar" className={barStyles["bottom-bar"]} />}
+    >
       <main id="content">Content</main>
     </EditorLayout>,
   );
@@ -55,6 +60,16 @@ describe("EditorLayout", () => {
     expect(rectOf("#end-panel").width).toBe(200);
   });
 
+  test("insets the bar by the panel widths at desktop width", async () => {
+    await page.viewport(1280, 800);
+    renderLayout();
+    resize("#start-panel", 480);
+
+    const bar = rectOf("#bar");
+    expect(bar.left).toBe(480 + 32);
+    expect(bar.right).toBe(1280 - 200 - 32);
+  });
+
   test("clamps wide panels at tablet width", async () => {
     await page.viewport(768, 1024);
     renderLayout();
@@ -78,6 +93,8 @@ describe("EditorLayout", () => {
     expect(getComputedStyle(layout).paddingLeft).toBe("0px");
     expect(getComputedStyle(layout).paddingRight).toBe("0px");
     expect(getComputedStyle(layout).paddingTop).toBe("96px");
+    expect(rectOf("#bar").left).toBe(16);
+    expect(rectOf("#bar").right).toBe(WIDTH - 16);
 
     const start = wrapperOf("#start-panel").getBoundingClientRect();
     expect(start.left).toBe(0);

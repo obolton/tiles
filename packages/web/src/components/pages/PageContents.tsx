@@ -15,6 +15,7 @@ export interface PageContentsProps {
   signal?: AbortSignal;
   end?: JSX.Node;
   endVisible?: Reactive<boolean>;
+  bar?: JSX.Node;
 }
 
 export default function PageContents(props: PageContentsProps) {

@@ -18,10 +18,12 @@ export interface EditorLayoutProps {
   start?: JSX.Node;
   end?: JSX.Node;
   endVisible?: Reactive<boolean>;
+  /** Fixed chrome (the editor's bottom bar) that follows the panel insets. */
+  bar?: JSX.Node;
   children: JSX.Node;
 }
 
-export default function EditorLayout({ start, end, endVisible, children }: EditorLayoutProps) {
+export default function EditorLayout({ start, end, endVisible, bar, children }: EditorLayoutProps) {
   const startSize = reactive(clamp(startWidth.value));
   const endSize = reactive(clamp(endWidth.value));
   const isEndVisible = endVisible ?? reactive(true);
@@ -47,6 +49,7 @@ export default function EditorLayout({ start, end, endVisible, children }: Edito
         </div>
       ) : null}
 
+      {bar}
       {children}
 
       {end ? (

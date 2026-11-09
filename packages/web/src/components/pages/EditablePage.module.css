@@ -2,13 +2,16 @@
   --bottom-bar-inset: 32px;
 
   position: fixed;
-  inset: auto var(--bottom-bar-inset) max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
+  inset-inline: calc(var(--sidebar-width-start, 0px) + var(--bottom-bar-inset))
+    calc(var(--sidebar-width-end, 0px) + var(--bottom-bar-inset));
+  inset-block-end: max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: end;
   gap: 8px;
   z-index: 2;
   pointer-events: none;
+  transition: inset-inline var(--animation-duration-short) var(--easing);
 
   & > * {
     pointer-events: auto;

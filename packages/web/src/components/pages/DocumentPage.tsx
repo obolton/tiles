@@ -21,6 +21,7 @@ export interface DocumentPageProps {
   signal?: AbortSignal;
   end?: JSX.Node;
   endVisible?: Reactive<boolean>;
+  bar?: JSX.Node;
 }
 
 export default function DocumentPage({
@@ -30,12 +31,13 @@ export default function DocumentPage({
   signal,
   end,
   endVisible,
+  bar,
 }: DocumentPageProps) {
   const editorView = reactive<EditorView | null>(null);
   const state = reactive<EditorState | null>(null);
 
   return (
-    <EditorLayout end={end} endVisible={endVisible}>
+    <EditorLayout end={end} endVisible={endVisible} bar={bar}>
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}

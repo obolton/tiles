@@ -22,6 +22,7 @@ export interface PresentationPageProps {
   signal?: AbortSignal;
   end?: JSX.Node;
   endVisible?: Reactive<boolean>;
+  bar?: JSX.Node;
 }
 
 export default function PresentationPage({
@@ -32,6 +33,7 @@ export default function PresentationPage({
   signal,
   end,
   endVisible,
+  bar,
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = isEditable.derive((editable) => (editable ? "all" : null));
@@ -59,6 +61,7 @@ export default function PresentationPage({
       start={<ThumbnailListPanel page={page} isEditable={isEditable} tiles={tiles} />}
       end={end}
       endVisible={endVisible}
+      bar={bar}
     >
       <main
         className={styles.main}
