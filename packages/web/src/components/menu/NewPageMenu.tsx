@@ -48,7 +48,7 @@ export default function NewPageMenu({ workspaceId }: NewPageMenuProps) {
             Presentation
           </MenuItem>
           <MenuItem icon={<EmptyIcon aria-hidden="true" />} on:click={() => createNewPage("FREE")}>
-            Blank page
+            Page
           </MenuItem>
         </MenuItemGroup>
       </popover-menu>

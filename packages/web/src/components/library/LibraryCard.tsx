@@ -17,7 +17,7 @@ const PAGE_TYPES: Record<PageType, { Icon: JSX.Component<JSX.Attributes<"svg">>;
   {
     DOCUMENT: { Icon: DocumentIcon, label: "Document" },
     PRESENTATION: { Icon: PresentationIcon, label: "Presentation" },
-    FREE: { Icon: EmptyIcon, label: "Blank page" },
+    FREE: { Icon: EmptyIcon, label: "Page" },
   };
 
 export interface LibraryCardProps {
