@@ -1,4 +1,4 @@
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { AttributesFor, ElementTypeFor } from "./html-attributes";
 
 export type WithProperties<T> = {

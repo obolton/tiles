@@ -1,5 +1,5 @@
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface MenuItemProps extends JSX.Attributes<"button"> {
   label?: string;

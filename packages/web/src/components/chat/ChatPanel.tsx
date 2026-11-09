@@ -3,7 +3,7 @@ import Prompt from "@/components/prompt/Prompt";
 import Editor from "@/editor/Editor";
 import { submitPrompt } from "@/utils/ai";
 import styles from "./ChatPanel.module.css";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface ChatPanelProps {
   isOpen: Reactive<boolean>;

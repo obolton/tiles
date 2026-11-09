@@ -1,7 +1,7 @@
 import ColorPalette from "@/components/colors/ColorPalette";
 import ColorToggle, { type ActiveColor } from "@/components/colors/ColorToggle";
 import GradientPalette from "@/components/colors/GradientPalette";
-import { reactive, combine, type Reactive } from "reactivity";
+import { reactive, combine, type Reactive } from "carillon";
 import { getComplementaryColor, type Color } from "@/utils/color";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { ColorFill, GradientFill } from "./types";

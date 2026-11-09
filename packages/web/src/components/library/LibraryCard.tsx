@@ -6,7 +6,7 @@ import EmptyIcon from "@/icons/empty.svg?jsx";
 import { makeDraggable } from "@/utils/drag";
 import { formatRelativeDate } from "@/utils/dates";
 import styles from "./LibraryCard.module.css";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { AppRouterOutputs } from "@/api/client";
 import type { PageType } from "api/types/pages";
 import type { JSX } from "jsx/jsx";

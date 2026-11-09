@@ -2,7 +2,7 @@ import "@/elements/floating-toolbar/FloatingToolbar";
 import "@/elements/floating-toolbar/ToolbarTab";
 import CreateToolbar from "../CreateToolbar";
 import InsertButton from "@/components/buttons/InsertButton";
-import { flag } from "reactivity";
+import { flag } from "carillon";
 import type { Meta, Story } from "@/test/storybook";
 
 const meta = {

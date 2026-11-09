@@ -13,7 +13,7 @@ import type { EditorState } from "prosemirror-state";
 import type { Awareness } from "@/collaboration/types";
 import type Body from "@/models/Body";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {
   contentFragment: Y.XmlFragment;

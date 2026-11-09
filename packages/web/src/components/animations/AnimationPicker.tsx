@@ -7,7 +7,7 @@ import SlideIcon from "@/icons/slide.svg?jsx";
 import GrowIcon from "@/icons/grow.svg?jsx";
 import ShrinkIcon from "@/icons/shrink.svg?jsx";
 import type { Animation } from "@/models/Tile";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
 export interface AnimationPickerProps {

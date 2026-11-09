@@ -1,4 +1,4 @@
-import { ReactiveArray } from "reactivity";
+import { ReactiveArray } from "carillon";
 import type { Database, ObjectStore, SchemaDefinition } from "@/utils/idb";
 
 export interface CacheMeta {

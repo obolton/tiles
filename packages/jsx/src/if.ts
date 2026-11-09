@@ -1,4 +1,4 @@
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "./jsx";
 
 export interface IfProps {

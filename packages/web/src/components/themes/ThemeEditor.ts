@@ -1,4 +1,4 @@
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import SidebarPanel from "@/components/pages/SidebarPanel";
 import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
@@ -10,7 +10,7 @@ import type Page from "@/models/Page";
 import type Theme from "@/models/Theme";
 import type { ThemePatch } from "@/models/Theme";
 import type { SidebarSlot } from "@/components/pages/SidebarPanel";
-import type { UnsubscribeCallback } from "reactivity";
+import type { UnsubscribeCallback } from "carillon";
 
 export const THEME_EDITOR_PANEL_ID = "theme-editor-panel";
 

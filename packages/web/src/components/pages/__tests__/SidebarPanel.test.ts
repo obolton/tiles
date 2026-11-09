@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import SidebarPanel, { PAGE_ACTIONS_BUTTON_ID } from "../SidebarPanel";
 
 const PANEL_ID = "test-panel";

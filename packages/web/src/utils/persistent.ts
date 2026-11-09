@@ -1,4 +1,4 @@
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 
 type Value = string | number | boolean | object;
 

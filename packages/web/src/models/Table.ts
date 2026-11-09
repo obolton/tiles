@@ -15,7 +15,7 @@ import Row, { type CellValue } from "./Row";
 import SharedList from "@/collaboration/SharedList";
 import { createId } from "doc/id";
 import YReactive from "@/collaboration/YReactive";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type Page from "@/models/Page";
 
 export type { CellValue };

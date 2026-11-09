@@ -7,7 +7,7 @@ import SectionToolbar from "@/components/layouts/section/SectionToolbar";
 import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./Slide.module.css";
 import type SectionModel from "@/models/Section";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface SlideProps {
   section: SectionModel;

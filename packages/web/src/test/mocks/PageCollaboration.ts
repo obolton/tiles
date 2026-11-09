@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { array } from "reactivity";
+import { array } from "carillon";
 import type * as Y from "yjs";
 import type { PageCollaboration as ActualPageCollaboration } from "@/collaboration/PageCollaboration";
 import type { Peer } from "@/collaboration/Presence";

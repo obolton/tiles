@@ -6,7 +6,7 @@ import CodeIcon from "@/icons/code.svg?jsx";
 import LineNumbersIcon from "@/icons/line-numbers.svg?jsx";
 import { SUPPORTED_LANGUAGES, findLanguageConfig } from "@/utils/richText/code/languages";
 import { setCodeBlockLanguage, toggleCodeBlockLineNumbers } from "@/utils/richText/commands";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { Format } from "@/utils/richText/format";
 import type { Command } from "prosemirror-state";
 import type ListSelect from "@/elements/list-select/ListSelect";

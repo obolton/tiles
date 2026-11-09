@@ -9,7 +9,7 @@ import type TableView from "@/elements/table/TableView";
 import type Table from "@/models/Table";
 import type { EditorView } from "prosemirror-view";
 import type { EditorState } from "prosemirror-state";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface TableToolbarProps {
   table: Table;

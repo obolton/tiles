@@ -3,7 +3,7 @@ import PresentationPage from "./PresentationPage";
 import LayoutPage from "./LayoutPage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "jsx/jsx";
 
 export interface PageContentsProps {

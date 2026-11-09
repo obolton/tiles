@@ -6,7 +6,7 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import { toCSSColor } from "@/utils/color";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import styles from "./FillPicker.module.css";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "./types";
 import type { ToolbarButtonProps } from "@/components/buttons/ToolbarButton";

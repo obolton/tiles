@@ -5,7 +5,7 @@ import { DATE_THEMES, DEFAULT_DATE_THEME } from "@/components/dates/themes";
 import { LINK_THEMES, DEFAULT_LINK_THEME } from "@/components/links/themes";
 import { HEADING_THEMES, DEFAULT_HEADING_THEME } from "@/components/headings/themes";
 import { MIN_TEXT_SIZE, MAX_TEXT_SIZE } from "@/constants/formatting";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { getFontConfig, type FontId } from "fonts/config";
 import Code from "./Code";
 import type {
