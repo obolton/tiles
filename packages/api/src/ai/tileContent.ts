@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { BODY_ID } from "doc/body";
 import { getChildren, orderedEntries } from "doc/placement/ordering";
 import { getCell } from "doc/tiles/table";
-import { fragmentToMarkdown } from "doc/richText/markdown";
+import { fragmentToMarkdown } from "doc/markdown/richText";
 import { getTileIds } from "doc/richText/tiles";
 import { toMarkdown } from "@/ai/context/markdown";
 import type { RichText } from "doc/types/richText";
