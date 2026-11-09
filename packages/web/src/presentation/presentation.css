@@ -1,9 +1,6 @@
 body[data-presenting] {
   --header-height: 0px;
 
-  overflow: hidden;
-  height: 100dvh;
-
   /* Hide navigation and editing chrome */
   & #header,
   & floating-toolbar:not(#presentation-toolbar),
@@ -16,6 +13,12 @@ body[data-presenting] {
   & page-item {
     outline: none;
   }
+}
+
+/* Slides: each root item fills the screen in turn */
+body[data-presenting="slides"] {
+  overflow: hidden;
+  height: 100dvh;
 
   & main {
     height: 100dvh;

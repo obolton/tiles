@@ -11,6 +11,7 @@ import FramePicker from "@/components/frames/FramePicker";
 import If from "jsx/if";
 import { resolveTheme, getThemeColors } from "@/utils/themes";
 import { viewTransition } from "@/utils/transitions";
+import { mediaQuery, PHONE_QUERY } from "@/utils/viewport";
 import type { JSX } from "jsx/jsx";
 import type Theme from "@/models/Theme";
 import type Tile from "@/models/Tile";
@@ -26,6 +27,8 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
     const resolved = resolveTheme(tile);
     return resolved ? getThemeColors(resolved) : [];
   });
+  // Docks are hidden on phones (DockZone.module.css), so tiles cannot be sent to them there
+  const canDock = mediaQuery(PHONE_QUERY).derive((phone) => !phone);
   const hasBorder = frame.derive((f) => f === "OUTLINED" || f === "FRAMED");
 
   function setTheme(theme: Theme | null) {
@@ -43,7 +46,11 @@ export default function StyleTab({ tile, children }: StyleTabProps) {
           showAuto={tile.type === "TEXT" || tile.type === "IMAGE"}
         />
 
-        {tile.page.type === "FREE" && <DockSelect tile={tile} />}
+        {tile.page.type === "LAYOUT" && (
+          <If condition={canDock}>
+            <DockSelect tile={tile} />
+          </If>
+        )}
       </ToolbarGroup>
 
       <ToolbarGroup label="Appearance">

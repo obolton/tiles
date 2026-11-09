@@ -74,7 +74,7 @@ export default function InsertTileItems({ getPlacement, showText }: InsertTileIt
                 imageId: id,
                 size: { width, height },
                 sizing: "AUTO",
-                width: Editor.current.page.width.value,
+                width: Editor.current.page.spanningWidth(placement.parentId ?? null),
               });
             },
           });

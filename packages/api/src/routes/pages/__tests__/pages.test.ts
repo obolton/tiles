@@ -42,7 +42,7 @@ const MOCK_PAGE_CONTEXT: AuthenticatedPageProcedureContext = {
   isService: false,
   pageId: "page-1",
   workspaceId: "workspace-1",
-  pageType: "FREE",
+  pageType: "LAYOUT",
 };
 
 const PAGE_ID = "6e9c6c65-7bb1-4f5e-a3d7-64d1e2b3a111";
@@ -205,8 +205,8 @@ describe("createInitialDoc", () => {
     expect(tile?.layout).toBe("FREEFORM");
   });
 
-  test("seeds no tiles for FREE pages", () => {
-    expect(getTiles(createInitialDoc("FREE"))).toHaveLength(0);
+  test("seeds no tiles for LAYOUT pages", () => {
+    expect(getTiles(createInitialDoc("LAYOUT"))).toHaveLength(0);
   });
 });
 

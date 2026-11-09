@@ -7,7 +7,7 @@ import Section from "@/models/Section";
 import Text from "@/models/Text";
 import Theme from "@/models/Theme";
 import client from "@/api/client";
-import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
+import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH, FULL_PAGE_WIDTH } from "@/constants/size";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
 
@@ -30,6 +30,33 @@ vi.mock("@/api/client", () => ({
 }));
 
 describe("Page", () => {
+  describe("width", () => {
+    test("resolves a full-width setting to the measured columns", () => {
+      const page = new Page(PAGE, new Y.Doc());
+
+      page.widthSetting.value = FULL_PAGE_WIDTH;
+      expect(page.isFullWidth.value).toBe(true);
+      expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);
+
+      page.availableWidth.value = 60;
+      expect(page.width.value).toBe(60);
+
+      page.widthSetting.value = 24;
+      expect(page.isFullWidth.value).toBe(false);
+      expect(page.width.value).toBe(24);
+    });
+
+    test("gives root tiles of a full-width page no width of their own", () => {
+      const page = new Page(PAGE, new Y.Doc());
+      expect(page.spanningWidth()).toBe(DEFAULT_PAGE_WIDTH);
+
+      page.widthSetting.value = FULL_PAGE_WIDTH;
+      page.availableWidth.value = 60;
+      expect(page.spanningWidth()).toBeNull();
+      expect(page.spanningWidth("section-id")).toBe(60);
+    });
+  });
+
   test("maps properties to reactive values", () => {
     const page = new Page(PAGE, new Y.Doc());
 

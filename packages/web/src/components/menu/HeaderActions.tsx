@@ -17,7 +17,7 @@ import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
-import { mediaQuery } from "@/utils/viewport";
+import { mediaQuery, PHONE_QUERY } from "@/utils/viewport";
 import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import styles from "./HeaderActions.module.css";
@@ -27,9 +27,6 @@ const PAGE_ACTIONS_MENU_ID = "page-actions-menu";
 
 /** Below this width the secondary actions collapse into an overflow menu. */
 const COMPACT_ACTIONS_QUERY = "(width < 1024px)";
-
-/** Below this width undo and redo join the overflow menu. */
-const PHONE_QUERY = "(width < 640px)";
 
 export interface HeaderActionsProps {
   editor: Editor;

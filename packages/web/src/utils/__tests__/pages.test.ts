@@ -10,7 +10,7 @@ describe("getPageDescription", () => {
     expect(getPageDescription({ ...PAGE, type: "DOCUMENT" })).toBe(
       "A document by Test User, created with Tiles.",
     );
-    expect(getPageDescription({ ...PAGE, type: "FREE" })).toBe(
+    expect(getPageDescription({ ...PAGE, type: "LAYOUT" })).toBe(
       "A page by Test User, created with Tiles.",
     );
   });

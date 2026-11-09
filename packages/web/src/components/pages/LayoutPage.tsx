@@ -9,13 +9,14 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DockZone from "@/components/docks/DockZone";
 import EditorLayout from "@/components/pages/EditorLayout";
 import LayoutEditor from "@/editor/LayoutEditor";
-import styles from "./FreePage.module.css";
+import { SIZE_UNIT } from "@/constants/size";
+import styles from "./LayoutPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "reactivity";
 import type { JSX } from "jsx/jsx";
 
-export interface FreePageProps {
+export interface LayoutPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   showToolbar: Reactive<boolean>;
@@ -24,14 +25,14 @@ export interface FreePageProps {
   end?: Reactive<JSX.Node>;
 }
 
-export default function FreePage({
+export default function LayoutPage({
   page,
   isEditable,
   showToolbar,
   tiles,
   signal,
   end,
-}: FreePageProps) {
+}: LayoutPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
     switch (alignment) {
@@ -62,6 +63,19 @@ export default function FreePage({
       sectionId: null,
       signal,
     });
+    observeAvailableWidth(element);
+  }
+
+  // A full-width page sizes its tiles by the measured column count
+  function observeAvailableWidth(element: HTMLElement) {
+    if (typeof ResizeObserver !== "function") {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      page.availableWidth.value = Math.max(1, Math.floor(element.clientWidth / SIZE_UNIT));
+    });
+    observer.observe(element);
+    signal?.addEventListener("abort", () => observer.disconnect(), { once: true });
   }
 
   return (
@@ -83,10 +97,10 @@ export default function FreePage({
         />
         <main
           ref={ref}
-          className={styles.main}
+          classList={{ [styles.main]: true, [styles.full]: page.isFullWidth }}
           data-alignment={page.alignment}
           data-layout="VERTICAL"
-          data-page-type="FREE"
+          data-page-type="LAYOUT"
         >
           <Each items={tiles}>
             {(tile) => (

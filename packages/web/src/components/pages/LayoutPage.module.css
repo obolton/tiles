@@ -14,21 +14,26 @@
     --sidebar-width-left: var(--sidebar-width-end, 0px);
     --sidebar-width-right: var(--sidebar-width-start, 0px);
   }
+}
 
-  &:has([data-dock-zone="TOP"]:not([data-empty])) {
-    padding-top: min(var(--dock-top-size), 50vh);
-  }
+/* Inset the content for occupied docks, which are hidden on phones (DockZone.module.css) */
+@media (width >= 640px) {
+  .layout {
+    &:has([data-dock-zone="TOP"]:not([data-empty])) {
+      padding-top: min(var(--dock-top-size), 50vh);
+    }
 
-  &:has([data-dock-zone="BOTTOM"]:not([data-empty])) {
-    padding-bottom: min(var(--dock-bottom-size), 50vh);
-  }
+    &:has([data-dock-zone="BOTTOM"]:not([data-empty])) {
+      padding-bottom: min(var(--dock-bottom-size), 50vh);
+    }
 
-  &:has([data-dock-zone="LEFT"]:not([data-empty])) {
-    padding-left: min(var(--dock-left-size), 50vw);
-  }
+    &:has([data-dock-zone="LEFT"]:not([data-empty])) {
+      padding-left: min(var(--dock-left-size), 50vw);
+    }
 
-  &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
-    padding-right: min(var(--dock-right-size), 50vw);
+    &:has([data-dock-zone="RIGHT"]:not([data-empty])) {
+      padding-right: min(var(--dock-right-size), 50vw);
+    }
   }
 }
 
@@ -62,5 +67,14 @@
     align-self: inherit;
     border-inline: 1px dashed rgb(0 0 0 / 6%);
     pointer-events: none;
+  }
+
+  /* An unbounded page width: tiles without a width of their own stretch to the page */
+  &.full {
+    --page-width: calc(infinity);
+
+    &::before {
+      content: none;
+    }
   }
 }

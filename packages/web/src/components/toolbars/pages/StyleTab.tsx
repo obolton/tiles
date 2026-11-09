@@ -7,6 +7,7 @@ import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import { viewTransition } from "@/utils/transitions";
+import { FULL_PAGE_WIDTH } from "@/constants/size";
 import type { HorizontalAlignment } from "doc/types/enums";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type Page from "@/models/Page";
@@ -25,7 +26,7 @@ export default function StyleTab({ page }: StyleTabProps) {
   function setWidth(event: Event) {
     const value = (event.currentTarget as ListSelect).value;
     if (value) {
-      page.width.value = parseInt(value, 10);
+      page.widthSetting.value = parseInt(value, 10);
     }
   }
 
@@ -44,13 +45,16 @@ export default function StyleTab({ page }: StyleTabProps) {
           data-tooltip="Theme"
         />
 
-        <list-select label="Page width" value={page.width} showvalue on:change={setWidth}>
+        <list-select label="Page width" value={page.widthSetting} showvalue on:change={setWidth}>
           <SizeIcon slot="default-icon" aria-hidden="true" />
           <ListGroup>
             <ListOption value="32">Standard</ListOption>
             <ListOption value="24">Narrow</ListOption>
             <ListOption value="40">Wide</ListOption>
-            <ListOption value="48">Full</ListOption>
+            <ListOption value="48">Extra wide</ListOption>
+            {page.type === "LAYOUT" && (
+              <ListOption value={`${FULL_PAGE_WIDTH}`}>Full width</ListOption>
+            )}
           </ListGroup>
         </list-select>
 

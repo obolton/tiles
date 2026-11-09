@@ -11,7 +11,7 @@ import Section from "@/models/Section";
 import createTileFromData from "@/models/createTile";
 import { YMapBinding, type BoundField } from "@/collaboration/YMapBinding";
 import { reactive, array, combine } from "reactivity";
-import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH } from "@/constants/size";
+import { DEFAULT_DOCK_SIZE, DEFAULT_PAGE_WIDTH, FULL_PAGE_WIDTH } from "@/constants/size";
 import * as Y from "yjs";
 import type { AppRouterOutputs } from "@/api/client";
 import type { Reactive, ReactiveArray } from "reactivity";
@@ -53,7 +53,13 @@ export default class Page {
   readonly themes: PageThemes;
   readonly themeId: Reactive<string | null>;
   readonly theme: Reactive<ThemeData | null>;
+  /** The page width in grid units: the setting, or the measured columns of a full-width page. */
   readonly width: Reactive<number>;
+  /** The stored page width: a column count, or {@link FULL_PAGE_WIDTH}. */
+  readonly widthSetting: BoundField<number>;
+  readonly isFullWidth: Reactive<boolean>;
+  /** The columns available to a full-width page, measured by the page view. */
+  readonly availableWidth: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Record<DockEdge, BoundField<number>>;
   readonly dropdowns: SharedList<Dropdown>;
@@ -94,7 +100,13 @@ export default class Page {
     this.themes = new PageThemes(doc);
     this.metadataBinding = new YMapBinding(doc.getMap("metadata"));
     this.themeId = this.metadataBinding.field("themeId", null);
-    this.width = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
+    this.widthSetting = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
+    this.isFullWidth = this.widthSetting.derive((width) => width === FULL_PAGE_WIDTH);
+    this.availableWidth = reactive(DEFAULT_PAGE_WIDTH);
+    this.width = combine(
+      { setting: this.widthSetting, available: this.availableWidth },
+      ({ setting, available }) => (setting === FULL_PAGE_WIDTH ? available : setting),
+    );
     this.alignment = this.metadataBinding.field("alignment", "CENTER");
     this.theme = combine({ id: this.themeId, themes: this.themes }, ({ id, themes }) =>
       id ? (themes.get(id) ?? null) : null,
@@ -181,6 +193,11 @@ export default class Page {
   /** Removes the tile from the page index. Idempotent. */
   remove(id: string) {
     this.index.delete(id);
+  }
+
+  /** The width for a new tile spanning its container; root tiles of a full-width page stretch instead. */
+  spanningWidth(parentId: string | null = null): number | null {
+    return parentId === null && this.isFullWidth.value ? null : this.width.value;
   }
 
   /** The container for a parent: the body for root tiles of a document page, else a collection. */
