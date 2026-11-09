@@ -361,13 +361,12 @@ export default class Editor {
       purpose: "content",
       workspaceId: this.workspaceId,
     });
-    const placement = this.insertPlacement;
     await Image.create(this.page, {
-      ...placement,
+      ...this.insertPlacement,
       imageId: id,
       size: { width, height },
       sizing: "AUTO",
-      width: this.page.spanningWidth(placement.parentId ?? null),
+      width: this.page.width.value,
     });
   }
 
@@ -404,13 +403,12 @@ export default class Editor {
           purpose: "content",
           workspaceId: this.workspaceId,
         });
-        const placement = this.insertPlacement;
         await Image.create(this.page, {
-          ...placement,
+          ...this.insertPlacement,
           imageId: id,
           size: { width, height },
           sizing: "AUTO",
-          width: this.page.spanningWidth(placement.parentId ?? null),
+          width: this.page.width.value,
         });
       }
     } else if (isUriList(item)) {

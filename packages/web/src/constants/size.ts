@@ -13,6 +13,3 @@ export const ASPECT_RATIOS: Record<Exclude<Sizing, "CUSTOM" | "AUTO">, number> =
 export const DEFAULT_DOCK_SIZE = 200; // px
 
 export const DEFAULT_PAGE_WIDTH = 32;
-
-/** The page width setting for pages that stretch to the available width. */
-export const FULL_PAGE_WIDTH = 0;

@@ -85,7 +85,7 @@ export default function LayoutPage({
         />
         <main
           ref={ref}
-          classList={{ [styles.main]: true, [styles.full]: page.isFullWidth }}
+          className={styles.main}
           data-alignment={page.alignment}
           data-layout="VERTICAL"
           data-page-type="LAYOUT"

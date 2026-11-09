@@ -68,13 +68,4 @@
     border-inline: 1px dashed rgb(0 0 0 / 6%);
     pointer-events: none;
   }
-
-  /* An unbounded page width: tiles without a width of their own stretch to the page */
-  &.full {
-    --page-width: calc(infinity);
-
-    &::before {
-      content: none;
-    }
-  }
 }
