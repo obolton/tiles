@@ -7,8 +7,6 @@ body[data-presenting] {
   /* Hide navigation and editing chrome */
   & #header,
   & floating-toolbar:not(#presentation-toolbar),
-  & #ai-button,
-  & #insert-button,
   & .thumbnail-list-panel {
     display: none;
   }

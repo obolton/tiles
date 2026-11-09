@@ -5,24 +5,38 @@
   inset-inline: calc(var(--sidebar-width-start, 0px) + var(--bottom-bar-inset))
     calc(var(--sidebar-width-end, 0px) + var(--bottom-bar-inset));
   inset-block-end: max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: end;
   gap: 8px;
   z-index: 2;
   pointer-events: none;
   transition: inset-inline var(--animation-duration-short) var(--easing);
 
-  & > * {
-    pointer-events: auto;
+  /* Balances the create column so the toolbar slot stays centred while there is room */
+  &::before {
+    content: "";
+    flex: 1 1 0;
   }
 }
 
 .toolbar-slot {
-  display: flex;
-  justify-content: center;
+  flex: 0 1 auto;
   min-width: 0;
-  pointer-events: none;
+  display: grid;
+  place-items: end center;
+
+  /* Toolbars share one cell so an outgoing one never displaces the next */
+  & > * {
+    grid-area: 1 / 1;
+    pointer-events: auto;
+  }
+}
+
+.create {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  justify-content: end;
 
   & > * {
     pointer-events: auto;
@@ -30,24 +44,27 @@
 }
 
 @media (width < 640px) {
-  /* The toolbar takes a full-width row; the buttons share the row above with its tab bar */
+  /* The create toolbar shares the top row with the tab bar; the toolbar takes a full-width row */
   .bottom-bar {
     --bottom-bar-inset: 16px;
 
-    grid-template:
-      "ai . insert" minmax(40px, auto)
-      "toolbar toolbar toolbar" auto / auto 1fr auto;
+    display: grid;
+    gap: 0;
 
-    & > :global(#ai-button) {
-      grid-area: ai;
-    }
-
-    & > :global(#insert-slot) {
-      grid-area: insert;
+    &::before {
+      content: none;
     }
   }
 
+  .create {
+    grid-row: 1;
+  }
+
   .toolbar-slot {
-    grid-area: toolbar;
+    grid-row: 2;
+
+    & > * {
+      margin-block-start: 8px;
+    }
   }
 }

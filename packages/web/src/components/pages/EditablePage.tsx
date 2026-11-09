@@ -1,5 +1,5 @@
 import PageContents from "@/components/pages/PageContents";
-import AIButton from "@/components/buttons/AIButton";
+import CreateToolbar from "@/components/toolbars/CreateToolbar";
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
@@ -39,16 +39,15 @@ export default function EditablePage({ editor }: EditablePageProps) {
   const bar = (
     <If condition={isEditable}>
       <div className={styles["bottom-bar"]} role="group" aria-label="Editor tools">
-        <AIButton isOpen={editor.isPromptToolbarOpen} />
         <div id="toolbar-slot" className={styles["toolbar-slot"]}>
           <If condition={selection.derive((value) => value.size >= 2)}>
             <SelectionToolbar />
           </If>
-          <If condition={editor.isPromptToolbarOpen}>
-            <ChatPanel />
-          </If>
         </div>
-        <div id="insert-slot" />
+        <div className={styles.create}>
+          <ChatPanel isOpen={editor.isPromptToolbarOpen} />
+          <CreateToolbar isPromptOpen={editor.isPromptToolbarOpen} />
+        </div>
       </div>
     </If>
   );

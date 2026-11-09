@@ -14,7 +14,6 @@ export default function InsertButton({ classList, ...props }: JSX.Attributes<"bu
       aria-haspopup="menu"
       aria-expanded="false"
       data-tooltip="Insert content"
-      data-tooltip-position="left"
       on:pointerdown={preventDefault}
       {...props}
     >

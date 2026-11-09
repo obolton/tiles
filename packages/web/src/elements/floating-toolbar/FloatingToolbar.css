@@ -18,6 +18,13 @@
   :host(:state(single-tab)) & {
     display: none;
   }
+
+  @media (width < 640px) {
+    :host(.primary) & {
+      left: 8px;
+      translate: none;
+    }
+  }
 }
 
 .tab-button {
