@@ -31,7 +31,7 @@ import AlignLeftIcon from "@/icons/align-left.svg?jsx";
 import AlignCenterIcon from "@/icons/align-center.svg?jsx";
 import AlignRightIcon from "@/icons/align-right.svg?jsx";
 import AlignJustifyIcon from "@/icons/align-justify.svg?jsx";
-import NewIcon from "@/icons/new.svg?jsx";
+import AddBoxIcon from "@/icons/add-box.svg?jsx";
 import EventIcon from "@/icons/event.svg?jsx";
 import DropdownIcon from "@/icons/dropdown.svg?jsx";
 import Dropdown from "@/models/Dropdown";
@@ -263,11 +263,11 @@ export default function FormattingTools({ editorView, state }: FormattingToolsPr
         <ToolbarButton
           id="insert-content-button"
           popovertarget="insert-content-menu"
-          label="Insert content"
+          label="Insert element"
           aria-haspopup="menu"
           aria-expanded="false"
         >
-          <NewIcon aria-hidden="true" />
+          <AddBoxIcon aria-hidden="true" />
         </ToolbarButton>
 
         <popover-menu id="insert-content-menu">
