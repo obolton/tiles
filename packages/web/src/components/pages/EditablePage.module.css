@@ -8,12 +8,17 @@
   gap: 8px;
   z-index: 2;
   pointer-events: none;
-  transition: inset-inline var(--animation-duration-short) var(--easing);
+  transition: inset-inline var(--animation-duration) var(--spring);
 
   /* Balances the create column so the toolbar slot stays centred while there is room */
   &::before {
     content: "";
     flex: 1 1 0;
+  }
+
+  /* The bar and its columns let clicks through; only the toolbars themselves take them */
+  & > * > * {
+    pointer-events: auto;
   }
 }
 
@@ -26,7 +31,6 @@
   /* Toolbars share one cell so an outgoing one never displaces the next */
   & > * {
     grid-area: 1 / 1;
-    pointer-events: auto;
   }
 }
 
@@ -35,10 +39,6 @@
   flex: 1 1 0;
   display: flex;
   justify-content: end;
-
-  & > * {
-    pointer-events: auto;
-  }
 }
 
 @media (width < 640px) {

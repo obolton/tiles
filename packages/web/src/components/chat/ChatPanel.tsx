@@ -21,7 +21,7 @@ export default function ChatPanel({ isOpen }: ChatPanelProps) {
   }
 
   return (
-    <div id="chat-panel" classList={{ [styles.panel]: true, [styles.open]: isOpen }}>
+    <div classList={{ [styles.panel]: true, [styles.open]: isOpen }}>
       <Thread />
       <Prompt
         className={styles.prompt}

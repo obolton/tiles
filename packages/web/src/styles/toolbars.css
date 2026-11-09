@@ -25,35 +25,11 @@ floating-toolbar {
     min-width: 0;
   }
 
-  &.bottom-right {
-    position: fixed;
-    inset: auto 32px 32px auto;
-  }
-
-  &.anchored {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 100%;
-    margin: 24px;
-
-    &.inside {
-      justify-self: end;
-    }
-  }
-
+  /* The contextual toolbar gives way to the prompt */
   body:is([data-drag], [data-resize]) &,
-  body[data-prompt] &.primary:not(.prompt) {
+  body[data-prompt] &.primary {
     display: none;
     opacity: 0;
-  }
-}
-
-@supports (anchor-name: --anchor) {
-  floating-toolbar.anchored {
-    position: fixed;
-    inset-block-start: auto !important;
-    inset-inline-start: auto !important;
-    position-area: block-end center;
   }
 }
 
