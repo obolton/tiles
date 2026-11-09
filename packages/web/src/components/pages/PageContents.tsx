@@ -13,8 +13,7 @@ export interface PageContentsProps {
   showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
-  end?: JSX.Node;
-  endVisible?: Reactive<boolean>;
+  end?: Reactive<JSX.Node>;
   bar?: JSX.Node;
 }
 

@@ -28,6 +28,7 @@ popover-menu {
   }
 
   @supports (anchor-name: --anchor) {
+    position-anchor: auto;
     inset-block-start: anchor(end);
     inset-inline-start: anchor(start);
     position-try-fallbacks:

@@ -1,6 +1,4 @@
 .bottom-bar {
-  --bottom-bar-inset: 32px;
-
   position: fixed;
   inset-inline: calc(var(--sidebar-width-start, 0px) + var(--bottom-bar-inset))
     calc(var(--sidebar-width-end, 0px) + var(--bottom-bar-inset));
@@ -46,8 +44,6 @@
 @media (width < 640px) {
   /* The create toolbar shares the top row with the tab bar; the toolbar takes a full-width row */
   .bottom-bar {
-    --bottom-bar-inset: 16px;
-
     display: grid;
     gap: 0;
 

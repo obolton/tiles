@@ -2,23 +2,27 @@ import "@/styles";
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "jsx/dom";
+import { reactive } from "reactivity";
 import EditorLayout from "../EditorLayout";
 import { PanelResizeEvent } from "@/elements/resizable-panel/events";
 import barStyles from "../EditablePage.module.css";
+import type { JSX } from "jsx/jsx";
 
 function renderLayout() {
-  // Measure final positions rather than the sheet's slide-in transition
+  // Measure final positions rather than the panels' slide-in transitions
   document.body.dataset.disableTransitions = "";
+  const end = reactive<JSX.Node>(<div id="end-panel">End</div>);
   const nodes = render(
     <EditorLayout
       start={<div id="start-panel">Start</div>}
-      end={<div id="end-panel">End</div>}
+      end={end}
       bar={<div id="bar" className={barStyles["bottom-bar"]} />}
     >
       <main id="content">Content</main>
     </EditorLayout>,
   );
   document.body.append(...nodes);
+  return { end };
 }
 
 function rectOf(selector: string) {
@@ -55,9 +59,9 @@ describe("EditorLayout", () => {
 
     const layout = wrapperOf("#content");
     expect(getComputedStyle(layout).paddingLeft).toBe("480px");
-    expect(getComputedStyle(layout).paddingRight).toBe("200px");
+    expect(getComputedStyle(layout).paddingRight).toBe("280px");
     expect(rectOf("#start-panel").width).toBe(480);
-    expect(rectOf("#end-panel").width).toBe(200);
+    expect(rectOf("#end-panel").width).toBe(280);
   });
 
   test("insets the bar by the panel widths at desktop width", async () => {
@@ -67,7 +71,22 @@ describe("EditorLayout", () => {
 
     const bar = rectOf("#bar");
     expect(bar.left).toBe(480 + 32);
-    expect(bar.right).toBe(1280 - 200 - 32);
+    expect(bar.right).toBe(1280 - 280 - 32);
+  });
+
+  test("collapses the end slot while it has no panel", async () => {
+    await page.viewport(1280, 800);
+    const { end } = renderLayout();
+
+    end.value = null;
+
+    const layout = wrapperOf("#content");
+    expect(document.querySelector("#end-panel")).toBeNull();
+    expect(getComputedStyle(layout).paddingRight).toBe("0px");
+
+    end.value = <div id="end-panel">End</div>;
+    expect(rectOf("#end-panel").width).toBe(280);
+    expect(getComputedStyle(layout).paddingRight).toBe("280px");
   });
 
   test("clamps wide panels at tablet width", async () => {
@@ -79,7 +98,7 @@ describe("EditorLayout", () => {
     const start = wrapperOf("#start-panel").getBoundingClientRect();
     expect(start.width).toBeCloseTo(768 * 0.3, 0);
     expect(parseFloat(getComputedStyle(layout).paddingLeft)).toBeCloseTo(768 * 0.3, 0);
-    expect(rectOf("#end-panel").width).toBe(200);
+    expect(rectOf("#end-panel").width).toBeCloseTo(768 * 0.3, 0);
   });
 
   test("shows the start panel as a rail and the end panel as a sheet at phone width", async () => {

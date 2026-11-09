@@ -32,6 +32,7 @@ export default class AnchoredPopover extends HTMLElement {
 
   #anchorElement: HTMLElement | null = null;
   #triggerElement: HTMLElement | null = null;
+  #anchoredElement: HTMLElement | null = null;
   #positionAbortController: AbortController | null = null;
 
   get anchorElement() {
@@ -76,7 +77,7 @@ export default class AnchoredPopover extends HTMLElement {
     switch (name) {
       case "anchor":
         if (this.matches(":popover-open")) {
-          this.setPosition();
+          this.#updatePosition();
         }
         return;
       case "align":
@@ -107,7 +108,7 @@ export default class AnchoredPopover extends HTMLElement {
     }
 
     if (event.newState === "open") {
-      this.#triggerElement = this.#getTriggerElement();
+      this.#triggerElement = this.#getTriggerElement(event);
       if (SUPPORTS_ANCHOR_POSITIONING) {
         this.#applyAnchorPositioning();
       } else {
@@ -120,7 +121,11 @@ export default class AnchoredPopover extends HTMLElement {
     }
   }
 
-  #getTriggerElement(): HTMLElement | null {
+  #getTriggerElement(event: ToggleEvent): HTMLElement | null {
+    if (event.source instanceof HTMLElement) {
+      return event.source;
+    }
+
     const activeElement = document.activeElement;
     if (
       activeElement instanceof HTMLElement &&
@@ -151,15 +156,34 @@ export default class AnchoredPopover extends HTMLElement {
     }
   }
 
+  #updatePosition() {
+    if (SUPPORTS_ANCHOR_POSITIONING) {
+      this.#applyAnchorPositioning();
+    } else {
+      this.setPosition();
+    }
+  }
+
   #applyAnchorPositioning() {
     const anchor = this.anchorElement;
-    if (!anchor) {
-      return;
-    }
-
     const anchorName = `--${this.id}-anchor`;
-    anchor.style.anchorName = anchorName;
-    this.style.positionAnchor = anchorName;
+
+    // Popovers can share an anchor, so only clear a name this popover applied
+    if (
+      this.#anchoredElement &&
+      this.#anchoredElement !== anchor &&
+      this.#anchoredElement.style.anchorName === anchorName
+    ) {
+      this.#anchoredElement.style.anchorName = "";
+    }
+    this.#anchoredElement = anchor;
+
+    if (anchor) {
+      anchor.style.anchorName = anchorName;
+      this.style.positionAnchor = anchorName;
+    } else {
+      this.style.positionAnchor = "";
+    }
   }
 
   #addPositionListeners() {
@@ -171,18 +195,8 @@ export default class AnchoredPopover extends HTMLElement {
   }
 
   #cleanup() {
-    if (SUPPORTS_ANCHOR_POSITIONING) {
-      const anchor = this.anchorElement;
-      // Popovers can share an anchor, so only clear a name this popover applied
-      if (anchor?.style.anchorName === `--${this.id}-anchor`) {
-        anchor.style.anchorName = "";
-      }
-      this.style.positionAnchor = "";
-    } else {
-      this.#positionAbortController?.abort();
-      this.#positionAbortController = null;
-    }
-
+    this.#positionAbortController?.abort();
+    this.#positionAbortController = null;
     this.#triggerElement = null;
   }
 

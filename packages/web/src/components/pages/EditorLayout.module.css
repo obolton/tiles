@@ -20,6 +20,11 @@
 .end {
   inset-inline-end: 0;
   inline-size: var(--sidebar-width-end);
+  transition: inset-inline-end var(--animation-duration) var(--spring);
+
+  @starting-style {
+    inset-inline-end: calc(-1 * var(--sidebar-width-end));
+  }
 }
 
 /* Keep room for the page when both panels are open */

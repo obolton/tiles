@@ -4,7 +4,6 @@ import NewIcon from "@/icons/new.svg?jsx";
 import If from "jsx/if";
 import PageInvite from "@/models/PageInvite";
 import { user as currentUser } from "@/utils/sessions";
-import { combine } from "reactivity";
 import { showModal } from "@/utils/modals";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
@@ -34,10 +33,6 @@ export default function PeopleList({ page, online }: PeopleListProps) {
     value?.id === page.author.id ? "Owner · You" : "Owner",
   );
   const hasInvites = invites.derive((items) => items.length > 0);
-  const isEmpty = combine(
-    { access, invites },
-    ({ access, invites }) => access.length === 0 && invites.length === 0,
-  );
 
   function showInviteModal() {
     void showModal(InviteModalLoader, {
@@ -65,9 +60,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
   return (
     <section className={styles.section} aria-labelledby="share-people">
       <div className={styles.row}>
-        <h3 id="share-people" className={styles.heading}>
-          People
-        </h3>
+        <h3 id="share-people">People</h3>
         <button type="button" className="secondary small" on:click={showInviteModal}>
           <NewIcon aria-hidden="true" />
           Invite
@@ -95,9 +88,7 @@ export default function PeopleList({ page, online }: PeopleListProps) {
 
       <If condition={hasInvites}>
         <>
-          <h4 id="share-pending" className={styles.heading}>
-            Pending invites
-          </h4>
+          <h4 id="share-pending">Pending invites</h4>
           <ul className={styles.list} aria-labelledby="share-pending">
             {invites.derive((items) =>
               items.map((invite) => (
@@ -106,10 +97,6 @@ export default function PeopleList({ page, online }: PeopleListProps) {
             )}
           </ul>
         </>
-      </If>
-
-      <If condition={isEmpty}>
-        <p className={styles.empty}>Only you have access</p>
       </If>
     </section>
   );
