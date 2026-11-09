@@ -1,11 +1,12 @@
-import styles from "./AltTab.module.css";
+import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
+import styles from "./AltText.module.css";
 import type Image from "@/models/Image";
 
-export interface AltTabProps {
+export interface AltTextProps {
   image: Image;
 }
 
-export default function AltTab({ image }: AltTabProps) {
+export default function AltText({ image }: AltTextProps) {
   function onBlur(event: Event) {
     const input = event.currentTarget as HTMLInputElement;
     const alt = input.value || null;
@@ -15,14 +16,15 @@ export default function AltTab({ image }: AltTabProps) {
   }
 
   return (
-    <toolbar-tab name="alt" label="Alt text">
+    <ToolbarGroup label="Alt text">
       <input
         className={styles.alt}
         type="text"
         placeholder="Alt text"
+        aria-label="Alt text"
         value={image.alt.value ?? ""}
         on:blur={onBlur}
       />
-    </toolbar-tab>
+    </ToolbarGroup>
   );
 }

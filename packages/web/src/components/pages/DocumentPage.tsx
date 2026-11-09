@@ -20,6 +20,7 @@ export interface DocumentPageProps {
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: Reactive<JSX.Node>;
+  bar?: JSX.Node;
 }
 
 export default function DocumentPage({
@@ -28,12 +29,13 @@ export default function DocumentPage({
   showToolbar,
   signal,
   end,
+  bar,
 }: DocumentPageProps) {
   const editorView = reactive<EditorView | null>(null);
   const state = reactive<EditorState | null>(null);
 
   return (
-    <EditorLayout end={end}>
+    <EditorLayout end={end} bar={bar}>
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}

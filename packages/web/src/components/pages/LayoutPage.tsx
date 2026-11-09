@@ -23,6 +23,7 @@ export interface LayoutPageProps {
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: Reactive<JSX.Node>;
+  bar?: JSX.Node;
 }
 
 export default function LayoutPage({
@@ -32,6 +33,7 @@ export default function LayoutPage({
   tiles,
   signal,
   end,
+  bar,
 }: LayoutPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
@@ -79,7 +81,7 @@ export default function LayoutPage({
   }
 
   return (
-    <EditorLayout end={end}>
+    <EditorLayout end={end} bar={bar}>
       <div className={styles.layout} style={style}>
         <DockZone
           page={page}

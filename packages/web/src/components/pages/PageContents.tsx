@@ -14,6 +14,7 @@ export interface PageContentsProps {
   tiles: TileCollection;
   signal?: AbortSignal;
   end?: Reactive<JSX.Node>;
+  bar?: JSX.Node;
 }
 
 export default function PageContents(props: PageContentsProps) {
