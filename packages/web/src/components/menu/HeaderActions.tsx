@@ -12,11 +12,13 @@ import ShareIcon from "@/icons/share.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
+import DownloadIcon from "@/icons/download.svg?jsx";
 import If from "jsx/if";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
+import { exportPageAsMarkdown } from "@/utils/export";
 import { mediaQuery } from "@/utils/viewport";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import styles from "./HeaderActions.module.css";
@@ -123,38 +125,39 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               </ToolbarButton>
             </If>
 
-            <If condition={isCompact}>
-              <ToolbarButton
-                id={PAGE_ACTIONS_BUTTON_ID}
-                label="More actions"
-                popovertarget={PAGE_ACTIONS_MENU_ID}
-                aria-haspopup="menu"
-                aria-expanded="false"
-              >
-                <MoreIcon aria-hidden="true" />
-              </ToolbarButton>
+            <ToolbarButton
+              id={PAGE_ACTIONS_BUTTON_ID}
+              label="More actions"
+              popovertarget={PAGE_ACTIONS_MENU_ID}
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
+              <MoreIcon aria-hidden="true" />
+            </ToolbarButton>
 
-              <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
-                <If condition={isEditable}>
-                  <If condition={isPhone}>
-                    <MenuItemGroup>
-                      <MenuItem
-                        icon={<UndoIcon aria-hidden="true" />}
-                        aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
-                        on:click={menuAction(() => editor.undo())}
-                      >
-                        Undo
-                      </MenuItem>
-                      <MenuItem
-                        icon={<RedoIcon aria-hidden="true" />}
-                        aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
-                        on:click={menuAction(() => editor.redo())}
-                      >
-                        Redo
-                      </MenuItem>
-                    </MenuItemGroup>
-                  </If>
+            {/* Holds the actions that do not fit as buttons at the current width, plus the export */}
+            <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
+              <If condition={isEditable}>
+                <If condition={isPhone}>
+                  <MenuItemGroup>
+                    <MenuItem
+                      icon={<UndoIcon aria-hidden="true" />}
+                      aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
+                      on:click={menuAction(() => editor.undo())}
+                    >
+                      Undo
+                    </MenuItem>
+                    <MenuItem
+                      icon={<RedoIcon aria-hidden="true" />}
+                      aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
+                      on:click={menuAction(() => editor.redo())}
+                    >
+                      Redo
+                    </MenuItem>
+                  </MenuItemGroup>
+                </If>
 
+                <If condition={isCompact}>
                   <MenuItemGroup>
                     <MenuItem
                       icon={<ShareIcon aria-hidden="true" />}
@@ -172,7 +175,9 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                     </MenuItem>
                   </MenuItemGroup>
                 </If>
+              </If>
 
+              <If condition={isCompact}>
                 <MenuItemGroup>
                   <MenuItem
                     icon={isBookmarked.derive(bookmarkIcon)}
@@ -188,8 +193,17 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                     Present
                   </MenuItem>
                 </MenuItemGroup>
-              </popover-menu>
-            </If>
+              </If>
+
+              <MenuItemGroup>
+                <MenuItem
+                  icon={<DownloadIcon aria-hidden="true" />}
+                  on:click={menuAction(() => exportPageAsMarkdown(editor.page))}
+                >
+                  Export as Markdown
+                </MenuItem>
+              </MenuItemGroup>
+            </popover-menu>
           </ToolbarGroup>
         </>
       )}
