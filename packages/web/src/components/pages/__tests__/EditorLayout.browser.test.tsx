@@ -12,7 +12,7 @@ function renderLayout() {
   document.body.dataset.disableTransitions = "";
   const end = reactive<JSX.Node>(<div id="end-panel">End</div>);
   const nodes = render(
-    <EditorLayout start={<div id="start-panel">Start</div>} end={end}>
+    <EditorLayout start={<div id="start-panel">Start</div>} end={end} bar={<div id="bar" />}>
       <main id="content">Content</main>
     </EditorLayout>,
   );
@@ -59,6 +59,16 @@ describe("EditorLayout", () => {
     expect(rectOf("#end-panel").width).toBe(280);
   });
 
+  test("insets the bar by the panel widths at desktop width", async () => {
+    await page.viewport(1280, 800);
+    renderLayout();
+    resize("#start-panel", 480);
+
+    const bar = wrapperOf("#bar").getBoundingClientRect();
+    expect(bar.left).toBe(480 + 32);
+    expect(bar.right).toBe(1280 - 280 - 32);
+  });
+
   test("collapses the end slot while it has no panel", async () => {
     await page.viewport(1280, 800);
     const { end } = renderLayout();
@@ -97,6 +107,9 @@ describe("EditorLayout", () => {
     expect(getComputedStyle(layout).paddingLeft).toBe("0px");
     expect(getComputedStyle(layout).paddingRight).toBe("0px");
     expect(getComputedStyle(layout).paddingTop).toBe("96px");
+    const bar = wrapperOf("#bar").getBoundingClientRect();
+    expect(bar.left).toBe(16);
+    expect(bar.right).toBe(WIDTH - 16);
 
     const start = wrapperOf("#start-panel").getBoundingClientRect();
     expect(start.left).toBe(0);

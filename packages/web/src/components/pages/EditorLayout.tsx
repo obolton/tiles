@@ -18,10 +18,12 @@ export interface EditorLayoutProps {
   start?: JSX.Node;
   /** The panel in the end slot, which is hidden while this is null. */
   end?: Reactive<JSX.Node>;
+  /** Fixed chrome (the editor's bottom bar), kept between the panels. */
+  bar?: JSX.Node;
   children: JSX.Node;
 }
 
-export default function EditorLayout({ start, end, children }: EditorLayoutProps) {
+export default function EditorLayout({ start, end, bar, children }: EditorLayoutProps) {
   const startSize = reactive(clamp(startWidth.value));
   const endSize = reactive(clamp(endWidth.value));
   const isEndVisible = end?.derive((panel) => panel != null) ?? reactive(false);
@@ -47,6 +49,7 @@ export default function EditorLayout({ start, end, children }: EditorLayoutProps
         </div>
       ) : null}
 
+      {bar ? <div className={styles.bar}>{bar}</div> : null}
       {children}
 
       {end ? (

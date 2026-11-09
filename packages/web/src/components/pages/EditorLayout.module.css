@@ -27,6 +27,16 @@
   }
 }
 
+.bar {
+  position: fixed;
+  inset-inline: calc(var(--sidebar-width-start) + var(--bottom-bar-inset))
+    calc(var(--sidebar-width-end) + var(--bottom-bar-inset));
+  inset-block-end: max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
+  z-index: 2;
+  pointer-events: none;
+  transition: inset-inline var(--animation-duration) var(--spring);
+}
+
 /* Keep room for the page when both panels are open */
 @media (width < 1024px) {
   .layout {

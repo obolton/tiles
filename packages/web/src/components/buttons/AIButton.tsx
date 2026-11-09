@@ -19,7 +19,6 @@ export default function AIButton({ isOpen }: AIButtonProps) {
       aria-label="AI prompt"
       aria-pressed={isOpen}
       data-tooltip="AI prompt"
-      data-tooltip-position="right"
       on:click={onClick}
     >
       <AIIcon aria-hidden="true" />
