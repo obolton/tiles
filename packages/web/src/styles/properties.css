@@ -40,19 +40,6 @@
   initial-value: rgb(0 112 243 / 70%);
 }
 
-/* Widths of the toolbar tab edge fades, driven by its scroll position */
-@property --toolbar-fade-start {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
-@property --toolbar-fade-end {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
 @property --min-width {
   syntax: "<length>";
   inherits: true;

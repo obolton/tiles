@@ -6,7 +6,7 @@ import { render } from "jsx/dom";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 
-const SUPPORTS_SCROLL_TIMELINE = CSS.supports("animation-timeline", "scroll()");
+const SUPPORTS_VIEW_TIMELINE = CSS.supports("animation-timeline", "view()");
 
 function renderToolbar(className?: string) {
   const nodes = render(
@@ -29,20 +29,22 @@ function renderToolbar(className?: string) {
   document.body.append(...nodes);
 }
 
-function scroller() {
-  const element = document.querySelector("toolbar-tab")?.shadowRoot?.getElementById("scroller");
+function tab() {
+  const element = document.querySelector("toolbar-tab");
   if (!element) {
-    throw new Error("Missing scroller");
+    throw new Error("Missing tab");
   }
   return element;
 }
 
-function fades() {
-  const style = getComputedStyle(scroller());
-  return {
-    start: style.getPropertyValue("--toolbar-fade-start"),
-    end: style.getPropertyValue("--toolbar-fade-end"),
-  };
+function buttons() {
+  return Array.from(document.querySelectorAll("toolbar-tab button"));
+}
+
+/** The opacity applied by an item's edge fade, 1 when none is in effect. */
+function fadeOf(element: Element) {
+  const match = /opacity\((\d*\.?\d+)\)/.exec(getComputedStyle(element).filter);
+  return match ? Number(match[1]) : 1;
 }
 
 async function nextFrame() {
@@ -54,45 +56,50 @@ afterEach(() => {
 });
 
 describe("ToolbarTab", () => {
-  test("slots its groups into a scroller", () => {
-    renderToolbar();
-    const slot = scroller().querySelector("slot");
-    expect(slot?.assignedElements()).toHaveLength(4);
-  });
-
   test("keeps a non-primary toolbar at its content width", () => {
     renderToolbar();
-    expect(getComputedStyle(scroller()).overflowX).toBe("visible");
-    expect(document.querySelector("toolbar-tab")?.getBoundingClientRect().width).toBeGreaterThan(
-      320,
-    );
+    expect(getComputedStyle(tab()).overflowX).toBe("visible");
+    expect(tab().getBoundingClientRect().width).toBeGreaterThan(320);
   });
 
   test("scrolls a primary toolbar that is wider than its container", () => {
     renderToolbar("primary");
-    const element = scroller();
-    expect(getComputedStyle(element).overflowX).toBe("auto");
-    expect(element.scrollWidth).toBeGreaterThan(element.clientWidth);
-    expect(document.querySelector("toolbar-tab")?.getBoundingClientRect().width).toBe(320);
+    expect(getComputedStyle(tab()).overflowX).toBe("auto");
+    expect(tab().scrollWidth).toBeGreaterThan(tab().clientWidth);
+    expect(tab().getBoundingClientRect().width).toBe(320);
   });
 
-  test.runIf(SUPPORTS_SCROLL_TIMELINE)("fades only the edge with more to scroll to", async () => {
-    renderToolbar("primary");
-    const element = scroller();
-    await nextFrame();
-    expect(fades()).toEqual({ start: "0px", end: "32px" });
+  test.runIf(SUPPORTS_VIEW_TIMELINE)(
+    "fades the items at the edge with more to scroll to",
+    async () => {
+      renderToolbar("primary");
+      const items = buttons();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!first || !last) {
+        throw new Error("Missing buttons");
+      }
+      await nextFrame();
+      expect(fadeOf(first)).toBe(1);
+      expect(fadeOf(last)).toBe(0);
+      const { right } = tab().getBoundingClientRect();
+      const clipped = items.find((item) => item.getBoundingClientRect().right > right);
+      expect(clipped).toBeDefined();
+      expect(fadeOf(clipped as Element)).toBeLessThan(1);
 
-    element.scrollLeft = element.scrollWidth;
-    await nextFrame();
-    expect(fades()).toEqual({ start: "32px", end: "0px" });
-  });
+      tab().scrollLeft = tab().scrollWidth;
+      await nextFrame();
+      expect(fadeOf(first)).toBe(0);
+      expect(fadeOf(last)).toBe(1);
+    },
+  );
 
-  test.runIf(SUPPORTS_SCROLL_TIMELINE)(
-    "shows no fades when there is nothing to scroll",
+  test.runIf(SUPPORTS_VIEW_TIMELINE)(
+    "does not fade items when there is nothing to scroll",
     async () => {
       renderToolbar();
       await nextFrame();
-      expect(fades()).toEqual({ start: "0px", end: "0px" });
+      expect(buttons().every((item) => fadeOf(item) === 1)).toBe(true);
     },
   );
 });

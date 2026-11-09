@@ -35,7 +35,9 @@ floating-toolbar {
 
 toolbar-tab {
   grid-area: 1 / 1;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   opacity: 0;
   pointer-events: none;
   transition:
@@ -58,10 +60,40 @@ toolbar-tab {
   }
 
   .primary > & {
-    --toolbar-tab-overflow: auto;
-
     max-width: 100%;
     min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 8px;
+
+    & > [role="group"] {
+      scroll-snap-align: start;
+    }
+
+    /* Items fade as they cross the edges of the scrollport, so a clipped edge reads as scrollable */
+    @supports (animation-timeline: view()) {
+      & > [role="group"] > :not([popover]) {
+        animation: toolbar-item-fade linear both;
+        animation-timeline: view(inline);
+      }
+    }
+  }
+}
+
+@keyframes toolbar-item-fade {
+  entry 0% {
+    filter: opacity(0);
+  }
+
+  entry 100%,
+  exit 0% {
+    filter: opacity(1);
+  }
+
+  exit 100% {
+    filter: opacity(0);
   }
 }
 
