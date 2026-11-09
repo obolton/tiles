@@ -164,11 +164,6 @@ export default class AnchoredPopover extends HTMLElement {
     }
   }
 
-  /**
-   * Points the popover at its anchor. The association is kept when the popover closes so it stays
-   * attached while fading out; the next open re-points it. Without an anchor, the stylesheet's
-   * `position-anchor: auto` falls back to the invoker.
-   */
   #applyAnchorPositioning() {
     const anchor = this.anchorElement;
     const anchorName = `--${this.id}-anchor`;
