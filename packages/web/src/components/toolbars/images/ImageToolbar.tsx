@@ -8,7 +8,6 @@ import type { Reactive } from "reactivity";
 
 export interface ImageToolbarProps {
   image: Image;
-  /** The caption editor's view. */
   editorView: Reactive<EditorView | null>;
 }
 
