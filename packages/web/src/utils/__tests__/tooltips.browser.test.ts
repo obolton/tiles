@@ -49,4 +49,16 @@ describe("tooltips", () => {
     await expect.poll(isTooltipOpen, { timeout: TOOLTIP_DELAY * 4 }).toBe(true);
     expect(document.getElementById("tooltip")?.textContent).toBe("Labelled");
   });
+
+  test("flips a tooltip above a target at the bottom of the viewport", async () => {
+    const { labelled } = renderButtons();
+    labelled.style.cssText = "position: fixed; inset: auto 0 0; height: 40px";
+
+    await userEvent.hover(labelled);
+
+    await expect.poll(isTooltipOpen, { timeout: TOOLTIP_DELAY * 4 }).toBe(true);
+    const tooltip = document.getElementById("tooltip")?.getBoundingClientRect();
+    const target = labelled.getBoundingClientRect();
+    expect(tooltip?.bottom).toBeLessThanOrEqual(target.top);
+  });
 });

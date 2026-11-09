@@ -111,7 +111,14 @@ class TooltipController {
     const height = this.tooltip.offsetHeight;
 
     const bounds = this.target.getBoundingClientRect();
-    const position = this.getPosition();
+    let position = this.getPosition();
+
+    // Flip to the other side when the preferred one would leave the viewport
+    if (position === "bottom" && bounds.bottom + TOOLTIP_MARGIN + height > window.innerHeight) {
+      position = "top";
+    } else if (position === "top" && bounds.top - TOOLTIP_MARGIN - height < 0) {
+      position = "bottom";
+    }
 
     switch (position) {
       case "left":
