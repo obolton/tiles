@@ -5,7 +5,6 @@ import type { JSX } from "jsx/jsx";
 
 export interface CreateToolbarProps {
   isPromptOpen: Reactive<boolean>;
-  /** Contents of the insert group. Pages portal their Insert button and menu in instead. */
   children?: JSX.Node;
 }
 

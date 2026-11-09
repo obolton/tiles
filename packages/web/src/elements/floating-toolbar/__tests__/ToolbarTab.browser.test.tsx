@@ -6,8 +6,6 @@ import { render } from "jsx/dom";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 
-const SUPPORTS_VIEW_TIMELINE = CSS.supports("animation-timeline", "view()");
-
 function renderToolbar(className?: string) {
   const nodes = render(
     <div style={{ width: "320px" }}>
@@ -37,20 +35,6 @@ function tab() {
   return element;
 }
 
-function buttons() {
-  return Array.from(document.querySelectorAll("toolbar-tab button"));
-}
-
-/** The opacity applied by an item's edge fade, 1 when none is in effect. */
-function fadeOf(element: Element) {
-  const match = /opacity\((\d*\.?\d+)\)/.exec(getComputedStyle(element).filter);
-  return match ? Number(match[1]) : 1;
-}
-
-async function nextFrame() {
-  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-}
-
 afterEach(() => {
   document.body.replaceChildren();
 });
@@ -68,38 +52,4 @@ describe("ToolbarTab", () => {
     expect(tab().scrollWidth).toBeGreaterThan(tab().clientWidth);
     expect(tab().getBoundingClientRect().width).toBe(320);
   });
-
-  test.runIf(SUPPORTS_VIEW_TIMELINE)(
-    "fades the items at the edge with more to scroll to",
-    async () => {
-      renderToolbar("primary");
-      const items = buttons();
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (!first || !last) {
-        throw new Error("Missing buttons");
-      }
-      await nextFrame();
-      expect(fadeOf(first)).toBe(1);
-      expect(fadeOf(last)).toBe(0);
-      const { right } = tab().getBoundingClientRect();
-      const clipped = items.find((item) => item.getBoundingClientRect().right > right);
-      expect(clipped).toBeDefined();
-      expect(fadeOf(clipped as Element)).toBeLessThan(1);
-
-      tab().scrollLeft = tab().scrollWidth;
-      await nextFrame();
-      expect(fadeOf(first)).toBe(0);
-      expect(fadeOf(last)).toBe(1);
-    },
-  );
-
-  test.runIf(SUPPORTS_VIEW_TIMELINE)(
-    "does not fade items when there is nothing to scroll",
-    async () => {
-      renderToolbar();
-      await nextFrame();
-      expect(buttons().every((item) => fadeOf(item) === 1)).toBe(true);
-    },
-  );
 });

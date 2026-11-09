@@ -27,7 +27,6 @@
   }
 }
 
-/* Fixed chrome between the panels, following their insets */
 .bar {
   position: fixed;
   inset-inline: calc(var(--sidebar-width-start) + var(--bottom-bar-inset))

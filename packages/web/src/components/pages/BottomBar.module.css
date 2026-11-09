@@ -1,4 +1,4 @@
-.bottom-bar {
+.bar {
   display: grid;
   grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: end;
@@ -10,7 +10,7 @@
   }
 }
 
-.toolbar-slot {
+.slot {
   grid-column: 2;
   min-width: 0;
   display: grid;
@@ -31,7 +31,7 @@
 
 @media (width < 640px) {
   /* The create toolbar shares the top row with the tab bar; the toolbar takes a full-width row */
-  .bottom-bar {
+  .bar {
     grid-template-columns: 1fr;
     gap: 0;
   }
@@ -40,7 +40,7 @@
     grid-area: 1 / 1;
   }
 
-  .toolbar-slot {
+  .slot {
     grid-area: 2 / 1;
 
     & > * {

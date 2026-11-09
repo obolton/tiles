@@ -9,7 +9,6 @@ import type { JSX } from "jsx/jsx";
 
 export interface PromptProps extends JSX.Attributes<"form"> {
   className?: string;
-  /** Id for the textarea, so a caller can focus it. */
   inputId?: string;
   placeholder?: string;
   submitTooltip?: string;
