@@ -1,11 +1,9 @@
-import * as Y from "yjs";
+import type * as Y from "yjs";
 import { BODY_ID } from "doc/body";
-import { getChildren, orderedEntries } from "doc/placement/ordering";
-import { getCell } from "doc/tiles/table";
+import { getChildren } from "doc/placement/ordering";
 import { fragmentToMarkdown } from "doc/markdown/richText";
+import { tileToMarkdown } from "doc/markdown/tiles";
 import { getTileIds } from "doc/richText/tiles";
-import { toMarkdown } from "@/ai/context/markdown";
-import type { RichText } from "doc/types/richText";
 import type { TileType } from "doc/types/enums";
 
 export interface TileContent {
@@ -13,18 +11,6 @@ export interface TileContent {
   type: TileType;
   content: string;
 }
-
-type TileSerializer = (tile: Y.Map<unknown>) => string;
-
-const TILE_CONTENT: Partial<Record<TileType, TileSerializer>> = {
-  TEXT: getTextContent,
-  IMAGE: getImageContent,
-  VIDEO: getVideoContent,
-  LINK: getLinkContent,
-  PAGE_LINK: getPageLinkContent,
-  TABLE: getTableContent,
-  CHART: getChartContent,
-};
 
 /**
  * Resolves tile IDs to their content from a Y.Doc. Sections expand to their children and
@@ -50,7 +36,7 @@ export function resolveTileContents(
         .filter((content) => content.length > 0)
         .join("\n\n");
     }
-    const content = getTileContent(tile);
+    const content = tileToMarkdown(tile, { tiles });
     const header = `[${refs.get(id)}] (${String(tile.get("type"))}${content ? "" : ", empty"})`;
     return content ? `${header}\n${content}` : header;
   };
@@ -65,103 +51,8 @@ export function resolveTileContents(
     }
     const tile = tiles.get(id);
     const type = tile?.get("type") as TileType;
-    return { id, type, content: tile ? getTileContent(tile) : "" };
+    return { id, type, content: tile ? tileToMarkdown(tile, { tiles }) : "" };
   });
-}
-
-export function getTileContent(tile: Y.Map<unknown>): string {
-  return TILE_CONTENT[tile.get("type") as TileType]?.(tile) ?? "";
-}
-
-function getTextContent(tile: Y.Map<unknown>): string {
-  const content = tile.get("content");
-  return content instanceof Y.XmlFragment ? fragmentToMarkdown(content) : "";
-}
-
-function getImageContent(tile: Y.Map<unknown>): string {
-  const text = tile.get("text");
-  return Array.isArray(text) ? toMarkdown(text as RichText) : "";
-}
-
-function getVideoContent(tile: Y.Map<unknown>): string {
-  return joinLines(getString(tile, "title"), getString(tile, "description"));
-}
-
-function getLinkContent(tile: Y.Map<unknown>): string {
-  return joinLines(
-    getString(tile, "title"),
-    getString(tile, "description"),
-    getString(tile, "url"),
-  );
-}
-
-function getPageLinkContent(tile: Y.Map<unknown>): string {
-  return getTitle(tile.get("linkedPage"));
-}
-
-function getChartContent(tile: Y.Map<unknown>): string {
-  const parts: string[] = [];
-
-  const label = getTitle(tile.get("label"));
-  if (label) {
-    parts.push(`Labels: ${label}`);
-  }
-
-  const series = tile.get("series");
-  if (series instanceof Y.Map) {
-    const names: string[] = [];
-    for (const entry of series.values()) {
-      const name = entry instanceof Y.Map ? getTitle(entry.get("column")) : "";
-      if (name) {
-        names.push(name);
-      }
-    }
-    if (names.length > 0) {
-      parts.push(`Series: ${names.join(", ")}`);
-    }
-  }
-
-  return parts.join("\n");
-}
-
-function getTableContent(tile: Y.Map<unknown>): string {
-  const columnsMap = tile.get("columns");
-  const rowsMap = tile.get("rows");
-  if (!(columnsMap instanceof Y.Map) || !(rowsMap instanceof Y.Map)) {
-    return "";
-  }
-
-  const columns = orderedEntries(columnsMap);
-  if (columns.length === 0) {
-    return "";
-  }
-
-  const headers = columns.map(({ map }) => escapeCell(getString(map, "title")));
-  const lines = [`| ${headers.join(" | ")} |`, `| ${headers.map(() => "---").join(" | ")} |`];
-
-  for (const { map } of orderedEntries(rowsMap)) {
-    const values = columns.map(({ id }) => formatCell(getCell(map, id)));
-    lines.push(`| ${values.join(" | ")} |`);
-  }
-
-  return lines.join("\n");
-}
-
-function formatCell(value: unknown): string {
-  if (typeof value === "string") {
-    return escapeCell(value);
-  }
-  if (Array.isArray(value)) {
-    return escapeCell(toMarkdown(value as RichText));
-  }
-  return "";
-}
-
-/**
- * Escapes cell content so a value stays within one table cell.
- */
-function escapeCell(value: string): string {
-  return value.replace(/\|/g, "\\|").replace(/[\r\n]+/g, " ");
 }
 
 /** Content tile ids in order: the body before its embedded tiles, sections as their children. */
@@ -193,21 +84,4 @@ function expandReferences(
   };
   ids.forEach(visit);
   return Array.from(resolved);
-}
-
-function joinLines(...values: string[]): string {
-  return values.filter((value) => value.length > 0).join("\n");
-}
-
-function getString(tile: Y.Map<unknown>, key: string): string {
-  const value = tile.get(key);
-  return typeof value === "string" ? value : "";
-}
-
-function getTitle(value: unknown): string {
-  if (value && typeof value === "object" && "title" in value) {
-    const { title } = value;
-    return typeof title === "string" ? title : "";
-  }
-  return "";
 }
