@@ -5,7 +5,6 @@ import { render } from "jsx/dom";
 import { reactive } from "reactivity";
 import EditorLayout from "../EditorLayout";
 import { PanelResizeEvent } from "@/elements/resizable-panel/events";
-import barStyles from "../EditablePage.module.css";
 import type { JSX } from "jsx/jsx";
 
 function renderLayout() {
@@ -13,11 +12,7 @@ function renderLayout() {
   document.body.dataset.disableTransitions = "";
   const end = reactive<JSX.Node>(<div id="end-panel">End</div>);
   const nodes = render(
-    <EditorLayout
-      start={<div id="start-panel">Start</div>}
-      end={end}
-      bar={<div id="bar" className={barStyles["bottom-bar"]} />}
-    >
+    <EditorLayout start={<div id="start-panel">Start</div>} end={end} bar={<div id="bar" />}>
       <main id="content">Content</main>
     </EditorLayout>,
   );
@@ -69,7 +64,7 @@ describe("EditorLayout", () => {
     renderLayout();
     resize("#start-panel", 480);
 
-    const bar = rectOf("#bar");
+    const bar = wrapperOf("#bar").getBoundingClientRect();
     expect(bar.left).toBe(480 + 32);
     expect(bar.right).toBe(1280 - 280 - 32);
   });
@@ -112,8 +107,9 @@ describe("EditorLayout", () => {
     expect(getComputedStyle(layout).paddingLeft).toBe("0px");
     expect(getComputedStyle(layout).paddingRight).toBe("0px");
     expect(getComputedStyle(layout).paddingTop).toBe("96px");
-    expect(rectOf("#bar").left).toBe(16);
-    expect(rectOf("#bar").right).toBe(WIDTH - 16);
+    const bar = wrapperOf("#bar").getBoundingClientRect();
+    expect(bar.left).toBe(16);
+    expect(bar.right).toBe(WIDTH - 16);
 
     const start = wrapperOf("#start-panel").getBoundingClientRect();
     expect(start.left).toBe(0);

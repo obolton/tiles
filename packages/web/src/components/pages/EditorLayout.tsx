@@ -18,7 +18,7 @@ export interface EditorLayoutProps {
   start?: JSX.Node;
   /** The panel in the end slot, which is hidden while this is null. */
   end?: Reactive<JSX.Node>;
-  /** Fixed chrome (the editor's bottom bar) that follows the panel insets. */
+  /** Fixed chrome (the editor's bottom bar), kept between the panels. */
   bar?: JSX.Node;
   children: JSX.Node;
 }
@@ -49,7 +49,7 @@ export default function EditorLayout({ start, end, bar, children }: EditorLayout
         </div>
       ) : null}
 
-      {bar}
+      {bar ? <div className={styles.bar}>{bar}</div> : null}
       {children}
 
       {end ? (

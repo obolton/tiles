@@ -1,20 +1,8 @@
 .bottom-bar {
-  position: fixed;
-  inset-inline: calc(var(--sidebar-width-start, 0px) + var(--bottom-bar-inset))
-    calc(var(--sidebar-width-end, 0px) + var(--bottom-bar-inset));
-  inset-block-end: max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: end;
   gap: 8px;
-  z-index: 2;
-  pointer-events: none;
-  transition: inset-inline var(--animation-duration) var(--spring);
-
-  /* Balances the create column so the toolbar slot stays centred while there is room */
-  &::before {
-    content: "";
-    flex: 1 1 0;
-  }
 
   /* The bar and its columns let clicks through; only the toolbars themselves take them */
   & > * > * {
@@ -23,7 +11,7 @@
 }
 
 .toolbar-slot {
-  flex: 0 1 auto;
+  grid-column: 2;
   min-width: 0;
   display: grid;
   place-items: end center;
@@ -35,8 +23,8 @@
 }
 
 .create {
+  grid-column: 3;
   position: relative;
-  flex: 1 1 0;
   display: flex;
   justify-content: end;
 }
@@ -44,20 +32,16 @@
 @media (width < 640px) {
   /* The create toolbar shares the top row with the tab bar; the toolbar takes a full-width row */
   .bottom-bar {
-    display: grid;
+    grid-template-columns: 1fr;
     gap: 0;
-
-    &::before {
-      content: none;
-    }
   }
 
   .create {
-    grid-row: 1;
+    grid-area: 1 / 1;
   }
 
   .toolbar-slot {
-    grid-row: 2;
+    grid-area: 2 / 1;
 
     & > * {
       margin-block-start: 8px;
