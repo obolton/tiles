@@ -5,6 +5,8 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DocumentToolbar from "@/components/toolbars/pages/DocumentToolbar";
 import DocumentBody from "@/components/pages/DocumentBody";
 import EditorLayout from "@/components/pages/EditorLayout";
+import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
+import { focusNear } from "@/utils/richText/navigation";
 import { reactive, type Reactive } from "reactivity";
 import styles from "./DocumentPage.module.css";
 import type Page from "@/models/Page";
@@ -32,6 +34,23 @@ export default function DocumentPage({
   const editorView = reactive<EditorView | null>(null);
   const state = reactive<EditorState | null>(null);
 
+  // Clicks in the space around the body put the caret in it, so the whole page edits the body
+  function onPointerDown(event: PointerEvent) {
+    const view = editorView.value;
+    if (
+      !view ||
+      !isEditable.value ||
+      event.button !== PRIMARY_MOUSE_BUTTON ||
+      !(event.target instanceof Element) ||
+      !event.target.matches("main, [data-body]")
+    ) {
+      return;
+    }
+    event.preventDefault();
+    page.editor?.clearSelection();
+    focusNear(view, event);
+  }
+
   return (
     <EditorLayout end={end}>
       <main
@@ -40,6 +59,7 @@ export default function DocumentPage({
         data-alignment={page.alignment}
         data-layout="VERTICAL"
         data-page-type="DOCUMENT"
+        on:pointerdown={onPointerDown}
       >
         {page.body ? (
           <DocumentBody body={page.body} editorView={editorView} state={state} signal={signal} />
