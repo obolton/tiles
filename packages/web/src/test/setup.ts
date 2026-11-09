@@ -25,15 +25,16 @@ Object.defineProperty(document, "fonts", {
 
 Element.prototype.scrollIntoView = vi.fn();
 
-HTMLElement.prototype.showPopover = function () {
+HTMLElement.prototype.showPopover = function (options) {
+  const source = options?.source ?? null;
   const allowToggle = this.dispatchEvent(
-    new ToggleEvent("beforetoggle", { oldState: "closed", newState: "open" }),
+    new ToggleEvent("beforetoggle", { oldState: "closed", newState: "open", source }),
   );
   if (!allowToggle) {
     return;
   }
   this.setAttribute("open", "");
-  this.dispatchEvent(new ToggleEvent("toggle", { oldState: "closed", newState: "open" }));
+  this.dispatchEvent(new ToggleEvent("toggle", { oldState: "closed", newState: "open", source }));
 };
 
 HTMLElement.prototype.hidePopover = function () {
