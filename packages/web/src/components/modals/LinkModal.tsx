@@ -7,12 +7,16 @@ import Search from "@/components/search/Search";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
+import { LinkPreviewError } from "@/models/Link";
 import { flag, reactive } from "reactivity";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
 import type { LinkedPage } from "doc/tiles/pageLink";
 
-export type LinkModalResult = { linkedPage: LinkedPage } | { url: string | null };
+export type LinkModalResult =
+  | { linkedPage: LinkedPage }
+  | { url: string; preview: boolean }
+  | { url: null };
 
 export interface LinkModalProps extends ModalProps<LinkModalResult> {
   workspaceId: string;
@@ -20,6 +24,9 @@ export interface LinkModalProps extends ModalProps<LinkModalResult> {
   showPages?: boolean;
   showRemove?: boolean;
 }
+
+const PREVIEW_FAILED_MESSAGE =
+  "Couldn’t load a preview for this link. Check the URL and try again, or save it without a preview.";
 
 export default function LinkModal({
   cancel,
@@ -30,6 +37,7 @@ export default function LinkModal({
   showRemove = false,
 }: LinkModalProps) {
   const isPending = flag(false);
+  const previewFailed = flag(false);
   const query = reactive("");
   const pages = reactive<LibraryPage[]>([]);
   const nextCursor = reactive<string | null | undefined>(undefined);
@@ -70,18 +78,22 @@ export default function LinkModal({
     const form = event.currentTarget as HTMLFormElement;
     event.preventDefault();
 
-    const formData = new FormData(form);
-    const url = formData.get("url") as string;
-
-    if (isPending.value || !url) {
+    const input = form.elements.namedItem("url");
+    if (isPending.value || !(input instanceof HTMLInputElement) || !input.value) {
       return;
     }
 
     isPending.on();
     try {
-      await confirm({ url });
+      // A second save after a failed preview adds the link without one
+      await confirm({ url: input.value, preview: !previewFailed.value });
     } catch (error) {
-      handleError(error);
+      if (error instanceof LinkPreviewError) {
+        previewFailed.on();
+        input.focus();
+      } else {
+        handleError(error);
+      }
     } finally {
       isPending.off();
     }
@@ -132,18 +144,26 @@ export default function LinkModal({
       </ModalHeader>
 
       <ModalBody className={styles.body}>
-        <label>
-          Link URL
-          <input
-            type="url"
-            name="url"
-            className={styles.input}
-            placeholder="Enter a link URL"
-            autofocus
-            required
-            value={initialUrl}
-          />
-        </label>
+        <div className={styles.field}>
+          <label>
+            Link URL
+            <input
+              id="link-url"
+              type="url"
+              name="url"
+              className={styles.input}
+              placeholder="Enter a link URL"
+              autofocus
+              required
+              value={initialUrl}
+              aria-describedby="link-url-message"
+              on:input={previewFailed.off.bind(previewFailed)}
+            />
+          </label>
+          <p id="link-url-message" className={styles.message} role="alert">
+            {previewFailed.derive((failed) => (failed ? PREVIEW_FAILED_MESSAGE : null))}
+          </p>
+        </div>
 
         {showPages ? (
           <section on:click={onPageClick}>
@@ -172,7 +192,7 @@ export default function LinkModal({
 
       <ModalFooter>
         <button type="submit" classList={{ primary: true, pending: isPending }}>
-          Save
+          {previewFailed.derive((failed) => (failed ? "Save without preview" : "Save"))}
         </button>
         {showRemove ? (
           <button type="button" className="secondary" on:click={remove}>

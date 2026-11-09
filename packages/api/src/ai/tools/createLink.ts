@@ -43,10 +43,10 @@ async function createLinkTile(
         })
       : buildLinkMap({
           url: metadata.url,
-          title: metadata.title,
-          description: metadata.description,
-          siteName: metadata.siteName,
-          imageId: metadata.imageId,
+          title: metadata.preview?.title ?? null,
+          description: metadata.preview?.description ?? null,
+          siteName: metadata.preview?.siteName ?? null,
+          imageId: metadata.preview?.imageId ?? null,
           ...dimensions,
           coordinates,
         });

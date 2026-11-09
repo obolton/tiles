@@ -1,6 +1,8 @@
 import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
+import { handleError } from "@/utils/errors";
+import { showToast } from "@/utils/toasts";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { set, flag, combine, reactive } from "reactivity";
 import { last } from "@/utils/iterables";
@@ -16,7 +18,7 @@ import Page, { type PageData } from "@/models/Page";
 import Section from "@/models/Section";
 import { parseParentId } from "@/models/parentId";
 import Image from "@/models/Image";
-import Link from "@/models/Link";
+import Link, { LinkPreviewError } from "@/models/Link";
 import ChatState from "@/components/chat/ChatState";
 import VersionHistory from "@/components/versions/VersionHistory";
 import Share from "@/components/collaboration/Share";
@@ -412,12 +414,23 @@ export default class Editor {
         });
       }
     } else if (isUriList(item)) {
-      item.getAsString(async (url) => {
-        await Link.create(this.page, {
-          ...this.insertPlacement,
-          url,
-        });
+      item.getAsString((url) => {
+        this.dropLink(url).catch(handleError);
       });
+    }
+  }
+
+  /** Adds a link card for a dropped URL, without a preview when its page cannot be fetched. */
+  private async dropLink(url: string) {
+    const placement = this.insertPlacement;
+    try {
+      await Link.create(this.page, { ...placement, url });
+    } catch (error) {
+      if (!(error instanceof LinkPreviewError)) {
+        throw error;
+      }
+      await Link.create(this.page, { ...placement, url, preview: false });
+      showToast("Couldn’t load a preview, so the link was added without one.", "error");
     }
   }
 

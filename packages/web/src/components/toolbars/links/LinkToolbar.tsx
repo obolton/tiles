@@ -26,7 +26,7 @@ export default function LinkToolbar({ link }: LinkToolbarProps) {
       },
       async onConfirm(result) {
         if ("url" in result && result.url) {
-          await link.setUrl(result.url);
+          await link.setUrl(result.url, { preview: result.preview });
         }
       },
     });

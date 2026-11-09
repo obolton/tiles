@@ -4,15 +4,20 @@ import { resolveVideoMetadata, type VideoMetadataResult } from "@/routes/videos/
 import type { GetLinkMetadataSchema } from "./schema";
 import type { AuthenticatedPageProcedureContext } from "@/utils/middleware";
 
+export type LinkPreview = {
+  title: string | null;
+  description: string | null;
+  siteName: string | null;
+  imageId: string | null;
+};
+
 export type LinkMetadataResult =
   | VideoMetadataResult
   | {
       type: "LINK";
       url: string;
-      title: string | null;
-      description: string | null;
-      siteName: string | null;
-      imageId: string | null;
+      /** The page's preview, or `null` when the page could not be fetched. */
+      preview: LinkPreview | null;
     };
 
 export async function resolveLinkMetadata(
@@ -26,15 +31,16 @@ export async function resolveLinkMetadata(
 
   const { url } = input;
   const linkMetadata = await getLinkMetadata(url);
-  const { title = null, description = null, siteName = null, imageUrl = null } = linkMetadata ?? {};
+  if (!linkMetadata) {
+    return { type: "LINK", url, preview: null };
+  }
+
+  const { title, description, siteName, imageUrl } = linkMetadata;
   const imageId = imageUrl ? await fetchImage(imageUrl, ctx.workspaceId, ctx.userId) : null;
 
   return {
     type: "LINK",
     url,
-    title,
-    description,
-    siteName,
-    imageId,
+    preview: { title, description, siteName, imageId },
   };
 }

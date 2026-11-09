@@ -28,10 +28,12 @@ describe("CREATE_LINK_TOOL", () => {
     vi.mocked(resolveLinkMetadata).mockResolvedValue({
       type: "LINK",
       url: "https://example.com",
-      title: "Example",
-      description: "An example site",
-      siteName: "example.com",
-      imageId: "image-1",
+      preview: {
+        title: "Example",
+        description: "An example site",
+        siteName: "example.com",
+        imageId: "image-1",
+      },
     });
 
     const result = await CREATE_LINK_TOOL.function(BASE_ARGS, context);
@@ -68,14 +70,27 @@ describe("CREATE_LINK_TOOL", () => {
     expect(map.get("title")).toBe("A video");
   });
 
+  test("creates a link tile without a preview when the page cannot be fetched", async () => {
+    vi.mocked(resolveLinkMetadata).mockResolvedValue({
+      type: "LINK",
+      url: "https://example.com",
+      preview: null,
+    });
+
+    const result = await CREATE_LINK_TOOL.function(BASE_ARGS, context);
+
+    expect(result).toMatchObject({ type: "LINK" });
+    const map = getCreatedTile(doc, result);
+    expect(map.get("url")).toBe("https://example.com");
+    expect(map.get("title")).toBeNull();
+    expect(map.get("imageId")).toBeNull();
+  });
+
   test("resolves an args parentId to the parent", async () => {
     vi.mocked(resolveLinkMetadata).mockResolvedValue({
       type: "LINK",
       url: "https://example.com",
-      title: null,
-      description: null,
-      siteName: null,
-      imageId: null,
+      preview: null,
     });
 
     const result = await CREATE_LINK_TOOL.function({ ...BASE_ARGS, parentId: 0 }, context);
