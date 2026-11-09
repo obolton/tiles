@@ -6,6 +6,16 @@ import "./presentation.css";
 
 const IDLE_TIMEOUT = 3000;
 
+/** Slides step through the root items one screen at a time; a page is shown whole. */
+export type PresentationMode = "slides" | "page";
+
+interface SlideNavigation {
+  group: HTMLElement;
+  prevButton: HTMLButtonElement;
+  nextButton: HTMLButtonElement;
+  counter: HTMLElement;
+}
+
 export default class Presentation {
   static #current: Presentation | null = null;
 
@@ -16,11 +26,17 @@ export default class Presentation {
 
     const element = container ?? document.querySelector("main");
 
-    if (!(element instanceof HTMLElement) || element.children.length === 0) {
+    if (!(element instanceof HTMLElement)) {
       return;
     }
 
-    this.#current = new Presentation(element, startSlide);
+    const mode: PresentationMode = element.dataset.pageType === "LAYOUT" ? "page" : "slides";
+
+    if (mode === "slides" && element.children.length === 0) {
+      return;
+    }
+
+    this.#current = new Presentation(element, mode, startSlide);
   }
 
   static stop() {
@@ -33,10 +49,9 @@ export default class Presentation {
   }
 
   private readonly container: HTMLElement;
+  private readonly mode: PresentationMode;
   private readonly toolbar: HTMLElement;
-  private readonly counter: HTMLElement;
-  private readonly prevButton: HTMLButtonElement;
-  private readonly nextButton: HTMLButtonElement;
+  private readonly navigation: SlideNavigation | null;
   private readonly fullscreenButton: HTMLButtonElement;
   private readonly abortController = new AbortController();
 
@@ -49,8 +64,9 @@ export default class Presentation {
     return this.container.children.length;
   }
 
-  private constructor(container: HTMLElement, startSlide: number) {
+  private constructor(container: HTMLElement, mode: PresentationMode, startSlide: number) {
     this.container = container;
+    this.mode = mode;
     this.currentIndex = Math.max(0, Math.min(startSlide, this.slideCount - 1));
 
     this.toolbar = document.createElement("floating-toolbar");
@@ -61,14 +77,10 @@ export default class Presentation {
 
     const tab = document.createElement("toolbar-tab");
 
-    const navGroup = document.createElement("div");
-    navGroup.role = "group";
-    navGroup.ariaLabel = "Navigation";
-    this.prevButton = this.createButton("previous", arrowLeftIcon, "Previous slide");
-    this.counter = document.createElement("span");
-    this.counter.className = "slide-counter";
-    this.nextButton = this.createButton("next", arrowRightIcon, "Next slide");
-    navGroup.append(this.prevButton, this.counter, this.nextButton);
+    this.navigation = mode === "slides" ? this.createNavigation() : null;
+    if (this.navigation) {
+      tab.append(this.navigation.group);
+    }
 
     const controlGroup = document.createElement("div");
     controlGroup.role = "group";
@@ -78,20 +90,22 @@ export default class Presentation {
     const closeButton = this.createButton("close", closeIcon, "Exit presentation");
     controlGroup.append(this.fullscreenButton, closeButton);
 
-    tab.append(navGroup, controlGroup);
+    tab.append(controlGroup);
     this.toolbar.append(tab);
 
     document.body.appendChild(this.toolbar);
-    document.body.dataset.presenting = "true";
+    document.body.dataset.presenting = mode;
 
     // Move focus away from any now-hidden element so keyboard events work
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
 
-    this.observeSlides();
     this.addEventListeners();
-    this.goTo(this.currentIndex);
+    if (mode === "slides") {
+      this.observeSlides();
+      this.goTo(this.currentIndex);
+    }
     void this.enterFullscreen();
 
     // Show toolbar initially, then auto-hide
@@ -121,6 +135,18 @@ export default class Presentation {
   }
 
   // Navigation
+
+  private createNavigation(): SlideNavigation {
+    const group = document.createElement("div");
+    group.role = "group";
+    group.ariaLabel = "Navigation";
+    const prevButton = this.createButton("previous", arrowLeftIcon, "Previous slide");
+    const counter = document.createElement("span");
+    counter.className = "slide-counter";
+    const nextButton = this.createButton("next", arrowRightIcon, "Next slide");
+    group.append(prevButton, counter, nextButton);
+    return { group, prevButton, nextButton, counter };
+  }
 
   private goTo(index: number) {
     this.currentIndex = Math.max(0, Math.min(index, this.slideCount - 1));
@@ -185,7 +211,9 @@ export default class Presentation {
 
     try {
       await document.documentElement.requestFullscreen();
-      this.goTo(this.currentIndex);
+      if (this.mode === "slides") {
+        this.goTo(this.currentIndex);
+      }
     } catch {
       // Fullscreen denied
     }
@@ -193,6 +221,17 @@ export default class Presentation {
 
   private onKeyDown(event: KeyboardEvent) {
     if (event.defaultPrevented) {
+      return;
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      Presentation.stop();
+      return;
+    }
+
+    // A whole page scrolls natively
+    if (this.mode !== "slides") {
       return;
     }
 
@@ -219,10 +258,6 @@ export default class Presentation {
       case "End":
         event.preventDefault();
         this.goTo(this.slideCount - 1);
-        break;
-      case "Escape":
-        event.preventDefault();
-        Presentation.stop();
         break;
     }
   }
@@ -346,9 +381,14 @@ export default class Presentation {
   }
 
   private updateProgress() {
-    this.counter.textContent = `${this.currentIndex + 1}\u2009/\u2009${this.slideCount}`;
-    this.prevButton.disabled = this.currentIndex === 0;
-    this.nextButton.disabled = this.currentIndex === this.slideCount - 1;
+    if (!this.navigation) {
+      return;
+    }
+
+    const { counter, prevButton, nextButton } = this.navigation;
+    counter.textContent = `${this.currentIndex + 1} / ${this.slideCount}`;
+    prevButton.disabled = this.currentIndex === 0;
+    nextButton.disabled = this.currentIndex === this.slideCount - 1;
 
     const url = new URL(window.location.href);
     url.searchParams.set("present", String(this.currentIndex));

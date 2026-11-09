@@ -9,13 +9,13 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DockZone from "@/components/docks/DockZone";
 import EditorLayout from "@/components/pages/EditorLayout";
 import LayoutEditor from "@/editor/LayoutEditor";
-import styles from "./FreePage.module.css";
+import styles from "./LayoutPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "reactivity";
 import type { JSX } from "jsx/jsx";
 
-export interface FreePageProps {
+export interface LayoutPageProps {
   page: Page;
   isEditable: Reactive<boolean>;
   showToolbar: Reactive<boolean>;
@@ -25,7 +25,7 @@ export interface FreePageProps {
   bar?: JSX.Node;
 }
 
-export default function FreePage({
+export default function LayoutPage({
   page,
   isEditable,
   showToolbar,
@@ -33,7 +33,7 @@ export default function FreePage({
   signal,
   end,
   bar,
-}: FreePageProps) {
+}: LayoutPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = page.alignment.derive((alignment) => {
     switch (alignment) {
@@ -88,7 +88,7 @@ export default function FreePage({
           className={styles.main}
           data-alignment={page.alignment}
           data-layout="VERTICAL"
-          data-page-type="FREE"
+          data-page-type="LAYOUT"
         >
           <Each items={tiles}>
             {(tile) => (

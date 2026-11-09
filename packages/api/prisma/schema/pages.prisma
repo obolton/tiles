@@ -8,7 +8,7 @@ enum GradientDirection {
 enum PageType {
   DOCUMENT
   PRESENTATION
-  FREE
+  LAYOUT
 }
 
 model Page {
@@ -21,7 +21,7 @@ model Page {
   folderId    String?   @map("folder_id") @db.Uuid
   published   Boolean   @default(false)
   title       String    @db.VarChar(100)
-  type        PageType  @default(FREE)
+  type        PageType  @default(LAYOUT)
 
   documentId String @unique @map("document_id") @db.Uuid
 

@@ -13,7 +13,7 @@ export const PAGE: PageData = {
     imageUrl: "https://tiles.dev",
   },
   title: "Test Page",
-  type: "FREE",
+  type: "LAYOUT",
   access: [],
   invites: [],
   document: "",

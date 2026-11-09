@@ -17,3 +17,6 @@ export function mediaQuery(query: string): Reactive<boolean> {
   });
   return matches;
 }
+
+/** Narrow viewports, below which the layout collapses to a single column. */
+export const NARROW_QUERY = "(width < 640px)";

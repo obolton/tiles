@@ -1,6 +1,6 @@
 import DocumentPage from "./DocumentPage";
 import PresentationPage from "./PresentationPage";
-import FreePage from "./FreePage";
+import LayoutPage from "./LayoutPage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "reactivity";
@@ -23,7 +23,7 @@ export default function PageContents(props: PageContentsProps) {
       return <DocumentPage {...props} />;
     case "PRESENTATION":
       return <PresentationPage {...props} />;
-    case "FREE":
-      return <FreePage {...props} />;
+    case "LAYOUT":
+      return <LayoutPage {...props} />;
   }
 }
