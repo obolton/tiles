@@ -49,7 +49,11 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   const loaded = flag(false);
 
   const columns = width.value ?? image.page.width.value;
-  const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
+  // An image without a width of its own spans a full-width page
+  const sizes =
+    width.value == null && image.page.isFullWidth.value
+      ? "100vw"
+      : `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
 
   return (
     <Tile>

@@ -159,7 +159,7 @@
 }
 
 @media (width < 640px) {
-  /* Docks are hidden on phones for now, including the drop zones shown while dragging */
+  /* Docks are hidden on narrow viewports for now, including the drop zones shown while dragging */
   .zone,
   body[data-drag] .zone[data-empty] {
     display: none;

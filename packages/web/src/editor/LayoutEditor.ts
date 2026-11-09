@@ -110,6 +110,15 @@ export default class LayoutEditor {
     return this.layoutType === "FREEFORM";
   }
 
+  /** The columns a vertical layout spans: the page width, or what fits in the grid of a full-width page. */
+  private get pageColumns() {
+    if (!this.page.isFullWidth.value) {
+      return this.page.width.value;
+    }
+    const unit = this.gridColumnWidth + this.gridColumnGap;
+    return Math.max(1, Math.round((this.gridRect.width / this.scale + this.gridColumnGap) / unit));
+  }
+
   handleEvent(event: Event) {
     switch (event.type) {
       case "dnd-dragover":
@@ -447,7 +456,7 @@ export default class LayoutEditor {
     document.body.dataset.resize = "true";
 
     if (this.layoutType === "VERTICAL") {
-      const cw = this.page.width.value;
+      const cw = this.pageColumns;
       this.widthSnapValues = [cw, Math.round((cw * 2) / 3), Math.round(cw / 2), Math.round(cw / 3)];
     }
   }
@@ -511,7 +520,7 @@ export default class LayoutEditor {
             1,
           );
 
-      this.resizing.width.value = width === this.page.width.value ? null : width;
+      this.resizing.width.value = width === this.pageColumns ? null : width;
       this.resizing.height.value = height;
     }
   }

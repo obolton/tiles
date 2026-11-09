@@ -16,7 +16,7 @@
   }
 }
 
-/* Inset the content for occupied docks, which are hidden on phones (DockZone.module.css) */
+/* Inset the content for occupied docks, which are hidden on narrow viewports (DockZone.module.css) */
 @media (width >= 640px) {
   .layout {
     &:has([data-dock-zone="TOP"]:not([data-empty])) {

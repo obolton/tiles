@@ -53,13 +53,11 @@ export default class Page {
   readonly themes: PageThemes;
   readonly themeId: Reactive<string | null>;
   readonly theme: Reactive<ThemeData | null>;
-  /** The page width in grid units: the setting, or the measured columns of a full-width page. */
+  /** The page width in grid units, where a column count is needed; a full-width page stretches in CSS. */
   readonly width: Reactive<number>;
   /** The stored page width: a column count, or {@link FULL_PAGE_WIDTH}. */
   readonly widthSetting: BoundField<number>;
   readonly isFullWidth: Reactive<boolean>;
-  /** The columns available to a full-width page, measured by the page view. */
-  readonly availableWidth: Reactive<number>;
   readonly alignment: Reactive<HorizontalAlignment>;
   readonly dockSizes: Record<DockEdge, BoundField<number>>;
   readonly dropdowns: SharedList<Dropdown>;
@@ -102,10 +100,8 @@ export default class Page {
     this.themeId = this.metadataBinding.field("themeId", null);
     this.widthSetting = this.metadataBinding.field("width", DEFAULT_PAGE_WIDTH);
     this.isFullWidth = this.widthSetting.derive((width) => width === FULL_PAGE_WIDTH);
-    this.availableWidth = reactive(DEFAULT_PAGE_WIDTH);
-    this.width = combine(
-      { setting: this.widthSetting, available: this.availableWidth },
-      ({ setting, available }) => (setting === FULL_PAGE_WIDTH ? available : setting),
+    this.width = this.widthSetting.derive((width) =>
+      width === FULL_PAGE_WIDTH ? DEFAULT_PAGE_WIDTH : width,
     );
     this.alignment = this.metadataBinding.field("alignment", "CENTER");
     this.theme = combine({ id: this.themeId, themes: this.themes }, ({ id, themes }) =>

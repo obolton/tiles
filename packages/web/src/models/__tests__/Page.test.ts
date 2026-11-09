@@ -31,15 +31,12 @@ vi.mock("@/api/client", () => ({
 
 describe("Page", () => {
   describe("width", () => {
-    test("resolves a full-width setting to the measured columns", () => {
+    test("falls back to the default width for a full-width page", () => {
       const page = new Page(PAGE, new Y.Doc());
 
       page.widthSetting.value = FULL_PAGE_WIDTH;
       expect(page.isFullWidth.value).toBe(true);
       expect(page.width.value).toBe(DEFAULT_PAGE_WIDTH);
-
-      page.availableWidth.value = 60;
-      expect(page.width.value).toBe(60);
 
       page.widthSetting.value = 24;
       expect(page.isFullWidth.value).toBe(false);
@@ -51,9 +48,8 @@ describe("Page", () => {
       expect(page.spanningWidth()).toBe(DEFAULT_PAGE_WIDTH);
 
       page.widthSetting.value = FULL_PAGE_WIDTH;
-      page.availableWidth.value = 60;
       expect(page.spanningWidth()).toBeNull();
-      expect(page.spanningWidth("section-id")).toBe(60);
+      expect(page.spanningWidth("section-id")).toBe(DEFAULT_PAGE_WIDTH);
     });
   });
 

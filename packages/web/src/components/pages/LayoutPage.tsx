@@ -9,7 +9,6 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DockZone from "@/components/docks/DockZone";
 import EditorLayout from "@/components/pages/EditorLayout";
 import LayoutEditor from "@/editor/LayoutEditor";
-import { SIZE_UNIT } from "@/constants/size";
 import styles from "./LayoutPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -65,19 +64,6 @@ export default function LayoutPage({
       sectionId: null,
       signal,
     });
-    observeAvailableWidth(element);
-  }
-
-  // A full-width page sizes its tiles by the measured column count
-  function observeAvailableWidth(element: HTMLElement) {
-    if (typeof ResizeObserver !== "function") {
-      return;
-    }
-    const observer = new ResizeObserver(() => {
-      page.availableWidth.value = Math.max(1, Math.floor(element.clientWidth / SIZE_UNIT));
-    });
-    observer.observe(element);
-    signal?.addEventListener("abort", () => observer.disconnect(), { once: true });
   }
 
   return (

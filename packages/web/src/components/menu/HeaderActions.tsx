@@ -17,7 +17,7 @@ import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
-import { mediaQuery, PHONE_QUERY } from "@/utils/viewport";
+import { mediaQuery, NARROW_QUERY } from "@/utils/viewport";
 import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import styles from "./HeaderActions.module.css";
@@ -58,8 +58,8 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
   const { isEditable, canUndo, canRedo } = editor;
   const isCompact = mediaQuery(COMPACT_ACTIONS_QUERY);
   const isExpanded = isCompact.derive((compact) => !compact);
-  const isPhone = mediaQuery(PHONE_QUERY);
-  const showUndoRedo = isPhone.derive((phone) => !phone);
+  const isNarrow = mediaQuery(NARROW_QUERY);
+  const showUndoRedo = isNarrow.derive((narrow) => !narrow);
 
   function toggleEdit() {
     viewTransition(() => {
@@ -149,7 +149,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
                 <If condition={isEditable}>
                   <MenuItemGroup>
-                    <If condition={isPhone}>
+                    <If condition={isNarrow}>
                       <MenuItem
                         icon={<UndoIcon aria-hidden="true" />}
                         aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
