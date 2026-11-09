@@ -14,6 +14,8 @@ export function buildLinkMap(properties: Omit<LinkMapInput, keyof PlacementInput
   const map = buildBaseTileMap({
     ...baseProps,
     type: "LINK",
+    // Override default AUTO sizing, which has no intrinsic height for a link card
+    sizing: baseProps.sizing ?? "CUSTOM",
     background: imageId ? { type: "image", imageId } : background,
   });
   map.set("url", url);

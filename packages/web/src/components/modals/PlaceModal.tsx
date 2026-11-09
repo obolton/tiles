@@ -4,8 +4,9 @@ import styles from "./PlaceModal.module.css";
 import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
+import If from "jsx/if";
 import type { ModalProps } from "@/utils/modals";
-import { ReactiveValue } from "reactivity";
+import { ReactiveValue, combine, flag } from "reactivity";
 import { handleError } from "@/utils/errors";
 import debounce from "@/utils/debounce";
 
@@ -21,8 +22,15 @@ interface PlaceModalProps extends ModalProps<PlaceModalResult> {
 
 export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalProps) {
   const isPending = new ReactiveValue(false);
+  const isSearching = flag(false);
   const location = new ReactiveValue<GeolocationPosition | null>(null);
   const results = new ReactiveValue<Place[]>([]);
+  // Existing results stay visible, dimmed, while they are being refreshed
+  const showSearching = combine(
+    { isSearching, results },
+    ({ isSearching, results }) => isSearching && results.length === 0,
+  );
+  let latestSearchId = 0;
 
   if (!import.meta.env.SSR && !boundingBox) {
     navigator.geolocation.getCurrentPosition(
@@ -32,23 +40,43 @@ export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalP
   }
 
   const search = debounce(async (query: string) => {
+    const searchId = ++latestSearchId;
+    // A newer search supersedes this one, so leave its state alone
+    const isCurrent = () => searchId === latestSearchId;
+
     if (!query) {
       results.value = [];
+      isSearching.off();
       return;
     }
-    const newResults = await client.places.search.mutate(
-      boundingBox
-        ? {
-            query,
-            boundingBox,
-          }
-        : {
-            query,
-            lat: location.value?.coords.latitude ?? 0,
-            long: location.value?.coords.longitude ?? 0,
-          },
-    );
-    results.value = newResults;
+
+    isSearching.on();
+    try {
+      const places = await client.places.search.mutate(
+        boundingBox
+          ? {
+              query,
+              boundingBox,
+            }
+          : {
+              query,
+              lat: location.value?.coords.latitude ?? 0,
+              long: location.value?.coords.longitude ?? 0,
+            },
+      );
+      if (isCurrent()) {
+        results.value = places;
+      }
+    } catch (error) {
+      if (isCurrent()) {
+        results.value = [];
+        handleError(error, "Couldn't search for places. Please try again.");
+      }
+    } finally {
+      if (isCurrent()) {
+        isSearching.off();
+      }
+    }
   }, 250);
 
   const onInput = (event: Event) => {
@@ -89,7 +117,14 @@ export default function PlaceModal({ boundingBox, cancel, confirm }: PlaceModalP
           />
         </label>
 
-        <ol className={styles["place-select"]} aria-label="Results">
+        <p className={styles.status} role="status">
+          <If condition={showSearching}>Searching…</If>
+        </p>
+
+        <ol
+          classList={{ [styles["place-select"]]: true, [styles.searching]: isSearching }}
+          aria-label="Results"
+        >
           {results.derive((items) =>
             items.map((result) => (
               <li>

@@ -13,6 +13,8 @@ export type LinkMetadataResult =
       description: string | null;
       siteName: string | null;
       imageId: string | null;
+      /** False when the page could not be fetched, so there is nothing to preview. */
+      previewAvailable: boolean;
     };
 
 export async function resolveLinkMetadata(
@@ -36,5 +38,6 @@ export async function resolveLinkMetadata(
     description,
     siteName,
     imageId,
+    previewAvailable: linkMetadata !== null,
   };
 }

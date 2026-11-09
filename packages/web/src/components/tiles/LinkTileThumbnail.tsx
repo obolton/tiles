@@ -9,12 +9,12 @@ export interface LinkTileThumbnailProps {
 }
 
 export default function LinkTileThumbnail({ link }: LinkTileThumbnailProps) {
-  const { title, description, siteName } = link;
+  const { displayTitle, description, siteName } = link;
   return (
     <Tile>
       <div className={styles.link}>
         <div className={styles.caption}>
-          <p className={styles.title}>{title}</p>
+          <p className={styles.title}>{displayTitle}</p>
           <If condition={description}>
             <p>{description}</p>
           </If>

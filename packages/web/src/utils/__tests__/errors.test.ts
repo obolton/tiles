@@ -14,4 +14,12 @@ describe("handleError", () => {
     expect(showToast).toHaveBeenCalledWith("Sorry, an error occurred.", "error");
     expect(consoleError).toHaveBeenCalledWith(error);
   });
+
+  test("shows the given message instead of the default", () => {
+    vi.spyOn(console, "error").mockImplementationOnce(() => {});
+
+    handleError(new Error("Test error"), "Couldn't search for places.");
+
+    expect(showToast).toHaveBeenCalledWith("Couldn't search for places.", "error");
+  });
 });

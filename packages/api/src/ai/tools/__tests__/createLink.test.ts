@@ -32,6 +32,7 @@ describe("CREATE_LINK_TOOL", () => {
       description: "An example site",
       siteName: "example.com",
       imageId: "image-1",
+      previewAvailable: true,
     });
 
     const result = await CREATE_LINK_TOOL.function(BASE_ARGS, context);
@@ -76,6 +77,7 @@ describe("CREATE_LINK_TOOL", () => {
       description: null,
       siteName: null,
       imageId: null,
+      previewAvailable: false,
     });
 
     const result = await CREATE_LINK_TOOL.function({ ...BASE_ARGS, parentId: 0 }, context);

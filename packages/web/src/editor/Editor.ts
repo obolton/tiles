@@ -9,6 +9,7 @@ import { pulse } from "@/utils/animation/effects";
 import { prefersReducedMotion } from "@/utils/preferences";
 import { focusInside } from "@/utils/focus";
 import { isEditMode, setEditMode } from "@/utils/edit";
+import { handleError } from "@/utils/errors";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
@@ -412,11 +413,10 @@ export default class Editor {
         });
       }
     } else if (isUriList(item)) {
-      item.getAsString(async (url) => {
-        await Link.create(this.page, {
-          ...this.insertPlacement,
-          url,
-        });
+      item.getAsString((url) => {
+        Link.create(this.page, { ...this.insertPlacement, url }).catch((error: unknown) =>
+          handleError(error, "Couldn't add the link. Please try again."),
+        );
       });
     }
   }

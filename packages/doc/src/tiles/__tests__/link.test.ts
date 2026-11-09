@@ -34,4 +34,33 @@ describe("buildLinkMap", () => {
 
     expect(map.get("background")).toEqual({ type: "color", color: "abcabc" });
   });
+
+  test("defaults to custom sizing so the card has a height", () => {
+    const doc = new Y.Doc();
+    const map = buildLinkMap({
+      url: "https://example.com",
+      title: null,
+      description: null,
+      siteName: null,
+      imageId: null,
+    });
+    doc.getMap().set("tile", map);
+
+    expect(map.get("sizing")).toBe("CUSTOM");
+  });
+
+  test("keeps the provided sizing", () => {
+    const doc = new Y.Doc();
+    const map = buildLinkMap({
+      url: "https://example.com",
+      title: null,
+      description: null,
+      siteName: null,
+      imageId: null,
+      sizing: "SQUARE",
+    });
+    doc.getMap().set("tile", map);
+
+    expect(map.get("sizing")).toBe("SQUARE");
+  });
 });

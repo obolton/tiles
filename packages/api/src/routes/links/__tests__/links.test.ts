@@ -96,6 +96,7 @@ describe("resolveLinkMetadata", () => {
         description: "An example page",
         siteName: "Example Site",
         imageId: "image-1",
+        previewAvailable: true,
       });
     });
 
@@ -126,7 +127,7 @@ describe("resolveLinkMetadata", () => {
       expect(result).toMatchObject({ type: "LINK", imageId: null });
     });
 
-    test("returns null fields when no metadata is available", async () => {
+    test("reports the preview as unavailable when the page cannot be fetched", async () => {
       vi.mocked(getLinkMetadata).mockResolvedValue(null);
 
       const result = await resolveLinkMetadata(INPUT, MOCK_CONTEXT);
@@ -139,6 +140,7 @@ describe("resolveLinkMetadata", () => {
         description: null,
         siteName: null,
         imageId: null,
+        previewAvailable: false,
       });
     });
   });

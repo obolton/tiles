@@ -1,8 +1,16 @@
 toast-container {
+  /* Reset the popover user agent styles */
   position: fixed;
   contain: layout;
-  right: 24px;
-  bottom: 24px;
+  inset: auto 24px 24px auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  overflow: visible;
+  color: inherit;
+  background: none;
   z-index: 2;
   display: flex;
   flex-direction: column;

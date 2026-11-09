@@ -2,13 +2,35 @@ import * as Y from "yjs";
 import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildLinkMap, type LinkMapInput } from "doc/tiles/link";
-import { type Reactive } from "reactivity";
-import client from "@/api/client";
+import { combine, type Reactive } from "reactivity";
+import client, { type AppRouterOutputs } from "@/api/client";
+import { showToast } from "@/utils/toasts";
 import Video from "./Video";
 import type Page from "@/models/Page";
 
+type LinkMetadata = AppRouterOutputs["externalLinks"]["getMetadata"];
+
+// Link cards default to a small square, as AUTO sizing would give them no height
+const DEFAULT_SIZE = 5;
+
 export interface CreateLinkInput extends Omit<CreateTileInput, "type"> {
   url: string;
+}
+
+function getHostname(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+}
+
+async function fetchMetadata(page: Page, url: string): Promise<LinkMetadata> {
+  const metadata = await client.externalLinks.getMetadata.query({ pageId: page.id, url });
+  if (metadata.type === "LINK" && !metadata.previewAvailable) {
+    showToast("Couldn't load a preview for this link.", "error");
+  }
+  return metadata;
 }
 
 export default class Link extends Tile {
@@ -19,17 +41,24 @@ export default class Link extends Tile {
   readonly description: Reactive<string | null>;
   readonly siteName: Reactive<string | null>;
   readonly imageId: Reactive<string | null>;
+  /** The title, or the link's hostname when no title could be fetched. */
+  readonly displayTitle: Reactive<string>;
 
   static createMap(properties: Omit<LinkMapInput, keyof PlacementInput>): Y.Map<unknown> {
     return buildLinkMap(properties);
   }
 
   static async create(page: Page, data: CreateLinkInput): Promise<Link | Video> {
-    const { parentId, beforeId, at, url, ...rest } = data;
-    const metadata = await client.externalLinks.getMetadata.query({
-      pageId: page.id,
+    const {
+      parentId,
+      beforeId,
+      at,
       url,
-    });
+      width = DEFAULT_SIZE,
+      height = DEFAULT_SIZE,
+      ...rest
+    } = data;
+    const metadata = await fetchMetadata(page, url);
 
     if (metadata.type === "VIDEO") {
       // Link card dimensions do not suit a video, which uses its own sizing
@@ -39,6 +68,8 @@ export default class Link extends Tile {
 
     const map = Link.createMap({
       ...rest,
+      width,
+      height,
       url: metadata.url,
       title: metadata.title,
       description: metadata.description,
@@ -58,15 +89,16 @@ export default class Link extends Tile {
     this.description = this.binding.field("description", null);
     this.siteName = this.binding.field("siteName", null);
     this.imageId = this.binding.field("imageId", null);
+    this.displayTitle = combine(
+      { title: this.title, url: this.url },
+      ({ title, url }) => title || getHostname(url),
+    );
   }
 
   async setUrl(url: string) {
     this.url.value = url;
 
-    const metadata = await client.externalLinks.getMetadata.query({
-      pageId: this.page.id,
-      url,
-    });
+    const metadata = await fetchMetadata(this.page, url);
 
     if (metadata.type === "LINK") {
       this.title.value = metadata.title;

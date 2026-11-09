@@ -13,11 +13,11 @@ export interface LinkTileProps {
 }
 
 export default function LinkTile({ link, showToolbar }: LinkTileProps) {
-  const { url, title, description, siteName, editor } = link;
+  const { url, displayTitle, description, siteName, editor } = link;
   const { isEditable } = editor;
   const contents = (
     <div className={styles.caption}>
-      <p className={styles.title}>{title}</p>
+      <p className={styles.title}>{displayTitle}</p>
       <If condition={description}>
         <p>{description}</p>
       </If>

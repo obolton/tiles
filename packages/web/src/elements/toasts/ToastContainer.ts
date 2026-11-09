@@ -16,6 +16,7 @@ declare global {
 
 export default class ToastContainer extends HTMLElement {
   private paused = false;
+  private popoverOpen = false;
   private timeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -26,6 +27,8 @@ export default class ToastContainer extends HTMLElement {
   }
 
   connectedCallback() {
+    // Toasts are shown as a manual popover so they render above open dialogs
+    this.popover = "manual";
     this.addEventListener("pointerover", this.pause);
     this.addEventListener("pointerout", this.setRemoveToastTimeout);
 
@@ -49,6 +52,7 @@ export default class ToastContainer extends HTMLElement {
       this.timeout = null;
     }
     this.paused = false;
+    this.popoverOpen = false;
   }
 
   private pause() {
@@ -84,9 +88,30 @@ export default class ToastContainer extends HTMLElement {
     ]);
     toast.remove();
 
-    if (!this.paused && this.childElementCount > 0) {
+    if (this.childElementCount === 0) {
+      this.closePopover();
+      return;
+    }
+    if (!this.paused) {
       this.setRemoveToastTimeout();
     }
+  }
+
+  /** Shows the container in the top layer, above any dialog opened since it was last shown. */
+  private openPopover() {
+    if (this.popoverOpen) {
+      this.hidePopover();
+    }
+    this.showPopover();
+    this.popoverOpen = true;
+  }
+
+  private closePopover() {
+    if (!this.popoverOpen) {
+      return;
+    }
+    this.hidePopover();
+    this.popoverOpen = false;
   }
 
   public showToast(message: string, type: ToastType = "info") {
@@ -118,6 +143,7 @@ export default class ToastContainer extends HTMLElement {
 
     toast.append(icon, document.createTextNode(message));
     this.prepend(toast);
+    this.openPopover();
 
     if (!this.paused && this.childElementCount === 1) {
       this.setRemoveToastTimeout();

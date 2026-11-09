@@ -2,6 +2,15 @@
   width: 100%;
 }
 
+.status {
+  margin: 8px 0 0;
+  color: rgb(0 0 0 / 50%);
+
+  &:empty {
+    display: none;
+  }
+}
+
 .place-select {
   display: flex;
   flex-direction: column;
@@ -12,11 +21,17 @@
   background: none;
   outline: none;
   list-style: none;
-  transition: height var(--animation-duration) var(--easing);
-}
+  transition:
+    height var(--animation-duration) var(--easing),
+    opacity var(--animation-duration) var(--easing);
 
-.place-select:empty {
-  height: 0;
+  &:empty {
+    height: 0;
+  }
+
+  &.searching {
+    opacity: 0.5;
+  }
 }
 
 .place-select > li > button {
