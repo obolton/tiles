@@ -15,7 +15,7 @@
 
 .toolbar {
   position: fixed;
-  inset: auto 32px 32px;
+  inset: auto var(--bottom-bar-inset) max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
   display: flex;
   justify-content: center;
   z-index: 2;
@@ -23,9 +23,5 @@
 
   & > * {
     pointer-events: auto;
-  }
-
-  @media (width < 640px) {
-    inset: auto 16px 16px;
   }
 }

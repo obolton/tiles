@@ -23,4 +23,11 @@ describe("CREATE_MAP_TOOL", () => {
     expect(map.get("layout")).toBe("MAP");
     expect(map.get("mapStyle")).toBe("SATELLITE");
   });
+
+  test("falls back to the default style when none is given", async () => {
+    const result = await CREATE_MAP_TOOL.function({ size: "small", mapStyle: null }, context);
+
+    const map = getCreatedTile(doc, result);
+    expect(map.get("mapStyle")).toBe("DEFAULT");
+  });
 });

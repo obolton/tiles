@@ -1,12 +1,17 @@
+/* Fills the page so clicks below short content still land in the editor */
 .body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   width: calc(var(--page-width) * 24px);
   max-width: 100%;
-  padding: clamp(8px, 2cqi, 16px);
+  padding-inline: clamp(8px, 2cqi, 16px);
   color: var(--text-color);
   font-family: var(--font);
 }
 
 .editor {
+  flex: 1;
   outline: none;
 
   & li[role="checkbox"]::after {

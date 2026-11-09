@@ -1,0 +1,55 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  color: var(--ui-color);
+  background: var(--ui-background, #fff);
+  border-inline-start: 1px solid rgb(0 0 0 / 8%);
+
+  /* Lift the panel off the page like the header */
+  box-shadow: 0 0 24px rgb(0 0 0 / 10%);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 12px 12px 4px 16px;
+}
+
+/* Matches the page title in the header */
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Section headings within a panel */
+.panel :is(h3, h4, legend) {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ui-secondary-color);
+}
+
+@media (width < 640px) {
+  .panel {
+    block-size: auto;
+    max-block-size: min(70dvh, 560px);
+    padding-block-end: env(safe-area-inset-bottom);
+    border-inline-start: none;
+    border-start-start-radius: 24px;
+    border-start-end-radius: 24px;
+    box-shadow:
+      var(--surface-outline),
+      0 -8px 24px rgb(0 0 0 / 10%);
+
+    &::part(handle) {
+      display: none;
+    }
+  }
+}

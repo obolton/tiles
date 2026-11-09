@@ -3,6 +3,7 @@ import SidebarPanel from "@/components/pages/SidebarPanel";
 import { flag, reactive } from "reactivity";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
+import type { SidebarSlot } from "@/components/pages/SidebarPanel";
 
 export type VersionEntry = AppRouterOutputs["versions"]["list"]["versions"][number];
 
@@ -18,10 +19,11 @@ export default class VersionHistory extends SidebarPanel {
   constructor(
     private readonly pageId: string,
     readonly previewVersion: VersionEntry | null = null,
+    sidebar?: SidebarSlot,
   ) {
-    super(VERSION_HISTORY_PANEL_ID, VERSION_HISTORY_BUTTON_ID);
+    super(VERSION_HISTORY_PANEL_ID, VERSION_HISTORY_BUTTON_ID, sidebar);
     if (previewVersion) {
-      this.isOpen.on();
+      this.sidebar.value = this;
       this.selectedId.value = previewVersion.id;
       if (!import.meta.env.SSR) {
         this.refresh().catch(handleError);

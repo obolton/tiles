@@ -26,6 +26,11 @@ class TooltipController {
           if (!(event.target instanceof Element)) {
             return;
           }
+          // Focus only counts when it is visible, so focus moved by script after a click
+          // (e.g. into a newly opened panel) does not show a tooltip
+          if (event.type === "focusin" && !event.target.matches(":focus-visible")) {
+            return;
+          }
           const target = event.target.closest<HTMLElement>("[data-tooltip]");
           if (target && target !== this.target && target.ariaExpanded !== "true") {
             this.enter(target);
@@ -106,7 +111,14 @@ class TooltipController {
     const height = this.tooltip.offsetHeight;
 
     const bounds = this.target.getBoundingClientRect();
-    const position = this.getPosition();
+    let position = this.getPosition();
+
+    // Flip to the other side when the preferred one would leave the viewport
+    if (position === "bottom" && bounds.bottom + TOOLTIP_MARGIN + height > window.innerHeight) {
+      position = "top";
+    } else if (position === "top" && bounds.top - TOOLTIP_MARGIN - height < 0) {
+      position = "bottom";
+    }
 
     switch (position) {
       case "left":

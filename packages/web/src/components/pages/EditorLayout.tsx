@@ -5,7 +5,7 @@ import styles from "./EditorLayout.module.css";
 import type { Reactive } from "reactivity";
 import type { JSX } from "jsx/jsx";
 
-export const SIDEBAR_CONSTRAINTS = { min: 120, max: 480, default: 200 };
+export const SIDEBAR_CONSTRAINTS = { min: 240, max: 480, default: 280 };
 
 const startWidth = persistent<number>("editor:sidebar-width:start", SIDEBAR_CONSTRAINTS.default);
 const endWidth = persistent<number>("editor:sidebar-width:end", SIDEBAR_CONSTRAINTS.default);
@@ -16,15 +16,17 @@ function clamp(value: number): number {
 
 export interface EditorLayoutProps {
   start?: JSX.Node;
-  end?: JSX.Node;
-  endVisible?: Reactive<boolean>;
+  /** The panel in the end slot, which is hidden while this is null. */
+  end?: Reactive<JSX.Node>;
+  /** Fixed chrome (the editor's bottom bar), kept between the panels. */
+  bar?: JSX.Node;
   children: JSX.Node;
 }
 
-export default function EditorLayout({ start, end, endVisible, children }: EditorLayoutProps) {
+export default function EditorLayout({ start, end, bar, children }: EditorLayoutProps) {
   const startSize = reactive(clamp(startWidth.value));
   const endSize = reactive(clamp(endWidth.value));
-  const isEndVisible = endVisible ?? reactive(true);
+  const isEndVisible = end?.derive((panel) => panel != null) ?? reactive(false);
 
   const style = {
     "--sidebar-size-start": start ? startSize.derive((value) => `${value}px`) : "0px",
@@ -47,6 +49,7 @@ export default function EditorLayout({ start, end, endVisible, children }: Edito
         </div>
       ) : null}
 
+      {bar ? <div className={styles.bar}>{bar}</div> : null}
       {children}
 
       {end ? (

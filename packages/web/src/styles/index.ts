@@ -9,7 +9,6 @@ import "@/styles/drag.css";
 import "@/styles/resize.css";
 import "@/styles/lightbox.css";
 import "@/styles/popovers.css";
-import "@/styles/panels.css";
 import "@/styles/navigation.css";
 import "@/styles/toasts.css";
 import "@/styles/images.css";

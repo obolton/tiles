@@ -9,6 +9,7 @@ import type { JSX } from "jsx/jsx";
 
 export interface PromptProps extends JSX.Attributes<"form"> {
   className?: string;
+  inputId?: string;
   placeholder?: string;
   submitTooltip?: string;
   onSubmit: (prompt: string) => Promise<void>;
@@ -17,6 +18,7 @@ export interface PromptProps extends JSX.Attributes<"form"> {
 
 export default function Prompt({
   className,
+  inputId,
   placeholder,
   submitTooltip = "Done",
   onSubmit,
@@ -73,7 +75,7 @@ export default function Prompt({
       <ReferenceList />
 
       <ResizingTextarea
-        id="prompt-input"
+        id={inputId}
         name="prompt"
         rows={1}
         placeholder={placeholder}

@@ -20,8 +20,8 @@ export interface PresentationPageProps {
   showToolbar: Reactive<boolean>;
   tiles: TileCollection;
   signal?: AbortSignal;
-  end?: JSX.Node;
-  endVisible?: Reactive<boolean>;
+  end?: Reactive<JSX.Node>;
+  bar?: JSX.Node;
 }
 
 export default function PresentationPage({
@@ -31,7 +31,7 @@ export default function PresentationPage({
   tiles,
   signal,
   end,
-  endVisible,
+  bar,
 }: PresentationPageProps) {
   const tabindex = isEditable.derive((editable) => (editable ? 0 : undefined));
   const resize = isEditable.derive((editable) => (editable ? "all" : null));
@@ -58,7 +58,7 @@ export default function PresentationPage({
     <EditorLayout
       start={<ThumbnailListPanel page={page} isEditable={isEditable} tiles={tiles} />}
       end={end}
-      endVisible={endVisible}
+      bar={bar}
     >
       <main
         className={styles.main}

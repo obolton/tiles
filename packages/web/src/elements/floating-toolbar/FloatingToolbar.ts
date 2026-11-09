@@ -73,9 +73,13 @@ export default class FloatingToolbar extends HTMLElement {
       orientation: "horizontal",
     });
 
-    // Watch for child changes
-    this.mutationObserver = new MutationObserver(() => {
-      this.buildTabBar();
+    // Rebuild the tab bar when tabs change; re-scan the items when content is added inside a tab
+    this.mutationObserver = new MutationObserver((records) => {
+      if (records.some((record) => record.target === this)) {
+        this.buildTabBar();
+      } else {
+        this.itemsNav.update();
+      }
     });
 
     // Prevent toolbar items from stealing focus on pointer down
@@ -87,7 +91,7 @@ export default class FloatingToolbar extends HTMLElement {
   }
 
   connectedCallback() {
-    this.mutationObserver.observe(this, { childList: true });
+    this.mutationObserver.observe(this, { childList: true, subtree: true });
     this.tabBarNav.attach();
     this.itemsNav.attach();
     this.buildTabBar();

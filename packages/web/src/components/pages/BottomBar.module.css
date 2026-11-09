@@ -1,0 +1,50 @@
+.bar {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: end;
+  gap: 8px;
+
+  /* The bar and its columns let clicks through; only the toolbars themselves take them */
+  & > * > * {
+    pointer-events: auto;
+  }
+}
+
+.slot {
+  grid-column: 2;
+  min-width: 0;
+  display: grid;
+  place-items: end center;
+
+  /* Toolbars share one cell so an outgoing one never displaces the next */
+  & > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.create {
+  grid-column: 3;
+  position: relative;
+  display: flex;
+  justify-content: end;
+}
+
+@media (width < 640px) {
+  /* The create toolbar shares the top row with the tab bar; the toolbar takes a full-width row */
+  .bar {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .create {
+    grid-area: 1 / 1;
+  }
+
+  .slot {
+    grid-area: 2 / 1;
+
+    & > * {
+      margin-block-start: 8px;
+    }
+  }
+}

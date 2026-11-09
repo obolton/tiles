@@ -1,9 +1,28 @@
+/* Floats above the create toolbar so its size never affects the bar's layout */
 .panel {
+  position: absolute;
+  inset-block-end: calc(100% + 8px);
+  inset-inline-end: 0;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - var(--header-height) - 96px);
   width: min(600px, 80vw);
+  max-height: calc(100dvh - var(--header-height) - 128px);
   pointer-events: none !important;
+  transition:
+    display var(--animation-duration-short) allow-discrete,
+    opacity var(--animation-duration-short) var(--easing),
+    translate var(--animation-duration-short) var(--easing);
+
+  &:not(.open) {
+    display: none;
+    opacity: 0;
+    translate: 0 8px;
+  }
+
+  @starting-style {
+    opacity: 0;
+    translate: 0 8px;
+  }
 }
 
 .prompt {
@@ -18,6 +37,6 @@
 @media (width < 640px) {
   .panel {
     width: 100%;
-    max-height: calc(100dvh - var(--header-height) - 80px);
+    max-height: calc(100dvh - var(--header-height) - 96px);
   }
 }

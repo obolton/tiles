@@ -25,35 +25,11 @@ floating-toolbar {
     min-width: 0;
   }
 
-  &.bottom-right {
-    position: fixed;
-    inset: auto 32px 32px auto;
-  }
-
-  &.anchored {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 100%;
-    margin: 24px;
-
-    &.inside {
-      justify-self: end;
-    }
-  }
-
+  /* The contextual toolbar gives way to the prompt */
   body:is([data-drag], [data-resize]) &,
-  body[data-prompt] &.primary:not(.prompt) {
+  body[data-prompt] &.primary {
     display: none;
     opacity: 0;
-  }
-}
-
-@supports (anchor-name: --anchor) {
-  floating-toolbar.anchored {
-    position: fixed;
-    inset-block-start: auto !important;
-    inset-inline-start: auto !important;
-    position-area: block-end center;
   }
 }
 
@@ -91,69 +67,33 @@ toolbar-tab {
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     scroll-padding-inline: 8px;
-    scroll-timeline: --toolbar-scroll inline;
 
     & > [role="group"] {
       scroll-snap-align: start;
     }
 
-    /* Edge fades that only appear while there is more to scroll to in that direction */
-    &::before,
-    &::after {
-      content: "";
-      position: sticky;
-      z-index: 1;
-      flex: none;
-      align-self: stretch;
-      width: 32px;
-      opacity: 0;
-      pointer-events: none;
-      animation: toolbar-fade-start linear both;
-      animation-timeline: --toolbar-scroll;
-    }
-
-    &::before {
-      inset-inline-start: 0;
-      margin-inline-end: -40px;
-      background: linear-gradient(
-        to right,
-        oklch(from var(--ui-background-color) l c h),
-        transparent
-      );
-    }
-
-    &::after {
-      inset-inline-end: 0;
-      margin-inline-start: -40px;
-      background: linear-gradient(
-        to left,
-        oklch(from var(--ui-background-color) l c h),
-        transparent
-      );
-      animation-name: toolbar-fade-end;
+    /* Items fade as they cross the edges of the scrollport, so a clipped edge reads as scrollable */
+    @supports (animation-timeline: view()) {
+      & > [role="group"] > :not([popover]) {
+        animation: toolbar-item-fade linear both;
+        animation-timeline: view(inline);
+      }
     }
   }
 }
 
-@keyframes toolbar-fade-start {
-  0% {
-    opacity: 0;
+@keyframes toolbar-item-fade {
+  entry 0% {
+    filter: opacity(0);
   }
 
-  15%,
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes toolbar-fade-end {
-  0%,
-  85% {
-    opacity: 1;
+  entry 100%,
+  exit 0% {
+    filter: opacity(1);
   }
 
-  100% {
-    opacity: 0;
+  exit 100% {
+    filter: opacity(0);
   }
 }
 

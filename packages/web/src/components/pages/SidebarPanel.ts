@@ -1,23 +1,31 @@
-import { flag } from "reactivity";
+import { reactive } from "reactivity";
 import { focusInside, getFocusedDescendant } from "@/utils/focus";
+import type { Reactive, ReactiveValue } from "reactivity";
 
 /** The header's overflow menu button, which opens the panels when their own buttons are collapsed into it. */
 export const PAGE_ACTIONS_BUTTON_ID = "page-actions-button";
 
-/** Open state for a panel in the editor's end slot, moving focus into the panel on open and back to its button on close. */
+/** Holds the panel that is open in a sidebar, so that opening one panel closes another. */
+export type SidebarSlot = ReactiveValue<SidebarPanel | null>;
+
+/** Open state for a panel in the editor's end sidebar, moving focus into the panel on open and back to its button on close. */
 export default class SidebarPanel {
-  readonly isOpen = flag(false);
+  readonly isOpen: Reactive<boolean>;
 
   constructor(
     readonly panelId: string,
     readonly buttonId: string | null = null,
-  ) {}
+    protected readonly sidebar: SidebarSlot = reactive<SidebarPanel | null>(null),
+  ) {
+    this.isOpen = sidebar.derive((panel) => panel === this);
+  }
 
   open() {
     if (this.isOpen.value) {
       return;
     }
-    this.isOpen.on();
+    this.sidebar.value?.close();
+    this.sidebar.value = this;
     requestAnimationFrame(() => {
       const panel = document.getElementById(this.panelId);
       if (panel) {
@@ -30,10 +38,10 @@ export default class SidebarPanel {
     if (!this.isOpen.value) {
       return;
     }
-    // Capture focus before the flag flips and the panel detaches
+    // Capture focus before the panel detaches
     const panel = document.getElementById(this.panelId);
     const hadFocus = !!panel && !!getFocusedDescendant(panel);
-    this.isOpen.off();
+    this.sidebar.value = null;
     if (hadFocus && this.buttonId) {
       const button =
         document.getElementById(this.buttonId) ?? document.getElementById(PAGE_ACTIONS_BUTTON_ID);

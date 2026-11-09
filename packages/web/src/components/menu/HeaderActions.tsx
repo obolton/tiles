@@ -20,6 +20,7 @@ import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
 import { exportPageAsMarkdown } from "@/utils/export";
 import { mediaQuery } from "@/utils/viewport";
+import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import styles from "./HeaderActions.module.css";
 import type Editor from "@/editor/Editor";
@@ -106,12 +107,26 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
             </button>
 
             <If condition={isEditable}>
-              <EditingTools editor={editor} undoRedo={showUndoRedo} panels={isExpanded} />
+              <EditingTools editor={editor} undoRedo={showUndoRedo} versionHistory={isExpanded} />
             </If>
           </ToolbarGroup>
 
           <ToolbarGroup label="Page actions">
             <If condition={isExpanded}>
+              <If condition={isEditable}>
+                <ToolbarButton
+                  id={SHARE_BUTTON_ID}
+                  label="Share"
+                  aria-pressed={editor.share.isOpen}
+                  aria-controls={editor.share.isOpen.derive((open) =>
+                    open ? SHARE_PANEL_ID : undefined,
+                  )}
+                  on:click={() => editor.share.toggle()}
+                >
+                  <ShareIcon aria-hidden="true" />
+                </ToolbarButton>
+              </If>
+
               <ToolbarButton
                 label={isBookmarked.derive((value) => (value ? "Bookmarked" : "Not bookmarked"))}
                 aria-pressed={isBookmarked}
@@ -136,35 +151,26 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
             </ToolbarButton>
 
             <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
-              <If condition={isEditable}>
-                <If condition={isPhone}>
+              <If condition={isCompact}>
+                <If condition={isEditable}>
                   <MenuItemGroup>
-                    <MenuItem
-                      icon={<UndoIcon aria-hidden="true" />}
-                      aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
-                      on:click={menuAction(() => editor.undo())}
-                    >
-                      Undo
-                    </MenuItem>
-                    <MenuItem
-                      icon={<RedoIcon aria-hidden="true" />}
-                      aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
-                      on:click={menuAction(() => editor.redo())}
-                    >
-                      Redo
-                    </MenuItem>
-                  </MenuItemGroup>
-                </If>
+                    <If condition={isPhone}>
+                      <MenuItem
+                        icon={<UndoIcon aria-hidden="true" />}
+                        aria-disabled={canUndo.derive((v) => (v ? undefined : "true"))}
+                        on:click={menuAction(() => editor.undo())}
+                      >
+                        Undo
+                      </MenuItem>
+                      <MenuItem
+                        icon={<RedoIcon aria-hidden="true" />}
+                        aria-disabled={canRedo.derive((v) => (v ? undefined : "true"))}
+                        on:click={menuAction(() => editor.redo())}
+                      >
+                        Redo
+                      </MenuItem>
+                    </If>
 
-                <If condition={isCompact}>
-                  <MenuItemGroup>
-                    <MenuItem
-                      icon={<ShareIcon aria-hidden="true" />}
-                      checked={editor.share.isOpen}
-                      on:click={menuAction(() => editor.share.toggle())}
-                    >
-                      Share
-                    </MenuItem>
                     <MenuItem
                       icon={<HistoryIcon aria-hidden="true" />}
                       checked={editor.versionHistory.isOpen}
@@ -174,10 +180,17 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                     </MenuItem>
                   </MenuItemGroup>
                 </If>
-              </If>
 
-              <If condition={isCompact}>
                 <MenuItemGroup>
+                  <If condition={isEditable}>
+                    <MenuItem
+                      icon={<ShareIcon aria-hidden="true" />}
+                      checked={editor.share.isOpen}
+                      on:click={menuAction(() => editor.share.toggle())}
+                    >
+                      Share
+                    </MenuItem>
+                  </If>
                   <MenuItem
                     icon={isBookmarked.derive(bookmarkIcon)}
                     checked={isBookmarked}

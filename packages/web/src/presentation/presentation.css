@@ -7,8 +7,6 @@ body[data-presenting] {
   /* Hide navigation and editing chrome */
   & #header,
   & floating-toolbar:not(#presentation-toolbar),
-  & #ai-button,
-  & #insert-button,
   & .thumbnail-list-panel {
     display: none;
   }
@@ -49,6 +47,9 @@ body[data-presenting] {
 }
 
 #presentation-toolbar {
+  position: fixed;
+  inset: auto var(--bottom-bar-inset) max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
+  margin-inline: auto;
   opacity: 0;
   visibility: hidden;
   transition:

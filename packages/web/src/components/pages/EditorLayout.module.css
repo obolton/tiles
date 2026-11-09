@@ -20,6 +20,21 @@
 .end {
   inset-inline-end: 0;
   inline-size: var(--sidebar-width-end);
+  transition: inset-inline-end var(--animation-duration) var(--spring);
+
+  @starting-style {
+    inset-inline-end: calc(-1 * var(--sidebar-width-end));
+  }
+}
+
+.bar {
+  position: fixed;
+  inset-inline: calc(var(--sidebar-width-start) + var(--bottom-bar-inset))
+    calc(var(--sidebar-width-end) + var(--bottom-bar-inset));
+  inset-block-end: max(var(--bottom-bar-inset), env(safe-area-inset-bottom));
+  z-index: 2;
+  pointer-events: none;
+  transition: inset-inline var(--animation-duration) var(--spring);
 }
 
 /* Keep room for the page when both panels are open */
