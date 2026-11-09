@@ -48,9 +48,14 @@ popover-menu {
 
 anchored-popover,
 popover-menu,
-toolbar-tab,
 filter-select {
   padding: 8px;
+}
+
+anchored-popover,
+popover-menu,
+toolbar-tab,
+filter-select {
   border-radius: calc(var(--border-radius) + 8px);
   font-size: 1rem;
   color: var(--ui-color);

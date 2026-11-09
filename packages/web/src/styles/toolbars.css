@@ -59,9 +59,7 @@ floating-toolbar {
 
 toolbar-tab {
   grid-area: 1 / 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: block;
   opacity: 0;
   pointer-events: none;
   transition:
@@ -84,76 +82,10 @@ toolbar-tab {
   }
 
   .primary > & {
+    --toolbar-tab-overflow: auto;
+
     max-width: 100%;
     min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
-    scroll-padding-inline: 8px;
-    scroll-timeline: --toolbar-scroll inline;
-
-    & > [role="group"] {
-      scroll-snap-align: start;
-    }
-
-    /* Edge fades that only appear while there is more to scroll to in that direction */
-    &::before,
-    &::after {
-      content: "";
-      position: sticky;
-      z-index: 1;
-      flex: none;
-      align-self: stretch;
-      width: 32px;
-      opacity: 0;
-      pointer-events: none;
-      animation: toolbar-fade-start linear both;
-      animation-timeline: --toolbar-scroll;
-    }
-
-    &::before {
-      inset-inline-start: 0;
-      margin-inline-end: -40px;
-      background: linear-gradient(
-        to right,
-        oklch(from var(--ui-background-color) l c h),
-        transparent
-      );
-    }
-
-    &::after {
-      inset-inline-end: 0;
-      margin-inline-start: -40px;
-      background: linear-gradient(
-        to left,
-        oklch(from var(--ui-background-color) l c h),
-        transparent
-      );
-      animation-name: toolbar-fade-end;
-    }
-  }
-}
-
-@keyframes toolbar-fade-start {
-  0% {
-    opacity: 0;
-  }
-
-  15%,
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes toolbar-fade-end {
-  0%,
-  85% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
   }
 }
 

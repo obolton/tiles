@@ -1,4 +1,8 @@
+import css from "./ToolbarTab.css?inline";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+
+const stylesheet = new CSSStyleSheet();
+stylesheet.replaceSync(css);
 
 export interface ToolbarTabAttributes extends GlobalHTMLAttributes {
   label?: string;
@@ -30,6 +34,14 @@ export default class ToolbarTab extends HTMLElement {
     this.internals = this.attachInternals();
     this.internals.role = "tabpanel";
     this.internals.ariaHidden = "true";
+
+    // The scroller carries the overflow and edge fades; the host keeps the surface
+    const shadow = this.attachShadow({ mode: "open" });
+    shadow.adoptedStyleSheets = [stylesheet];
+    const scroller = document.createElement("div");
+    scroller.id = "scroller";
+    scroller.append(document.createElement("slot"));
+    shadow.append(scroller);
   }
 
   connectedCallback() {
