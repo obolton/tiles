@@ -1,5 +1,5 @@
-import { flag } from "reactivity";
-import type { Reactive } from "reactivity";
+import { flag } from "carillon";
+import type { Reactive } from "carillon";
 
 /**
  * A reactive flag that tracks whether a media query matches. It never matches during
@@ -17,3 +17,6 @@ export function mediaQuery(query: string): Reactive<boolean> {
   });
   return matches;
 }
+
+/** Narrow viewports, below which the layout collapses to a single column. */
+export const NARROW_QUERY = "(width < 640px)";

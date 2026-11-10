@@ -19,7 +19,7 @@ import Table from "@/models/Table";
 import type { TileType } from "doc/types/enums";
 import type { TilePlacementInput } from "@/models/TileContainer";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 type InsertTileButton = {
   label: string;

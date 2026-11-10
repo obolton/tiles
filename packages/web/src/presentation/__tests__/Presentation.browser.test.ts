@@ -60,6 +60,32 @@ describe("Presentation", () => {
     },
   );
 
+  test("steps through the root items of a page as slides", async () => {
+    await page.viewport(1280, 800);
+    present();
+
+    expect(document.body.dataset.presenting).toBe("slides");
+    expect(toolbar().querySelector(".slide-counter")?.textContent).toBe("1\u2009/\u20092");
+    expect(toolbar().querySelector("[data-action=next]")).not.toBeNull();
+  });
+
+  test("shows a layout page whole, without slide navigation", async () => {
+    await page.viewport(1280, 800);
+    document.body.dataset.disableTransitions = "";
+
+    // Layout pages may keep all their content in docks, leaving the main area empty
+    const main = document.createElement("main");
+    main.dataset.pageType = "LAYOUT";
+    document.body.append(main);
+
+    Presentation.start(main);
+
+    expect(document.body.dataset.presenting).toBe("page");
+    expect(toolbar().querySelector("[data-action=next]")).toBeNull();
+    expect(toolbar().querySelector("[data-action=previous]")).toBeNull();
+    expect(toolbar().querySelector("[data-action=close]")).not.toBeNull();
+  });
+
   test("removes the toolbar when the presentation stops", async () => {
     await page.viewport(1280, 800);
     present();

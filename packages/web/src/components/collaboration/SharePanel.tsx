@@ -1,11 +1,11 @@
 import PublicLink from "./PublicLink";
 import PeopleList from "./PeopleList";
 import Sidebar from "@/components/pages/Sidebar";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import styles from "./SharePanel.module.css";
 import type Share from "./Share";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "jsx/jsx";
 
 export interface SharePanelProps extends JSX.Attributes<"resizable-panel"> {

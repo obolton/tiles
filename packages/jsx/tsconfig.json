@@ -11,6 +11,5 @@
     },
     "rootDir": "."
   },
-  "include": ["./src/**/*"],
-  "references": [{ "path": "../reactivity" }]
+  "include": ["./src/**/*"]
 }

@@ -7,7 +7,7 @@ import If from "jsx/if";
 import type Page from "@/models/Page";
 import type { Command, EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface DocumentToolbarProps {
   page: Page;

@@ -1,7 +1,7 @@
 import SortIcon from "@/icons/sort.svg?jsx";
 import styles from "./SearchToolbar.module.css";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
 export interface SearchToolbarProps<S extends string = string> extends JSX.Attributes<"div"> {

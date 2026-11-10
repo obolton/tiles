@@ -7,7 +7,7 @@ import Search from "@/components/search/Search";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import client from "@/api/client";
 import { handleError } from "@/utils/errors";
-import { flag, reactive } from "reactivity";
+import { flag, reactive } from "carillon";
 import type { LibraryPage } from "@/components/library/LibraryCard";
 import type { ModalProps } from "@/utils/modals";
 import type { LinkedPage } from "doc/tiles/pageLink";

@@ -5,7 +5,7 @@ import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder
 import { ResizeEvent } from "@/elements/resize/events";
 import { dockParentId } from "@/models/parentId";
 import type Page from "@/models/Page";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { DragDropEvent } from "@/utils/drag";
 import type { DragData } from "@/editor/LayoutEditor";
 import type Tile from "@/models/Tile";

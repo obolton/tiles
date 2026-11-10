@@ -6,7 +6,7 @@ import Portal from "jsx/portal";
 import styles from "./PageLinkTile.module.css";
 import Editor from "@/editor/Editor";
 import type PageLink from "@/models/PageLink";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface PageLinkTileProps {
   pageLink: PageLink;

@@ -8,7 +8,6 @@
     { "path": "./packages/fonts" },
     { "path": "./packages/image-upload-worker" },
     { "path": "./packages/jsx" },
-    { "path": "./packages/reactivity" },
     { "path": "./packages/web" },
     { "path": "./scripts" }
   ]

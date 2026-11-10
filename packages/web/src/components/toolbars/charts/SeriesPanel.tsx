@@ -5,7 +5,7 @@ import SeriesRow from "./SeriesRow";
 import NewIcon from "@/icons/new.svg?jsx";
 import ParagraphIcon from "@/icons/paragraph.svg?jsx";
 import styles from "./SeriesPanel.module.css";
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import type Chart from "@/models/Chart";
 import type Series from "@/models/Series";
 import type { ChartType } from "@/models/Series";

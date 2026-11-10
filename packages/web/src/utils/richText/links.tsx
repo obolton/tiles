@@ -3,7 +3,7 @@ import type { EditorView, NodeView, ViewMutationRecord } from "prosemirror-view"
 import type { Node } from "prosemirror-model";
 import Themeable from "@/components/themes/Themeable";
 import { render } from "jsx/dom";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import {
   LINK_THEMES,
   LINK_THEME_OPTIONS,

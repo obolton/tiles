@@ -1,7 +1,7 @@
 import ModalHeader from "@/components/modals/ModalHeader";
 import ModalBody from "@/components/modals/ModalBody";
 import ModalFooter from "@/components/modals/ModalFooter";
-import { flag } from "reactivity";
+import { flag } from "carillon";
 import { handleError } from "@/utils/errors";
 import type { ModalProps } from "@/utils/modals";
 

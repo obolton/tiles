@@ -3,13 +3,13 @@ import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
 import If from "jsx/if";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import {
   VERSION_HISTORY_BUTTON_ID,
   VERSION_HISTORY_PANEL_ID,
 } from "@/components/versions/VersionHistory";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface EditingToolsProps {
   editor: Editor;

@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { StyleDeclaration } from "jsx/html-attributes";
 import type { Fill } from "@/components/fills/types";
 import type { RichText } from "doc/types/richText";

@@ -2,7 +2,7 @@ import { ACCEPT_IMAGE_TYPES } from "@/utils/media";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
 import styles from "./UploadImage.module.css";
-import { ReactiveValue } from "reactivity";
+import { ReactiveValue } from "carillon";
 import { handleError } from "@/utils/errors";
 import type FilePicker from "@/elements/file-picker/FilePicker";
 

@@ -3,7 +3,7 @@ import type { PlacementInput } from "doc/tiles/base";
 import Tile from "./Tile";
 import { buildSectionMap, type SectionMapInput } from "doc/tiles/section";
 import type TileCollection from "./TileCollection";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { Layout, MapStyle } from "doc/types/enums";
 import type Page from "@/models/Page";
 

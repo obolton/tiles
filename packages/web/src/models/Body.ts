@@ -1,5 +1,5 @@
 import type * as Y from "yjs";
-import { reactive, type Reactive } from "reactivity";
+import { reactive, type Reactive } from "carillon";
 import { getBody } from "doc/body";
 import { insertTile, positionAfterTile, removeTiles } from "doc/richText/tiles";
 import type Page from "./Page";

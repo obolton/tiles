@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildImageMap } from "doc/tiles/image";
-import { reactive, type Reactive } from "reactivity";
+import { reactive, type Reactive } from "carillon";
 import { serialize } from "@/utils/richText/serialize";
 import { getImageUrl } from "@/utils/images";
 import type Page from "@/models/Page";

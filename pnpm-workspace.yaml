@@ -8,6 +8,8 @@ allowBuilds:
   workerd: false
 autoInstallPeers: false
 minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  - carillon
 trustPolicy: no-downgrade
 trustPolicyExclude:
   - chokidar@4.0.3

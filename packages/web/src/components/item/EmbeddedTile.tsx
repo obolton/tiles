@@ -1,6 +1,6 @@
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
-import { isReactive, reactive, type Reactive } from "reactivity";
+import { isReactive, reactive, type Reactive } from "carillon";
 import styles from "./EmbeddedTile.module.css";
 import type Tile from "@/models/Tile";
 

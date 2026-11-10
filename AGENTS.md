@@ -21,7 +21,6 @@ The user experience is intended to be highly intuitive, usable, accessible and d
   - `doc`: Document schema and utilities.
   - `fonts`: Font registry, manifest and the script that syncs fonts to R2.
   - `jsx`: JSX runtime.
-  - `reactivity`: Reactivity library.
   - `web`: Web frontend using Vite, Web Components and a custom JSX runtime.
     - `src/elements`: Web Components
     - `src/components`: JSX components

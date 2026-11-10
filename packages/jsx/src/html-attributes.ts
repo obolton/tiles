@@ -4,7 +4,7 @@
  * For DOM property access, use the $-prefixed syntax (e.g., $tabIndex).
  */
 
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 // Style types
 

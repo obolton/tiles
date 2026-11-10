@@ -2,7 +2,7 @@ import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
 import WorkspaceMembers from "@/components/workspaces/WorkspaceMembers";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { render } from "../dom";
 import { renderToString } from "../server";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { Switch, Case, Default } from "../switch";
 
 describe("Switch", () => {

@@ -3,7 +3,7 @@ import client from "@/api/client";
 import { publicEnv } from "@/env/public";
 import { getCookie } from "./cookies";
 import { navigate } from "./navigation";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import type { AppRouterOutputs } from "@/api/client";
 
 export type User = AppRouterOutputs["users"]["getUserInfo"];

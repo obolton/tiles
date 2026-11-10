@@ -6,7 +6,7 @@ import { PRIMARY_MOUSE_BUTTON } from "@/constants/input";
 import styles from "./MapSection.module.css";
 import type Tile from "@/models/Tile";
 import type Editor from "@/editor/Editor";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface MapPinProps {
   tile: Tile;

@@ -3,7 +3,7 @@ import SearchToolbar from "@/components/search/SearchToolbar";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 import { PageSortOptions, type PageSort } from "@/components/grid/PagesGrid";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";

@@ -8,7 +8,7 @@ import {
   serializeStyles,
   applyStyleObject,
 } from "../attributes";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 
 describe("mapAttributeName", () => {
   test("maps className to class", () => {

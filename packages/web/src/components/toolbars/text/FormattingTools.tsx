@@ -85,7 +85,7 @@ import {
 import { getLink } from "@/utils/richText/helpers";
 import { loadFonts } from "@/utils/fonts";
 import Editor from "@/editor/Editor";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { EditorState, Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 import type { TextAlignment } from "@/utils/richText/format";

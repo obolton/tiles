@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { buildDropdownMap, type DropdownMapInput } from "doc/tiles/dropdown";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { DropdownOption } from "doc/types/dropdown";
 
 export type { DropdownMapInput };

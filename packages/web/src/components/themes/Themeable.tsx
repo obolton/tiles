@@ -1,6 +1,6 @@
 import { render } from "jsx/dom";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ThemeRegistry } from "@/types/themes";
 import type ThemeSelector from "@/elements/themes/ThemeSelector";
 
