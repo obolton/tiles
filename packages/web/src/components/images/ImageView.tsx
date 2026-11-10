@@ -1,6 +1,6 @@
 import RichText from "@/components/text/RichText";
+import { flag } from "carillon";
 import { getImageSrcSet, getImageStyle } from "./imageStyle";
-import { trackImageLoad } from "./loadState";
 import styles from "./ImageView.module.css";
 import type Image from "@/models/Image";
 
@@ -22,7 +22,14 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
 
   const srcSet = getImageSrcSet(imageUrl);
   const style = getImageStyle(image);
-  const { loaded, onLoad, ref } = trackImageLoad();
+  const loaded = flag(false);
+
+  // A server-rendered image can finish loading before hydration attaches its load listener
+  function ref(element: HTMLImageElement) {
+    if (element.complete && element.naturalWidth > 0) {
+      loaded.on();
+    }
+  }
 
   return (
     <figure
@@ -41,7 +48,7 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
         alt={alt}
         style={style}
         ref={ref}
-        on:load={onLoad}
+        on:load={loaded.on.bind(loaded)}
       />
 
       {text.derive((value) =>

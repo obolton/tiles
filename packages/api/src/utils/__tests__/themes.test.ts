@@ -90,8 +90,6 @@ describe("getDefaultThemesData", () => {
     expect(theme.accentColor).toHaveLength(6);
   });
 
-  // The defaults are 8-bit colors, so each 16-bit channel repeats its byte ("#0066ff" is
-  // "00006666ffff"). Anything else is a mistyped value.
   test.each(themes)("$name repeats each color channel byte", (theme) => {
     for (const color of [theme.backgroundColor, theme.textColor, theme.accentColor]) {
       const high = color.filter((_, index) => index % 2 === 0);
