@@ -6,7 +6,8 @@ import If from "jsx/if";
 import Portal from "jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { getImageSrcSet, getImageStyle, getMaxWidth } from "@/components/images/imageStyle";
-import { flag, reactive } from "carillon";
+import { trackImageLoad } from "@/components/images/loadState";
+import { reactive } from "carillon";
 import styles from "@/components/images/ImageView.module.css";
 import type Image from "@/models/Image";
 import type { Reactive } from "carillon";
@@ -46,7 +47,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
 
   const srcSet = getImageSrcSet(imageUrl);
   const style = getImageStyle(image);
-  const loaded = flag(false);
+  const { loaded, onLoad, ref } = trackImageLoad();
 
   const columns = width.value ?? image.page.width.value;
   const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
@@ -81,7 +82,8 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
               origin={origin}
               onMove={(value) => (origin.value = value)}
               onRelease={(value) => (image.origin.value = value)}
-              on:load={loaded.on.bind(loaded)}
+              ref={ref}
+              on:load={onLoad}
             />
 
             <TextEditor

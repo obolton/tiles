@@ -1,6 +1,6 @@
 import RichText from "@/components/text/RichText";
-import { flag } from "carillon";
 import { getImageSrcSet, getImageStyle } from "./imageStyle";
+import { trackImageLoad } from "./loadState";
 import styles from "./ImageView.module.css";
 import type Image from "@/models/Image";
 
@@ -22,7 +22,7 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
 
   const srcSet = getImageSrcSet(imageUrl);
   const style = getImageStyle(image);
-  const loaded = flag(false);
+  const { loaded, onLoad, ref } = trackImageLoad();
 
   return (
     <figure
@@ -40,7 +40,8 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
         loading="lazy"
         alt={alt}
         style={style}
-        on:load={loaded.on.bind(loaded)}
+        ref={ref}
+        on:load={onLoad}
       />
 
       {text.derive((value) =>
