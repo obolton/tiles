@@ -3,6 +3,7 @@ import * as Y from "yjs";
 import { EditorState } from "prosemirror-state";
 import { Schema, type Node } from "prosemirror-model";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
+import { fragmentToRichText } from "doc/richText/serialize";
 import { serialize, serializeFragment } from "../serialize";
 import { deserialize } from "../deserialize";
 import { schema } from "../schema";
@@ -68,7 +69,10 @@ describe("serialize / deserialize round trips", () => {
     expect(deserialize(serialized).eq(doc)).toBe(true);
 
     const lossy = LOSSY_FRAGMENTS.find(([lossyName]) => lossyName === name);
-    expect(serializeFragment(toFragment(doc))).toEqual(lossy ? lossy[1] : content);
+    const fragment = toFragment(doc);
+    expect(serializeFragment(fragment)).toEqual(lossy ? lossy[1] : content);
+    // The prosemirror-free converter in `doc` must agree with the ProseMirror-based one.
+    expect(fragmentToRichText(fragment)).toEqual(serializeFragment(fragment));
   });
 
   test("fixtures exercise every node and mark type in the schema", () => {

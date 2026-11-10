@@ -27,3 +27,13 @@ export function buildVideoMap(
   map.set("imageUrl", imageUrl);
   return map;
 }
+
+/** The public page of a video on its provider. */
+export function getVideoUrl(videoType: VideoType, videoId: string): string {
+  switch (videoType) {
+    case "YOUTUBE":
+      return `https://www.youtube.com/watch?v=${videoId}`;
+    case "VIMEO":
+      return `https://vimeo.com/${videoId}`;
+  }
+}

@@ -12,11 +12,13 @@ import ShareIcon from "@/icons/share.svg?jsx";
 import HistoryIcon from "@/icons/history.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
+import DownloadIcon from "@/icons/download.svg?jsx";
 import If from "jsx/if";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";
 import { handleError } from "@/utils/errors";
+import { exportPageAsMarkdown } from "@/utils/export";
 import { mediaQuery, NARROW_QUERY } from "@/utils/viewport";
 import { SHARE_BUTTON_ID, SHARE_PANEL_ID } from "@/components/collaboration/Share";
 import { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
@@ -135,18 +137,18 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
               </ToolbarButton>
             </If>
 
-            <If condition={isCompact}>
-              <ToolbarButton
-                id={PAGE_ACTIONS_BUTTON_ID}
-                label="More actions"
-                popovertarget={PAGE_ACTIONS_MENU_ID}
-                aria-haspopup="menu"
-                aria-expanded="false"
-              >
-                <MoreIcon aria-hidden="true" />
-              </ToolbarButton>
+            <ToolbarButton
+              id={PAGE_ACTIONS_BUTTON_ID}
+              label="More actions"
+              popovertarget={PAGE_ACTIONS_MENU_ID}
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
+              <MoreIcon aria-hidden="true" />
+            </ToolbarButton>
 
-              <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
+            <popover-menu id={PAGE_ACTIONS_MENU_ID} align="right">
+              <If condition={isCompact}>
                 <If condition={isEditable}>
                   <MenuItemGroup>
                     <If condition={isNarrow}>
@@ -200,8 +202,17 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                     Present
                   </MenuItem>
                 </MenuItemGroup>
-              </popover-menu>
-            </If>
+              </If>
+
+              <MenuItemGroup>
+                <MenuItem
+                  icon={<DownloadIcon aria-hidden="true" />}
+                  on:click={menuAction(() => exportPageAsMarkdown(editor.page))}
+                >
+                  Export as Markdown
+                </MenuItem>
+              </MenuItemGroup>
+            </popover-menu>
           </ToolbarGroup>
         </>
       )}

@@ -1,3 +1,10 @@
+export const PageType = {
+  DOCUMENT: "DOCUMENT",
+  PRESENTATION: "PRESENTATION",
+  LAYOUT: "LAYOUT",
+} as const;
+export type PageType = (typeof PageType)[keyof typeof PageType];
+
 export const TileType = {
   SECTION: "SECTION",
   TEXT: "TEXT",

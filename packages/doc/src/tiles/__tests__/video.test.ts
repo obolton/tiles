@@ -1,6 +1,16 @@
 import { describe, expect, test } from "vitest";
 import * as Y from "yjs";
-import { buildVideoMap } from "@/tiles/video";
+import { buildVideoMap, getVideoUrl } from "@/tiles/video";
+
+describe("getVideoUrl", () => {
+  test("builds a YouTube watch URL", () => {
+    expect(getVideoUrl("YOUTUBE", "abc123")).toBe("https://www.youtube.com/watch?v=abc123");
+  });
+
+  test("builds a Vimeo URL", () => {
+    expect(getVideoUrl("VIMEO", "987")).toBe("https://vimeo.com/987");
+  });
+});
 
 describe("buildVideoMap", () => {
   test("sets video fields", () => {
