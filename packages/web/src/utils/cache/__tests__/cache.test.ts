@@ -2,6 +2,7 @@ import { describe, expect, test, afterEach } from "vitest";
 import Theme from "@/models/Theme";
 import {
   initializeCache,
+  setWorkspaceId,
   getWorkspaceId,
   destroyCache,
   usersCache,
@@ -41,6 +42,17 @@ describe("cache", () => {
       // Old cache data should be cleared
       expect(bookmarksCache.isWarm).toBe(false);
     });
+
+    test("switches workspace when the workspace ID is set first", async () => {
+      await initializeCache("user-1", "workspace-1");
+      await bookmarksCache.set([{ id: "page-1" }]);
+
+      setWorkspaceId("workspace-2");
+      await initializeCache("user-1", "workspace-2");
+
+      expect(getWorkspaceId()).toBe("workspace-2");
+      expect(bookmarksCache.isWarm).toBe(false);
+    });
   });
 
   describe("getWorkspaceId", () => {
@@ -49,8 +61,16 @@ describe("cache", () => {
       expect(getWorkspaceId()).toBe("workspace-123");
     });
 
-    test("throws if cache not initialized", () => {
-      expect(() => getWorkspaceId()).toThrow("Cache not initialized. Call initializeCache first.");
+    test("throws if the workspace is not set", () => {
+      expect(() => getWorkspaceId()).toThrow("Workspace not set");
+    });
+  });
+
+  describe("setWorkspaceId", () => {
+    test("sets the workspace ID without initializing the database", () => {
+      setWorkspaceId("workspace-123");
+
+      expect(getWorkspaceId()).toBe("workspace-123");
     });
   });
 
@@ -59,7 +79,7 @@ describe("cache", () => {
       await initializeCache("user-1", "workspace-1");
       await destroyCache();
 
-      expect(() => getWorkspaceId()).toThrow("Cache not initialized");
+      expect(() => getWorkspaceId()).toThrow("Workspace not set");
     });
 
     test("allows reinitializing after destroy", async () => {
@@ -72,6 +92,13 @@ describe("cache", () => {
 
     test("is idempotent when not initialized", async () => {
       await expect(destroyCache()).resolves.not.toThrow();
+    });
+
+    test("clears a workspace set without a database", async () => {
+      setWorkspaceId("workspace-1");
+      await destroyCache();
+
+      expect(() => getWorkspaceId()).toThrow("Workspace not set");
     });
   });
 
