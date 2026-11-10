@@ -49,7 +49,6 @@ describe("HeaderActions", () => {
     test("downloads the page as Markdown", async () => {
       await page.viewport(1280, 800);
       const downloads: string[] = [];
-      vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
       vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
         this: HTMLAnchorElement,
       ) {

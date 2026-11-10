@@ -2,7 +2,7 @@ import type * as Y from "yjs";
 import { fragmentToRichText } from "../richText/serialize";
 import { ListType } from "../types/richText";
 import type { BlockNode, CodeNode, ListItemNode, ListNode, RichText } from "../types/richText";
-import { inlineToMarkdown, longestRun } from "./inline";
+import { inlineToMarkdown } from "./inline";
 
 export interface MarkdownOptions {
   /** Renders an embedded tile by id. */
@@ -94,8 +94,7 @@ function listMarker(list: ListNode, item: ListItemNode, index: number): string {
 
 function renderCode(block: CodeNode): string {
   const text = block.children.map((child) => child.text).join("");
-  const fence = "`".repeat(Math.max(3, longestRun(text, "`") + 1));
-  return `${fence}${block.language}\n${text}\n${fence}`;
+  return `\`\`\`${block.language}\n${text}\n\`\`\``;
 }
 
 function renderEmbeddedTile(id: string, options: MarkdownOptions): string {

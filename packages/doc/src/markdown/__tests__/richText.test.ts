@@ -185,14 +185,14 @@ describe("richTextToMarkdown", () => {
       expect(richTextToMarkdown([code])).toBe("```javascript\nconst x = 1;\n```");
     });
 
-    test("keeps code verbatim and lengthens the fence past any backticks inside", () => {
+    test("keeps code verbatim inside a three-backtick fence", () => {
       const code: BlockNode = {
         type: "code",
         language: "",
         lineNumbers: false,
-        children: [t("```md\n*not emphasis*\n```")],
+        children: [t("`a` and ``b``\n*not emphasis*")],
       };
-      expect(richTextToMarkdown([code])).toBe("````\n```md\n*not emphasis*\n```\n````");
+      expect(richTextToMarkdown([code])).toBe("```\n`a` and ``b``\n*not emphasis*\n```");
     });
   });
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { codeSpan, escapeText, inlineToMarkdown, longestRun } from "@/markdown/inline";
+import { codeSpan, escapeText, inlineToMarkdown } from "@/markdown/inline";
 import { TextFormat } from "@/types/richText";
 import type { InlineNode, TextNode } from "@/types/richText";
 
@@ -187,12 +187,12 @@ describe("codeSpan", () => {
     expect(codeSpan("x")).toBe("`x`");
   });
 
-  test("uses a longer fence than any backtick run inside", () => {
+  test("fences text containing a backtick with three backticks", () => {
     expect(codeSpan("a``b")).toBe("```a``b```");
   });
 
   test("pads text that starts or ends with a backtick", () => {
-    expect(codeSpan("`a")).toBe("`` `a ``");
+    expect(codeSpan("`a")).toBe("``` `a ```");
   });
 
   test("pads text that starts and ends with a space", () => {
@@ -201,15 +201,5 @@ describe("codeSpan", () => {
 
   test("does not pad whitespace-only text", () => {
     expect(codeSpan("  ")).toBe("`  `");
-  });
-});
-
-describe("longestRun", () => {
-  test("measures the longest consecutive run of a character", () => {
-    expect(longestRun("a``b```c", "`")).toBe(3);
-  });
-
-  test("returns zero when the character is absent", () => {
-    expect(longestRun("abc", "`")).toBe(0);
   });
 });

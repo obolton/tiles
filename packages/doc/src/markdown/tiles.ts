@@ -8,13 +8,9 @@ import { escapeText, inlineToMarkdown } from "./inline";
 import { fragmentToMarkdown, richTextToMarkdown } from "./richText";
 
 export interface TileMarkdownOptions {
-  /** Every tile of the page, for section children and embedded tiles. */
   tiles: Y.Map<Y.Map<unknown>>;
-  /** The absolute URL of an uploaded image. Without it, images render their caption only. */
   imageUrl?: (imageId: string) => string;
-  /** The absolute URL of a page. Without it, page links render their title only. */
   pageUrl?: (pageId: string) => string;
-  /** Renders a section child or embedded tile by id. Defaults to {@link renderTile}. */
   tile?: (id: string) => string;
 }
 
