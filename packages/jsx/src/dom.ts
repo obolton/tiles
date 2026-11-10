@@ -1,4 +1,4 @@
-import { isReactive } from "reactivity";
+import { isReactive } from "carillon";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode, toNodeArray } from "./node-types";
 import {
@@ -8,7 +8,7 @@ import {
   mapAttributeName,
 } from "./attributes";
 import type { ClassList } from "./html-attributes";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "./jsx";
 
 const XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";

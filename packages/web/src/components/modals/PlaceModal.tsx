@@ -5,7 +5,7 @@ import ModalHeader from "./ModalHeader";
 import ModalBody from "./ModalBody";
 import ModalFooter from "./ModalFooter";
 import type { ModalProps } from "@/utils/modals";
-import { ReactiveValue } from "reactivity";
+import { ReactiveValue } from "carillon";
 import { handleError } from "@/utils/errors";
 import debounce from "@/utils/debounce";
 

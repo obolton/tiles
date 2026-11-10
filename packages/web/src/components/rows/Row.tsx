@@ -1,6 +1,6 @@
 import styles from "./Row.module.css";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface RowProps {
   title: string | Reactive<string>;

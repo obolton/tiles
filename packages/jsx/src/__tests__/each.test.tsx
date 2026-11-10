@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "../dom";
 import { renderToString } from "../server";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import Each from "../each";
 
 describe("Each", () => {

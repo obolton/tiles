@@ -1,4 +1,4 @@
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import { themesCache } from "@/utils/cache";
 import { handleError } from "@/utils/errors";
 import { getWorkspaceThemes, createWorkspaceTheme } from "@/utils/workspaceThemes";
@@ -14,7 +14,7 @@ import Editor from "@/editor/Editor";
 import Theme from "@/models/Theme";
 import styles from "./ThemePicker.module.css";
 import type { ThemeData } from "@/models/Theme";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "jsx/jsx";
 

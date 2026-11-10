@@ -6,7 +6,7 @@ import styles from "./DocumentBody.module.css";
 import type Body from "@/models/Body";
 import type { EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface DocumentBodyProps {
   body: Body;

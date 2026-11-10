@@ -3,7 +3,7 @@ import ColorPalette from "@/components/colors/ColorPalette";
 import { toCSSColor } from "@/utils/color";
 import styles from "./ColorPicker.module.css";
 import type { Color } from "@/utils/color";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { JSX } from "jsx/jsx";
 

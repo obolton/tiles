@@ -5,7 +5,7 @@ import Page from "@/models/Page";
 import Theme from "@/models/Theme";
 import { PAGE } from "@/test/fixtures/Page";
 import { THEME } from "@/test/fixtures/Theme";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import type { Meta, Story } from "@/test/storybook";
 
 const meta = {

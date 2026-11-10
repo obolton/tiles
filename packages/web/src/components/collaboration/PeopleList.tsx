@@ -10,7 +10,7 @@ import { showToast } from "@/utils/toasts";
 import styles from "./SharePanel.module.css";
 import type Page from "@/models/Page";
 import type { User } from "@/types/collaboration";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 const InviteModalLoader = () => import("@/components/modals/invite/InviteModal");
 

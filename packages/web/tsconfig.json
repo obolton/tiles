@@ -16,8 +16,7 @@
     { "path": "../doc" },
     { "path": "../env" },
     { "path": "../fonts" },
-    { "path": "../jsx" },
-    { "path": "../reactivity" }
+    { "path": "../jsx" }
   ],
 
   "cmkOptions": {

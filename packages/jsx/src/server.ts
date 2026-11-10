@@ -1,5 +1,5 @@
 import { escapeText } from "entities";
-import { unwrap } from "reactivity";
+import { unwrap } from "carillon";
 import { openTag, closeTag, VOID_ELEMENTS, type Attributes } from "./html";
 import { isClassComponent } from "./jsx";
 import { isEmptyNode, isTextNode, isElementNode } from "./node-types";

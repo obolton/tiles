@@ -6,7 +6,7 @@ import styles from "./ScrollSection.module.css";
 import type ScrollView from "@/elements/scroll-view/ScrollView";
 import type SectionModel from "@/models/Section";
 import type { Layout } from "doc/types/enums";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface ScrollSectionProps {
   section: SectionModel;

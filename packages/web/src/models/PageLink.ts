@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildPageLinkMap, type LinkedPage } from "doc/tiles/pageLink";
-import { type Reactive } from "reactivity";
+import { type Reactive } from "carillon";
 import type Page from "@/models/Page";
 
 export interface CreatePageLinkInput extends Omit<CreateTileInput, "type"> {

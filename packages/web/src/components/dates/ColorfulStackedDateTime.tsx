@@ -1,5 +1,5 @@
 import styles from "./ColorfulStackedDateTime.module.css";
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function ColorfulStackedDateTime({ value, time }: DateTimeThemeProps) {

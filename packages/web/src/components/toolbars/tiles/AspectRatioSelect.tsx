@@ -7,7 +7,7 @@ import SixteenNineIcon from "@/icons/16-9.svg?jsx";
 import NineSixteenIcon from "@/icons/9-16.svg?jsx";
 import SizeIcon from "@/icons/size.svg?jsx";
 import type { Sizing } from "doc/types/enums";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
 
 export interface AspectRatioSelectProps {

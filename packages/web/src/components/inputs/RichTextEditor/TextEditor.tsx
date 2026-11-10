@@ -6,7 +6,7 @@ import { createState } from "@/utils/richText/state";
 import { handleError } from "@/utils/errors";
 import type { RichText } from "doc/types/richText";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export type { EditorState };
 

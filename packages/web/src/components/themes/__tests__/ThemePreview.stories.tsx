@@ -1,6 +1,6 @@
 import ThemePreview from "../ThemePreview";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import type { ThemeData } from "@/models/Theme";
 import type { Meta, Story } from "@/test/storybook";
 

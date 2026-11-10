@@ -1,6 +1,6 @@
 import { NodeSelection } from "prosemirror-state";
 import { render } from "jsx/dom";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { TILE_NODE } from "doc/richText/tiles";
 import EmbeddedTile from "@/components/item/EmbeddedTile";
 import { exitNode, insertParagraphAfter } from "@/utils/richText/navigation";

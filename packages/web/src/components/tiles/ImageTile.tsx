@@ -6,10 +6,10 @@ import If from "jsx/if";
 import Portal from "jsx/portal";
 import TextEditor from "@/components/inputs/RichTextEditor/TextEditor";
 import { getImageSrcSet, getImageStyle, getMaxWidth } from "@/components/images/imageStyle";
-import { flag, reactive } from "reactivity";
+import { flag, reactive } from "carillon";
 import styles from "@/components/images/ImageView.module.css";
 import type Image from "@/models/Image";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { EditorView } from "prosemirror-view";
 
 export interface ImageTileProps {

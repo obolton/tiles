@@ -12,7 +12,7 @@ import LayoutEditor from "@/editor/LayoutEditor";
 import styles from "./LayoutPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "jsx/jsx";
 
 export interface LayoutPageProps {

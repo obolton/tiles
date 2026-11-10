@@ -7,7 +7,7 @@ import FolderIcon from "@/icons/folder.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
 import SettingsIcon from "@/icons/settings.svg?jsx";
 import { showModal } from "@/utils/modals";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { invalidateWorkspaceFolders } from "@/utils/folders";
 import { redirectWithToast } from "@/utils/toasts";
 import { reveal } from "@/utils/scroll";

@@ -1,4 +1,4 @@
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import type { DateTimeThemeProps } from "./themes";
 
 export default function LongDateTime({ value, time }: DateTimeThemeProps) {

@@ -1,6 +1,6 @@
 import AIButton from "@/components/buttons/AIButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "jsx/jsx";
 
 export interface CreateToolbarProps {

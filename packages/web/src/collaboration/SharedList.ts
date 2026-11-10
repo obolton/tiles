@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { BaseReactive, type ListChange } from "reactivity";
+import { BaseReactive, type ListChange } from "carillon";
 
 export interface SharedListItem {
   dispose(): void;

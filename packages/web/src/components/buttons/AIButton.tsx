@@ -1,6 +1,6 @@
 import AIIcon from "@/icons/ai.svg?jsx";
 import Editor from "@/editor/Editor";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface AIButtonProps {
   isOpen: Reactive<boolean>;

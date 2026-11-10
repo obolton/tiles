@@ -7,7 +7,7 @@ import {
   oklchToP3,
   type Color,
 } from "@/utils/color";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface ThemeColor {
   name: string;

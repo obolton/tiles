@@ -4,7 +4,7 @@ import getTileThumbnail from "@/components/thumbnails/getTileThumbnail";
 import MapSectionThumbnail from "./MapSectionThumbnail";
 import CalendarSectionThumbnail from "./CalendarSectionThumbnail";
 import { getSizeStyle } from "@/components/item/Item";
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import styles from "./SectionThumbnail.module.css";
 import type SectionModel from "@/models/Section";
 

@@ -4,7 +4,7 @@ import Editor from "@/editor/Editor";
 import PageInvite from "@/models/PageInvite";
 import { PAGE } from "@/test/fixtures/Page";
 import { PAGE_INVITE } from "@/test/fixtures/PageInvite";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import type { PageAccess } from "@/types/collaboration";
 import type { Meta, Story } from "@/test/storybook";
 

@@ -4,7 +4,7 @@ import InviteRow from "@/components/collaboration/InviteRow";
 import Placeholder from "@/components/placeholder/Placeholder";
 import NewIcon from "@/icons/new.svg?jsx";
 import client from "@/api/client";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
 import { showModal } from "@/utils/modals";

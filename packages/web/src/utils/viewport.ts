@@ -1,5 +1,5 @@
-import { flag } from "reactivity";
-import type { Reactive } from "reactivity";
+import { flag } from "carillon";
+import type { Reactive } from "carillon";
 
 /**
  * A reactive flag that tracks whether a media query matches. It never matches during

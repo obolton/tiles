@@ -3,7 +3,7 @@ import ProfileImage from "@/components/profile-image/ProfileImage";
 import RemoveIcon from "@/icons/remove.svg?jsx";
 import styles from "./UserRow.module.css";
 import type { User } from "@/types/collaboration";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface UserRowProps {
   user: User;

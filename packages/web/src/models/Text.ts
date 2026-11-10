@@ -3,7 +3,7 @@ import type { PlacementInput } from "doc/tiles/base";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
 import Tile from "./Tile";
 import { buildTextMap, type TextMapInput } from "doc/tiles/text";
-import { type Reactive } from "reactivity";
+import { type Reactive } from "carillon";
 import { deserialize } from "@/utils/richText/deserialize";
 import type Page from "@/models/Page";
 import type { VerticalAlignment } from "doc/types/enums";
