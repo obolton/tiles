@@ -9,6 +9,24 @@ declare global {
   }
 }
 
+// Plot's default left margin for a y-axis, sized for its default font size
+const MARGIN_LEFT = 40;
+const LINE_WIDTH = 3;
+
+/**
+ * How far the y-axis tick labels extend past the left edge of the chart, in the chart's own
+ * units as an ancestor may scale it.
+ */
+function getAxisOverflow(chart: Element, width: number): number {
+  const labels = chart.querySelector('[aria-label="y-axis tick label"]');
+  const bounds = chart.getBoundingClientRect();
+  if (!labels || bounds.width === 0) {
+    return 0;
+  }
+  const overflow = bounds.left - labels.getBoundingClientRect().left;
+  return Math.ceil((overflow * width) / bounds.width);
+}
+
 function describeSeries(seriesElements: ChartSeries[]) {
   const description = seriesElements
     .map((series) => {
@@ -44,16 +62,19 @@ export default class ChartView extends HTMLElement {
     });
     this.resizeObserver.observe(this);
     this.addEventListener("serieschange", this);
+    document.fonts.addEventListener("loadingdone", this);
   }
 
   disconnectedCallback() {
     this.mutationObserver.disconnect();
     this.resizeObserver.disconnect();
     this.removeEventListener("serieschange", this);
+    document.fonts.removeEventListener("loadingdone", this);
   }
 
   handleEvent(event: Event) {
-    if (event.type === "serieschange") {
+    // A font that loads after drawing changes the width of the tick labels
+    if (event.type === "serieschange" || event.type === "loadingdone") {
       this.scheduleDraw();
     }
   }
@@ -87,18 +108,31 @@ export default class ChartView extends HTMLElement {
       return;
     }
 
+    const rect = this.getBoundingClientRect();
+    const chart = this.render(seriesElements, rect, MARGIN_LEFT);
+    this.shadowRoot?.replaceChildren(chart);
+
+    // Plot does not measure text, so the tick labels of a larger inherited font overflow the
+    // margin. Their width is only known once the chart is attached.
+    const overflow = getAxisOverflow(chart, rect.width);
+    if (overflow > 0) {
+      this.shadowRoot?.replaceChildren(this.render(seriesElements, rect, MARGIN_LEFT + overflow));
+    }
+  }
+
+  private render(seriesElements: ChartSeries[], rect: DOMRect, marginLeft: number) {
     const gradientDefs: SVGLinearGradientElement[] = [];
 
-    const rect = this.getBoundingClientRect();
     const chart = plot({
       className: "chart",
       width: rect.width,
       height: rect.height,
-      marginTop: 48,
-      marginBottom: 48,
+      marginTop: 16,
+      marginBottom: 32,
+      marginLeft,
       marks: [
-        axisX({ labelArrow: "none", strokeOpacity: 0.5 }),
-        axisY({ labelArrow: "none", strokeOpacity: 0.5 }),
+        axisX({ label: null, strokeOpacity: 0.5 }),
+        axisY({ label: null, strokeOpacity: 0.5 }),
         ...seriesElements.map((series, index) => {
           const marks = series.values.map((value, i) => ({ label: i, value }));
 
@@ -126,6 +160,7 @@ export default class ChartView extends HTMLElement {
                 x: "label",
                 y: "value",
                 stroke: fillOrStroke,
+                strokeWidth: LINE_WIDTH,
                 ariaHidden: "true",
               });
             case "AREA":
@@ -149,7 +184,7 @@ export default class ChartView extends HTMLElement {
     chart.part = "chart";
     chart.setAttribute("role", "img");
     chart.setAttribute("aria-label", describeSeries(seriesElements));
-    this.shadowRoot?.replaceChildren(chart);
+    return chart;
   }
 }
 
