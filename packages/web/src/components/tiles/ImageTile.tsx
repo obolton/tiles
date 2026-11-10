@@ -48,6 +48,13 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
   const style = getImageStyle(image);
   const loaded = flag(false);
 
+  // A server-rendered image can finish loading before hydration attaches its load listener
+  function ref(element: HTMLImageElement) {
+    if (element.complete && element.naturalWidth > 0) {
+      loaded.on();
+    }
+  }
+
   const columns = width.value ?? image.page.width.value;
   const sizes = `(max-width: 800px) ${((columns / 3) * 100).toFixed(3)}vw, (min-width: 800px) ${getMaxWidth(columns)}px`;
 
@@ -81,6 +88,7 @@ export default function ImageTile({ image, showToolbar }: ImageTileProps) {
               origin={origin}
               onMove={(value) => (origin.value = value)}
               onRelease={(value) => (image.origin.value = value)}
+              ref={ref}
               on:load={loaded.on.bind(loaded)}
             />
 

@@ -21,14 +21,14 @@ const MOCK_THEME: Theme = {
   workspaceId: "workspace-1",
   name: "Light",
   background: { type: "color", color: "ffffffffffff" },
-  colors: { text: "1a1a1a1a1a1a", accent: "0066ff0066ff" },
+  colors: { text: "1a1a1a1a1a1a", accent: "00006666ffff" },
   fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
 };
 
 const CREATE_INPUT: CreateThemeSchema = {
   workspaceId: "workspace-1",
   name: "Light",
-  colors: { text: "1a1a1a1a1a1a", accent: "0066ff0066ff" },
+  colors: { text: "1a1a1a1a1a1a", accent: "00006666ffff" },
   fonts: { heading: "inter", body: "inter", code: "jetbrains-mono" },
 };
 
@@ -68,7 +68,7 @@ describe("createTheme", () => {
         backgroundColor: fromHex("ffffffffffff"),
         backgroundGradient: null,
         textColor: fromHex("1a1a1a1a1a1a"),
-        accentColor: fromHex("0066ff0066ff"),
+        accentColor: fromHex("00006666ffff"),
         headingFont: "inter",
         bodyFont: "inter",
         codeFont: "jetbrains-mono",

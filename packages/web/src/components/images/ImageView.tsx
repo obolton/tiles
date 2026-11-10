@@ -24,6 +24,13 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
   const style = getImageStyle(image);
   const loaded = flag(false);
 
+  // A server-rendered image can finish loading before hydration attaches its load listener
+  function ref(element: HTMLImageElement) {
+    if (element.complete && element.naturalWidth > 0) {
+      loaded.on();
+    }
+  }
+
   return (
     <figure
       id={showInLightbox ? `${id}-figure` : undefined}
@@ -40,6 +47,7 @@ export default function ImageView({ image, showInLightbox }: ImageViewProps) {
         loading="lazy"
         alt={alt}
         style={style}
+        ref={ref}
         on:load={loaded.on.bind(loaded)}
       />
 

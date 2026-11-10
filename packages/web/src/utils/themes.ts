@@ -15,7 +15,7 @@ export type { ThemeData };
 /** The values a new theme starts from. */
 export const DEFAULT_THEME_VALUES: Omit<ThemeValues, "name"> = {
   background: { type: "color", color: "ffffffffffff" },
-  colors: { text: "1a1a1a1a1a1a", accent: "0066ff0066ff" },
+  colors: { text: "1a1a1a1a1a1a", accent: "00006666ffff" },
   fonts: { heading: DEFAULT_HEADING_FONT, body: DEFAULT_FONT, code: DEFAULT_CODE_FONT },
 };
 

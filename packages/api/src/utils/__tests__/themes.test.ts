@@ -70,7 +70,7 @@ describe("getDefaultThemesData", () => {
       backgroundColor: new Uint8Array([255, 255, 255, 255, 255, 255]),
       backgroundGradient: null,
       textColor: new Uint8Array([26, 26, 26, 26, 26, 26]),
-      accentColor: new Uint8Array([0, 102, 255, 0, 102, 255]),
+      accentColor: new Uint8Array([0, 0, 102, 102, 255, 255]),
       headingFont: "inter",
       bodyFont: "inter",
       codeFont: "jetbrains-mono",
@@ -80,7 +80,7 @@ describe("getDefaultThemesData", () => {
   test("decodes gradient backgrounds into two colors", () => {
     expect(themes.find((theme) => theme.name === "Ocean")).toMatchObject({
       backgroundGradient: "VERTICAL",
-      backgroundColor: new Uint8Array([8, 8, 16, 16, 48, 48, 24, 72, 96, 96, 144, 144]),
+      backgroundColor: new Uint8Array([8, 8, 16, 16, 48, 48, 24, 24, 96, 96, 144, 144]),
     });
   });
 
@@ -88,6 +88,14 @@ describe("getDefaultThemesData", () => {
     expect(theme.backgroundColor).toHaveLength(theme.backgroundGradient ? 12 : 6);
     expect(theme.textColor).toHaveLength(6);
     expect(theme.accentColor).toHaveLength(6);
+  });
+
+  test.each(themes)("$name repeats each color channel byte", (theme) => {
+    for (const color of [theme.backgroundColor, theme.textColor, theme.accentColor]) {
+      const high = color.filter((_, index) => index % 2 === 0);
+      const low = color.filter((_, index) => index % 2 === 1);
+      expect(low).toEqual(high);
+    }
   });
 
   test.each(themes)("$name uses registered fonts", (theme) => {
