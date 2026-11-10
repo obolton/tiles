@@ -75,15 +75,17 @@ let currentWorkspaceId: string | null = null;
  * Initializes the cache database for the current user and workspace.
  */
 export async function initializeCache(userId: string, workspaceId: string): Promise<void> {
+  const name = `tiles-${userId}-${workspaceId}`;
+
   if (db) {
-    if (currentWorkspaceId === workspaceId) {
-      return; // Already initialized for this workspace
+    if (db.name === name) {
+      return; // Already initialized for this user and workspace
     }
     await destroyCache();
   }
 
   db = new Database({
-    name: `tiles-${userId}-${workspaceId}`,
+    name,
     version: 5,
     schema,
   });
@@ -97,11 +99,19 @@ export async function initializeCache(userId: string, workspaceId: string): Prom
 }
 
 /**
+ * Sets the workspace that the cache holds data for. The workspace is known before the user is,
+ * so it doesn't depend on the database.
+ */
+export function setWorkspaceId(workspaceId: string): void {
+  currentWorkspaceId = workspaceId;
+}
+
+/**
  * Gets the workspace ID for the current cache.
  */
 export function getWorkspaceId(): string {
   if (!currentWorkspaceId) {
-    throw new Error("Cache not initialized. Call initializeCache first.");
+    throw new Error("Workspace not set. Call setWorkspaceId or initializeCache first.");
   }
   return currentWorkspaceId;
 }
@@ -121,6 +131,7 @@ export async function destroyCache(): Promise<void> {
 
     await db.deleteDatabase();
     db = null;
-    currentWorkspaceId = null;
   }
+
+  currentWorkspaceId = null;
 }

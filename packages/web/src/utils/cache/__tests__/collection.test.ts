@@ -44,6 +44,34 @@ function createDatabase(collection: CacheCollection<TestItem>) {
   });
 }
 
+describe("CacheCollection without a database", () => {
+  beforeEach(() => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("reports nothing cached", async () => {
+    const collection = createCollection();
+    await collection.set([{ id: "1", name: "Test" }]);
+
+    expect(await collection.getCached()).toBeNull();
+  });
+
+  test("keeps items in memory", async () => {
+    const collection = createCollection();
+
+    await collection.set([{ id: "1", name: "First" }]);
+    await collection.upsert({ id: "2", name: "Second" });
+    await collection.delete(["1"]);
+
+    expect(collection.items.value).toEqual([{ id: "2", name: "Second" }]);
+    expect(collection.getById("2")).toEqual({ id: "2", name: "Second" });
+  });
+});
+
 describe("CacheCollection", () => {
   let collection: CacheCollection<TestItem>;
   let db: Database<ReturnType<typeof createCollection>["schema"]>;
