@@ -3,7 +3,7 @@
 Tiles is a collaborative editor for building pages that look great and do more than plain documents: guides, presentations, dashboards, notes, portfolios, landing pages and more.
 
 <p align="center">
-  <img src="docs/screenshots/editor.webp" alt="Three people editing a travel guide together in the Tiles editor" width="900">
+  <img src="docs/images/editor.webp" alt="Three people editing a travel guide together in the Tiles editor" width="900">
 </p>
 
 Pages are made of **tiles**: blocks of text, images, videos, links, tables and charts. Drag them around, group them into sections, pick a theme and share the result.
@@ -11,7 +11,7 @@ Pages are made of **tiles**: blocks of text, images, videos, links, tables and c
 ## Features
 
 - **Visual editing.** What you see is what you get. Switch between view and edit modes, and drag, drop and resize tiles directly on the page.
-- **Three page types.** Start from a document, a presentation or a blank page.
+- **Three page types.** Start from a document, a presentation or a layout.
 - **Flexible layouts.** Arrange tiles in grid, horizontal, vertical, freeform, calendar or map sections.
 - **Rich text.** Headings, lists, checklists, quotes, code blocks with syntax highlighting, mentions, dates and dropdowns.
 - **Tables and charts.** Keep data in tables and plot it as bar, line or area charts.
@@ -26,21 +26,21 @@ Pages are made of **tiles**: blocks of text, images, videos, links, tables and c
 <table>
   <tr>
     <td width="50%" valign="top">
-      <img src="docs/screenshots/document.webp" alt="A launch plan document with mentions, a checklist and a table">
+      <img src="docs/images/document.webp" alt="A launch plan document with mentions, a checklist and a table">
       <p><b>Documents</b><br>Write with rich text and embed tables, images and other tiles alongside it.</p>
     </td>
     <td width="50%" valign="top">
-      <img src="docs/screenshots/dashboard.webp" alt="A sales dashboard with key figures and two charts">
+      <img src="docs/images/dashboard.webp" alt="A sales dashboard with key figures and two charts">
       <p><b>Dashboards</b><br>Combine key figures, tables and charts on one page.</p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <img src="docs/screenshots/presentation.webp" alt="A presentation with a list of slides beside the current slide">
+      <img src="docs/images/presentation.webp" alt="A presentation with a list of slides beside the current slide">
       <p><b>Presentations</b><br>Lay out slides freely, then present them full screen.</p>
     </td>
     <td width="50%" valign="top">
-      <img src="docs/screenshots/themes.webp" alt="The theme picker open over a page with a grid of images and text">
+      <img src="docs/images/themes.webp" alt="The theme picker open over a page with a grid of images and text">
       <p><b>Themes</b><br>Restyle a page in one click, or create your own themes.</p>
     </td>
   </tr>
