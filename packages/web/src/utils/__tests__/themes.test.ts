@@ -8,6 +8,7 @@ import {
   DEFAULT_THEME_VALUES,
 } from "../themes";
 import { THEME } from "@/test/fixtures/Theme";
+import { toCSSColor } from "@/utils/color";
 import type { ThemeData } from "../themes";
 
 const GRADIENT_THEME: ThemeData = {
@@ -148,6 +149,13 @@ describe("getPageTheme", () => {
 });
 
 describe("DEFAULT_THEME_VALUES", () => {
+  test("starts from a blue accent on dark text", () => {
+    expect(DEFAULT_THEME_VALUES.colors).toEqual({ text: "1a1a1a1a1a1a", accent: "00006666ffff" });
+    expect(toCSSColor(DEFAULT_THEME_VALUES.colors.accent)).toBe(
+      "color(display-p3 0.0000 0.4000 1.0000)",
+    );
+  });
+
   test("starts from a white background with the default fonts", () => {
     expect(DEFAULT_THEME_VALUES.background).toEqual({ type: "color", color: "ffffffffffff" });
     expect(DEFAULT_THEME_VALUES.fonts).toEqual({

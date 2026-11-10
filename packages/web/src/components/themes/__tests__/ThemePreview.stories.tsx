@@ -15,7 +15,7 @@ const GRADIENT_THEME: ThemeData = {
   background: {
     type: "gradient",
     colorA: "080810103030",
-    colorB: "184860609090",
+    colorB: "181860609090",
     direction: "VERTICAL",
   },
   colors: { text: "e0e0e8e8f0f0", accent: "4040a0a0d8d8" },
