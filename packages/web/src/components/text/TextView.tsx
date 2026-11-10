@@ -1,5 +1,5 @@
 import RichText from "./RichText";
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import styles from "./TextView.module.css";
 import { serializeFragment } from "@/utils/richText/serialize";
 import type Text from "@/models/Text";

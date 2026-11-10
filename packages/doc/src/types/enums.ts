@@ -1,7 +1,7 @@
 export const PageType = {
   DOCUMENT: "DOCUMENT",
   PRESENTATION: "PRESENTATION",
-  FREE: "FREE",
+  LAYOUT: "LAYOUT",
 } as const;
 export type PageType = (typeof PageType)[keyof typeof PageType];
 

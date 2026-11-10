@@ -4,7 +4,7 @@ import type { PageData } from "@/models/Page";
 const PAGE_TYPE_LABELS: Record<PageData["type"], string> = {
   DOCUMENT: "document",
   PRESENTATION: "presentation",
-  FREE: "page",
+  LAYOUT: "page",
 };
 
 /** A short, human-readable summary of a page for link previews and search results. */

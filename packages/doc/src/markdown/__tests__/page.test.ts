@@ -31,7 +31,7 @@ function textTile(
 
 describe("pageToMarkdown", () => {
   test("heads the output with the page title", () => {
-    expect(pageToMarkdown(page().doc, { title: "Untitled *draft*", type: "FREE" })).toBe(
+    expect(pageToMarkdown(page().doc, { title: "Untitled *draft*", type: "LAYOUT" })).toBe(
       "# Untitled \\*draft\\*\n",
     );
   });
@@ -39,7 +39,7 @@ describe("pageToMarkdown", () => {
   test("leaves out the heading for a blank title", () => {
     const { doc, tiles } = page();
     textTile(tiles, "t", "Content");
-    expect(pageToMarkdown(doc, { title: "  ", type: "FREE" })).toBe("Content\n");
+    expect(pageToMarkdown(doc, { title: "  ", type: "LAYOUT" })).toBe("Content\n");
   });
 
   describe("document", () => {
@@ -95,7 +95,7 @@ describe("pageToMarkdown", () => {
     });
   });
 
-  describe("free", () => {
+  describe("layout", () => {
     test("renders the docks around the page in reading order", () => {
       const { doc, tiles } = page();
       textTile(tiles, "main", "Main", null, "a0");
@@ -105,7 +105,7 @@ describe("pageToMarkdown", () => {
       textTile(tiles, "left", "Left", dockParentId("LEFT"));
       textTile(tiles, "top", "Top", dockParentId("TOP"));
 
-      expect(pageToMarkdown(doc, { title: "Page", type: "FREE" })).toBe(
+      expect(pageToMarkdown(doc, { title: "Page", type: "LAYOUT" })).toBe(
         "# Page\n\nTop\n\nLeft\n\nMain\n\nRight\n\nBottom\n",
       );
     });

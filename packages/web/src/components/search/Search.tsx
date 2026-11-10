@@ -1,6 +1,6 @@
 import debounce from "@/utils/debounce";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface SearchProps<T, S extends string = string> {
   itemsClassName?: string;

@@ -1,6 +1,6 @@
 import styles from "./MovableImage.module.css";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export type Origin = { x: number; y: number };
 

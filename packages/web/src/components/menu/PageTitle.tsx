@@ -4,7 +4,7 @@ import { handleError } from "@/utils/errors";
 import styles from "./PageTitle.module.css";
 import type Page from "@/models/Page";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface PageTitleProps {
   page: Page;

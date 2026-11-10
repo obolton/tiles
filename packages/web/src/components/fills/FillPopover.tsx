@@ -6,7 +6,7 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import AIIcon from "@/icons/ai.svg?jsx";
 import EmptyIcon from "@/icons/empty.svg?jsx";
 import styles from "./FillPopover.module.css";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ThemeColor } from "@/components/colors/ColorPalette";
 import type { Fill } from "./types";
 import type { JSX } from "jsx/jsx";

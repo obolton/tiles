@@ -2,7 +2,7 @@ import { getThemeStyles } from "@/utils/themes";
 import { getBackgroundColor } from "@/utils/backgrounds";
 import { toCSSColor } from "@/utils/color";
 import styles from "./ThemePreview.module.css";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ThemeData } from "@/models/Theme";
 
 export interface ThemePreviewProps {

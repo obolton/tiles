@@ -1,5 +1,5 @@
 import * as Y from "yjs";
-import { BaseReactive, type SubscribeCallback } from "reactivity";
+import { BaseReactive, type SubscribeCallback } from "carillon";
 
 /**
  * A reactive view of a `Y.AbstractType`.

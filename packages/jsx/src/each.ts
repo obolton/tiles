@@ -1,6 +1,6 @@
 import { hydrateNode, render, createPlaceholderNode } from "./dom";
 import { moveBefore } from "./move-before";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { JSX } from "./jsx";
 
 export interface EachProps<T> {

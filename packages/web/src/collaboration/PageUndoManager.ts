@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { ySyncPluginKey } from "y-prosemirror";
-import { flag, type ReactiveFlag } from "reactivity";
+import { flag, type ReactiveFlag } from "carillon";
 import { getBody } from "doc/body";
 
 export interface UndoStepHooks {

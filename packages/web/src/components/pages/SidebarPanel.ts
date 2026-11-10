@@ -1,6 +1,6 @@
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { focusInside, getFocusedDescendant } from "@/utils/focus";
-import type { Reactive, ReactiveValue } from "reactivity";
+import type { Reactive, ReactiveValue } from "carillon";
 
 /** The header's overflow menu button, which opens the panels when their own buttons are collapsed into it. */
 export const PAGE_ACTIONS_BUTTON_ID = "page-actions-button";

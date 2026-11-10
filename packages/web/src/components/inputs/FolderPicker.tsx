@@ -5,7 +5,7 @@ import ListOption from "@/components/lists/ListOption";
 import ListGroup from "@/components/lists/ListGroup";
 import Each from "jsx/each";
 import FolderIcon from "@/icons/folder.svg?jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
 import type { JSX } from "jsx/jsx";
 

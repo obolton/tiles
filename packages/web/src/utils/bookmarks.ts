@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { bookmarksCache } from "./cache";
-import { flag } from "reactivity";
+import { flag } from "carillon";
 
 export const isBookmarked = flag(false);
 

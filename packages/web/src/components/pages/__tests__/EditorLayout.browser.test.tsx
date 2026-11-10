@@ -2,7 +2,7 @@ import "@/styles";
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "jsx/dom";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import EditorLayout from "../EditorLayout";
 import { PanelResizeEvent } from "@/elements/resizable-panel/events";
 import type { JSX } from "jsx/jsx";

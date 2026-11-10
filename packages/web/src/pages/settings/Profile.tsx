@@ -8,7 +8,7 @@ import { showToast } from "@/utils/toasts";
 import { handleError } from "@/utils/errors";
 import { uploadMedia } from "@/utils/media";
 import { user as userProperties } from "@/utils/sessions";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import styles from "./Profile.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type FilePicker from "@/elements/file-picker/FilePicker";

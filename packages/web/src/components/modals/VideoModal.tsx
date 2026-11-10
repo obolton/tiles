@@ -4,7 +4,7 @@ import ModalFooter from "./ModalFooter";
 import styles from "./VideoModal.module.css";
 import { handleError } from "@/utils/errors";
 import { UnsupportedVideoError } from "@/models/Video";
-import { flag } from "reactivity";
+import { flag } from "carillon";
 import type { ModalProps } from "@/utils/modals";
 
 export interface VideoModalResult {

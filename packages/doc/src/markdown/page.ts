@@ -12,8 +12,8 @@ export interface PageMarkdownOptions extends Pick<TileMarkdownOptions, "imageUrl
   type: PageType;
 }
 
-/** A free page's containers in reading order: top and left docks, the page, right and bottom docks. */
-const FREE_PAGE_PARENTS = [
+/** A layout page's containers in reading order: top and left docks, the page, right and bottom docks. */
+const LAYOUT_PAGE_PARENTS = [
   dockParentId("TOP"),
   dockParentId("LEFT"),
   null,
@@ -43,8 +43,8 @@ function renderContent(doc: Y.Doc, type: PageType, options: TileMarkdownOptions)
         .map(({ id }) => render(id))
         .filter((slide) => slide.length > 0)
         .join("\n\n---\n\n");
-    case "FREE":
-      return FREE_PAGE_PARENTS.flatMap((parent) => getChildren(options.tiles, parent))
+    case "LAYOUT":
+      return LAYOUT_PAGE_PARENTS.flatMap((parent) => getChildren(options.tiles, parent))
         .map(({ id }) => render(id))
         .filter((tile) => tile.length > 0)
         .join("\n\n");

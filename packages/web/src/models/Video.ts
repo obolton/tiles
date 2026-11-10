@@ -3,7 +3,7 @@ import type { PlacementInput } from "doc/tiles/base";
 import Tile, { type CreateTileInput } from "./Tile";
 import { buildVideoMap, type VideoMapInput } from "doc/tiles/video";
 import client, { type AppRouterOutputs } from "@/api/client";
-import { type Reactive } from "reactivity";
+import { type Reactive } from "carillon";
 import type Page from "@/models/Page";
 import type { VideoType } from "doc/types/enums";
 

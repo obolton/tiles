@@ -1,6 +1,6 @@
 import * as Y from "yjs";
 import { prosemirrorToYXmlFragment } from "y-prosemirror";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import Editor from "@/editor/Editor";
 import Section from "@/models/Section";
 import Text from "@/models/Text";

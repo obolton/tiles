@@ -1,4 +1,4 @@
-import { combine } from "reactivity";
+import { combine } from "carillon";
 import { setSearchParams } from "@/utils/urls";
 import type Image from "@/models/Image";
 

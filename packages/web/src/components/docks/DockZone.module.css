@@ -157,3 +157,11 @@
   margin: -16px 0;
   cursor: ns-resize;
 }
+
+@media (width < 640px) {
+  /* Docks are hidden on narrow viewports for now, including the drop zones shown while dragging */
+  .zone,
+  body[data-drag] .zone[data-empty] {
+    display: none;
+  }
+}

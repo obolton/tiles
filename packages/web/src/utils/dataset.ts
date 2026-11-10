@@ -1,4 +1,4 @@
-import { reactive, type Reactive } from "reactivity";
+import { reactive, type Reactive } from "carillon";
 
 export type RecordValues = Record<string, unknown>;
 

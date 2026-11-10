@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { buildSeriesMap, type SeriesMapInput } from "doc/tiles/series";
 import { YMapBinding } from "@/collaboration/YMapBinding";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 import type { ColorFill, GradientFill } from "@/components/fills/types";
 import type { Property } from "doc/types/chart";
 import type { ChartSeriesType } from "doc/types/enums";

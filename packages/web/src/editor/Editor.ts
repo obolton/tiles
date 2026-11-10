@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import { PageCollaboration } from "@/collaboration/PageCollaboration";
 import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
-import { set, flag, combine, reactive } from "reactivity";
+import { set, flag, combine, reactive } from "carillon";
 import { last } from "@/utils/iterables";
 import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
 import { pulse } from "@/utils/animation/effects";
@@ -29,7 +29,7 @@ import type { Awareness } from "@/collaboration/types";
 import type { TilePlacementInput } from "@/models/TileContainer";
 import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type SidebarPanel from "@/components/pages/SidebarPanel";
-import type { Reactive, ReactiveSet } from "reactivity";
+import type { Reactive, ReactiveSet } from "carillon";
 
 export type { PageData } from "@/models/Page";
 

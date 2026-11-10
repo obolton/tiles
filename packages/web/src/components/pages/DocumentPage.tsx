@@ -5,7 +5,7 @@ import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu"
 import DocumentToolbar from "@/components/toolbars/pages/DocumentToolbar";
 import DocumentBody from "@/components/pages/DocumentBody";
 import EditorLayout from "@/components/pages/EditorLayout";
-import { reactive, type Reactive } from "reactivity";
+import { reactive, type Reactive } from "carillon";
 import styles from "./DocumentPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";

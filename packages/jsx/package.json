@@ -15,8 +15,8 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
-    "entities": "^8.1.0",
-    "reactivity": "workspace:*"
+    "carillon": "^0.1.3",
+    "entities": "^8.1.0"
   },
   "devDependencies": {
     "jsdom": "^30.1.2"

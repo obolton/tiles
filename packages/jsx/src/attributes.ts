@@ -1,4 +1,4 @@
-import { isReactive } from "reactivity";
+import { isReactive } from "carillon";
 import type { ClassList } from "./html-attributes";
 import type { StyleDeclaration, StyleValue } from "./html-attributes";
 

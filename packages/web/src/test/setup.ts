@@ -20,6 +20,8 @@ Object.defineProperty(document, "fonts", {
   value: {
     add: vi.fn(),
     check: vi.fn().mockReturnValue(false),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
   },
 });
 

@@ -1,5 +1,5 @@
 import Each from "jsx/each";
-import { reactive } from "reactivity";
+import { reactive } from "carillon";
 import { highlight } from "@/utils/richText/code/highlight";
 import styles from "./Code.module.css";
 import type { CodeNode } from "doc/types/richText";

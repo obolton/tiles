@@ -10,7 +10,6 @@ export default defineConfig({
       "packages/fonts",
       "packages/image-upload-worker",
       "packages/jsx",
-      "packages/reactivity",
       "packages/web",
     ],
     coverage: {

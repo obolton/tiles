@@ -2,7 +2,7 @@ import IncreaseIcon from "@/icons/increase.svg?jsx";
 import DecreaseIcon from "@/icons/decrease.svg?jsx";
 import styles from "./Stepper.module.css";
 import type { JSX } from "jsx/jsx";
-import type { Reactive } from "reactivity";
+import type { Reactive } from "carillon";
 
 export interface StepperProps extends JSX.Attributes<"fieldset"> {
   id: string;

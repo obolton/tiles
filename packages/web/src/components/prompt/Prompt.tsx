@@ -1,7 +1,7 @@
 import ResizingTextarea from "@/components/inputs/ResizingTextarea";
 import ReferenceList from "./ReferenceList";
 import CheckIcon from "@/icons/check.svg?jsx";
-import { flag } from "reactivity";
+import { flag } from "carillon";
 import { handleError } from "@/utils/errors";
 import { classNames } from "@/utils/css";
 import styles from "./Prompt.module.css";
