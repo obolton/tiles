@@ -4,9 +4,6 @@ import type {
 } from "@ai-sdk/openai";
 import type { ImageType } from "@/generated/prisma/enums";
 
-export const DEFAULT_TEXT_PROVIDER = "openai";
-export const DEFAULT_TEXT_MODEL = "gpt-5.2";
-
 export const TEXT_PROVIDER_OPTIONS = {
   // Reasoning summaries are unused; they would otherwise default on once an effort is set.
   openai: { reasoningSummary: null } satisfies OpenAILanguageModelResponsesOptions,

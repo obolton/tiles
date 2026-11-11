@@ -19,6 +19,8 @@ describe("createLanguageModel", () => {
   });
 
   test("throws when the selected provider's key is missing", async () => {
+    vi.stubEnv("ANTHROPIC_API_KEY", undefined);
+
     await expect(createLanguageModel("anthropic", "claude-sonnet-4-5")).rejects.toThrow(
       "Missing environment variables: ANTHROPIC_API_KEY",
     );

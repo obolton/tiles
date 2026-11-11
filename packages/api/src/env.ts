@@ -1,6 +1,5 @@
 // oxlint-disable node/no-process-env
 import { defineEnv } from "env";
-import { DEFAULT_TEXT_MODEL, DEFAULT_TEXT_PROVIDER } from "@/ai/constants";
 
 export const env = defineEnv({
   NODE_ENV: process.env.NODE_ENV || "development",
@@ -31,7 +30,6 @@ export const env = defineEnv({
 
   HERE_API_KEY: process.env.HERE_API_KEY,
 
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  AI_TEXT_PROVIDER: process.env.AI_TEXT_PROVIDER || DEFAULT_TEXT_PROVIDER,
-  AI_TEXT_MODEL: process.env.AI_TEXT_MODEL || DEFAULT_TEXT_MODEL,
+  AI_TEXT_PROVIDER: process.env.AI_TEXT_PROVIDER,
+  AI_TEXT_MODEL: process.env.AI_TEXT_MODEL,
 });
