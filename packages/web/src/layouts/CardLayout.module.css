@@ -23,7 +23,7 @@
     oklch(97% 0.025 60deg)
   );
   background-size: 250% 250%;
-  animation: shift 24s ease-in-out infinite alternate;
+  animation: shift calc(var(--animation-duration-long) * 24) ease-in-out infinite alternate;
 
   & > span {
     position: absolute;
@@ -32,7 +32,7 @@
     border-radius: 15% / 20%;
     filter: blur(40px);
     opacity: 0.85;
-    animation: drift 18s var(--easing) infinite alternate;
+    animation: drift calc(var(--animation-duration-long) * 18) var(--easing) infinite alternate;
 
     &:nth-child(1) {
       inset: -12vmax auto auto -10vmax;
@@ -90,7 +90,8 @@
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 10%),
     0 24px 48px -24px rgb(0 0 0 / 30%);
-  animation: rise var(--animation-duration) var(--spring) 100ms backwards;
+  animation: rise var(--animation-duration) var(--spring) backwards;
+  animation-delay: 100ms;
 
   & > h1 {
     font-size: 1.5rem;

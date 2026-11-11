@@ -1,5 +1,4 @@
 import css from "./ListSelect.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 import { reveal } from "@/utils/scroll";
@@ -53,7 +52,7 @@ export default class ListSelect extends HTMLElement {
     this.internals.ariaHasPopup = "listbox";
 
     const shadow = this.attachShadow({ mode: "open" });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.defaultIconSlot = document.createElement("slot");
     this.defaultIconSlot.name = "default-icon";

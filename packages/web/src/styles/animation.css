@@ -1,6 +1,7 @@
 :root {
   --animation-duration: 350ms;
   --animation-duration-short: 200ms;
+  --animation-duration-long: 1s;
   --easing: ease;
   --spring: linear(
     0,
@@ -71,18 +72,13 @@
 }
 
 /*
- * Also adopted by every shadow root (see `@/elements/styles`).
- * Durations are near-zero rather than zero so animation events and
- * `Animation.finished` still fire. Delays are kept, as some are intentional.
+ * All durations derive from these properties (enforced by stylelint), so that
+ * zeroing them disables motion everywhere, including inside shadow roots.
  */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after,
-  ::backdrop {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  :root {
+    --animation-duration: 0s;
+    --animation-duration-short: 0s;
+    --animation-duration-long: 0s;
   }
 }

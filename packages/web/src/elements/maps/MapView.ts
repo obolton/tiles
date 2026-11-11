@@ -8,7 +8,6 @@ import {
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import MapEvent from "./MapEvent";
 import css from "./MapView.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import type MapPoint from "./MapPoint";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
@@ -93,7 +92,7 @@ export default class MapView extends HTMLElement {
       mode: "open",
       slotAssignment: "manual",
     });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.root = document.createElement("figure");
     this.root.id = "root";

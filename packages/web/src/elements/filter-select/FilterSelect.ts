@@ -1,5 +1,4 @@
 import css from "./FilterSelect.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -44,7 +43,7 @@ export default class FilterSelect extends HTMLElement {
       mode: "closed",
       delegatesFocus: true,
     });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.input = document.createElement("input");
     this.input.id = "input";

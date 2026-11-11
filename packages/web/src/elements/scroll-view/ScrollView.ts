@@ -1,5 +1,4 @@
 import css from "./ScrollView.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import arrowUpIcon from "@/icons/arrow-up.svg?raw";
 import arrowDownIcon from "@/icons/arrow-down.svg?raw";
 import arrowLeftIcon from "@/icons/arrow-left.svg?raw";
@@ -40,7 +39,7 @@ export default class ScrollView extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.internals = this.attachInternals();
     this.internals.role = "group";

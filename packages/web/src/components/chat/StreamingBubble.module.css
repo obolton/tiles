@@ -1,5 +1,5 @@
 .streaming {
-  animation: pulse 1.5s ease-in-out infinite;
+  animation: pulse calc(var(--animation-duration-long) * 1.5) ease-in-out infinite;
 }
 
 @keyframes pulse {

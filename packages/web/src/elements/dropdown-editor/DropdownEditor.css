@@ -79,7 +79,7 @@
   cursor: pointer;
   color: var(--icon-color);
   opacity: 0.5;
-  transition: opacity var(--animation-duration-short, 0.15s) var(--easing, ease);
+  transition: opacity var(--animation-duration-short) var(--easing);
 
   &:hover {
     opacity: 1;

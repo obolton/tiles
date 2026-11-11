@@ -1,5 +1,4 @@
 import css from "./SwipeView.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import { smoothScrollBehavior } from "@/utils/scroll";
 import upIcon from "@/icons/arrow-up.svg?raw";
 import downIcon from "@/icons/arrow-down.svg?raw";
@@ -59,7 +58,7 @@ export default class SwipeView extends HTMLElement {
       mode: "open",
       slotAssignment: "manual",
     });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
 
     this.carousel = document.createElement("div");
     this.carousel.part = "carousel";

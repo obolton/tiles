@@ -1,5 +1,4 @@
 import css from "./PageItem.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import "./ItemHandle";
 import type ItemHandle from "./ItemHandle";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
@@ -48,7 +47,7 @@ export default class PageItem extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "open" });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
     shadow.append(document.createElement("slot"));
 
     this.addEventListener("pointerenter", this, { passive: true });

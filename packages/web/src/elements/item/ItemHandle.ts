@@ -1,5 +1,4 @@
 import css from "./ItemHandle.css?inline";
-import { adoptStyles } from "@/elements/styles";
 import { PageItemEvent } from "@/elements/item/events";
 import { getResizeHandleDirections, type ResizeHandleDirection } from "@/elements/item/resize";
 import { makeDraggable } from "@/utils/drag";
@@ -58,7 +57,7 @@ export default class ItemHandle extends HTMLElement {
     this.internals = this.attachInternals();
 
     const shadow = this.attachShadow({ mode: "open" });
-    adoptStyles(shadow, stylesheet);
+    shadow.adoptedStyleSheets = [stylesheet];
   }
 
   get target(): HTMLElement | null {
