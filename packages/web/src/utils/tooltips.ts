@@ -19,26 +19,12 @@ const TRANSFORM_ORIGINS: Record<TooltipPosition, string> = {
   right: "left center",
 };
 
-const SUPPORTS_ANCHORED_POPOVERS =
-  CSS.supports("position-area", "bottom") && supportsPopoverSource();
-
 /**
- * Whether `showPopover()` accepts a `source`, which also makes it the popover's implicit anchor.
- * Options are converted before the call fails on an element that is not a popover.
+ * Whether the tooltip can be anchored to its target with `showPopover({ source })` and positioned
+ * with CSS. Browsers that expose a toggle's `source` also accept it as a `showPopover()` option.
  */
-function supportsPopoverSource() {
-  let supported = false;
-  try {
-    document.createElement("div").showPopover({
-      get source() {
-        supported = true;
-        return undefined;
-      },
-    });
-  } catch {
-    // Expected, as the element is not a popover
-  }
-  return supported;
+function supportsAnchoredPopovers() {
+  return CSS.supports("position-area", "bottom") && "source" in ToggleEvent.prototype;
 }
 
 function isTooltipPosition(value: unknown): value is TooltipPosition {
@@ -157,7 +143,7 @@ class TooltipController {
     const position = this.getPosition();
     this.tooltip.textContent = this.target.dataset.tooltip ?? "";
 
-    if (SUPPORTS_ANCHORED_POPOVERS) {
+    if (supportsAnchoredPopovers()) {
       // CSS anchor positioning flips and shifts the tooltip to keep it within the viewport
       this.tooltip.dataset.position = position;
       this.tooltip.showPopover({ source: this.target });
