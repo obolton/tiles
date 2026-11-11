@@ -30,7 +30,6 @@ export const TEXT_MODEL: LanguageModel = await createLanguageModel(
   env.AI_TEXT_MODEL,
 );
 
-// Loaded on first use so that a missing OpenAI key only affects image generation.
 export async function getImageModel(): Promise<ImageModel> {
   const { openai } = await import("./providers/openai");
   return openai.image(IMAGE_MODEL_ID);
