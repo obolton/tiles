@@ -2,8 +2,21 @@ import { describe, test, expect, vi } from "vitest";
 import { z } from "zod";
 import { MOCK_TOOL_CONTEXT } from "@/test/fixtures/ai";
 import { FUNCTION_TOOLS, createTools } from "../tools";
+import type { FunctionToolOptions } from "../types";
 
 const EXECUTION_OPTIONS = { toolCallId: "call-1", messages: [], context: {} };
+
+function getSchemas(tool: FunctionToolOptions): z.core.JSONSchema.BaseSchema[] {
+  const schemas: z.core.JSONSchema.BaseSchema[] = [];
+  z.toJSONSchema(tool.schema, {
+    target: "draft-7",
+    io: "input",
+    override: ({ jsonSchema }) => {
+      schemas.push(jsonSchema);
+    },
+  });
+  return schemas;
+}
 
 describe("FUNCTION_TOOLS", () => {
   test("contains all expected tools", () => {
@@ -29,26 +42,50 @@ describe("FUNCTION_TOOLS", () => {
       expect(typeof tool.function).toBe("function");
     }
   });
+});
 
-  // Strict tool schemas must list every property as required, so optional values are nullable
-  // rather than `.optional()` or `.default()`. The AI SDK converts schemas in input mode.
-  test.each(FUNCTION_TOOLS.map((tool) => [tool.name, tool] as const))(
-    "%s lists every property as required",
-    (_, tool) => {
-      const optional: string[] = [];
-      z.toJSONSchema(tool.schema, {
-        io: "input",
-        override: ({ jsonSchema, path }) => {
-          for (const key of Object.keys(jsonSchema.properties ?? {})) {
-            if (!jsonSchema.required?.includes(key)) {
-              optional.push([...path, key].join("."));
-            }
-          }
-        },
-      });
-      expect(optional).toEqual([]);
-    },
-  );
+// Strict tool schemas are limited to the features that every provider supports.
+describe("tool schemas", () => {
+  const UNSUPPORTED_KEYWORDS = [
+    "minimum",
+    "maximum",
+    "exclusiveMinimum",
+    "exclusiveMaximum",
+    "multipleOf",
+    "minLength",
+    "maxLength",
+    "maxItems",
+  ];
+  const MAX_UNION_PARAMETERS = 16;
+
+  const TOOLS = FUNCTION_TOOLS.map((tool) => [tool.name, getSchemas(tool)] as const);
+
+  test.each(TOOLS)("%s uses no unsupported constraints", (_, schemas) => {
+    for (const schema of schemas) {
+      const unsupported = Object.keys(schema).filter((key) => UNSUPPORTED_KEYWORDS.includes(key));
+      expect(unsupported).toEqual([]);
+      expect(schema.minItems ?? 0).toBeLessThanOrEqual(1);
+    }
+  });
+
+  // Optional values are nullable rather than `.optional()` or `.default()`.
+  test.each(TOOLS)("%s lists every property as required", (_, schemas) => {
+    for (const schema of schemas) {
+      expect(schema.required ?? []).toEqual(Object.keys(schema.properties ?? {}));
+    }
+  });
+
+  test("stay within the union parameter limit", () => {
+    const parameters = TOOLS.flatMap(([, schemas]) =>
+      schemas.flatMap((schema) => Object.values(schema.properties ?? {})),
+    );
+    const unions = parameters.filter(
+      (parameter) =>
+        typeof parameter === "object" && (parameter.anyOf || Array.isArray(parameter.type)),
+    );
+
+    expect(unions.length).toBeLessThanOrEqual(MAX_UNION_PARAMETERS);
+  });
 });
 
 describe("createTools", () => {
