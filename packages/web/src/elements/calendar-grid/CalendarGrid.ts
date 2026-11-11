@@ -1,4 +1,5 @@
 import css from "./CalendarGrid.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import leftIcon from "@/icons/arrow-left.svg?raw";
 import rightIcon from "@/icons/arrow-right.svg?raw";
 import {
@@ -158,7 +159,7 @@ export default class CalendarGrid extends HTMLElement {
       mode: "closed",
       slotAssignment: "manual",
     });
-    this.shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(this.shadow, stylesheet);
     this.firstDayOfWeek = getFirstDayOfWeek();
 
     this.previousButton = document.createElement("button");

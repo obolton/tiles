@@ -1,5 +1,5 @@
 import CloseIcon from "@/icons/close.svg?jsx";
-import { scrollIntoViewIfNeeded } from "@/utils/scroll";
+import { scrollIntoViewIfNeeded, smoothScrollBehavior } from "@/utils/scroll";
 import styles from "./Chip.module.css";
 import type { JSX } from "jsx/jsx";
 
@@ -19,7 +19,7 @@ function handleLinkClick(event: MouseEvent) {
   event.preventDefault();
   const target = document.querySelector(hash);
   if (target instanceof HTMLElement) {
-    scrollIntoViewIfNeeded(target, { behavior: "smooth" });
+    scrollIntoViewIfNeeded(target, { behavior: smoothScrollBehavior() });
   }
 }
 

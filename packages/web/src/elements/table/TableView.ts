@@ -7,6 +7,7 @@ import { moveBefore } from "jsx/move-before";
 import { getFocusedDescendant } from "@/utils/focus";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import css from "./TableView.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import newIcon from "@/icons/new.svg?raw";
 import type { ResizeEvent } from "@/elements/resize/events";
 import type { DragDropEvent } from "@/utils/drag";
@@ -253,7 +254,7 @@ export default class TableView extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "open", delegatesFocus: true });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     this.contentsSlot = document.createElement("slot");
     shadow.appendChild(this.contentsSlot);

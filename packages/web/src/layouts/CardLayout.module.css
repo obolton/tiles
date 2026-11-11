@@ -124,12 +124,3 @@
     padding: 24px;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .wordmark,
-  .card,
-  .background,
-  .background > span {
-    animation: none;
-  }
-}

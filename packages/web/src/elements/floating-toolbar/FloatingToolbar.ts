@@ -1,4 +1,5 @@
 import css from "./FloatingToolbar.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import ToolbarTab from "./ToolbarTab";
 import KeyboardNavigation from "@/utils/keyboard";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
@@ -47,7 +48,7 @@ export default class FloatingToolbar extends HTMLElement {
     this.internals.role = "toolbar";
 
     const shadow = this.attachShadow({ mode: "open" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     // Tab bar
     this.tabBar = document.createElement("nav");

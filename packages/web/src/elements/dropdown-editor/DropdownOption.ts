@@ -1,6 +1,7 @@
 import { makeDraggable } from "@/utils/drag";
 import { DeleteEvent } from "@/utils/events";
 import css from "./DropdownOption.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import menuIcon from "@/icons/menu.svg?raw";
 import trashIcon from "@/icons/trash.svg?raw";
 
@@ -30,7 +31,7 @@ export default class DropdownOption extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "open" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     this.dragHandle = document.createElement("span");
     this.dragHandle.id = "drag-handle";

@@ -1,6 +1,23 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { reveal, scrollIntoViewIfNeeded, whenVisible } from "../scroll";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { reveal, scrollIntoViewIfNeeded, smoothScrollBehavior, whenVisible } from "../scroll";
 import IntersectionObserver from "@/test/mocks/IntersectionObserver";
+import { REDUCED_MOTION_QUERY, stubMatchMedia, unstubMatchMedia } from "@/test/mocks/matchMedia";
+
+describe("smoothScrollBehavior", () => {
+  afterEach(() => {
+    unstubMatchMedia();
+  });
+
+  test("scrolls smoothly by default", () => {
+    stubMatchMedia();
+    expect(smoothScrollBehavior()).toBe("smooth");
+  });
+
+  test("scrolls instantly when the user prefers reduced motion", () => {
+    stubMatchMedia(REDUCED_MOTION_QUERY);
+    expect(smoothScrollBehavior()).toBe("instant");
+  });
+});
 
 describe("reveal", () => {
   const containerRect = new DOMRect(0, 100, 400, 300);

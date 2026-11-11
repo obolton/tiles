@@ -1,4 +1,5 @@
 import css from "./InfiniteScroll.css?inline";
+import { adoptStyles } from "@/elements/styles";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -23,7 +24,7 @@ export default class InfiniteScroll extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     const slot = document.createElement("slot");
     this.sentinel = document.createElement("div");

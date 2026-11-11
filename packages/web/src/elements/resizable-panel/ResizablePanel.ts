@@ -1,5 +1,6 @@
 import "@/elements/resize/ResizeHandle";
 import css from "./ResizablePanel.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import { PanelResizeEvent } from "./events";
 import {
   clampSize,
@@ -58,7 +59,7 @@ export default class ResizablePanel extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     this.handle.part.add("handle");
     this.handle.role = "separator";

@@ -3,6 +3,7 @@ import type { DragDropEvent } from "@/utils/drag";
 import { ReorderEvent } from "@/utils/events";
 import DropdownOption from "./DropdownOption";
 import css from "./DropdownEditor.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import writeIcon from "@/icons/write.svg?raw";
 import newIcon from "@/icons/new.svg?raw";
 
@@ -41,7 +42,7 @@ export default class DropdownEditor extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "open" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     // Header with title and edit button
     this.header = document.createElement("div");

@@ -1,3 +1,10 @@
+import { prefersReducedMotion } from "@/utils/preferences";
+
+/** Smooth scrolling, or instant scrolling if the user prefers reduced motion. */
+export function smoothScrollBehavior(): ScrollBehavior {
+  return prefersReducedMotion() ? "instant" : "smooth";
+}
+
 /**
  * Scrolls a container to reveal a descendant element, if it is not
  * fully visible within the container's bounds.

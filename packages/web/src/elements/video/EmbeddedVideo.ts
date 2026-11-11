@@ -1,4 +1,5 @@
 import css from "./EmbeddedVideo.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const stylesheet = new CSSStyleSheet();
@@ -35,7 +36,7 @@ export default class EmbeddedVideo extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "open" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
   }
 
   connectedCallback() {

@@ -19,3 +19,4 @@ import "@/styles/richText.css";
 import "@/utils/richText/code/highlight.css";
 import "@/styles/tables.css";
 import "@/styles/theme-selector.css";
+import "@/styles/reducedMotion.css";

@@ -1,9 +1,11 @@
 import css from "./ScrollView.css?inline";
+import { adoptStyles } from "@/elements/styles";
 import arrowUpIcon from "@/icons/arrow-up.svg?raw";
 import arrowDownIcon from "@/icons/arrow-down.svg?raw";
 import arrowLeftIcon from "@/icons/arrow-left.svg?raw";
 import arrowRightIcon from "@/icons/arrow-right.svg?raw";
 import type { DragDropEvent } from "@/utils/drag";
+import { smoothScrollBehavior } from "@/utils/scroll";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -38,7 +40,7 @@ export default class ScrollView extends HTMLElement {
     super();
 
     const shadow = this.attachShadow({ mode: "closed" });
-    shadow.adoptedStyleSheets = [stylesheet];
+    adoptStyles(shadow, stylesheet);
 
     this.internals = this.attachInternals();
     this.internals.role = "group";
@@ -284,29 +286,29 @@ export default class ScrollView extends HTMLElement {
     this.container.scroll({
       top: element.offsetTop - scrollPaddingTop,
       left: element.offsetLeft - scrollPaddingLeft,
-      behavior: "smooth",
+      behavior: smoothScrollBehavior(),
     });
   }
 
   scrollToTop() {
-    this.container.scroll({ top: 0, behavior: "smooth" });
+    this.container.scroll({ top: 0, behavior: smoothScrollBehavior() });
   }
 
   scrollToBottom() {
     this.container.scroll({
       top: this.container.scrollHeight - this.container.clientHeight,
-      behavior: "smooth",
+      behavior: smoothScrollBehavior(),
     });
   }
 
   scrollToLeft() {
-    this.container.scroll({ left: 0, behavior: "smooth" });
+    this.container.scroll({ left: 0, behavior: smoothScrollBehavior() });
   }
 
   scrollToRight() {
     this.container.scroll({
       left: this.container.scrollWidth - this.container.clientWidth,
-      behavior: "smooth",
+      behavior: smoothScrollBehavior(),
     });
   }
 

@@ -1,5 +1,7 @@
+import { prefersReducedMotion } from "@/utils/preferences";
+
 export function viewTransition(callback: () => void): ViewTransition {
-  if (typeof document.startViewTransition !== "undefined") {
+  if (typeof document.startViewTransition !== "undefined" && !prefersReducedMotion()) {
     return document.startViewTransition(callback);
   }
 
