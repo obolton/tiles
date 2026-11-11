@@ -1,13 +1,12 @@
 import PageTab from "./PageTab";
-import StyleTab from "./StyleTab";
 import type Page from "@/models/Page";
 
 export interface PageToolbarProps {
   page: Page;
-  allowDelete?: boolean;
+  showAlignment?: boolean;
 }
 
-export default function PageToolbar({ page, allowDelete }: PageToolbarProps) {
+export default function PageToolbar({ page, showAlignment }: PageToolbarProps) {
   return (
     <floating-toolbar
       className="primary"
@@ -15,8 +14,7 @@ export default function PageToolbar({ page, allowDelete }: PageToolbarProps) {
       aria-label="Page toolbar"
       name="page-toolbar"
     >
-      <PageTab page={page} allowDelete={allowDelete} />
-      <StyleTab page={page} />
+      <PageTab page={page} showAlignment={showAlignment} />
     </floating-toolbar>
   );
 }

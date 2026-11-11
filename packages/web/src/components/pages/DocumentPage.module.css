@@ -8,18 +8,6 @@
   min-height: calc(100vh - var(--header-height));
   margin-top: var(--header-height);
 
-  &[data-alignment="LEFT"] {
-    align-items: flex-start;
-  }
-
-  &[data-alignment="CENTER"] {
-    align-items: center;
-  }
-
-  &[data-alignment="RIGHT"] {
-    align-items: flex-end;
-  }
-
   body[data-editing] &::before {
     content: "";
     position: absolute;
