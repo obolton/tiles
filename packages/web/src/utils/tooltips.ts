@@ -1,6 +1,55 @@
 const TOOLTIP_DELAY = 500;
 const TOOLTIP_MARGIN = 16;
 
+const TOOLTIP_POSITIONS = ["top", "bottom", "left", "right"] as const;
+
+type TooltipPosition = (typeof TOOLTIP_POSITIONS)[number];
+
+const OPPOSITE_POSITIONS: Record<TooltipPosition, TooltipPosition> = {
+  top: "bottom",
+  bottom: "top",
+  left: "right",
+  right: "left",
+};
+
+const TRANSFORM_ORIGINS: Record<TooltipPosition, string> = {
+  top: "center bottom",
+  bottom: "center top",
+  left: "right center",
+  right: "left center",
+};
+
+const SUPPORTS_ANCHORED_POPOVERS =
+  CSS.supports("position-area", "bottom") && supportsPopoverSource();
+
+/**
+ * Whether `showPopover()` accepts a `source`, which also makes it the popover's implicit anchor.
+ * Options are converted before the call fails on an element that is not a popover.
+ */
+function supportsPopoverSource() {
+  let supported = false;
+  try {
+    document.createElement("div").showPopover({
+      get source() {
+        supported = true;
+        return undefined;
+      },
+    });
+  } catch {
+    // Expected, as the element is not a popover
+  }
+  return supported;
+}
+
+function isTooltipPosition(value: unknown): value is TooltipPosition {
+  return TOOLTIP_POSITIONS.some((position) => position === value);
+}
+
+/** Keeps a box of the given size within the viewport, with a margin on each side. */
+function clamp(start: number, size: number, viewportSize: number) {
+  return Math.max(TOOLTIP_MARGIN, Math.min(start, viewportSize - size - TOOLTIP_MARGIN));
+}
+
 class TooltipController {
   private active = false;
   private tooltip: HTMLDivElement;
@@ -89,11 +138,11 @@ class TooltipController {
     }, TOOLTIP_DELAY);
   }
 
-  private getPosition() {
-    return (
-      this.target?.closest("[data-tooltip-position]")?.getAttribute("data-tooltip-position") ??
-      "bottom"
-    );
+  private getPosition(): TooltipPosition {
+    const position = this.target
+      ?.closest("[data-tooltip-position]")
+      ?.getAttribute("data-tooltip-position");
+    return isTooltipPosition(position) ? position : "bottom";
   }
 
   private show() {
@@ -105,47 +154,60 @@ class TooltipController {
       document.body.appendChild(this.tooltip);
     }
 
+    const position = this.getPosition();
     this.tooltip.textContent = this.target.dataset.tooltip ?? "";
-    this.tooltip.showPopover();
-    const width = this.tooltip.offsetWidth;
-    const height = this.tooltip.offsetHeight;
 
-    const bounds = this.target.getBoundingClientRect();
-    let position = this.getPosition();
-
-    // Flip to the other side when the preferred one would leave the viewport
-    if (position === "bottom" && bounds.bottom + TOOLTIP_MARGIN + height > window.innerHeight) {
-      position = "top";
-    } else if (position === "top" && bounds.top - TOOLTIP_MARGIN - height < 0) {
-      position = "bottom";
-    }
-
-    switch (position) {
-      case "left":
-        this.tooltip.style.top = `${bounds.top + (bounds.height - height) / 2}px`;
-        this.tooltip.style.left = `${bounds.left - width - TOOLTIP_MARGIN}px`;
-        this.tooltip.style.transformOrigin = "right center";
-        break;
-      case "right":
-        this.tooltip.style.top = `${bounds.top + (bounds.height - height) / 2}px`;
-        this.tooltip.style.left = `${bounds.right + TOOLTIP_MARGIN}px`;
-        this.tooltip.style.transformOrigin = "left center";
-        break;
-      case "top":
-        this.tooltip.style.top = `${bounds.top - height - TOOLTIP_MARGIN}px`;
-        this.tooltip.style.left = `${bounds.left + (bounds.width - width) / 2}px`;
-        this.tooltip.style.transformOrigin = "center bottom";
-        break;
-      case "bottom":
-        this.tooltip.style.top = `${bounds.bottom + TOOLTIP_MARGIN}px`;
-        this.tooltip.style.left = `${bounds.left + (bounds.width - width) / 2}px`;
-        this.tooltip.style.transformOrigin = "center top";
-        break;
-      default:
-        throw new Error(`Invalid tooltip position: ${position}`);
+    if (SUPPORTS_ANCHORED_POPOVERS) {
+      // CSS anchor positioning flips and shifts the tooltip to keep it within the viewport
+      this.tooltip.dataset.position = position;
+      this.tooltip.showPopover({ source: this.target });
+    } else {
+      this.tooltip.showPopover();
+      this.setPosition(this.target, position);
     }
 
     this.target.setAttribute("aria-describedby", this.tooltip.id);
+  }
+
+  private setPosition(target: HTMLElement, preferred: TooltipPosition) {
+    const width = this.tooltip.offsetWidth;
+    const height = this.tooltip.offsetHeight;
+    const bounds = target.getBoundingClientRect();
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
+
+    const fits: Record<TooltipPosition, boolean> = {
+      top: bounds.top - height - TOOLTIP_MARGIN * 2 >= 0,
+      bottom: bounds.bottom + height + TOOLTIP_MARGIN * 2 <= viewportHeight,
+      left: bounds.left - width - TOOLTIP_MARGIN * 2 >= 0,
+      right: bounds.right + width + TOOLTIP_MARGIN * 2 <= viewportWidth,
+    };
+    const position =
+      [preferred, OPPOSITE_POSITIONS[preferred], "bottom" as const, "top" as const].find(
+        (candidate) => fits[candidate],
+      ) ?? preferred;
+
+    let top = bounds.top + (bounds.height - height) / 2;
+    let left = bounds.left + (bounds.width - width) / 2;
+
+    switch (position) {
+      case "top":
+        top = bounds.top - height - TOOLTIP_MARGIN;
+        break;
+      case "bottom":
+        top = bounds.bottom + TOOLTIP_MARGIN;
+        break;
+      case "left":
+        left = bounds.left - width - TOOLTIP_MARGIN;
+        break;
+      case "right":
+        left = bounds.right + TOOLTIP_MARGIN;
+        break;
+    }
+
+    this.tooltip.style.top = `${clamp(top, height, viewportHeight)}px`;
+    this.tooltip.style.left = `${clamp(left, width, viewportWidth)}px`;
+    this.tooltip.style.transformOrigin = TRANSFORM_ORIGINS[position];
   }
 
   private resetTarget() {
