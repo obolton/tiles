@@ -34,8 +34,10 @@ function heading(
   return { type: "heading", level, align: TextAlignment.LEFT, ...style, children };
 }
 
-function listItem(children: BlockNode[], checked = false): ListItemNode {
-  return { type: "listitem", checked, children };
+function listItem(children: BlockNode[], checked?: boolean): ListItemNode {
+  return checked === undefined
+    ? { type: "listitem", children }
+    : { type: "listitem", checked, children };
 }
 
 function list(listType: ListType, children: ListItemNode[]): ListNode {

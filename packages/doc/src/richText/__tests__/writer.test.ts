@@ -152,7 +152,6 @@ describe("YXmlStreamWriter", () => {
           children: [
             {
               name: "list_item",
-              attrs: { checked: false },
               children: [
                 {
                   name: "paragraph",
@@ -164,7 +163,6 @@ describe("YXmlStreamWriter", () => {
                   children: [
                     {
                       name: "list_item",
-                      attrs: { checked: false },
                       children: [
                         {
                           name: "paragraph",
@@ -179,7 +177,6 @@ describe("YXmlStreamWriter", () => {
             },
             {
               name: "list_item",
-              attrs: { checked: false },
               children: [
                 {
                   name: "paragraph",
@@ -206,7 +203,6 @@ describe("YXmlStreamWriter", () => {
           children: [
             {
               name: "list_item",
-              attrs: { checked: false },
               children: [
                 {
                   name: "paragraph",

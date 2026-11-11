@@ -1,6 +1,31 @@
 import { Plugin } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 import type { EditorView, NodeView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
+import { schema } from "./schema";
+
+/**
+ * Exposes check list items as checkboxes. The role depends on the parent list type rather than the
+ * item's `checked` attribute, so items of ordinary lists are never checkboxes.
+ */
+function checkItemDecorations(doc: Node): DecorationSet {
+  const decorations: Decoration[] = [];
+  doc.descendants((node, pos) => {
+    if (node.type === schema.nodes.check_list) {
+      node.forEach((item, offset) => {
+        const from = pos + 1 + offset;
+        decorations.push(
+          Decoration.node(from, from + item.nodeSize, {
+            role: "checkbox",
+            "aria-checked": item.attrs.checked === true ? "true" : "false",
+          }),
+        );
+      });
+    }
+    return !node.isTextblock;
+  });
+  return DecorationSet.create(doc, decorations);
+}
 
 class ListItemNodeView implements NodeView, EventListenerObject {
   readonly dom: HTMLLIElement;
@@ -9,14 +34,12 @@ class ListItemNodeView implements NodeView, EventListenerObject {
   private readonly view: EditorView;
   private readonly getPos: () => number | undefined;
 
-  constructor(node: Node, view: EditorView, getPos: () => number | undefined) {
+  constructor(view: EditorView, getPos: () => number | undefined) {
     this.view = view;
     this.getPos = getPos;
 
     this.dom = document.createElement("li");
     this.contentDOM = this.dom;
-
-    this.setChecked(node.attrs.checked as boolean | undefined);
     this.dom.addEventListener("click", this);
   }
 
@@ -27,18 +50,7 @@ class ListItemNodeView implements NodeView, EventListenerObject {
   }
 
   update(node: Node) {
-    this.setChecked(node.attrs.checked as boolean | undefined);
-    return true;
-  }
-
-  private setChecked(checked: boolean | undefined) {
-    if (typeof checked === "boolean") {
-      this.dom.role = "checkbox";
-      this.dom.ariaChecked = checked ? "true" : "false";
-    } else {
-      this.dom.role = null;
-      this.dom.ariaChecked = null;
-    }
+    return node.type === schema.nodes.list_item;
   }
 
   private onClick(event: MouseEvent) {
@@ -58,11 +70,18 @@ class ListItemNodeView implements NodeView, EventListenerObject {
 }
 
 export function lists() {
-  return new Plugin({
+  return new Plugin<DecorationSet>({
+    state: {
+      init: (_config, state) => checkItemDecorations(state.doc),
+      apply: (tr, decorations) => (tr.docChanged ? checkItemDecorations(tr.doc) : decorations),
+    },
     props: {
+      decorations(state) {
+        return this.getState(state);
+      },
       nodeViews: {
-        list_item(node, view, getPos) {
-          return new ListItemNodeView(node, view, getPos);
+        list_item(_node, view, getPos) {
+          return new ListItemNodeView(view, getPos);
         },
       },
     },

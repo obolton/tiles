@@ -183,16 +183,40 @@ describe("fragmentToRichText", () => {
     test.each([
       ["ordered_list", ListType.ORDERED],
       ["unordered_list", ListType.UNORDERED],
-      ["check_list", ListType.CHECK],
-    ])("converts a %s", (name, listType) => {
+    ])("converts a %s without a checked state", (name, listType) => {
       const list = element(name, {}, [
+        item(false, paragraph(text("One"))),
+        item(undefined, paragraph(text("Two"))),
+      ]);
+      const [result] = fragmentToRichText(fragment(list));
+      expect(result).toEqual({
+        type: "list",
+        listType,
+        children: [
+          {
+            type: "listitem",
+            children: [{ type: "paragraph", align: TextAlignment.LEFT, children: [plain("One")] }],
+          },
+          {
+            type: "listitem",
+            children: [{ type: "paragraph", align: TextAlignment.LEFT, children: [plain("Two")] }],
+          },
+        ],
+      });
+      expect(result?.type === "list" && result.children.map((child) => "checked" in child)).toEqual(
+        [false, false],
+      );
+    });
+
+    test("converts a check_list, defaulting a missing checked state to unchecked", () => {
+      const list = element("check_list", {}, [
         item(true, paragraph(text("Done"))),
         item(undefined, paragraph(text("Todo"))),
       ]);
       expect(fragmentToRichText(fragment(list))).toEqual([
         {
           type: "list",
-          listType,
+          listType: ListType.CHECK,
           children: [
             {
               type: "listitem",
@@ -229,7 +253,6 @@ describe("fragmentToRichText", () => {
           children: [
             {
               type: "listitem",
-              checked: false,
               children: [
                 { type: "paragraph", align: TextAlignment.LEFT, children: [plain("a")] },
                 {
@@ -238,7 +261,6 @@ describe("fragmentToRichText", () => {
                   children: [
                     {
                       type: "listitem",
-                      checked: false,
                       children: [
                         { type: "paragraph", align: TextAlignment.LEFT, children: [plain("b")] },
                       ],
@@ -398,7 +420,6 @@ describe("fragmentToRichText", () => {
         children: [
           {
             type: "listitem",
-            checked: false,
             children: [
               {
                 type: "paragraph",

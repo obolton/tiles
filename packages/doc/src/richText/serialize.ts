@@ -108,7 +108,7 @@ function toList(element: Y.XmlElement, listType: ListType): BlockNode {
       const attrs: Attributes = child.getAttributes();
       children.push({
         type: "listitem",
-        checked: attrs.checked === true,
+        ...(listType === ListType.CHECK && { checked: attrs.checked === true }),
         children: toBlocks(child.toArray()),
       });
     }

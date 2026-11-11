@@ -114,7 +114,7 @@ describe("deserialize", () => {
       ],
     },
     {
-      name: "defaults list items to unchecked",
+      name: "leaves ordinary list items without a checked state",
       input: [
         {
           type: "list",
@@ -134,7 +134,6 @@ describe("deserialize", () => {
           children: [
             {
               type: "listitem",
-              checked: false,
               children: [{ type: "paragraph", align: TextAlignment.LEFT, children: [] }],
             },
           ],

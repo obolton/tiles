@@ -6,7 +6,7 @@ import { MAX_INDENT } from "@/constants/formatting";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
 import { MENTION_PLUGIN_KEY } from "./mentions";
 import type { NodeType, Mark, MarkType } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
+import type { Command, Transaction } from "prosemirror-state";
 import type { FontId } from "fonts/config";
 
 export function addMark(mark: Mark): Command {
@@ -174,6 +174,22 @@ const listNodeTypes = new Set([
   schema.nodes.check_list,
 ]);
 
+/** Gives check list items an explicit `checked` state and clears it from other list items. */
+function normalizeListItems(tr: Transaction, listPos: number) {
+  const list = tr.doc.nodeAt(listPos);
+  if (!list || !listNodeTypes.has(list.type)) {
+    return;
+  }
+  const isCheckList = list.type === schema.nodes.check_list;
+  list.forEach((item, offset) => {
+    const checked = item.attrs.checked as boolean | undefined;
+    const next = isCheckList ? checked === true : undefined;
+    if (checked !== next) {
+      tr.setNodeAttribute(listPos + 1 + offset, "checked", next);
+    }
+  });
+}
+
 export function toggleList(nodeType: NodeType): Command {
   return function (state, dispatch, view) {
     const { selection } = state;
@@ -182,7 +198,11 @@ export function toggleList(nodeType: NodeType): Command {
       if (list.node.type === nodeType) {
         return liftListItem(schema.nodes.list_item)(state, dispatch, view);
       } else {
-        dispatch?.(state.tr.setNodeMarkup(list.pos, nodeType));
+        if (dispatch) {
+          const tr = state.tr.setNodeMarkup(list.pos, nodeType);
+          normalizeListItems(tr, list.pos);
+          dispatch(tr);
+        }
         return true;
       }
     } else {
@@ -196,7 +216,10 @@ export function toggleList(nodeType: NodeType): Command {
       if (!canWrap) {
         return false;
       }
-      dispatch?.(tr);
+      if (dispatch) {
+        normalizeListItems(tr, range.start);
+        dispatch(tr);
+      }
       return true;
     }
   };

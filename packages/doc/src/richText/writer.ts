@@ -213,7 +213,7 @@ export class YXmlStreamWriter {
   }
 
   private listItem(): { item: Y.XmlElement; paragraph: Y.XmlElement } {
-    const item = this.element("list_item", { checked: false });
+    const item = this.element("list_item");
     const paragraph = this.paragraph();
     item.insert(0, [paragraph]);
     return { item, paragraph };
