@@ -19,15 +19,15 @@ describe("createLanguageModel", () => {
   });
 
   test("throws when the selected provider's key is missing", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", undefined);
+    vi.stubEnv("ANTHROPIC_PLATFORM_API_KEY", undefined);
 
     await expect(createLanguageModel("anthropic", "claude-sonnet-4-5")).rejects.toThrow(
-      "Missing environment variables: ANTHROPIC_API_KEY",
+      "Missing environment variables: ANTHROPIC_PLATFORM_API_KEY",
     );
   });
 
   test("creates an Anthropic model when its key is set", async () => {
-    vi.stubEnv("ANTHROPIC_API_KEY", "test");
+    vi.stubEnv("ANTHROPIC_PLATFORM_API_KEY", "test");
 
     expect(await createLanguageModel("anthropic", "claude-sonnet-4-5")).toMatchObject({
       provider: expect.stringContaining("anthropic"),
@@ -36,7 +36,7 @@ describe("createLanguageModel", () => {
   });
 
   test("creates a Google model when its key is set", async () => {
-    vi.stubEnv("GOOGLE_GENERATIVE_AI_API_KEY", "test");
+    vi.stubEnv("GOOGLE_PLATFORM_API_KEY", "test");
 
     expect(await createLanguageModel("google", "gemini-2.5-pro")).toMatchObject({
       provider: expect.stringContaining("google"),
