@@ -59,6 +59,9 @@
 }
 
 .wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
   padding: 4px 12px;
   margin: -4px -12px;
   border-radius: 16px;
@@ -67,6 +70,13 @@
   line-height: 1;
   letter-spacing: -0.03em;
   animation: rise var(--animation-duration) var(--spring) backwards;
+
+  & > svg {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    fill: currentcolor;
+  }
 }
 
 .card {
