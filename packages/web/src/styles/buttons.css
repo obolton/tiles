@@ -382,8 +382,8 @@ form[data-pending] button[type="submit"] {
     left: 50%;
     translate: -50% -50%;
     aspect-ratio: 1;
-    min-width: 100%;
-    min-height: 100%;
+    min-width: calc(100% * sqrt(2));
+    min-height: calc(100% * sqrt(2));
     background: conic-gradient(
       oklch(80% 90% 0deg),
       oklch(80% 90% 30deg),
@@ -459,11 +459,11 @@ form[data-pending] button[type="submit"] {
 @keyframes reveal-border {
   from {
     opacity: 1;
-    clip-path: inset(0 round 24px);
+    clip-path: inset(0 round var(--border-radius));
   }
 
   to {
     opacity: 0.9;
-    clip-path: inset(3px round 24px);
+    clip-path: inset(3px round max(0px, var(--border-radius) - 3px));
   }
 }
