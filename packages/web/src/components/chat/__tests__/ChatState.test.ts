@@ -94,6 +94,20 @@ describe("ChatState", () => {
       expect(chat.hasMessages).toBe(false);
     });
 
+    test("completeStreaming drops subscribers so later streams do not reach them", () => {
+      const callback = vi.fn();
+      chat.beginStreaming();
+      chat.subscribe(callback);
+      chat.append("First");
+      chat.completeStreaming();
+
+      chat.beginStreaming();
+      chat.append("Second");
+
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(callback).toHaveBeenCalledWith("First");
+    });
+
     test("beginStreaming resets the buffer from a previous stream", () => {
       chat.beginStreaming();
       chat.append("stale");
