@@ -7,6 +7,8 @@
   flex-direction: column;
   gap: 12px;
   padding-block: 24px;
+  padding-inline: 8px;
+  margin-inline: -8px;
   pointer-events: none;
 }
 
