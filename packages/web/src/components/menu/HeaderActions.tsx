@@ -194,7 +194,7 @@ export default function HeaderActions({ editor }: HeaderActionsProps) {
                   icon={<DownloadIcon aria-hidden="true" />}
                   on:click={menuAction(() => exportPageAsMarkdown(editor.page))}
                 >
-                  Export as Markdown
+                  Export
                 </MenuItem>
               </MenuItemGroup>
             </popover-menu>

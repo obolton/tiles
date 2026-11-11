@@ -29,7 +29,7 @@ describe("HeaderActions", () => {
       await openMenu();
 
       await expect
-        .element(page.getByRole("menuitem", { name: "Export as Markdown" }))
+        .element(page.getByRole("menuitem", { name: "Export", exact: true }))
         .toBeVisible();
       expect(page.getByRole("menuitemcheckbox", { name: "Bookmark" }).query()).toBeNull();
       expect(page.getByRole("menuitem", { name: "Present" }).query()).toBeNull();
@@ -77,7 +77,7 @@ describe("HeaderActions", () => {
       await expect.element(page.getByRole("menuitemcheckbox", { name: "Bookmark" })).toBeVisible();
       await expect.element(page.getByRole("menuitem", { name: "Present" })).toBeVisible();
       await expect
-        .element(page.getByRole("menuitem", { name: "Export as Markdown" }))
+        .element(page.getByRole("menuitem", { name: "Export", exact: true }))
         .toBeVisible();
     });
 
@@ -92,7 +92,7 @@ describe("HeaderActions", () => {
       renderActions();
       await openMenu();
 
-      await page.getByRole("menuitem", { name: "Export as Markdown" }).click();
+      await page.getByRole("menuitem", { name: "Export", exact: true }).click();
 
       expect(downloads).toEqual(["Test Page.md"]);
     });
