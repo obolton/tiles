@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createLanguageModel } from "../models";
+import { createLanguageModel, getImageModel } from "../models";
 
 beforeEach(() => {
   // Provider modules read their API key on load, so evaluate them afresh per test.
@@ -46,5 +46,29 @@ describe("createLanguageModel", () => {
 
   test("throws for an unsupported provider", async () => {
     await expect(createLanguageModel("foo", "bar")).rejects.toThrow("Unsupported AI_TEXT_PROVIDER");
+  });
+});
+
+describe("getImageModel", () => {
+  test("creates an OpenAI image model", async () => {
+    expect(await getImageModel()).toMatchObject({
+      provider: expect.stringContaining("openai"),
+    });
+  });
+
+  test("throws when the OpenAI key is missing", async () => {
+    vi.stubEnv("OPENAI_PLATFORM_API_KEY", undefined);
+
+    await expect(getImageModel()).rejects.toThrow(
+      "Missing environment variables: OPENAI_PLATFORM_API_KEY",
+    );
+  });
+
+  test("does not require the OpenAI key to load the text model", async () => {
+    vi.stubEnv("OPENAI_PLATFORM_API_KEY", undefined);
+
+    const { TEXT_MODEL } = await import("../models");
+
+    expect(TEXT_MODEL).toMatchObject({ provider: expect.stringContaining("anthropic") });
   });
 });

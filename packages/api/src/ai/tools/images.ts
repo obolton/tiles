@@ -2,7 +2,7 @@ import { Buffer } from "node:buffer";
 import { generateImage } from "ai";
 import prisma from "@/database/prisma";
 import { upload, IMAGES_BUCKET } from "@/utils/storage";
-import { IMAGE_MODEL } from "../models";
+import { getImageModel } from "../models";
 import {
   IMAGE_GENERATION_DIMENSIONS,
   IMAGE_GENERATION_OPTIONS,
@@ -13,7 +13,7 @@ import type { ToolContext } from "./types";
 
 export async function generateImageFromPrompt(prompt: string) {
   const { image } = await generateImage({
-    model: IMAGE_MODEL,
+    model: await getImageModel(),
     prompt,
     size: `${IMAGE_GENERATION_DIMENSIONS.width}x${IMAGE_GENERATION_DIMENSIONS.height}`,
     providerOptions: { openai: IMAGE_GENERATION_OPTIONS },
