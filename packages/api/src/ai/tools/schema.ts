@@ -27,6 +27,14 @@ export function getDimensions(size: Size): Dimensions {
   }
 }
 
+function rangedNumber(min: number, max: number) {
+  return z
+    .number()
+    .refine((value) => value >= min && value <= max, `Must be between ${min} and ${max}`);
+}
+
+export const IdSchema = z.number();
+
 export function resolveParentId(
   parentId: number | null,
   { resolveArtifactId, sectionId }: ToolContext,
@@ -50,11 +58,11 @@ export const FrameSchema = z.enum(FrameStyle).nullable().meta({
     "Visual frame style: OUTLINED (thin border), SUBTLE (soft glow), CARD (paper shadow), RAISED (floating shadow), FRAMED (bold border), FULL_BLEED (extends background to container edges - only for root/vertical/horizontal layouts)",
 });
 
-export const PositionXSchema = z.number().min(0).max(100).nullable().meta({
+export const PositionXSchema = rangedNumber(0, 100).nullable().meta({
   description: "Horizontal position (0-100%) for items in freeform sections",
 });
 
-export const PositionYSchema = z.number().min(0).max(100).nullable().meta({
+export const PositionYSchema = rangedNumber(0, 100).nullable().meta({
   description: "Vertical position (0-100%) for items in freeform sections",
 });
 
@@ -64,8 +72,8 @@ const TextColorSchema = ColorSchema.nullable().meta({
 
 export const CoordinatesSchema = z
   .strictObject({
-    lat: z.number().gte(MIN_LATITUDE).lte(MAX_LATITUDE),
-    long: z.number().gte(MIN_LONGITUDE).lte(MAX_LONGITUDE),
+    lat: rangedNumber(MIN_LATITUDE, MAX_LATITUDE),
+    long: rangedNumber(MIN_LONGITUDE, MAX_LONGITUDE),
   })
   .nullable()
   .meta({

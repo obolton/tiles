@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { CommonTileSchema, CoordinatesSchema } from "./schema";
+import { CommonTileSchema, CoordinatesSchema, IdSchema } from "./schema";
 import type { FunctionToolOptions, ToolContext } from "./types";
 
 const EditStyleSchema = z.strictObject({
-  id: z.number().int().meta({
+  id: IdSchema.meta({
     description: "The ID of the tile to style",
   }),
   ...CommonTileSchema,

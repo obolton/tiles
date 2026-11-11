@@ -2,11 +2,11 @@ import { z } from "zod";
 import { buildImageMap } from "doc/tiles/image";
 import { IMAGE_GENERATION_DIMENSIONS } from "../constants";
 import { generateAndUploadImage } from "./images";
-import { CoordinatesSchema, resolveParentId } from "./schema";
+import { CoordinatesSchema, resolveParentId, IdSchema } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateImageSchema = z.strictObject({
-  parentId: z.number().int().nullable().meta({
+  parentId: IdSchema.nullable().meta({
     description:
       "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),

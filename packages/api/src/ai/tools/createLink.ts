@@ -2,11 +2,11 @@ import { z } from "zod";
 import { resolveLinkMetadata } from "@/routes/links/links";
 import { buildLinkMap } from "doc/tiles/link";
 import { buildVideoMap } from "doc/tiles/video";
-import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId } from "./schema";
+import { SizeSchema, getDimensions, CoordinatesSchema, resolveParentId, IdSchema } from "./schema";
 import type { FunctionToolOptions, TileResult, ToolContext } from "./types";
 
 const CreateLinkSchema = z.strictObject({
-  parentId: z.number().int().nullable().meta({
+  parentId: IdSchema.nullable().meta({
     description:
       "ID of a section or map to place this content inside (from a create_section or create_map result), or null",
   }),

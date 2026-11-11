@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { IdSchema } from "./schema";
 import type { FunctionToolOptions, ToolContext } from "./types";
 
 const DeleteTilesSchema = z.strictObject({
-  ids: z.array(z.number().int()).min(1).max(20).meta({
+  ids: z.array(IdSchema).min(1).meta({
     description: "The IDs of the tiles to delete",
   }),
 });
