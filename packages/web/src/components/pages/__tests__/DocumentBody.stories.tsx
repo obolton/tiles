@@ -48,11 +48,15 @@ export const TextOnly: Story = {
 
 export const WithEmbeddedTiles: Story = {
   render: () => {
-    const list = editor.page.createTile(Section.createMap({ layout: "VERTICAL" }), { at: null });
+    const list = editor.page.createTile(Section.createMap({ layout: "VERTICAL", height: 15 }), {
+      at: null,
+    });
     editor.page.createTile(Text.createMap({ content: [paragraph("Inside the list")] }), {
       parentId: list.id,
     });
-    const section = editor.page.createTile(Section.createMap({ layout: "GRID" }), { at: null });
+    const section = editor.page.createTile(Section.createMap({ layout: "GRID", height: 15 }), {
+      at: null,
+    });
     editor.page.createTile(Text.createMap({ content: [paragraph("Inside the grid")] }), {
       parentId: section.id,
     });
