@@ -321,12 +321,22 @@ describe("Editor", () => {
       editor.versionHistory.close();
     });
 
-    test("leaving edit mode closes the share panel", () => {
+    test("leaving edit mode keeps the share panel open", () => {
       editor.share.open();
 
       editor.setEditable(false);
 
-      expect(editor.share.isOpen.value).toBe(false);
+      expect(editor.share.isOpen.value).toBe(true);
+      editor.share.close();
+    });
+
+    test("leaving edit mode keeps version history open", () => {
+      editor.versionHistory.open();
+
+      editor.setEditable(false);
+
+      expect(editor.versionHistory.isOpen.value).toBe(true);
+      editor.versionHistory.close();
     });
 
     test("opening the theme editor closes the share panel", () => {

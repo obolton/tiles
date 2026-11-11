@@ -8,8 +8,6 @@ import BookmarkIcon from "@/icons/bookmark.svg?jsx";
 import PresentIcon from "@/icons/present.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
-import HistoryIcon from "@/icons/history.svg?jsx";
-import ShareIcon from "@/icons/share.svg?jsx";
 import MoreIcon from "@/icons/more.svg?jsx";
 import type { Meta, Story } from "@/test/storybook";
 import type { User } from "@/utils/sessions";
@@ -132,15 +130,9 @@ export const EditorEditMode: Story = {
             <ToolbarButton label="Redo">
               <RedoIcon aria-hidden="true" />
             </ToolbarButton>
-            <ToolbarButton label="Version history">
-              <HistoryIcon aria-hidden="true" />
-            </ToolbarButton>
           </ToolbarGroup>
 
           <ToolbarGroup label="Page actions">
-            <ToolbarButton label="Share">
-              <ShareIcon aria-hidden="true" />
-            </ToolbarButton>
             <ToolbarButton label="Not bookmarked">
               <BookmarkIcon aria-hidden="true" />
             </ToolbarButton>

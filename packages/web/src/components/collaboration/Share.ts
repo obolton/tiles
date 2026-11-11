@@ -1,11 +1,10 @@
-import SidebarPanel from "@/components/pages/SidebarPanel";
+import SidebarPanel, { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import type { SidebarSlot } from "@/components/pages/SidebarPanel";
 
 export const SHARE_PANEL_ID = "share-panel";
-export const SHARE_BUTTON_ID = "share-button";
 
 export default class Share extends SidebarPanel {
   constructor(sidebar?: SidebarSlot) {
-    super(SHARE_PANEL_ID, SHARE_BUTTON_ID, sidebar);
+    super(SHARE_PANEL_ID, PAGE_ACTIONS_BUTTON_ID, sidebar);
   }
 }
