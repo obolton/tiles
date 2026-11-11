@@ -237,7 +237,7 @@ export default class Editor {
       requestAnimationFrame(() => this.focusFirstTile());
     } else {
       this.clearSelection();
-      this.sidebar.value?.close();
+      this.themeEditor.close();
       this.isEditable.value = false;
       setEditMode(false);
       this.stopCollaboration();

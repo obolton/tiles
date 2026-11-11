@@ -2,7 +2,7 @@ import { reactive } from "carillon";
 import { focusInside, getFocusedDescendant } from "@/utils/focus";
 import type { Reactive, ReactiveValue } from "carillon";
 
-/** The header's overflow menu button, which opens the panels when their own buttons are collapsed into it. */
+/** The header's overflow menu button, which opens the share and version history panels. */
 export const PAGE_ACTIONS_BUTTON_ID = "page-actions-button";
 
 /** Holds the panel that is open in a sidebar, so that opening one panel closes another. */
@@ -43,9 +43,7 @@ export default class SidebarPanel {
     const hadFocus = !!panel && !!getFocusedDescendant(panel);
     this.sidebar.value = null;
     if (hadFocus && this.buttonId) {
-      const button =
-        document.getElementById(this.buttonId) ?? document.getElementById(PAGE_ACTIONS_BUTTON_ID);
-      button?.focus();
+      document.getElementById(this.buttonId)?.focus();
     }
   }
 

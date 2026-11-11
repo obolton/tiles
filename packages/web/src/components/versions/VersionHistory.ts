@@ -1,5 +1,5 @@
 import client from "@/api/client";
-import SidebarPanel from "@/components/pages/SidebarPanel";
+import SidebarPanel, { PAGE_ACTIONS_BUTTON_ID } from "@/components/pages/SidebarPanel";
 import { flag, reactive } from "carillon";
 import { handleError } from "@/utils/errors";
 import type { AppRouterOutputs } from "@/api/client";
@@ -8,7 +8,6 @@ import type { SidebarSlot } from "@/components/pages/SidebarPanel";
 export type VersionEntry = AppRouterOutputs["versions"]["list"]["versions"][number];
 
 export const VERSION_HISTORY_PANEL_ID = "version-history-panel";
-export const VERSION_HISTORY_BUTTON_ID = "version-history-button";
 
 export default class VersionHistory extends SidebarPanel {
   readonly selectedId = reactive<string | null>(null);
@@ -21,7 +20,7 @@ export default class VersionHistory extends SidebarPanel {
     readonly previewVersion: VersionEntry | null = null,
     sidebar?: SidebarSlot,
   ) {
-    super(VERSION_HISTORY_PANEL_ID, VERSION_HISTORY_BUTTON_ID, sidebar);
+    super(VERSION_HISTORY_PANEL_ID, PAGE_ACTIONS_BUTTON_ID, sidebar);
     if (previewVersion) {
       this.sidebar.value = this;
       this.selectedId.value = previewVersion.id;

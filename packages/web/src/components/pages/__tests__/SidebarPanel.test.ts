@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { reactive } from "carillon";
-import SidebarPanel, { PAGE_ACTIONS_BUTTON_ID } from "../SidebarPanel";
+import SidebarPanel from "../SidebarPanel";
 
 const PANEL_ID = "test-panel";
 const BUTTON_ID = "test-button";
@@ -63,18 +63,6 @@ describe("SidebarPanel", () => {
       state.close();
       expect(state.isOpen.value).toBe(false);
       expect(document.activeElement).toBe(button);
-    });
-
-    test("returns focus to the page actions button when the panel button is absent", () => {
-      const more = document.createElement("button");
-      more.id = PAGE_ACTIONS_BUTTON_ID;
-      document.body.append(more);
-      button.remove();
-      const state = new SidebarPanel(PANEL_ID, BUTTON_ID);
-      state.open();
-      state.close();
-      expect(document.activeElement).toBe(more);
-      more.remove();
     });
 
     test("leaves focus alone when the panel has no button", () => {
