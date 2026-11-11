@@ -63,7 +63,6 @@ export default function PresentationPage({
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}
-        data-alignment={page.alignment}
         data-page-type="PRESENTATION"
         on:click={onClick}
       >

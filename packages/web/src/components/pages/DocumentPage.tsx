@@ -39,7 +39,6 @@ export default function DocumentPage({
       <main
         className={styles.main}
         style={{ "--page-width": page.width }}
-        data-alignment={page.alignment}
         data-layout="VERTICAL"
         data-page-type="DOCUMENT"
       >

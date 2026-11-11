@@ -122,7 +122,7 @@ export default function LayoutPage({
 
         <If condition={showToolbar}>
           <Portal element="toolbar-slot">
-            <PageToolbar page={page} />
+            <PageToolbar page={page} showAlignment />
           </Portal>
         </If>
       </div>

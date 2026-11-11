@@ -1,7 +1,6 @@
 import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import CodeTab from "@/components/toolbars/text/CodeTab";
 import PageTab from "./PageTab";
-import StyleTab from "./StyleTab";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
 import If from "jsx/if";
 import type Page from "@/models/Page";
@@ -42,7 +41,6 @@ export default function DocumentToolbar({ page, state, editorView }: DocumentToo
       </If>
 
       <PageTab page={page} />
-      <StyleTab page={page} />
     </floating-toolbar>
   );
 }
