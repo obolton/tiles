@@ -5,7 +5,10 @@
   border: none;
   font-size: 1rem;
   font-weight: 500;
-  white-space: nowrap;
+  inline-size: max-content;
+  max-inline-size: calc(100vw - 32px);
+  text-align: center;
+  text-wrap: balance;
   color: var(--ui-color);
   text-shadow: 0 1px 1px rgb(255 255 255 / 30%);
   background-color: rgb(255 255 255 / 85%);
@@ -20,6 +23,34 @@
     display var(--animation-duration-short) allow-discrete,
     opacity var(--animation-duration-short) var(--easing),
     scale var(--animation-duration-short) var(--easing);
+
+  /* Set when anchor positioning is supported, with the popover anchored to its target */
+  &[data-position] {
+    inset: auto;
+    margin: 16px;
+    position-anchor: auto;
+    position-area: bottom;
+    position-try-fallbacks: top;
+    transform-origin: center top;
+  }
+
+  &[data-position="top"] {
+    position-area: top;
+    position-try-fallbacks: bottom;
+    transform-origin: center bottom;
+  }
+
+  &[data-position="left"] {
+    position-area: left;
+    position-try-fallbacks: right, bottom, top;
+    transform-origin: right center;
+  }
+
+  &[data-position="right"] {
+    position-area: right;
+    position-try-fallbacks: left, bottom, top;
+    transform-origin: left center;
+  }
 
   &:popover-open {
     opacity: 1;
