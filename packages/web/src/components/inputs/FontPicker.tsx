@@ -29,9 +29,10 @@ export default function FontPicker({
 
   const setFont = (event: Event) => onChange((event.target as ListSelect).value as FontId);
 
-  const style = value?.derive((font) => ({
-    "--preview-font": font ? `"${getFontConfig(font).family}"` : undefined,
-  }));
+  const style = value?.derive((id) => {
+    const font = id ? getFontConfig(id) : null;
+    return { "--preview-font": font ? `"${font.previewFamily}", "${font.family}"` : undefined };
+  });
 
   return (
     <list-select
