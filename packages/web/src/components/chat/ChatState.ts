@@ -73,6 +73,7 @@ export default class ChatState {
     this.state.value = "idle";
     this.buffer = "";
     this.destination = null;
+    this.subscribers.clear();
   }
 
   getHistory(): Array<{ role: "user" | "assistant"; content: string }> {
