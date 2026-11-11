@@ -10,7 +10,8 @@ const { doGenerate } = vi.hoisted(() => ({ doGenerate: vi.fn() }));
 
 vi.mock("@/ai/models", async () => {
   const { MockImageModelV4 } = await import("ai/test");
-  return { IMAGE_MODEL: new MockImageModelV4({ doGenerate }) };
+  const model = new MockImageModelV4({ doGenerate });
+  return { getImageModel: async () => model };
 });
 
 vi.mock("@/utils/storage", () => ({
