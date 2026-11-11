@@ -295,6 +295,17 @@ describe("Editor", () => {
 
       expect(editor.references.size).toBe(0);
     });
+
+    test("keeps the chat history when closed and reopened", () => {
+      editor.openPromptToolbar();
+      editor.chat.addUserMessage("Hello");
+      editor.closePromptToolbar();
+
+      editor.openPromptToolbar();
+
+      expect(editor.chat.messages.value).toMatchObject([{ role: "user", content: "Hello" }]);
+      editor.closePromptToolbar();
+    });
   });
 
   describe("sidebar panels", () => {

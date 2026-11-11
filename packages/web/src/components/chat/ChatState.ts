@@ -73,6 +73,8 @@ export default class ChatState {
     this.state.value = "idle";
     this.buffer = "";
     this.destination = null;
+    // Each streaming bubble subscribes on render, so drop them once its response is complete
+    this.subscribers.clear();
   }
 
   getHistory(): Array<{ role: "user" | "assistant"; content: string }> {

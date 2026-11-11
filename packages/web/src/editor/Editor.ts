@@ -555,7 +555,6 @@ export default class Editor {
     this.isPromptOpen.value = false;
     delete document.body.dataset.prompt;
     this.clearReferences();
-    this.chat.clear();
   }
 
   togglePromptToolbar() {
