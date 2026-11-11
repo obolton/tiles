@@ -11,13 +11,17 @@
 .user {
   align-self: flex-end;
   white-space: pre-wrap;
-  background: oklch(58% 0.2 260deg);
+  background: oklch(55% 0.2 260deg);
   color: #fff;
   border-end-end-radius: 4px;
 }
 
 .assistant {
+  --text-color: var(--ui-color);
+
   align-self: flex-start;
+  font-size: inherit;
+  color: var(--text-color);
   background: var(--ui-background-color);
   border-end-start-radius: 4px;
 }

@@ -80,6 +80,7 @@ export default function Prompt({
         rows={1}
         placeholder={placeholder}
         title={placeholder}
+        aria-label={placeholder}
         required
         readonly={pending}
         on:keydown={handleKeyDown}
@@ -89,6 +90,7 @@ export default function Prompt({
         type="submit"
         classList={{ floating: true, small: true, pending }}
         disabled={pending}
+        aria-label={submitTooltip}
         data-tooltip={submitTooltip}
       >
         <CheckIcon aria-hidden="true" />
