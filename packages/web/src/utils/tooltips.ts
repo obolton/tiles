@@ -32,7 +32,7 @@ function isTooltipPosition(value: unknown): value is TooltipPosition {
 }
 
 /** Keeps a box of the given size within the viewport, with a margin on each side. */
-function clamp(start: number, size: number, viewportSize: number) {
+function clampToViewport(start: number, size: number, viewportSize: number) {
   return Math.max(TOOLTIP_MARGIN, Math.min(start, viewportSize - size - TOOLTIP_MARGIN));
 }
 
@@ -191,8 +191,8 @@ class TooltipController {
         break;
     }
 
-    this.tooltip.style.top = `${clamp(top, height, viewportHeight)}px`;
-    this.tooltip.style.left = `${clamp(left, width, viewportWidth)}px`;
+    this.tooltip.style.top = `${clampToViewport(top, height, viewportHeight)}px`;
+    this.tooltip.style.left = `${clampToViewport(left, width, viewportWidth)}px`;
     this.tooltip.style.transformOrigin = TRANSFORM_ORIGINS[position];
   }
 
