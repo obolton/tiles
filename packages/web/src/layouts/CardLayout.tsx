@@ -1,5 +1,6 @@
 import PageLayout from "@/layouts/PageLayout";
 import { SITE_NAME } from "@/constants/site";
+import LogoIcon from "@/icons/logo.svg?jsx";
 import styles from "./CardLayout.module.css";
 import type { JSX } from "jsx/jsx";
 
@@ -21,6 +22,7 @@ export default function CardLayout({ title, description, children }: CardLayoutP
         </div>
 
         <a className={styles.wordmark} href="/">
+          <LogoIcon aria-hidden="true" />
           {SITE_NAME}
         </a>
 
