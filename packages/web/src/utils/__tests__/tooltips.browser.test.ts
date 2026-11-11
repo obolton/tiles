@@ -71,6 +71,16 @@ describe("tooltips", () => {
     expect(document.getElementById("tooltip")?.textContent).toBe("Labelled");
   });
 
+  test("describes its target while it is shown", async () => {
+    const { labelled } = renderButtons();
+
+    await hoverUntilOpen(labelled);
+    expect(labelled.ariaDescribedByElements).toEqual([getTooltip()]);
+
+    await userEvent.keyboard("{Escape}");
+    expect(labelled.ariaDescribedByElements).toBeNull();
+  });
+
   describe.each([
     { name: "with anchor positioning", anchored: true },
     { name: "without anchor positioning", anchored: false },

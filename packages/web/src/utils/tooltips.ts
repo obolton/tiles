@@ -152,7 +152,7 @@ class TooltipController {
       this.setPosition(this.target, position);
     }
 
-    this.target.setAttribute("aria-describedby", this.tooltip.id);
+    this.target.ariaDescribedByElements = [this.tooltip];
   }
 
   private setPosition(target: HTMLElement, preferred: TooltipPosition) {
@@ -197,10 +197,12 @@ class TooltipController {
   }
 
   private resetTarget() {
-    this.target?.removeAttribute("aria-describedby");
-    this.target?.removeEventListener("pointerleave", this);
-    this.target?.removeEventListener("blur", this);
-    this.target = undefined;
+    if (this.target) {
+      this.target.ariaDescribedByElements = null;
+      this.target.removeEventListener("pointerleave", this);
+      this.target.removeEventListener("blur", this);
+      this.target = undefined;
+    }
     removeEventListener("click", this);
     removeEventListener("keydown", this);
   }
