@@ -8,6 +8,7 @@ import InsertButton from "@/components/buttons/InsertButton";
 import PageToolbar from "@/components/toolbars/pages/PageToolbar";
 import PresentationInsertMenu from "@/components/toolbars/insert/PresentationInsertMenu";
 import Section from "@/models/Section";
+import { smoothScrollBehavior } from "@/utils/scroll";
 import styles from "./PresentationPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
@@ -51,7 +52,7 @@ export default function PresentationPage({
       return;
     }
     const slide = event.target.closest("main > page-item");
-    slide?.scrollIntoView({ behavior: "smooth", block: "center" });
+    slide?.scrollIntoView({ behavior: smoothScrollBehavior(), block: "center" });
   }
 
   return (

@@ -405,7 +405,7 @@ form[data-pending] button[type="submit"] {
     );
     animation:
       var(--animation-duration) var(--easing) var(--delay) backwards reveal-overlay,
-      1s linear var(--delay) infinite rotate;
+      var(--animation-duration-long) linear var(--delay) infinite rotate;
   }
 
   &::after {

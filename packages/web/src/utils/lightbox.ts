@@ -1,5 +1,5 @@
 import { viewTransition } from "./transitions";
-import { scrollIntoViewIfNeeded } from "./scroll";
+import { scrollIntoViewIfNeeded, smoothScrollBehavior } from "./scroll";
 import { moveTo, moveFrom } from "./animation/effects";
 
 const TRANSITION = "lightbox";
@@ -255,7 +255,7 @@ function itemClick(event: MouseEvent) {
   if (index !== currentIndex) {
     event.stopPropagation();
     element.scrollIntoView({
-      behavior: "smooth",
+      behavior: smoothScrollBehavior(),
       block: "center",
     });
   }
@@ -274,7 +274,7 @@ function keyDown(event: KeyboardEvent) {
     }
 
     items[currentIndex]?.scrollIntoView({
-      behavior: "smooth",
+      behavior: smoothScrollBehavior(),
       block: "center",
     });
   }

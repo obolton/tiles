@@ -15,7 +15,7 @@
     hsl(0deg 0 calc(80% + var(--loading-progress) * 0.15))
   );
   box-shadow: 0 6px 4px -4px rgb(0 0 0 / 15%);
-  animation: 0.75s ease-in-out infinite alternate loading;
+  animation: var(--animation-duration-long) ease-in-out infinite alternate loading;
 }
 
 @keyframes loading {

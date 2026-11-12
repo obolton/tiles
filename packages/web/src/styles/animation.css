@@ -1,6 +1,7 @@
 :root {
   --animation-duration: 350ms;
   --animation-duration-short: 200ms;
+  --animation-duration-long: 1s;
   --easing: ease;
   --spring: linear(
     0,
@@ -67,5 +68,13 @@
 @keyframes fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration: 0s;
+    --animation-duration-short: 0s;
+    --animation-duration-long: 0s;
   }
 }

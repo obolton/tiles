@@ -15,7 +15,7 @@
   height: 4px;
   border-radius: 50%;
   background: var(--ui-color);
-  animation: pulse 1.4s var(--easing) infinite;
+  animation: pulse var(--animation-duration-long) var(--easing) infinite;
 }
 
 .dot:nth-child(2) {

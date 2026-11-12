@@ -3,6 +3,7 @@ import { ThumbnailListEvent } from "./events";
 import { getDragPosition } from "@/utils/drag-placeholder";
 import { moveBefore } from "jsx/move-before";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
+import { smoothScrollBehavior } from "@/utils/scroll";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 
 const ACTIVE_THRESHOLD = 0.5;
@@ -150,7 +151,7 @@ export default class ThumbnailList extends HTMLElement {
 
     this.jumpingTo = slide;
     this.setActive(slideId);
-    slide.scrollIntoView({ behavior: "smooth", block: "start" });
+    slide.scrollIntoView({ behavior: smoothScrollBehavior(), block: "start" });
   }
 
   private handleIntersect(entries: IntersectionObserverEntry[]) {
@@ -219,7 +220,11 @@ export default class ThumbnailList extends HTMLElement {
     if (next) {
       next.ariaSelected = "true";
       this.ariaActiveDescendantElement = next;
-      next.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+      next.scrollIntoView({
+        block: "nearest",
+        inline: "nearest",
+        behavior: smoothScrollBehavior(),
+      });
       this.dispatchEvent(new ThumbnailListEvent("slideselect", { slideId }));
     } else {
       this.ariaActiveDescendantElement = null;

@@ -1,4 +1,5 @@
 import css from "./SwipeView.css?inline";
+import { smoothScrollBehavior } from "@/utils/scroll";
 import upIcon from "@/icons/arrow-up.svg?raw";
 import downIcon from "@/icons/arrow-down.svg?raw";
 import type { GlobalHTMLAttributes } from "jsx/html-attributes";
@@ -295,7 +296,7 @@ export default class SwipeView extends HTMLElement {
     if (item) {
       this.carousel.scroll({
         top: parseFloat(item.style.getPropertyValue("--top")),
-        behavior: "smooth",
+        behavior: smoothScrollBehavior(),
       });
     }
   }
@@ -305,7 +306,7 @@ export default class SwipeView extends HTMLElement {
     if (item) {
       this.carousel.scroll({
         top: parseFloat(item.style.getPropertyValue("--top")),
-        behavior: "smooth",
+        behavior: smoothScrollBehavior(),
       });
     }
   }

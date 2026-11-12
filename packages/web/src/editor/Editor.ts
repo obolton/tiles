@@ -4,7 +4,7 @@ import { uploadMedia } from "@/utils/media";
 import { ACCEPT_IMAGE_TYPES, getAcceptableDragItem, isImage, isUriList } from "@/utils/media";
 import { set, flag, combine, reactive } from "carillon";
 import { last } from "@/utils/iterables";
-import { scrollIntoViewIfNeeded, whenVisible } from "@/utils/scroll";
+import { scrollIntoViewIfNeeded, smoothScrollBehavior, whenVisible } from "@/utils/scroll";
 import { pulse } from "@/utils/animation/effects";
 import { prefersReducedMotion } from "@/utils/preferences";
 import { focusInside } from "@/utils/focus";
@@ -452,7 +452,7 @@ export default class Editor {
     if (!element) {
       return;
     }
-    scrollIntoViewIfNeeded(element, { behavior: "smooth", block: "center" });
+    scrollIntoViewIfNeeded(element, { behavior: smoothScrollBehavior(), block: "center" });
     if (prefersReducedMotion()) {
       return;
     }
@@ -605,7 +605,7 @@ export default class Editor {
 
       if (focus instanceof HTMLElement) {
         focusInside(focus, { preventScroll: true });
-        scrollIntoViewIfNeeded(focus, { behavior: "smooth" });
+        scrollIntoViewIfNeeded(focus, { behavior: smoothScrollBehavior() });
       }
     }).updateCallbackDone.finally(() => {
       for (const item of items) {
@@ -630,7 +630,7 @@ export default class Editor {
     } else {
       focusInside(element, { preventScroll: true });
     }
-    scrollIntoViewIfNeeded(element, { behavior: "smooth" });
+    scrollIntoViewIfNeeded(element, { behavior: smoothScrollBehavior() });
   }
 
   // Undo / redo

@@ -55,11 +55,11 @@ body[data-editing] .figure {
 
 .loading {
   background: rgb(0 0 0 / 2%);
-  animation: 0.75s ease-in-out infinite alternate loading;
+  animation: var(--animation-duration-long) ease-in-out infinite alternate loading;
 
   & > img {
     opacity: 0;
-    transition: opacity 0.2s ease-in;
+    transition: opacity var(--animation-duration-short) ease-in;
   }
 }
 

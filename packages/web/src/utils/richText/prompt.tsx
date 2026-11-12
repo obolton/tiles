@@ -4,7 +4,7 @@ import InlinePrompt from "@/components/prompt/InlinePrompt";
 import { render } from "jsx/dom";
 import client from "@/api/client";
 import { BODY_ID } from "doc/body";
-import { SPRING } from "@/utils/animation/effects";
+import { animate, SPRING } from "@/utils/animation/effects";
 import Editor from "@/editor/Editor";
 import { serializeSelection } from "./selection";
 import { PROMPT_PLUGIN_KEY } from "./pluginKeys";
@@ -22,11 +22,9 @@ function getElement(view: EditorView) {
     editor.clearReferences();
 
     const prompt = element.firstElementChild! as HTMLFormElement;
-    void prompt
-      .animate([{ opacity: 0 }], SPRING)
-      .finished.finally(() =>
-        view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null })),
-      );
+    void animate(prompt, [{ opacity: 0 }], SPRING).finished.finally(() =>
+      view.dispatch(view.state.tr.setMeta(PROMPT_PLUGIN_KEY, { pos: null })),
+    );
 
     view.focus();
   }
@@ -74,7 +72,8 @@ function getElement(view: EditorView) {
     prompt.showPopover();
     prompt.querySelector("textarea")?.focus();
     const style = getComputedStyle(prompt);
-    prompt.animate(
+    animate(
+      prompt,
       [
         { width: 0, opacity: 0 },
         { width: style.width, opacity: 1 },
