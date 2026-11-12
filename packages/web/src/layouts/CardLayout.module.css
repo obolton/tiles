@@ -90,8 +90,7 @@
   box-shadow:
     0 0 0 1px rgb(0 0 0 / 10%),
     0 24px 48px -24px rgb(0 0 0 / 30%);
-  animation: rise var(--animation-duration) var(--spring) backwards;
-  animation-delay: 100ms;
+  animation: rise var(--animation-duration) var(--spring) 100ms backwards;
 
   & > h1 {
     font-size: 1.5rem;

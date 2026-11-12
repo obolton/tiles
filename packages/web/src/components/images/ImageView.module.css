@@ -55,7 +55,7 @@ body[data-editing] .figure {
 
 .loading {
   background: rgb(0 0 0 / 2%);
-  animation: calc(var(--animation-duration-long) * 0.75) ease-in-out infinite alternate loading;
+  animation: var(--animation-duration-long) ease-in-out infinite alternate loading;
 
   & > img {
     opacity: 0;

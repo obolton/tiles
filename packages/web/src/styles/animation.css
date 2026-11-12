@@ -72,7 +72,7 @@
 }
 
 /*
- * All durations derive from these properties (enforced by stylelint), so that
+ * All durations derive from these properties, so that
  * zeroing them disables motion everywhere, including inside shadow roots.
  */
 @media (prefers-reduced-motion: reduce) {
