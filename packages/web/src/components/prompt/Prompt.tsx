@@ -12,6 +12,7 @@ export interface PromptProps extends JSX.Attributes<"form"> {
   inputId?: string;
   placeholder?: string;
   submitTooltip?: string;
+  actions?: JSX.Node;
   onSubmit: (prompt: string) => Promise<void>;
   onCancel?: () => void;
 }
@@ -21,6 +22,7 @@ export default function Prompt({
   inputId,
   placeholder,
   submitTooltip = "Done",
+  actions,
   onSubmit,
   onCancel,
   ...props
@@ -85,6 +87,8 @@ export default function Prompt({
         readonly={pending}
         on:keydown={handleKeyDown}
       />
+
+      {actions && <div className={styles.actions}>{actions}</div>}
 
       <button
         type="submit"
