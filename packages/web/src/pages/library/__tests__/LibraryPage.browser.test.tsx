@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "jsx/dom";
 import LibraryPage from "../LibraryPage";
+import NewPageButton from "@/components/library/NewPageButton";
 import type { LibraryPage as LibraryPageItem } from "@/components/library/LibraryCard";
 import type { User } from "@/utils/sessions";
 
@@ -34,7 +35,7 @@ const PAGES: LibraryPageItem[] = Array.from({ length: 5 }, (_, index) => ({
   author: { id: USER.id, name: USER.name, imageUrl: null },
 }));
 
-function renderLibrary() {
+function renderLibrary({ actions = false } = {}) {
   const nodes = render(
     <LibraryPage
       workspace={{ id: "ws-1" }}
@@ -45,6 +46,7 @@ function renderLibrary() {
       placeholder="Search pages"
       emptyMessage="No pages"
       search={() => Promise.resolve({ pages: [], nextCursor: null })}
+      renderActions={actions ? () => <NewPageButton workspaceId="ws-1" /> : undefined}
     />,
   );
   document.body.append(...nodes);
@@ -70,17 +72,32 @@ describe("LibraryPage", () => {
       await page.viewport(WIDTH, 844);
       renderLibrary();
 
-      const newPage = rectOf('[popovertarget="new-page-menu"]');
+      const workspace = rectOf('[popovertarget="navigation-menu"]');
       const search = rectOf("#search-pages");
       const sort = rectOf("list-select");
 
-      expect(search.top).toBeGreaterThanOrEqual(newPage.bottom);
+      expect(search.top).toBeGreaterThanOrEqual(workspace.bottom);
       expect(sort.right).toBeLessThanOrEqual(WIDTH);
       expect(rectOf("#header").height).toBe(104);
       expect(getComputedStyle(document.querySelector("main") ?? document.body).marginTop).toBe(
         "104px",
       );
       expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(WIDTH);
+    });
+
+    test("fits the new page button beside the workspace menu", async () => {
+      await page.viewport(WIDTH, 844);
+      renderLibrary({ actions: true });
+
+      const workspace = rectOf('[popovertarget="navigation-menu"]');
+      const newPage = page.getByRole("button", { name: "New page" }).element();
+      const button = newPage.getBoundingClientRect();
+
+      expect(button.top).toBe(workspace.top);
+      expect(button.left).toBeGreaterThan(workspace.right);
+      expect(button.right).toBeLessThanOrEqual(WIDTH);
+      expect(newPage.scrollWidth).toBeLessThanOrEqual(newPage.clientWidth);
+      expect(rectOf("#header").height).toBe(104);
     });
 
     test("lays the folder navigation out as a horizontal row", async () => {

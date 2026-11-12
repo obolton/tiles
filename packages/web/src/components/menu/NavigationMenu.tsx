@@ -2,6 +2,7 @@ import ToolbarButton from "@/components/buttons/ToolbarButton";
 import MenuItem from "@/components/menus/MenuItem";
 import MenuItemGroup from "@/components/menus/MenuItemGroup";
 import MenuItemLink from "@/components/menus/MenuItemLink";
+import NewPageMenuItems from "./NewPageMenuItems";
 import ProfileImage from "@/components/profile-image/ProfileImage";
 import LibraryIcon from "@/icons/library.svg?jsx";
 import NewIcon from "@/icons/new.svg?jsx";
@@ -55,6 +56,7 @@ export default function NavigationMenu({ user, workspaceId }: NavigationMenuProp
             Library
           </MenuItemLink>
         </MenuItemGroup>
+        <NewPageMenuItems workspaceId={workspaceId} prefixed />
         <MenuItemGroup>
           {user.workspaces.map((w) => (
             <MenuItemLink
