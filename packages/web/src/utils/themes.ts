@@ -10,8 +10,6 @@ import type { Fill } from "@/components/fills/types";
 import type Tile from "@/models/Tile";
 import type { ThemeData, ThemeValues } from "@/models/Theme";
 
-export type { ThemeData };
-
 /** The values a new theme starts from. */
 export const DEFAULT_THEME_VALUES: Omit<ThemeValues, "name"> = {
   background: { type: "color", color: "ffffffffffff" },

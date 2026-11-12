@@ -1,4 +1,4 @@
-import type { PageData } from "@/editor/Editor";
+import type { PageData } from "@/models/Page";
 
 export const PAGE: PageData = {
   id: "page-id",

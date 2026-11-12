@@ -1,14 +1,8 @@
 import type { Transformer } from "node:stream/web";
 import type {
-  ParagraphNode,
-  HeadingNode,
-  ListItemNode,
-  DividerNode,
-  CodeNode,
   RichTextNode,
   RichTextFormat,
   DestinationMode,
-  Destination,
   RichTextStreamEvent,
 } from "doc/richText/events";
 
@@ -29,18 +23,7 @@ const DIVIDER_MATCH = /^(-{3,}|\*{3,}|_{3,})\s*\n/;
 const DELIMITER_MATCH = /(\*|_|-( *)|[0-9]\.?|#( *)|>|<|`|~|\+)/;
 const ALL_NEW_LINES_MATCH = /\n/g;
 
-export type {
-  ParagraphNode,
-  HeadingNode,
-  ListItemNode,
-  DividerNode,
-  CodeNode,
-  RichTextNode,
-  RichTextFormat,
-  DestinationMode,
-  Destination,
-  RichTextStreamEvent,
-};
+export type { RichTextNode, RichTextFormat };
 
 enum LineBreak {
   HARD,

@@ -7,20 +7,17 @@ const ThemeBackgroundSchema = z.discriminatedUnion("type", [
   ColorBackgroundSchema,
   GradientBackgroundSchema,
 ]);
-export type ThemeBackgroundSchema = z.infer<typeof ThemeBackgroundSchema>;
 
 const ThemeColorsSchema = z.object({
   text: ColorSchema,
   accent: ColorSchema,
 });
-export type ThemeColorsSchema = z.infer<typeof ThemeColorsSchema>;
 
 const ThemeFontsSchema = z.object({
   heading: FontIdSchema,
   body: FontIdSchema,
   code: FontIdSchema,
 });
-export type ThemeFontsSchema = z.infer<typeof ThemeFontsSchema>;
 
 export const ListThemesSchema = z.object({
   workspaceId: z.uuid(),

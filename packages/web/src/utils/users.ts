@@ -1,7 +1,5 @@
 import client from "@/api/client";
-import { usersCache, getWorkspaceId, type CachedUser } from "./cache";
-
-export type WorkspaceUser = CachedUser;
+import { usersCache, getWorkspaceId } from "./cache";
 
 export async function getWorkspaceUsers() {
   const cached = await usersCache.getCached();
@@ -14,10 +12,6 @@ export async function getWorkspaceUsers() {
   await usersCache.set(result.users, { nextCursor: result.nextCursor });
 
   return result;
-}
-
-export async function invalidateWorkspaceUsers(): Promise<void> {
-  await usersCache.invalidate();
 }
 
 export function getUserName(userId: string): string | null {

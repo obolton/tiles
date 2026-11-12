@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as Y from "yjs";
 import { createEditor } from "@/test/editor";
 import Table from "@/models/Table";
-import type { CellValue } from "@/models/Table";
+import type { CellValue } from "@/models/Row";
 import { buildSectionMap } from "doc/tiles/section";
 import { buildTableMap, DEFAULT_COLUMN_WIDTH, DEFAULT_ROW_HEIGHT } from "doc/tiles/table";
 import type Editor from "@/editor/Editor";

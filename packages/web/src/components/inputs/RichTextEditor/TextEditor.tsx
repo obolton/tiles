@@ -8,8 +8,6 @@ import type { RichText } from "doc/types/richText";
 import type { JSX } from "jsx/jsx";
 import type { Reactive } from "carillon";
 
-export type { EditorState };
-
 export interface TextEditorProps extends JSX.Attributes<"div"> {
   editorView: Reactive<EditorView | null>;
   state: Reactive<EditorState | null>;

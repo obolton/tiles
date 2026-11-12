@@ -42,9 +42,3 @@ export class UnsupportedMediaTypeError extends HttpError {
     super(415, "Unsupported Media Type");
   }
 }
-
-export class InternalServerError extends HttpError {
-  constructor(message = "Internal Server Error") {
-    super(500, message);
-  }
-}

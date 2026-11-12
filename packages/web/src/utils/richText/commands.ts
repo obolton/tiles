@@ -384,15 +384,6 @@ export function insertDropdown(dropdownType: string, value: string): Command {
   };
 }
 
-export function insertMention(userId: string, displayName: string): Command {
-  return function (state, dispatch) {
-    if (dispatch) {
-      dispatch(state.tr.replaceSelectionWith(schema.nodes.mention.create({ userId, displayName })));
-    }
-    return true;
-  };
-}
-
 export const insertDivider: Command = (state, dispatch) => {
   if (dispatch) {
     dispatch(state.tr.replaceSelectionWith(schema.nodes.divider.create(null)));

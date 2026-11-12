@@ -52,10 +52,6 @@ export interface Cell {
   column: Column;
 }
 
-export interface VisibleCell extends Cell {
-  element: HTMLElement;
-}
-
 export type RangeSelection = {
   type: "range";
   anchor: Cell;

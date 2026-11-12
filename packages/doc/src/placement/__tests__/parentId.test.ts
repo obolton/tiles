@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DOCK_PARENT_PREFIX, dockParentId, parseParentId, toParentId } from "@/placement/parentId";
+import { DOCK_PARENT_PREFIX, dockParentId, parseParentId } from "@/placement/parentId";
 
 describe("dockParentId", () => {
   test("prefixes the edge", () => {
@@ -37,22 +37,5 @@ describe("parseParentId", () => {
         edge,
       });
     }
-  });
-});
-
-describe("toParentId", () => {
-  test("returns null for the page root", () => {
-    expect(toParentId(null, null)).toBeNull();
-  });
-
-  test("returns the section id when there is no dock", () => {
-    const id = "11111111-2222-3333-4444-555555555555";
-    expect(toParentId(id, null)).toBe(id);
-  });
-
-  test("prefers a dock over a section", () => {
-    const id = "11111111-2222-3333-4444-555555555555";
-    expect(toParentId(id, "TOP")).toBe("dock:TOP");
-    expect(toParentId(null, "LEFT")).toBe("dock:LEFT");
   });
 });
