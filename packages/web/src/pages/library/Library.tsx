@@ -1,5 +1,6 @@
 import client from "@/api/client";
 import LibraryPage from "./LibraryPage";
+import NewPageButton from "@/components/library/NewPageButton";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";
 
@@ -24,6 +25,7 @@ export default function Library({ workspace, folders, pages, user }: LibraryProp
       draggable
       move
       trash
+      renderActions={() => <NewPageButton workspaceId={workspace.id} />}
     />
   );
 }

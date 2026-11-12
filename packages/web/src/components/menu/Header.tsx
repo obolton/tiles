@@ -1,5 +1,4 @@
 import NavigationMenu from "./NavigationMenu";
-import NewPageMenu from "./NewPageMenu";
 import styles from "./Header.module.css";
 import type { User } from "@/utils/sessions";
 import type { JSX } from "jsx/jsx";
@@ -25,7 +24,6 @@ export default function Header({ user, workspaceId, center, actions, stacked }: 
     >
       <nav className={styles.start} aria-label="Navigation">
         <NavigationMenu user={user} workspaceId={workspaceId} />
-        <NewPageMenu workspaceId={workspaceId} />
       </nav>
 
       <div className={styles.center}>{center}</div>

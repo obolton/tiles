@@ -1,4 +1,5 @@
 import "@/styles";
+import "@/elements/menu/PopoverMenu";
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "jsx/dom";
@@ -92,17 +93,36 @@ describe("Header", () => {
       renderHeader(compactActions({ editing: true, undoRedo: true }));
 
       const title = page.getByRole("heading", { level: 1 }).element();
-      const newPage = page.getByRole("button", { name: "New page" }).element();
+      const workspace = page.getByRole("button", { name: WORKSPACE_NAME }).element();
       const done = page.getByRole("button", { name: "Done" }).element();
 
       expect(page.getByRole("banner").element().getBoundingClientRect().height).toBe(56);
       expect(title.getBoundingClientRect().left).toBeGreaterThanOrEqual(
-        newPage.getBoundingClientRect().right,
+        workspace.getBoundingClientRect().right,
       );
       expect(title.getBoundingClientRect().right).toBeLessThanOrEqual(
         done.getBoundingClientRect().left,
       );
       expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
+    });
+  });
+
+  describe("workspace menu", () => {
+    test("offers a new page of each type below the library", async () => {
+      renderHeader(compactActions());
+      await page.getByRole("button", { name: WORKSPACE_NAME }).click();
+
+      const items = page
+        .getByRole("menuitem")
+        .elements()
+        .map((item) => item.textContent);
+      expect(items.slice(0, 4)).toEqual([
+        "Library",
+        "New document",
+        "New presentation",
+        "New layout",
+      ]);
+      await expect.element(page.getByRole("group", { name: "New page" })).toBeVisible();
     });
   });
 });

@@ -1,4 +1,5 @@
 import Header from "../Header";
+import NewPageButton from "@/components/library/NewPageButton";
 import SearchToolbar from "@/components/search/SearchToolbar";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
@@ -47,7 +48,13 @@ function LibrarySearch() {
 
 export const LibraryPage: Story = {
   render: () => (
-    <Header user={USER} workspaceId={WORKSPACE_ID} center={<LibrarySearch />} stacked />
+    <Header
+      user={USER}
+      workspaceId={WORKSPACE_ID}
+      center={<LibrarySearch />}
+      actions={<NewPageButton workspaceId={WORKSPACE_ID} />}
+      stacked
+    />
   ),
 };
 
