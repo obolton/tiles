@@ -12,7 +12,6 @@ export interface PromptProps extends JSX.Attributes<"form"> {
   inputId?: string;
   placeholder?: string;
   submitTooltip?: string;
-  /** Extra controls shown before the submit button. */
   actions?: JSX.Node;
   onSubmit: (prompt: string) => Promise<void>;
   onCancel?: () => void;
