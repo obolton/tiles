@@ -1,10 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from "vitest";
 import "fake-indexeddb/auto";
-import {
-  getWorkspaceThemes,
-  invalidateWorkspaceThemes,
-  createWorkspaceTheme,
-} from "../workspaceThemes";
+import { getWorkspaceThemes, createWorkspaceTheme } from "../workspaceThemes";
 import { initializeCache, destroyCache, themesCache } from "../cache";
 import { DEFAULT_THEME_VALUES } from "../themes";
 import { THEME, DARK_THEME } from "@/test/fixtures/Theme";
@@ -91,24 +87,6 @@ describe("workspaceThemes", () => {
         colors: DARK_THEME.colors,
         fonts: DARK_THEME.fonts,
       });
-    });
-  });
-
-  describe("invalidateWorkspaceThemes", () => {
-    test("removes the cached themes list", async () => {
-      vi.mocked(client.themes.list.query).mockResolvedValueOnce(mockThemesResponse);
-      await getWorkspaceThemes();
-
-      // Verify cache exists
-      const beforeInvalidate = await themesCache.getCached();
-      expect(beforeInvalidate).not.toBeNull();
-
-      // Invalidate
-      await invalidateWorkspaceThemes();
-
-      // Verify cache is cleared
-      const afterInvalidate = await themesCache.getCached();
-      expect(afterInvalidate).toBeNull();
     });
   });
 });

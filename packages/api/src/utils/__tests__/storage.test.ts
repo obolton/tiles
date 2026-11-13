@@ -1,44 +1,35 @@
 import { describe, expect, test, vi } from "vitest";
 import { Buffer } from "node:buffer";
-import { IMAGES_BUCKET, PROFILE_IMAGES_BUCKET, objectExists, upload } from "../storage";
+import { IMAGES_BUCKET, upload } from "../storage";
 
-const { send, done, clients, createUpload, S3Client, HeadObjectCommand, Upload } = vi.hoisted(
-  () => {
-    const send = vi.fn();
-    const done = vi.fn();
-    const clients: unknown[] = [];
-    const createUpload = vi.fn();
-    return {
-      send,
-      done,
-      clients,
-      createUpload,
-      S3Client: class {
-        send = send;
-        constructor(config: unknown) {
-          clients.push(config);
-        }
-      },
-      HeadObjectCommand: class {
-        constructor(public input: unknown) {}
-      },
-      Upload: class {
-        done = done;
-        constructor(options: unknown) {
-          createUpload(options);
-        }
-      },
-    };
-  },
-);
+const { done, clients, createUpload, S3Client, Upload } = vi.hoisted(() => {
+  const done = vi.fn();
+  const clients: unknown[] = [];
+  const createUpload = vi.fn();
+  return {
+    done,
+    clients,
+    createUpload,
+    S3Client: class {
+      constructor(config: unknown) {
+        clients.push(config);
+      }
+    },
+    Upload: class {
+      done = done;
+      constructor(options: unknown) {
+        createUpload(options);
+      }
+    },
+  };
+});
 
-vi.mock("@aws-sdk/client-s3", () => ({ S3Client, HeadObjectCommand }));
+vi.mock("@aws-sdk/client-s3", () => ({ S3Client }));
 vi.mock("@aws-sdk/lib-storage", () => ({ Upload }));
 
 describe("buckets", () => {
-  test("exposes the configured bucket names", () => {
+  test("exposes the configured images bucket name", () => {
     expect(IMAGES_BUCKET).toBe("test");
-    expect(PROFILE_IMAGES_BUCKET).toBe("test");
   });
 });
 
@@ -91,32 +82,6 @@ describe("upload", () => {
     await expect(upload("bucket", "key", Buffer.from(""), "image/png")).rejects.toThrow(
       "Upload failed",
     );
-  });
-});
-
-describe("objectExists", () => {
-  test("returns true when the object exists", async () => {
-    send.mockResolvedValueOnce({});
-
-    await expect(objectExists("bucket", "key")).resolves.toBe(true);
-
-    expect(send).toHaveBeenCalledExactlyOnceWith({ input: { Bucket: "bucket", Key: "key" } });
-  });
-
-  test("returns false when the object is not found", async () => {
-    const error = new Error("Not Found");
-    error.name = "NotFound";
-    send.mockRejectedValueOnce(error);
-
-    await expect(objectExists("bucket", "key")).resolves.toBe(false);
-  });
-
-  test("rethrows other errors", async () => {
-    const error = new Error("Access Denied");
-    error.name = "AccessDenied";
-    send.mockRejectedValueOnce(error);
-
-    await expect(objectExists("bucket", "key")).rejects.toBe(error);
   });
 });
 

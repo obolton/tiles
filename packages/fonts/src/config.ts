@@ -18,7 +18,6 @@ export const FontConfigSchema = z
   }));
 
 export type FontConfig = z.infer<typeof FontConfigSchema>;
-export type FontCategory = FontConfig["category"];
 
 export const FontsSchema = z
   .array(FontConfigSchema)

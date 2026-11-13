@@ -1,9 +1,8 @@
-import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { env } from "@/env";
 
 export const IMAGES_BUCKET = env.CLOUDFLARE_R2_BUCKET_IMAGES;
-export const PROFILE_IMAGES_BUCKET = env.CLOUDFLARE_R2_BUCKET_PROFILE_IMAGES;
 
 const S3 = new S3Client({
   region: "auto",
@@ -34,16 +33,4 @@ export async function upload(
     leavePartsOnError: false,
   });
   return upload.done();
-}
-
-export async function objectExists(bucket: string, key: string) {
-  try {
-    await S3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
-    return true;
-  } catch (error) {
-    if (error instanceof Error && error.name === "NotFound") {
-      return false;
-    }
-    throw error;
-  }
 }

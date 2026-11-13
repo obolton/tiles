@@ -18,10 +18,6 @@ export async function getWorkspaceThemes() {
   return themes;
 }
 
-export async function invalidateWorkspaceThemes(): Promise<void> {
-  await themesCache.invalidate();
-}
-
 /** Creates a theme from the given theme's values, or the defaults. */
 export async function createWorkspaceTheme(from: ThemeData | null = null): Promise<Theme> {
   const workspaceId = getWorkspaceId();

@@ -2,7 +2,7 @@ import * as Y from "yjs";
 import Editor from "@/editor/Editor";
 import { setEditMode } from "@/utils/edit";
 import { PAGE } from "@/test/fixtures/Page";
-import type { PageData } from "@/editor/Editor";
+import type { PageData } from "@/models/Page";
 
 interface CreateEditorOptions {
   /** Merged onto the `PAGE` fixture. */

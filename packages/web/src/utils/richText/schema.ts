@@ -393,12 +393,6 @@ const nodesSpec = {
   },
 } as const satisfies Record<string, NodeSpec>;
 
-type KeysWithProperty<T, Key, Value> = {
-  [K in keyof T]: Key extends keyof T[K] ? (T[K][Key] extends Value ? K : never) : never;
-}[keyof T];
-
-export type BlockNode = KeysWithProperty<typeof nodesSpec, "group", "block">;
-
 const marksSpec = {
   highlight: {
     parseDOM: [{ tag: "mark" }],

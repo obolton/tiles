@@ -1,7 +1,5 @@
 import type { Sizing } from "doc/types/enums";
 
-export const SIZE_UNIT = 24;
-
 export const ASPECT_RATIOS: Record<Exclude<Sizing, "CUSTOM" | "AUTO">, number> = {
   LANDSCAPE: 16 / 9,
   PORTRAIT: 9 / 16,

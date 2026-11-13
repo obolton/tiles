@@ -7,7 +7,6 @@ import {
   LengthRequiredError,
   ContentTooLargeError,
   UnsupportedMediaTypeError,
-  InternalServerError,
 } from "../errors";
 
 describe("HttpError", () => {
@@ -91,22 +90,5 @@ describe("UnsupportedMediaTypeError", () => {
     expect(error).toBeInstanceOf(HttpError);
     expect(error.status).toBe(415);
     expect(error.message).toBe("Unsupported Media Type");
-  });
-});
-
-describe("InternalServerError", () => {
-  test("has status 500 with default message", () => {
-    const error = new InternalServerError();
-
-    expect(error).toBeInstanceOf(HttpError);
-    expect(error.status).toBe(500);
-    expect(error.message).toBe("Internal Server Error");
-  });
-
-  test("accepts custom message", () => {
-    const error = new InternalServerError("Database connection failed");
-
-    expect(error.status).toBe(500);
-    expect(error.message).toBe("Database connection failed");
   });
 });

@@ -40,11 +40,6 @@ export interface RouteData<T = unknown> {
   data: T;
 }
 
-export interface RequestError {
-  statusCode: number;
-  message: string;
-}
-
 export type RouteMiddleware = (
   request: Request,
 ) => Promise<Response | undefined> | Response | undefined;

@@ -5,10 +5,6 @@ import type { Theme as ThemeData } from "api/routes/themes/fields";
 
 export type { ThemeData };
 
-export type ThemeBackground = ThemeData["background"];
-export type ThemeColors = ThemeData["colors"];
-export type ThemeFonts = ThemeData["fonts"];
-
 /** The editable values of a theme. */
 export type ThemeValues = Pick<ThemeData, "name" | "background" | "colors" | "fonts">;
 

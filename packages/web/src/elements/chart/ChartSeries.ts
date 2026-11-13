@@ -2,7 +2,6 @@ import type { GlobalHTMLAttributes } from "jsx/html-attributes";
 import type { GradientDirection } from "@/utils/svg-gradient";
 
 export type ChartSeriesType = "BAR" | "LINE" | "AREA";
-export type { GradientDirection };
 
 const DEFAULT_TYPE: ChartSeriesType = "BAR";
 

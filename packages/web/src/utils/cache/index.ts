@@ -3,8 +3,6 @@ import ThemeModel from "@/models/Theme";
 import type { Theme } from "api/types/themes";
 import { CacheCollection } from "./collection";
 
-export type { CacheMeta } from "./collection";
-
 // Type definitions
 
 export interface CachedUser {

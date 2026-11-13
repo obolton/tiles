@@ -4,8 +4,6 @@ import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "carillon";
 import type { DropdownOption } from "doc/types/dropdown";
 
-export type { DropdownMapInput };
-
 export default class Dropdown {
   readonly id: string;
   readonly title: Reactive<string | null>;

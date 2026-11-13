@@ -9,7 +9,7 @@ import {
 } from "../themes";
 import { THEME } from "@/test/fixtures/Theme";
 import { toCSSColor } from "@/utils/color";
-import type { ThemeData } from "../themes";
+import type { ThemeData } from "@/models/Theme";
 
 const GRADIENT_THEME: ThemeData = {
   ...THEME,

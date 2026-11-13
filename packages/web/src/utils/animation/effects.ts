@@ -31,30 +31,6 @@ export function createAnimationPromise(animation: Animation): Promise<void> {
   );
 }
 
-export function move(
-  element: Element,
-  {
-    fromX = "0",
-    fromY = "0",
-    toX = "0",
-    toY = "0",
-    timing = SPRING,
-  }: {
-    fromX?: string;
-    fromY?: string;
-    toX?: string;
-    toY?: string;
-    timing?: EffectTiming;
-  },
-) {
-  const animation = animate(
-    element,
-    [{ translate: `${fromX} ${fromY}` }, { translate: `${toX} ${toY}` }],
-    timing,
-  );
-  return createAnimationPromise(animation);
-}
-
 export function moveFrom(
   element: Element,
   { x = "0", y = "0", timing = SPRING }: { x?: string; y?: string; timing?: EffectTiming },
@@ -68,11 +44,6 @@ export function moveTo(
   { x = "0", y = "0", timing = SPRING }: { x?: string; y?: string; timing?: EffectTiming },
 ) {
   const animation = animate(element, [{ translate: "none" }, { translate: `${x} ${y}` }], timing);
-  return createAnimationPromise(animation);
-}
-
-export function fadeIn(element: Element, { timing = DEFAULT_TIMING } = { timing: DEFAULT_TIMING }) {
-  const animation = animate(element, [{ opacity: 0 }, { opacity: 1 }], timing);
   return createAnimationPromise(animation);
 }
 

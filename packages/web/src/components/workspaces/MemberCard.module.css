@@ -35,7 +35,3 @@
   font-size: 0.875rem;
   color: var(--ui-secondary-color);
 }
-
-.remove {
-  color: var(--destructive-color);
-}

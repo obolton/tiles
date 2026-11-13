@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { animate, fadeIn } from "../effects";
+import { animate } from "../effects";
 import { REDUCED_MOTION_QUERY, stubMatchMedia, unstubMatchMedia } from "@/test/mocks/matchMedia";
 
 function mockAnimate(element: Element) {
@@ -35,21 +35,6 @@ describe("animate", () => {
     const { animation } = mockAnimate(element);
 
     animate(element, [{ opacity: 0 }], { duration: 100 });
-    expect(animation.finish).toHaveBeenCalled();
-  });
-});
-
-describe("fadeIn", () => {
-  afterEach(() => {
-    unstubMatchMedia();
-  });
-
-  test("respects the reduced motion preference", async () => {
-    stubMatchMedia(REDUCED_MOTION_QUERY);
-    const element = document.createElement("div");
-    const { animation } = mockAnimate(element);
-
-    await fadeIn(element);
     expect(animation.finish).toHaveBeenCalled();
   });
 });

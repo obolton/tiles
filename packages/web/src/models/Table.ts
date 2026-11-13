@@ -18,8 +18,6 @@ import YReactive from "@/collaboration/YReactive";
 import type { Reactive } from "carillon";
 import type Page from "@/models/Page";
 
-export type { CellValue };
-
 export interface UpdateCellInput {
   rowId: string;
   columnId: string;

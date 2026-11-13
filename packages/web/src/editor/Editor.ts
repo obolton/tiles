@@ -31,8 +31,6 @@ import type { VersionEntry } from "@/components/versions/VersionHistory";
 import type SidebarPanel from "@/components/pages/SidebarPanel";
 import type { Reactive, ReactiveSet } from "carillon";
 
-export type { PageData } from "@/models/Page";
-
 const IS_SERVER = import.meta.env.SSR;
 
 const UNDO_SELECTION = Symbol("undo-selection");
