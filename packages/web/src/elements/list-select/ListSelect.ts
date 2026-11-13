@@ -375,6 +375,8 @@ export default class ListSelect extends HTMLElement {
     return this.querySelector<HTMLElement>(`[role="option"][data-value="${CSS.escape(value)}"]`);
   }
 
+  // Clones are appended after the authored children, so an element upgraded before hydration
+  // doesn't shift the child indexes the hydrator matches against.
   private showItem(item: Element | null) {
     for (const element of this.iconSlot.assignedElements()) {
       element.remove();
@@ -388,7 +390,7 @@ export default class ListSelect extends HTMLElement {
     if (icon) {
       const iconClone = icon.cloneNode(true) as SVGElement;
       iconClone.slot = "icon";
-      this.prepend(iconClone);
+      this.append(iconClone);
       this.internals.states.add("has-item-icon");
     } else {
       this.internals.states.delete("has-item-icon");
@@ -408,7 +410,7 @@ export default class ListSelect extends HTMLElement {
     const labelElement = document.createElement("span");
     labelElement.slot = "label";
     labelElement.textContent = labelText;
-    this.prepend(labelElement);
+    this.append(labelElement);
   }
 
   // Keyboard navigation

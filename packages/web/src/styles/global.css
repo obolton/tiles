@@ -176,6 +176,10 @@ map-legend-item:not(:defined) {
   display: none;
 }
 
+list-select:not(:defined) > :not([slot="default-icon"]) {
+  display: none;
+}
+
 scroll-view:not(:defined) {
   display: block;
   position: relative;
