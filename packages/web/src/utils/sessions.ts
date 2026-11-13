@@ -1,7 +1,7 @@
 import { SIGNED_IN_FLAG_COOKIE_NAME, SESSION_COOKIE_NAME } from "api/constants/cookies";
+import { parseCookie } from "cookie";
 import client from "@/api/client";
 import { publicEnv } from "@/env/public";
-import { getCookie } from "./cookies";
 import { navigate } from "./navigation";
 import { reactive } from "carillon";
 import type { AppRouterOutputs } from "@/api/client";
@@ -11,11 +11,11 @@ export type User = AppRouterOutputs["users"]["getUserInfo"];
 export const user = reactive<User | null>(null);
 
 export function getSessionId(headers: Headers) {
-  return getCookie(headers.get("cookie") ?? "", SESSION_COOKIE_NAME);
+  return parseCookie(headers.get("cookie") ?? "")[SESSION_COOKIE_NAME] ?? null;
 }
 
 export function isSignedIn() {
-  return getCookie(document.cookie, SIGNED_IN_FLAG_COOKIE_NAME) === "1";
+  return parseCookie(document.cookie)[SIGNED_IN_FLAG_COOKIE_NAME] === "1";
 }
 
 function cacheUser(value: User | null) {
