@@ -51,6 +51,11 @@ describe("getSessionId", () => {
     const headers = new Headers();
     expect(getSessionId(headers)).toBeNull();
   });
+
+  test("preserves session IDs containing an equals sign", () => {
+    const headers = new Headers({ cookie: "__Secure-session=abc==; other=xyz" });
+    expect(getSessionId(headers)).toBe("abc==");
+  });
 });
 
 describe("isSignedIn", () => {
