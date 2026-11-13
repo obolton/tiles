@@ -375,8 +375,6 @@ export default class ListSelect extends HTMLElement {
     return this.querySelector<HTMLElement>(`[role="option"][data-value="${CSS.escape(value)}"]`);
   }
 
-  // Clones are appended after the authored children, so an element upgraded before hydration
-  // doesn't shift the child indexes the hydrator matches against.
   private showItem(item: Element | null) {
     for (const element of this.iconSlot.assignedElements()) {
       element.remove();
