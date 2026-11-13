@@ -49,6 +49,7 @@ describe("saveDoc", () => {
     expect(prisma.page.update).toHaveBeenCalledWith({
       where: { id: "page-1" },
       data: {
+        updatedAt: expect.any(Date),
         document: {
           update: {
             snapshot: expect.any(Buffer),
@@ -57,5 +58,19 @@ describe("saveDoc", () => {
         },
       },
     });
+  });
+
+  test("bumps the page's updatedAt to the time of the save", async () => {
+    vi.useFakeTimers({ now: new Date("2026-01-02T03:04:05Z") });
+
+    try {
+      await saveDoc("page-1", Y.encodeStateAsUpdate(createEmptyDoc()));
+    } finally {
+      vi.useRealTimers();
+    }
+
+    expect(vi.mocked(prisma.page.update).mock.calls.at(0)?.[0].data.updatedAt).toEqual(
+      new Date("2026-01-02T03:04:05Z"),
+    );
   });
 });

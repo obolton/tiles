@@ -28,6 +28,8 @@ export async function saveDoc(pageId: string, state: Uint8Array): Promise<void> 
   await prisma.page.update({
     where: { id: pageId },
     data: {
+      // @updatedAt only changes with the page's own fields, not a nested document update
+      updatedAt: new Date(),
       document: {
         update: { snapshot, schemaVersion: CURRENT_SCHEMA_VERSION },
       },
