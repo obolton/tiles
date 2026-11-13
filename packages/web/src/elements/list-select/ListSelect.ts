@@ -388,7 +388,7 @@ export default class ListSelect extends HTMLElement {
     if (icon) {
       const iconClone = icon.cloneNode(true) as SVGElement;
       iconClone.slot = "icon";
-      this.prepend(iconClone);
+      this.append(iconClone);
       this.internals.states.add("has-item-icon");
     } else {
       this.internals.states.delete("has-item-icon");
@@ -408,7 +408,7 @@ export default class ListSelect extends HTMLElement {
     const labelElement = document.createElement("span");
     labelElement.slot = "label";
     labelElement.textContent = labelText;
-    this.prepend(labelElement);
+    this.append(labelElement);
   }
 
   // Keyboard navigation
