@@ -28,6 +28,7 @@ export async function saveDoc(pageId: string, state: Uint8Array): Promise<void> 
   await prisma.page.update({
     where: { id: pageId },
     data: {
+      updatedAt: new Date(),
       document: {
         update: { snapshot, schemaVersion: CURRENT_SCHEMA_VERSION },
       },
