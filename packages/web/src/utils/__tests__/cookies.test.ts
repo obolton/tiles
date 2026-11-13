@@ -16,4 +16,23 @@ describe("getCookie", () => {
     const cookies = "test=; abc=def";
     expect(getCookie(cookies, "test")).toBe("");
   });
+
+  test("returns null for an empty cookie string", () => {
+    expect(getCookie("", "test")).toBeNull();
+  });
+
+  test("preserves values containing an equals sign", () => {
+    const cookies = "token=abc==; abc=def";
+    expect(getCookie(cookies, "token")).toBe("abc==");
+  });
+
+  test("decodes encoded values", () => {
+    const cookies = "test=hello%20world";
+    expect(getCookie(cookies, "test")).toBe("hello world");
+  });
+
+  test("returns the raw value when decoding fails", () => {
+    const cookies = "test=100%";
+    expect(getCookie(cookies, "test")).toBe("100%");
+  });
 });
