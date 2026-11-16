@@ -45,13 +45,9 @@ Pages are made of **tiles**: blocks of text, images, videos, links, tables and c
     </td>
   </tr>
   <tr>
-    <td width="50%" valign="top">
-      <img src="docs/images/ai-chat.webp" alt="A chat with AI beside a document, where it has added a list of goals">
-      <p><b>AI chat</b><br>Ask for what you need and AI writes it into the page.</p>
-    </td>
-    <td width="50%" valign="top">
-      <img src="docs/images/ai-write.webp" alt="A prompt asking AI to rewrite the selected text on a slide">
-      <p><b>Write with AI</b><br>Select text and describe how to change it.</p>
+    <td colspan="2" align="center">
+      <img src="docs/images/ai-write.webp" alt="A prompt asking AI to rewrite the selected text on a slide" width="50%">
+      <p><b>AI</b><br>Select text or tiles and describe what you want changed.</p>
     </td>
   </tr>
 </table>
