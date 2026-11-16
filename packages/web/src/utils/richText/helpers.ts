@@ -96,20 +96,20 @@ export function getCodeBlockAttrs(state: EditorState): CodeBlockAttrs | null {
   };
 }
 
+function getSelectionTextblock(state: EditorState): Node | undefined {
+  return findInSelection(state, (node) => node.isTextblock)[0];
+}
+
 export function getSelectionAlignment(state: EditorState): TextAlignment | undefined {
-  const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
-  return textBlock ? (textBlock.node.attrs.align as TextAlignment | undefined) : undefined;
+  return getSelectionTextblock(state)?.attrs.align as TextAlignment | undefined;
 }
 
 export function getSelectionLineHeight(state: EditorState): number | undefined {
-  const textBlock = closest(state.selection.$from, (node) => node.isTextblock);
-  return textBlock ? (textBlock.node.attrs.lineHeight as number | undefined) : undefined;
+  return getSelectionTextblock(state)?.attrs.lineHeight as number | undefined;
 }
 
 export function getSelectionIndent(state: EditorState): number | undefined {
-  return closest(state.selection.$from, (node) => node.isTextblock)?.node.attrs.indent as
-    | number
-    | undefined;
+  return getSelectionTextblock(state)?.attrs.indent as number | undefined;
 }
 
 export function isInList(state: EditorState): boolean {
