@@ -3,7 +3,7 @@
 Tiles is a collaborative editor for building pages that look great and do more than plain documents: guides, presentations, dashboards, notes, portfolios, landing pages and more.
 
 <p align="center">
-  <img src="docs/images/editor.webp" alt="Three people editing a travel guide together in the Tiles editor" width="900">
+  <img src="docs/images/editor.webp" alt="Three people editing a travel guide together in the Tiles editor, one of them asking AI to rewrite the introduction" width="900">
 </p>
 
 Pages are made of **tiles**: blocks of text, images, videos, links, tables and charts. Drag them around, group them into sections, pick a theme and share the result.
@@ -42,6 +42,12 @@ Pages are made of **tiles**: blocks of text, images, videos, links, tables and c
     <td width="50%" valign="top">
       <img src="docs/images/themes.webp" alt="The theme picker open over a page with a grid of images and text">
       <p><b>Themes</b><br>Restyle a page in one click, or create your own themes.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <img src="docs/images/ai-write.webp" alt="A prompt asking AI to rewrite the selected text on a slide" width="50%">
+      <p><b>AI</b><br>Select text or tiles and describe what you want changed.</p>
     </td>
   </tr>
 </table>
