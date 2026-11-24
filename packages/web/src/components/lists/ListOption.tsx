@@ -1,5 +1,5 @@
 import type { Reactive } from "carillon";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface ListOptionProps extends JSX.Attributes<"div"> {
   value?: string;

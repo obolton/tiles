@@ -2,11 +2,11 @@ import "@/styles";
 import "@/elements/menu/PopoverMenu";
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import Header from "../Header";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { User } from "@/utils/sessions";
 
 const WORKSPACE_NAME = "A workspace with a long name";

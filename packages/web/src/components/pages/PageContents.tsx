@@ -4,7 +4,7 @@ import LayoutPage from "./LayoutPage";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "carillon";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface PageContentsProps {
   page: Page;

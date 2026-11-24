@@ -1,5 +1,4 @@
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { If, Portal } from "brushstroke";
 import InsertButton from "@/components/buttons/InsertButton";
 import DocumentInsertMenu from "@/components/toolbars/insert/DocumentInsertMenu";
 import DocumentToolbar from "@/components/toolbars/pages/DocumentToolbar";
@@ -11,7 +10,7 @@ import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface DocumentPageProps {
   page: Page;

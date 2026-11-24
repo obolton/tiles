@@ -1,6 +1,5 @@
 import { combine } from "carillon";
-import If from "jsx/if";
-import Each from "jsx/each";
+import { If, Each } from "brushstroke";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import DockLayoutEditor from "./DockLayoutEditor";

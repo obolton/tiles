@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 export interface CalendarDateAttributes extends GlobalHTMLAttributes {
   start?: string | null;
@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "calendar-date": CalendarDateAttributes;
   }

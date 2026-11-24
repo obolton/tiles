@@ -24,7 +24,7 @@ export default mergeConfig(
       },
     },
     plugins: [
-      svgPlugin({ importSource: "jsx" }),
+      svgPlugin({ importSource: "brushstroke" }),
       storybookTest({
         configDir: path.join(packageRoot, ".storybook"),
         storybookUrl: "http://localhost:6001",

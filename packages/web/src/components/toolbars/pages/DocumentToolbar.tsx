@@ -2,7 +2,7 @@ import FormattingTools from "@/components/toolbars/text/FormattingTools";
 import CodeTab from "@/components/toolbars/text/CodeTab";
 import PageTab from "./PageTab";
 import { getSelectionFormat, DEFAULT_FORMAT } from "@/utils/richText/format";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import type Page from "@/models/Page";
 import type { Command, EditorState } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";

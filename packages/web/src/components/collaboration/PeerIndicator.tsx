@@ -1,4 +1,4 @@
-import If from "jsx/if";
+import { If } from "brushstroke";
 import ProfileImageStack from "./ProfileImageStack";
 import styles from "./PeerIndicator.module.css";
 import type { Peer } from "@/collaboration/Presence";

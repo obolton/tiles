@@ -12,7 +12,7 @@ import type * as Y from "yjs";
 import type { EditorState } from "prosemirror-state";
 import type { Awareness } from "@/collaboration/types";
 import type Body from "@/models/Body";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Reactive } from "carillon";
 
 export interface CollaborativeTextEditorProps extends JSX.Attributes<"div"> {

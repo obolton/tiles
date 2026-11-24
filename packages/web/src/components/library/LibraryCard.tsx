@@ -9,7 +9,7 @@ import styles from "./LibraryCard.module.css";
 import type { Reactive } from "carillon";
 import type { AppRouterOutputs } from "@/api/client";
 import type { PageType } from "api/types/pages";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export type LibraryPage = AppRouterOutputs["pages"]["list"]["pages"][number];
 

@@ -1,7 +1,7 @@
 import Thread from "./Thread";
 import Prompt from "@/components/prompt/Prompt";
 import Editor from "@/editor/Editor";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import WriteIcon from "@/icons/write.svg?jsx";
 import { combine, flag, type Reactive } from "carillon";
 import { submitPrompt } from "@/utils/ai";

@@ -1,4 +1,4 @@
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface MenuItemLinkProps extends JSX.Attributes<"a"> {
   label?: string;

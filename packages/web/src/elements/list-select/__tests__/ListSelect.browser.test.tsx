@@ -1,8 +1,8 @@
 import "@/styles";
 import "../ListSelect";
 import { afterEach, describe, expect, test } from "vitest";
-import { hydrate } from "jsx/dom";
-import { renderToString } from "jsx/server";
+import { hydrate } from "brushstroke";
+import { renderToString } from "brushstroke/server";
 import ListGroup from "@/components/lists/ListGroup";
 import ListOption from "@/components/lists/ListOption";
 

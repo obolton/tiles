@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "popover-menu": PopoverMenuAttributes;
   }

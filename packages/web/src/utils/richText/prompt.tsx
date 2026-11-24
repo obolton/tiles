@@ -1,7 +1,7 @@
 import { Plugin, type EditorState } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 import InlinePrompt from "@/components/prompt/InlinePrompt";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import client from "@/api/client";
 import { BODY_ID } from "doc/body";
 import { animate, SPRING } from "@/utils/animation/effects";

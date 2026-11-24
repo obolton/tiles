@@ -1,5 +1,5 @@
 import { handleError } from "@/utils/errors";
-import { moveBefore } from "jsx/move-before";
+import { moveBefore } from "brushstroke";
 import { focusInside } from "@/utils/focus";
 import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ResizeEvent } from "@/elements/resize/events";

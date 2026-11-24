@@ -9,7 +9,7 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import MapEvent from "./MapEvent";
 import css from "./MapView.css?inline";
 import type MapPoint from "./MapPoint";
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -43,7 +43,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "map-view": MapViewAttributes;
   }

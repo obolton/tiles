@@ -9,7 +9,6 @@ export default defineConfig({
       "packages/env",
       "packages/fonts",
       "packages/image-upload-worker",
-      "packages/jsx",
       "packages/web",
     ],
     coverage: {

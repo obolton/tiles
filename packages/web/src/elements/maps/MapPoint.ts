@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 export interface MapPointAttributes extends GlobalHTMLAttributes {
   lat?: number | null;
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "map-point": MapPointAttributes;
   }

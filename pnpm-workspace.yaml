@@ -9,6 +9,7 @@ allowBuilds:
 autoInstallPeers: false
 minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
+  - brushstroke
   - carillon
 trustPolicy: no-downgrade
 trustPolicyExclude:

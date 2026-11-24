@@ -5,7 +5,7 @@ import { EditorState } from "prosemirror-state";
 import { createState } from "@/utils/richText/state";
 import { handleError } from "@/utils/errors";
 import type { RichText } from "doc/types/richText";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Reactive } from "carillon";
 
 export interface TextEditorProps extends JSX.Attributes<"div"> {

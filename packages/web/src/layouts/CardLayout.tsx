@@ -2,7 +2,7 @@ import PageLayout from "@/layouts/PageLayout";
 import { SITE_NAME } from "@/constants/site";
 import LogoIcon from "@/icons/logo.svg?jsx";
 import styles from "./CardLayout.module.css";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface CardLayoutProps {
   title: string;

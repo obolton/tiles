@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { hydrate, render } from "jsx/dom";
-import { renderToString } from "jsx/server";
+import { hydrate, render } from "brushstroke";
+import { renderToString } from "brushstroke/server";
 import Editor from "@/editor/Editor";
 import Image from "@/models/Image";
 import ImageView from "../ImageView";

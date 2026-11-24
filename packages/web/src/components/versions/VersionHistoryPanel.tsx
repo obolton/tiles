@@ -1,7 +1,7 @@
 import VersionList from "./VersionList";
 import Sidebar from "@/components/pages/Sidebar";
 import type VersionHistory from "./VersionHistory";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface VersionHistoryPanelProps extends JSX.Attributes<"resizable-panel"> {
   state: VersionHistory;

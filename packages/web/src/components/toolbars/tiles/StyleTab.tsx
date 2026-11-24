@@ -8,11 +8,11 @@ import FrameIcon from "@/icons/frame.svg?jsx";
 import FillPicker from "@/components/fills/FillPicker";
 import AnimationPicker from "@/components/animations/AnimationPicker";
 import FramePicker from "@/components/frames/FramePicker";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { resolveTheme, getThemeColors } from "@/utils/themes";
 import { viewTransition } from "@/utils/transitions";
 import { mediaQuery, NARROW_QUERY } from "@/utils/viewport";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type Theme from "@/models/Theme";
 import type Tile from "@/models/Tile";
 

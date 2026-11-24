@@ -1,5 +1,5 @@
-import { render } from "jsx/dom";
-import type { JSX } from "jsx/jsx";
+import { render } from "brushstroke";
+import type { JSX } from "brushstroke";
 import type { Reactive } from "carillon";
 import type { ThemeRegistry } from "@/types/themes";
 import type ThemeSelector from "@/elements/themes/ThemeSelector";

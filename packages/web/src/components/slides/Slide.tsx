@@ -1,6 +1,4 @@
-import Each from "jsx/each";
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { Each, If, Portal } from "brushstroke";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import SectionToolbar from "@/components/layouts/section/SectionToolbar";

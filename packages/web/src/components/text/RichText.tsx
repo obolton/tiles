@@ -19,7 +19,7 @@ import type {
   LinkNode,
   MentionNode,
 } from "doc/types/richText";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface RenderOptions {
   /** Renders an embedded tile by id. */

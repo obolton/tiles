@@ -12,7 +12,7 @@ import {
   type PhysicalEdge,
 } from "./geometry";
 import type { ResizeEvent } from "@/elements/resize/events";
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -34,7 +34,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "resizable-panel": ResizablePanelAttributes;
   }

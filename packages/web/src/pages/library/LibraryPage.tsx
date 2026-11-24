@@ -13,7 +13,7 @@ import { handleError } from "@/utils/errors";
 import { persistent } from "@/utils/persistent";
 import { reactive } from "carillon";
 import type { FoldersProps } from "@/components/folders/Folders";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Reactive } from "carillon";
 import type { User } from "@/utils/sessions";
 

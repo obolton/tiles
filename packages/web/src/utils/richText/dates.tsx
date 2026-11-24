@@ -2,7 +2,7 @@ import { Plugin } from "prosemirror-state";
 import type { EditorView, NodeView } from "prosemirror-view";
 import type { Node } from "prosemirror-model";
 import Themeable from "@/components/themes/Themeable";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import { showModal } from "@/utils/modals";
 import { reactive } from "carillon";
 import {

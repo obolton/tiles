@@ -7,7 +7,7 @@ import { handleError } from "@/utils/errors";
 import styles from "./FontPicker.module.css";
 import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface FontPickerProps extends JSX.Attributes<"list-select"> {
   label?: string;

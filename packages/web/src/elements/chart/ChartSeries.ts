@@ -1,4 +1,4 @@
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 import type { GradientDirection } from "@/utils/svg-gradient";
 
 export type ChartSeriesType = "BAR" | "LINE" | "AREA";
@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "chart-series": ChartSeriesAttributes;
   }

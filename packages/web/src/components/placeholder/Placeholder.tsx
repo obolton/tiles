@@ -1,6 +1,6 @@
 import styles from "./Placeholder.module.css";
 import { classNames } from "@/utils/css";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 interface PlaceholderProps {
   className?: string;

@@ -1,7 +1,7 @@
 import NavigationMenu from "./NavigationMenu";
 import styles from "./Header.module.css";
 import type { User } from "@/utils/sessions";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface HeaderProps {
   user: User;

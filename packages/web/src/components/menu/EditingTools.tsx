@@ -1,7 +1,7 @@
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { reactive } from "carillon";
 import type Editor from "@/editor/Editor";
 import type { Reactive } from "carillon";

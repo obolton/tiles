@@ -1,6 +1,6 @@
 import InsertTileItems from "./InsertTileItems";
 import type { TilePlacementInput } from "@/models/TileContainer";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface PresentationInsertMenuProps extends JSX.Attributes<"popover-menu"> {
   getPlacement: () => TilePlacementInput;

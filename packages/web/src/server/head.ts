@@ -1,5 +1,5 @@
 import { escapeUTF8 } from "entities";
-import { tag, escapeTagContents } from "jsx/html";
+import { tag, escapeTagContents } from "brushstroke/server";
 import { resolveImport } from "./assets";
 import { SITE_DESCRIPTION, SITE_NAME, THEME_COLOR } from "@/constants/site";
 import type { RouteMetadata } from "@/router/router";
