@@ -6,7 +6,7 @@ import InlinePrompt from "../InlinePrompt";
 import GenerateImagePanel from "@/components/fills/GenerateImagePanel";
 import { PAGE } from "@/test/fixtures/Page";
 import { createTextTile } from "@/test/fixtures/chat";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Meta, Story } from "@/test/storybook";
 
 const meta = {

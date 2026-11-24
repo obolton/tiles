@@ -7,7 +7,7 @@ import {
   assistantMessage,
   userMessage,
 } from "@/test/fixtures/chat";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Meta, Story } from "@/test/storybook";
 
 const meta = {

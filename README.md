@@ -58,17 +58,15 @@ Tiles is a TypeScript monorepo managed with `pnpm`.
 
 | Package               | Description                                                              |
 | --------------------- | ------------------------------------------------------------------------ |
-| `web`                 | Web frontend, built with Vite, Web Components and a custom JSX runtime.  |
+| `web`                 | Web frontend, built with Vite, Web Components and JSX.                   |
 | `api`                 | API server, built with Node, tRPC, Prisma and PostgreSQL.                |
 | `doc`                 | Document schema and utilities shared by the frontend and the API.        |
-| `jsx`                 | The JSX runtime used by the frontend.                                    |
-| `reactivity`          | The reactivity library used by the frontend.                             |
 | `fonts`               | Font registry, and the script that syncs fonts to Cloudflare R2.         |
 | `env`                 | Environment variable registry.                                           |
 | `image-upload-worker` | Cloudflare Worker that handles media uploads.                            |
 | `dev-cdn`             | Development-only Cloudflare Worker that serves uploaded media and fonts. |
 
-Rich text editing is built on [ProseMirror](https://prosemirror.net), and realtime collaboration on [Yjs](https://yjs.dev) and [Hocuspocus](https://github.com/ueberdosis/hocuspocus).
+The frontend renders with [Brushstroke](https://github.com/obolton/brushstroke), a JSX runtime, and [Carillon](https://github.com/obolton/carillon), a reactivity library. Both were developed for Tiles and are published separately. Rich text editing is built on [ProseMirror](https://prosemirror.net), and realtime collaboration on [Yjs](https://yjs.dev) and [Hocuspocus](https://github.com/ueberdosis/hocuspocus).
 
 ## Development
 

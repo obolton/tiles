@@ -1,4 +1,4 @@
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { toCSSColor, type Color } from "@/utils/color";
 import type { Reactive } from "carillon";
 import styles from "./ColorToggle.module.css";

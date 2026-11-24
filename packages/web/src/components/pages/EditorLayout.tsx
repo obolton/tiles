@@ -1,9 +1,9 @@
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { persistent } from "@/utils/persistent";
 import { combine, reactive } from "carillon";
 import styles from "./EditorLayout.module.css";
 import type { Reactive } from "carillon";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export const SIDEBAR_CONSTRAINTS = { min: 240, max: 480, default: 280 };
 

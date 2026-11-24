@@ -3,7 +3,7 @@ import BottomBar from "@/components/pages/BottomBar";
 import VersionHistoryPanel from "@/components/versions/VersionHistoryPanel";
 import SharePanel from "@/components/collaboration/SharePanel";
 import ThemeEditorPanel from "@/components/themes/ThemeEditorPanel";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { combine } from "carillon";
 import { handleError } from "@/utils/errors";
 import type Editor from "@/editor/Editor";

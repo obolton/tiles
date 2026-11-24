@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import LibraryPage from "../LibraryPage";
 import NewPageButton from "@/components/library/NewPageButton";
 import type { LibraryPage as LibraryPageItem } from "@/components/library/LibraryCard";

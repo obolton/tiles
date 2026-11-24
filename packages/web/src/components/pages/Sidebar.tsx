@@ -3,7 +3,7 @@ import CloseIcon from "@/icons/close.svg?jsx";
 import { SIDEBAR_CONSTRAINTS } from "./EditorLayout";
 import styles from "./Sidebar.module.css";
 import type SidebarPanel from "./SidebarPanel";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface SidebarProps extends JSX.Attributes<"resizable-panel"> {
   state: SidebarPanel;

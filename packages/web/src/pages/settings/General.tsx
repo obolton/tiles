@@ -1,7 +1,7 @@
 import PageLayout from "@/layouts/PageLayout";
 import SidebarLayout from "@/layouts/SidebarLayout";
 import Sidebar from "./Sidebar";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import client from "@/api/client";
 import { reactive } from "carillon";
 import { showToast, redirectWithToast } from "@/utils/toasts";

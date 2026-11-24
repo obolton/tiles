@@ -11,7 +11,7 @@ import TrashIcon from "@/icons/trash.svg?jsx";
 import styles from "./ThemeEditorPanel.module.css";
 import type ThemeEditor from "./ThemeEditor";
 import type Theme from "@/models/Theme";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface ThemeEditorPanelProps extends JSX.Attributes<"resizable-panel"> {
   state: ThemeEditor;

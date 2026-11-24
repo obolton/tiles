@@ -5,7 +5,7 @@ import ImageIcon from "@/icons/image.svg?jsx";
 import VideoIcon from "@/icons/video.svg?jsx";
 import LinkIcon from "@/icons/link.svg?jsx";
 import TableIcon from "@/icons/table.svg?jsx";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { showModal } from "@/utils/modals";
 import { uploadMedia } from "@/utils/media";
 import { handleError } from "@/utils/errors";
@@ -18,7 +18,7 @@ import PageLink from "@/models/PageLink";
 import Table from "@/models/Table";
 import type { TileType } from "doc/types/enums";
 import type { TilePlacementInput } from "@/models/TileContainer";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Reactive } from "carillon";
 
 type InsertTileButton = {

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "vitest";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import SignIn from "../SignIn";
 
 const PAGE_ID = "b8c96309-cc54-445b-a274-98b6be12c43f";

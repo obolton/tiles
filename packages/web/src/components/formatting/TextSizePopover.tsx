@@ -1,7 +1,7 @@
 import Stepper from "@/components/stepper/Stepper";
 import styles from "./TextSizePopover.module.css";
 import type { Reactive } from "carillon";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface TextSizePopoverProps extends Omit<
   JSX.Attributes<"anchored-popover">,

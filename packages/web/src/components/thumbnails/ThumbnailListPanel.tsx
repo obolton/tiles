@@ -1,5 +1,4 @@
-import Each from "jsx/each";
-import If from "jsx/if";
+import { Each, If } from "brushstroke";
 import Section from "@/models/Section";
 import SlideThumbnail from "@/components/slides/SlideThumbnail";
 import { SIDEBAR_CONSTRAINTS } from "@/components/pages/EditorLayout";
@@ -8,7 +7,7 @@ import { handleError } from "@/utils/errors";
 import styles from "./ThumbnailListPanel.module.css";
 import type { DragDropEvent } from "@/utils/drag";
 import type { ThumbnailListEvent } from "@/elements/thumbnails/events";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "carillon";

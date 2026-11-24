@@ -1,10 +1,10 @@
 import "./ThumbnailList.css";
 import { ThumbnailListEvent } from "./events";
 import { getDragPosition } from "@/utils/drag-placeholder";
-import { moveBefore } from "jsx/move-before";
+import { moveBefore } from "brushstroke";
 import { makeDraggable, type DragDropEvent } from "@/utils/drag";
 import { smoothScrollBehavior } from "@/utils/scroll";
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 const ACTIVE_THRESHOLD = 0.5;
 
@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "thumbnail-list": ThumbnailListAttributes;
   }

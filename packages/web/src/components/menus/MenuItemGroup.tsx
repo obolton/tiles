@@ -1,4 +1,4 @@
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface MenuItemGroupProps extends JSX.Attributes<"div"> {
   label?: string;

@@ -2,7 +2,7 @@ import css from "./SwipeView.css?inline";
 import { smoothScrollBehavior } from "@/utils/scroll";
 import upIcon from "@/icons/arrow-up.svg?raw";
 import downIcon from "@/icons/arrow-down.svg?raw";
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 
 const stylesheet = new CSSStyleSheet();
 stylesheet.replaceSync(css);
@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "swipe-view": SwipeViewAttributes;
   }

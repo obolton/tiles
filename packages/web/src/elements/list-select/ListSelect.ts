@@ -1,6 +1,6 @@
 import css from "./ListSelect.css?inline";
 import AnchoredPopover from "@/elements/anchored-popover/AnchoredPopover";
-import type { GlobalHTMLAttributes } from "jsx/html-attributes";
+import type { GlobalHTMLAttributes } from "brushstroke";
 import { reveal } from "@/utils/scroll";
 
 const stylesheet = new CSSStyleSheet();
@@ -20,7 +20,7 @@ declare global {
   }
 }
 
-declare module "jsx/html-attributes" {
+declare module "brushstroke" {
   interface HTMLAttributesByTagName {
     "list-select": ListSelectAttributes;
   }

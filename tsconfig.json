@@ -7,7 +7,6 @@
     { "path": "./packages/env" },
     { "path": "./packages/fonts" },
     { "path": "./packages/image-upload-worker" },
-    { "path": "./packages/jsx" },
     { "path": "./packages/web" },
     { "path": "./scripts" }
   ]

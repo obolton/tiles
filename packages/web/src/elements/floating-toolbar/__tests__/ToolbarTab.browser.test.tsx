@@ -2,7 +2,7 @@ import "@/styles";
 import "../FloatingToolbar";
 import "../ToolbarTab";
 import { afterEach, describe, expect, test } from "vitest";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import ToolbarButton from "@/components/buttons/ToolbarButton";
 import ToolbarGroup from "@/components/toolbars/ToolbarGroup";
 

@@ -1,7 +1,7 @@
 import "@/styles";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import { flag } from "carillon";
 import ChatPanel from "../ChatPanel";
 import { submitPrompt } from "@/utils/ai";

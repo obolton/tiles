@@ -1,4 +1,4 @@
-import { Switch, Case, Default } from "jsx/switch";
+import { Switch, Case, Default } from "brushstroke";
 import VersionIndicator from "@/components/versions/VersionIndicator";
 import { handleError } from "@/utils/errors";
 import styles from "./PageTitle.module.css";

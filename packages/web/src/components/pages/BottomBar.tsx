@@ -1,7 +1,7 @@
 import SelectionToolbar from "@/components/toolbars/selection/SelectionToolbar";
 import CreateToolbar from "@/components/toolbars/CreateToolbar";
 import ChatPanel from "@/components/chat/ChatPanel";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import styles from "./BottomBar.module.css";
 import type Editor from "@/editor/Editor";
 

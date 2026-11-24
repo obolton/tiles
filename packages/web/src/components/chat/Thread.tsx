@@ -1,5 +1,4 @@
-import Each from "jsx/each";
-import { Switch, Case } from "jsx/switch";
+import { Each, Switch, Case } from "brushstroke";
 import Editor from "@/editor/Editor";
 import MessageBubble from "./MessageBubble";
 import StreamingBubble from "./StreamingBubble";

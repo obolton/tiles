@@ -1,4 +1,4 @@
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { HttpError } from "./errors";
 
 export interface RequestProperties {

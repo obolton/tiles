@@ -2,7 +2,7 @@ import client from "@/api/client";
 import LibraryPage, { type LibraryPageState } from "./LibraryPage";
 import { handleError } from "@/utils/errors";
 import { showToast } from "@/utils/toasts";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import styles from "./Trash.module.css";
 import type { AppRouterOutputs } from "@/api/client";
 import type { User } from "@/utils/sessions";

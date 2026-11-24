@@ -1,5 +1,5 @@
 import { NodeSelection } from "prosemirror-state";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import { reactive } from "carillon";
 import { TILE_NODE } from "doc/richText/tiles";
 import EmbeddedTile from "@/components/item/EmbeddedTile";

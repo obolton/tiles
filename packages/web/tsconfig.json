@@ -4,7 +4,7 @@
     "lib": ["ESNext", "DOM"],
     "outDir": "dist",
     "jsx": "react-jsx",
-    "jsxImportSource": "jsx",
+    "jsxImportSource": "brushstroke",
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -15,8 +15,7 @@
     { "path": "../api" },
     { "path": "../doc" },
     { "path": "../env" },
-    { "path": "../fonts" },
-    { "path": "../jsx" }
+    { "path": "../fonts" }
   ],
 
   "cmkOptions": {

@@ -2,7 +2,7 @@ import "@/styles";
 import "@/elements/menu/PopoverMenu";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import HeaderActions from "../HeaderActions";
 import { createEditor } from "@/test/editor";
 

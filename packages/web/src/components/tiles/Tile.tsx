@@ -1,6 +1,5 @@
 import styles from "./Tile.module.css";
-import type { ClassList } from "jsx/html-attributes";
-import type { JSX } from "jsx/jsx";
+import type { ClassList, JSX } from "brushstroke";
 
 export type TileProps = {
   classList?: ClassList;

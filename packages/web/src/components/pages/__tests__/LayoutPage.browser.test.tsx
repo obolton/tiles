@@ -3,7 +3,7 @@ import "@/elements/item/PageItem";
 import "@/elements/scroll-view/ScrollView";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import { reactive } from "carillon";
 import LayoutPage from "../LayoutPage";
 import SectionItems from "@/components/toolbars/insert/SectionItems";

@@ -1,8 +1,7 @@
 import TextToolbar from "@/components/toolbars/text/TextToolbar";
 import TextView from "@/components/text/TextView";
 import Tile from "./Tile";
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { If, Portal } from "brushstroke";
 import styles from "./TextTile.module.css";
 import textViewStyles from "@/components/text/TextView.module.css";
 import CollaborativeTextEditor from "@/components/inputs/RichTextEditor/CollaborativeTextEditor";

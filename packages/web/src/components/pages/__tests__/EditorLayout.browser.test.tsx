@@ -1,11 +1,11 @@
 import "@/styles";
 import { afterEach, describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import { reactive } from "carillon";
 import EditorLayout from "../EditorLayout";
 import { PanelResizeEvent } from "@/elements/resizable-panel/events";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 function renderLayout() {
   // Measure final positions rather than the panels' slide-in transitions

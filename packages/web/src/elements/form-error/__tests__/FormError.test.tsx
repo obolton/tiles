@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "vitest";
-import { render } from "jsx/dom";
+import { render } from "brushstroke";
 import "../FormError";
 
 function renderForm() {

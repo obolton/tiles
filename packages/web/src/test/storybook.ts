@@ -1,4 +1,4 @@
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 import type { Parameters } from "@storybook/html-vite";
 import type { Globals } from "storybook/internal/types";
 

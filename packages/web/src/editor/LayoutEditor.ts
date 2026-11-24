@@ -1,6 +1,6 @@
 import { handleError } from "@/utils/errors";
 import { getSnapPoints, findSnapPoint, type SnapPoint, type SnapPoints } from "@/utils/snap";
-import { moveBefore } from "jsx/move-before";
+import { moveBefore } from "brushstroke";
 import { focusInside } from "@/utils/focus";
 import { createDragPlaceholder, getDragPosition } from "@/utils/drag-placeholder";
 import { ASPECT_RATIOS } from "@/constants/size";

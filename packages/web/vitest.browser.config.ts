@@ -22,7 +22,7 @@ export default mergeConfig(
         "@": path.resolve(packageRoot, "./src"),
       },
     },
-    plugins: [svgPlugin({ importSource: "jsx" })],
+    plugins: [svgPlugin({ importSource: "brushstroke" })],
     test: {
       include: ["src/**/__tests__/**/*.browser.test.{ts,tsx}"],
       env: {

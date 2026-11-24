@@ -13,7 +13,7 @@ import HistoryIcon from "@/icons/history.svg?jsx";
 import UndoIcon from "@/icons/undo.svg?jsx";
 import RedoIcon from "@/icons/redo.svg?jsx";
 import DownloadIcon from "@/icons/download.svg?jsx";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import { startPresentation } from "@/presentation";
 import { viewTransition } from "@/utils/transitions";
 import { isBookmarked, setIsBookmarked } from "@/utils/bookmarks";

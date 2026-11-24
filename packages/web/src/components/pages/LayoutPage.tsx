@@ -1,6 +1,4 @@
-import Each from "jsx/each";
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { Each, If, Portal } from "brushstroke";
 import Item from "@/components/item/Item";
 import TileContent from "@/components/item/TileContent";
 import InsertButton from "@/components/buttons/InsertButton";
@@ -13,7 +11,7 @@ import styles from "./LayoutPage.module.css";
 import type Page from "@/models/Page";
 import type TileCollection from "@/models/TileCollection";
 import type { Reactive } from "carillon";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface LayoutPageProps {
   page: Page;

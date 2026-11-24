@@ -3,7 +3,7 @@ import { DEFAULT_COLUMN_WIDTH } from "doc/tiles/table";
 import { getBackgroundStyle } from "@/utils/backgrounds";
 import { YMapBinding } from "@/collaboration/YMapBinding";
 import type { Reactive } from "carillon";
-import type { StyleDeclaration } from "jsx/html-attributes";
+import type { StyleDeclaration } from "brushstroke";
 import type { Fill } from "@/components/fills/types";
 
 export default class Column {

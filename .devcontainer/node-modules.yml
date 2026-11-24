@@ -9,7 +9,6 @@ services:
       - env_node_modules:/projects/${WORKSPACE}/packages/env/node_modules
       - fonts_node_modules:/projects/${WORKSPACE}/packages/fonts/node_modules
       - image-upload-worker_node_modules:/projects/${WORKSPACE}/packages/image-upload-worker/node_modules
-      - jsx_node_modules:/projects/${WORKSPACE}/packages/jsx/node_modules
       - web_node_modules:/projects/${WORKSPACE}/packages/web/node_modules
 volumes:
   node_modules:
@@ -19,5 +18,4 @@ volumes:
   env_node_modules:
   fonts_node_modules:
   image-upload-worker_node_modules:
-  jsx_node_modules:
   web_node_modules:

@@ -7,7 +7,7 @@ import client from "@/api/client";
 import { handleError } from "@/utils/errors";
 import { navigate } from "@/utils/navigation";
 import type { PageType } from "api/types/pages";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 const PAGE_TYPES: { type: PageType; name: string; icon: () => JSX.Node }[] = [
   { type: "DOCUMENT", name: "Document", icon: () => <DocumentIcon aria-hidden="true" /> },

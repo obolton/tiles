@@ -16,7 +16,7 @@ import styles from "./ThemePicker.module.css";
 import type { ThemeData } from "@/models/Theme";
 import type { Reactive } from "carillon";
 import type ListSelect from "@/elements/list-select/ListSelect";
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface ThemePickerProps extends Omit<
   JSX.Attributes<"list-select">,

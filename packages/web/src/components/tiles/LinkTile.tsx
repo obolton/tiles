@@ -1,8 +1,7 @@
 import Tile from "./Tile";
 import LinkToolbar from "@/components/toolbars/links/LinkToolbar";
 import ArrowOutwardIcon from "@/icons/arrow-outward.svg?jsx";
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { If, Portal } from "brushstroke";
 import styles from "./LinkTile.module.css";
 import type Link from "@/models/Link";
 import type { Reactive } from "carillon";

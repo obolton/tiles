@@ -1,7 +1,7 @@
 import UserRow from "./UserRow";
 import InviteRow from "./InviteRow";
 import NewIcon from "@/icons/new.svg?jsx";
-import If from "jsx/if";
+import { If } from "brushstroke";
 import PageInvite from "@/models/PageInvite";
 import { user as currentUser } from "@/utils/sessions";
 import { showModal } from "@/utils/modals";

@@ -1,7 +1,7 @@
 import { toCSSColor, type Color } from "@/utils/color";
 import styles from "./GradientPalette.module.css";
 import type { Reactive } from "carillon";
-import type { StyleDeclaration } from "jsx/html-attributes";
+import type { StyleDeclaration } from "brushstroke";
 import type { GradientFill } from "@/components/fills/types";
 
 export interface GradientPaletteProps {

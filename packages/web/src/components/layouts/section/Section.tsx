@@ -3,8 +3,7 @@ import ScrollSection from "./ScrollSection";
 import CalendarSection from "./CalendarSection";
 import MapSection from "./MapSection";
 import SectionToolbar from "./SectionToolbar";
-import If from "jsx/if";
-import Portal from "jsx/portal";
+import { If, Portal } from "brushstroke";
 import type SectionModel from "@/models/Section";
 import type { Reactive } from "carillon";
 

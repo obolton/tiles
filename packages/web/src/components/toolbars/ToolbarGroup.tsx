@@ -1,4 +1,4 @@
-import type { JSX } from "jsx/jsx";
+import type { JSX } from "brushstroke";
 
 export interface ToolbarGroupProps extends JSX.Attributes<"div"> {
   label: string;

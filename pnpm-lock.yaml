@@ -365,19 +365,6 @@ importers:
         specifier: ^4.148.0
         version: 4.148.0(@types/node@24.13.3)
 
-  packages/jsx:
-    dependencies:
-      carillon:
-        specifier: ^0.1.3
-        version: 0.1.3
-      entities:
-        specifier: ^8.1.0
-        version: 8.1.0
-    devDependencies:
-      jsdom:
-        specifier: ^30.1.2
-        version: 30.1.2
-
   packages/web:
     dependencies:
       '@codemirror/commands':
@@ -458,6 +445,9 @@ importers:
       api:
         specifier: workspace:*
         version: link:../api
+      brushstroke:
+        specifier: ^0.1.1
+        version: 0.1.1(carillon@0.1.3)
       carillon:
         specifier: ^0.1.3
         version: 0.1.3
@@ -485,9 +475,6 @@ importers:
       jose:
         specifier: ^6.2.12
         version: 6.2.12
-      jsx:
-        specifier: workspace:*
-        version: link:../jsx
       maplibre-gl:
         specifier: ^6.13.0
         version: 6.13.0
@@ -2711,6 +2698,12 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
+  brushstroke@0.1.1:
+    resolution: {integrity: sha512-ztwfhN/8eVmIzqzunyk+Hhar+oo7EYmQWqjcPrsslsvwkOG/uc8FCBp9VbYFKwyydWLDlhpDDPJlVHQrUWNL4A==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      carillon: ^0.1.3
+
   buffer@5.6.0:
     resolution: {integrity: sha512-/gDYp/UtU0eA1ys8bOs9J6a+E/KWIY+DZ+Q2WESNUA0jFRsJOc0SNUO6xJ5SGA1xueg3NL65W6s+NY5l9cunuw==}
 
@@ -3086,6 +3079,10 @@ packages:
 
   entities@8.1.0:
     resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
+    engines: {node: '>=20.19.0'}
+
+  entities@9.0.0:
+    resolution: {integrity: sha512-oJFNDJg3kTPwAD1cNn2+WmUq4wFoo09npc3Ydf1D7ED4smRiWrsKnaLxykrTWgyGEcusc87P5dxlAleol9kpkg==}
     engines: {node: '>=20.19.0'}
 
   env-paths@2.2.1:
@@ -6232,6 +6229,11 @@ snapshots:
       node-releases: 2.0.57
       update-browserslist-db: 1.3.3(browserslist@4.29.3)
 
+  brushstroke@0.1.1(carillon@0.1.3):
+    dependencies:
+      carillon: 0.1.3
+      entities: 9.0.0
+
   buffer@5.6.0:
     dependencies:
       base64-js: 1.5.1
@@ -6608,6 +6610,8 @@ snapshots:
   entities@4.5.0: {}
 
   entities@8.1.0: {}
+
+  entities@9.0.0: {}
 
   env-paths@2.2.1: {}
 
